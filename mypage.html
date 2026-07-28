@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>마이페이지 금 자산 손익 관리 | GoldLab & Co.</title>
+  <meta name="description" content="GoldLab & Co. 회원 전용 금 자산 실시간 평가 손익(PnL) 및 거래 장부 관리 시스템">
+  
+  <!-- FontAwesome Icon CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      background: radial-gradient(circle at 50% 20%, rgba(20, 24, 35, 0.95) 0%, #06070a 100%);
+      min-height: 100vh;
+    }
+    .mypage-nav {
+      background: rgba(13, 15, 22, 0.96);
+      border-bottom: 1px solid var(--border-gold-bright);
+      padding: 1rem 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+    }
+    .mypage-container {
+      max-width: 1240px;
+      margin: 2.5rem auto;
+      padding: 0 1.5rem;
+    }
+    .resell-alert-banner {
+      background: linear-gradient(135deg, rgba(212, 175, 55, 0.18) 0%, rgba(16, 185, 129, 0.18) 100%);
+      border: 1px solid var(--border-gold-bright);
+      border-radius: 18px;
+      padding: 1.4rem 1.8rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STICKY DUAL-TIER HEADER WRAPPER (스크롤 시 상단 상시 고정) -->
+  <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark); box-shadow:0 10px 30px rgba(0,0,0,0.8);">
+    <!-- 1. TOP MAIN NAVIGATION BAR (GoldLab & Co. 로고, 메뉴, 로그인/회원가입, 방문예약) -->
+    <nav class="navbar" style="border-bottom:1px solid rgba(255,255,255,0.06); padding:0.7rem 0; background:transparent;">
+      <div class="container nav-inner">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span>GoldLab<span class="gradient-text">&Co.</span></span>
+        </a>
+
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html#price-board" class="nav-link">실시간 시세 그래프</a></li>
+          <li><a href="index.html#products" class="nav-link">골드바 & 미니금</a></li>
+          <li><a href="index.html#booking" class="nav-link">방문 예약</a></li>
+          <li><a href="index.html#courier" class="nav-link">안심 택배 매입</a></li>
+          <li><a href="mypage.html" class="nav-link active">마이페이지 자산관리</a></li>
+        </ul>
+
+        <div class="nav-actions" style="display:flex; align-items:center; gap:0.75rem;">
+          <div id="authTopSlot">
+            <!-- Dynamically Injected by JS: Auth Pill Button -->
+          </div>
+          <a href="index.html#booking" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
+          <button class="mobile-toggle-btn" onclick="ToggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 2. SUB-HEADER LIVE MARKET RATE TICKER BAR (골드랩앤코 아래 배치 & 깔끔한 2줄 렌더링) -->
+    <div class="top-bar" style="background:rgba(5,6,8,0.95); padding:0.45rem 0; border-top:none;">
+      <div class="container" style="display:flex; align-items:center; gap:1.2rem;">
+        <span class="live-tag" style="padding:0.35rem 0.75rem; font-size:0.75rem; border-radius:6px; flex-shrink:0;"><i class="fa-solid fa-circle" style="font-size:0.45rem; color:#10b981;"></i> LIVE 시세</span>
+        <div id="topTickerContent" style="display:flex; flex-direction:column; gap:0.22rem; font-size:0.8rem; font-family:var(--font-num); color:var(--text-light); width:100%; overflow:hidden;">
+          <!-- Dynamically Injected by JS into 2 Clean Rows -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN MYPAGE ASSET MANAGEMENT -->
+  <main class="mypage-container">
+    <!-- User Profile Header Card -->
+    <div class="user-profile-header" style="background:var(--bg-dark-secondary); border:1px solid var(--border-gold-bright); border-radius:20px; padding:2rem; margin-bottom:2rem;">
+      <div class="user-info">
+        <div class="user-avatar" id="myAvatarIcon"><i class="fa-solid fa-user-shield"></i></div>
+        <div class="user-details">
+          <h2 style="font-size:1.6rem; color:var(--text-white);" id="myUserName">김골드 <span style="font-weight:400; font-size:1.1rem; color:var(--text-muted);">회원님의 금 자산 관리 솔루션</span></h2>
+          <span class="user-tier" id="myUserTier"><i class="fa-solid fa-crown text-gold"></i> VIP PLATINUM MEMBER</span>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:0.8rem;">
+        <button class="btn btn-gold" onclick="OpenAddTransactionModal()"><i class="fa-solid fa-plus"></i> 내 금 매매/보유 내역 추가</button>
+      </div>
+    </div>
+
+    <!-- Re-sell Recommendation Smart Banner (재매도 타이밍 알림) -->
+    <div class="resell-alert-banner" id="resellAlertBanner">
+      <div style="display:flex; align-items:center; gap:1.2rem;">
+        <div style="width:48px; height:48px; border-radius:50%; background:var(--gold-gradient); color:#000; display:flex; align-items:center; justify-content:center; font-size:1.4rem; font-weight:800;">
+          <i class="fa-solid fa-coins"></i>
+        </div>
+        <div>
+          <h4 style="font-size:1.15rem; color:var(--text-white); margin-bottom:0.2rem;" id="resellBannerTitle">💡 금 시세 상승! 보유 금 자산 현금화 타이밍 안내</h4>
+          <p style="font-size:0.88rem; color:var(--text-muted);" id="resellBannerDesc">등록하신 24K 순금 골드바 시세가 매수 시점 대비 <strong style="color:var(--pnl-plus);" id="resellPercentText">+5.06% 상승</strong>했습니다. 지금 종로 본점에 방문하시면 최고가로 즉시 현금 매입해 드립니다.</p>
+        </div>
+      </div>
+
+      <a href="index.html#booking" class="btn btn-gold" style="white-space:nowrap;"><i class="fa-solid fa-calendar-check"></i> 종로 본점 방문예약 ➔</a>
+    </div>
+
+    <!-- Live PnL Asset Cards Grid -->
+    <div class="pnl-cards-grid" style="margin-bottom:2rem;">
+      <div class="pnl-card">
+        <div class="pnl-card-title">총 등록 보유 중량</div>
+        <div class="pnl-card-val" id="myTotalWeight">80.00g <span style="font-size:0.9rem; font-weight:400; color:var(--text-muted);">(21.33돈)</span></div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">24K 순금 / 18K / 14K 포함</div>
+      </div>
+
+      <div class="pnl-card">
+        <div class="pnl-card-title">최초 총 매입/투자 금액</div>
+        <div class="pnl-card-val" id="myTotalCost">12,517,700 원</div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">구매/등록 당시 실지급 금액 기준</div>
+      </div>
+
+      <div class="pnl-card">
+        <div class="pnl-card-title">현재 금 시세 평가 금액</div>
+        <div class="pnl-card-val text-gold" id="myCurrentEval">13,151,320 원</div>
+        <div style="font-size:0.75rem; color:var(--gold-light); margin-top:0.4rem;">한국금거래소 당일 실시간 시세 기준</div>
+      </div>
+
+      <div class="pnl-card">
+        <div class="pnl-card-title">실시간 평가 손익 (PnL)</div>
+        <div class="pnl-card-val" id="myPnlAmount">+633,620 원</div>
+        <div id="myPnlBadge" class="badge-pnl badge-plus"><i class="fa-solid fa-caret-up"></i> +5.06% (수익중)</div>
+      </div>
+    </div>
+
+    <!-- Transaction Ledger Table -->
+    <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+      <div class="ledger-header" style="margin-bottom:1.5rem;">
+        <h3 style="color:var(--text-white); font-size:1.25rem;"><i class="fa-solid fa-receipt text-gold"></i> 내 금 매매 및 보유 거래 장부 (Transaction Ledger)</h3>
+        <span style="font-size:0.82rem; color:var(--text-muted);">실시간 한국표준금시세에 연동되어 손익률이 지속적으로 자동 반영됩니다.</span>
+      </div>
+
+      <div class="ledger-table-wrap">
+        <table class="ledger-table">
+          <thead>
+            <tr>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">거래일자</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">구분</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">품목명</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">순도</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">중량(돈/g)</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">등록 당시 단가</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">총 결제/매수 금액</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">현재 실시간 평가액</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">평가 손익 (KRW)</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem;">수익률 (%)</th>
+              <th style="white-space:nowrap!important; word-break:keep-all!important; font-size:0.86rem; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
+            </tr>
+          </thead>
+          <tbody id="ledgerTableBody">
+            <!-- JS Injected -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- ADD TRANSACTION MODAL -->
+  <div class="modal-overlay" id="addTxModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="CloseModal('addTxModal')">&times;</button>
+      <h3 style="color:var(--text-white); font-size:1.3rem; margin-bottom:1.2rem;"><i class="fa-solid fa-plus text-gold"></i> 내 금 매매/보유 거래 내역 추가</h3>
+      
+      <form onsubmit="AddMyTransaction(event)">
+        <div class="form-group">
+          <label class="form-label">거래 구분</label>
+          <select class="form-control" id="txType">
+            <option value="매수">매수 (내가 금을 구매했을 때)</option>
+            <option value="매도">매도 (내가 금을 팔았을 때)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">거래/구매 일자</label>
+          <input type="date" class="form-control" id="txDate" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">품목명</label>
+          <input type="text" class="form-control" id="txItemName" placeholder="예: 24K 순금 골드바 10돈, 18K 목걸이" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">금 순도</label>
+          <select class="form-control" id="txPurity">
+            <option value="24K">24K 순금 (999.9%)</option>
+            <option value="18K">18K (75.0%)</option>
+            <option value="14K">14K (58.5%)</option>
+            <option value="PT">백금 (Platinum)</option>
+            <option value="AG">은 (Silver 99.9%)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">중량 (돈 기준, 1돈 = 3.75g)</label>
+          <input type="number" step="0.1" class="form-control" id="txWeightDon" placeholder="예: 10" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">당시 총 결제/거래 금액 (원)</label>
+          <input type="number" class="form-control" id="txTotalCost" placeholder="예: 6800000" required>
+        </div>
+
+        <button type="submit" class="btn btn-gold" style="width:100%; margin-top:1rem;">내 장부에 등록하기</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Application JS Script -->
+  <script src="app.js?v=26"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Direct Auth Guard for MyPage
+      const savedUser = localStorage.getItem('goldlab_logged_user');
+      if (!savedUser) {
+        alert('마이페이지 금 자산 관리는 로그인 후 이용 가능합니다.');
+        window.location.href = 'index.html';
+      }
+    });
+
+    function LogoutUserAndRedirect() {
+      LogoutUser();
+      window.location.href = 'index.html';
+    }
+  </script>
+</body>
+</html>

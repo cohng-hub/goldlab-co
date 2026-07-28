@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GoldLab & Co. | 대한민국 대표 종로 금 거래소 · 실시간 금 자산 손익 플랫폼</title>
+  <meta name="description" content="종로 대표 금 거래소 GoldLab & Co. 한국금거래소 정밀 시세 반영, 고금 최고가 매입, 24K 순금 골드바 판매, 지점 방문 예약 및 마이페이지 실시간 금 자산 손익(PnL) 관리 시스템">
+  
+  <!-- FontAwesome Icon CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Chart.js CDN for High-Quality Interactive Price Chart -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- STICKY DUAL-TIER HEADER WRAPPER (스크롤 시 상단 상시 고정) -->
+  <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark); box-shadow:0 10px 30px rgba(0,0,0,0.8);">
+    <!-- 1. TOP MAIN NAVIGATION BAR (GoldLab & Co. 로고, 메뉴, 로그인/회원가입, 방문예약) -->
+    <nav class="navbar" style="border-bottom:1px solid rgba(255,255,255,0.06); padding:0.7rem 0; background:transparent;">
+      <div class="container nav-inner">
+        <a href="#" class="brand-logo">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span>GoldLab<span class="gradient-text">&Co.</span></span>
+        </a>
+
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="#price-board" class="nav-link active">실시간 시세 그래프</a></li>
+          <li><a href="#products" class="nav-link">골드바 & 미니금</a></li>
+          <li><a href="#booking" class="nav-link">방문 예약</a></li>
+          <li><a href="#courier" class="nav-link">안심 택배 매입</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)">마이페이지 자산관리</a></li>
+        </ul>
+
+        <div class="nav-actions" style="display:flex; align-items:center; gap:0.75rem;">
+          <div id="authTopSlot">
+            <!-- Dynamically Injected by JS: Auth Pill Button -->
+          </div>
+          <a href="#booking" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
+          <button class="mobile-toggle-btn" onclick="ToggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- 2. SUB-HEADER LIVE MARKET RATE TICKER BAR (골드랩앤코 아래 배치 & 깔끔한 2줄 렌더링) -->
+    <div class="top-bar" style="background:rgba(5,6,8,0.95); padding:0.45rem 0; border-top:none;">
+      <div class="container" style="display:flex; align-items:center; gap:1.2rem;">
+        <span class="live-tag" style="padding:0.35rem 0.75rem; font-size:0.75rem; border-radius:6px; flex-shrink:0;"><i class="fa-solid fa-circle" style="font-size:0.45rem; color:#10b981;"></i> LIVE 시세</span>
+        <div id="topTickerContent" style="display:flex; flex-direction:column; gap:0.22rem; font-size:0.8rem; font-family:var(--font-num); color:var(--text-light); width:100%; overflow:hidden;">
+          <!-- Dynamically Injected by JS into 2 Clean Rows -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <header class="hero">
+    <div class="container hero-grid">
+      <div class="hero-content">
+        <div class="section-badge"><i class="fa-solid fa-award"></i> 대한민국 대표 종로 금 거래소</div>
+        <h1 class="hero-title">
+          투명한 감정과 최적 시세,<br>
+          <span class="gradient-text">GoldLab & Co.</span>에서 경험하세요.
+        </h1>
+        <p class="hero-desc">
+          한국표준금시세 기준 실시간 적용 · 홀마크 999.9% 순금 보증 · 당일 현금 및 계좌 100% 입금 보장.
+          회원 전용 금 자산 실시간 평가 손익(PnL) 리포트 시스템 탑재.
+        </p>
+
+        <div class="hero-btn-group">
+          <a href="#price-board" class="btn btn-gold"><i class="fa-solid fa-chart-line"></i> 오늘 금 시세 그래프 보기</a>
+          <a href="mypage.html" class="btn btn-outline-gold" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 내 금 자산 손익 보기</a>
+        </div>
+
+        <div class="hero-stats">
+          <div class="stat-item">
+            <h4 id="statVolume">1,250 kg+</h4>
+            <p>누적 순금 누적 거래량</p>
+          </div>
+          <div class="stat-item">
+            <h4>99.9%</h4>
+            <p>고객 안심 만족도</p>
+          </div>
+          <div class="stat-item">
+            <h4>당일 100%</h4>
+            <p>매입금 즉시 입금 보장</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-media">
+        <div class="hero-image-wrapper">
+          <img src="assets/goldbar_hero.png" alt="GoldLab 24K Gold Bar">
+          <div class="live-badge-floating">
+            <div class="pulse-dot"></div>
+            <div>
+              <div style="font-size:0.75rem; color:var(--text-muted);">한국금거래소 당일 연동</div>
+              <div style="font-size:0.95rem; font-weight:700; color:var(--gold-light);" id="heroPriceSummary">24K 704,000원 / 돈 (한국금거래소 매입가)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- LIVE MARKET PRICE CHART BOARD SECTION -->
+  <section id="price-board" class="section">
+    <div class="container">
+      <div class="price-board-header" style="margin-bottom:1.8rem;">
+        <div>
+          <div class="section-badge"><i class="fa-solid fa-chart-area"></i> LIVE PRICE CHART</div>
+          <h2 class="section-title">실시간 금 시세 동향 그래프</h2>
+        </div>
+        <div class="time-stamp" id="liveTimestamp"><i class="fa-regular fa-clock"></i> 실시간 수신중...</div>
+      </div>
+
+      <!-- 국내 / 국제 시세 그래프 전환 토글 탭 -->
+      <div class="market-region-toggle-bar" style="display:flex; justify-content:center; gap:0.8rem; margin-bottom:1.5rem;">
+        <button id="btnMarketDomestic" class="market-region-btn active" onclick="SwitchMarketRegion('DOMESTIC')" style="background:var(--gold-gradient); color:#0b0c10; border:none; padding:0.65rem 1.6rem; border-radius:30px; font-size:0.95rem; font-weight:800; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.4); display:inline-flex; align-items:center; gap:0.5rem;">
+          <i class="fa-solid fa-shield-halved"></i> 🇰🇷 국내 금 시세 (한국금거래소 KRW / 1돈)
+        </button>
+        <button id="btnMarketGlobal" class="market-region-btn" onclick="SwitchMarketRegion('GLOBAL')" style="background:rgba(255,255,255,0.06); color:var(--text-light); border:1px solid var(--border-dark); padding:0.65rem 1.6rem; border-radius:30px; font-size:0.95rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:0.5rem;">
+          <i class="fa-solid fa-earth-americas text-gold"></i> 🌐 국제 금 시세 (NYMEX / LBMA USD / oz)
+        </button>
+      </div>
+
+      <!-- 2. Quick Metal Selector Cards -->
+      <div id="metalSelectorCards" style="display:flex!important; flex-direction:row!important; justify-content:space-between; align-items:stretch; gap:1.2rem; margin-bottom:1.8rem; width:100%;">
+        <!-- JS Injected 5 Cards -->
+      </div>
+
+      <!-- 3. Prominent Main Interactive Price Chart Card -->
+      <div class="main-chart-card" style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:2.2rem; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+        <div class="chart-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:1rem;">
+          <div class="chart-title-box">
+            <h3 id="chartMetalTitle" style="font-size:1.4rem; font-weight:800; color:var(--text-white);"><i class="fa-solid fa-chart-line text-gold"></i> 순금 24K (3.75g 1돈) 시세 변동 추이</h3>
+            <span style="font-size:0.8rem; color:var(--text-muted);" id="chartMetalSub">살 때(VAT포함): 835,000원 | 팔 때(매입가): 704,000원</span>
+          </div>
+
+          <div class="chart-period-btns" style="display:flex; gap:0.4rem; background:rgba(11,12,16,0.9); padding:0.35rem; border-radius:10px; border:1px solid var(--border-dark);">
+            <button class="period-btn active" onclick="SetChartPeriod(this, '1M')">1개월</button>
+            <button class="period-btn" onclick="SetChartPeriod(this, '3M')">3개월</button>
+            <button class="period-btn" onclick="SetChartPeriod(this, '6M')">6개월</button>
+            <button class="period-btn" onclick="SetChartPeriod(this, '1Y')">1년</button>
+            <button class="period-btn" onclick="SetChartPeriod(this, '3Y')">3년</button>
+          </div>
+        </div>
+
+        <!-- Canvas Chart Container -->
+        <div class="canvas-wrapper" style="position:relative; width:100%; height:380px; margin-bottom:2rem;">
+          <canvas id="goldPriceChart"></canvas>
+        </div>
+
+        <!-- Bottom Chart Stats Banner -->
+        <div class="chart-stats-banner" style="display:flex!important; flex-direction:row!important; justify-content:space-between; align-items:center; gap:1.2rem; background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem 1.6rem; width:100%;">
+          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
+            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">전년 동월 대비 변동</span>
+            <span class="stat-val up-val" id="yoyDiffText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">190,000원 ▲ 29.46%</span>
+          </div>
+          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
+            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">기간 최고 시세</span>
+            <span class="stat-val text-gold" id="highPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">838,000 원</span>
+          </div>
+          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
+            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">기간 최저 시세</span>
+            <span class="stat-val text-white" id="lowPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">798,000 원</span>
+          </div>
+          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
+            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">평균 거래 시세</span>
+            <span class="stat-val text-light" id="avgPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">815,400 원</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simulator Bar -->
+      <div class="simulator-box" style="margin-top:1.8rem; margin-bottom:0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:16px; padding:1.4rem 1.8rem;">
+        <div class="sim-info" style="display:flex; align-items:center; gap:1rem;">
+          <i class="fa-solid fa-sliders text-gold" style="font-size:1.4rem;"></i>
+          <div>
+            <h4>시세 변동 시뮬레이터 (Simulator)</h4>
+            <p style="font-size:0.8rem; color:var(--text-muted);">시세를 변동시켜 그래프와 마이페이지 금 자산 평가 손익(PnL) 반응을 직접 확인해보세요.</p>
+          </div>
+        </div>
+        <div class="sim-btn-group" style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+          <button class="sim-btn" onclick="SimulateMarketChange(2000)"><i class="fa-solid fa-arrow-up text-gold"></i> +2,000원 상승</button>
+          <button class="sim-btn" onclick="SimulateMarketChange(5000)"><i class="fa-solid fa-angles-up" style="color:var(--pnl-plus)"></i> +5,000원 대폭상승</button>
+          <button class="sim-btn" onclick="SimulateMarketChange(-3000)"><i class="fa-solid fa-arrow-down" style="color:var(--pnl-minus)"></i> -3,000원 하락</button>
+          <button class="sim-btn" onclick="ResetMarketRate()"><i class="fa-solid fa-rotate-left"></i> 시세 원복</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GOLD BAR & MINI GOLD PRODUCTS SECTION (4개 한 줄 레이아웃 보장) -->
+  <section id="products" class="section" style="background: var(--bg-dark-secondary);">
+    <div class="container">
+      <div class="section-title-wrap">
+        <div class="section-badge"><i class="fa-solid fa-boxes-stacked"></i> GOLD PORTFOLIO</div>
+        <h2 class="section-title">GoldLab 프리미엄 골드바 & 미니 콩알금</h2>
+        <p class="section-desc">1g 미니 자산 형성용 콩알금부터 1000g 실속 투자용 골드바까지</p>
+      </div>
+
+      <div class="product-grid" style="display:grid!important; grid-template-columns: repeat(4, 1fr)!important; gap: 1.4rem!important; width:100%;">
+        <!-- Product 1 -->
+        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
+          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
+            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-seedling text-gold"></i> MZ 소액 자산 형성</span>
+            <img src="assets/gold_beans.png" alt="24K 999.9 미니 콩알금 1g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
+          </div>
+          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
+            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 999.9 미니 콩알금 1g</h3>
+            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">귀여운 병 패키징 & 홀마크 순금 999.9 보증서 포함</p>
+            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">240,450원</div>
+              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('1g 콩알금')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2 -->
+        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
+          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
+            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-credit-card text-gold"></i> 베스트셀러 1돈</span>
+            <img src="assets/gold_card.png" alt="24K 카드형 골드바 3.75g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
+          </div>
+          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
+            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 카드형 골드바 3.75g (1돈)</h3>
+            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">보관 및 선물용 고급 카드 패키지 보증서</p>
+            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">860,000원</div>
+              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('3.75g 카드 골드바')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3 -->
+        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
+          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
+            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-shield-halved text-gold"></i> 실속 투자형 10돈</span>
+            <img src="assets/goldbar_10don.png" alt="24K 프리미엄 골드바 37.5g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
+          </div>
+          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
+            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 프리미엄 골드바 37.5g (10돈)</h3>
+            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">공임 최소화 · 한국표준금거래소 인증 마크</p>
+            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">8,440,000원</div>
+              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('37.5g 골드바')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4 -->
+        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
+          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
+            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-crown text-gold"></i> VIP 헤리티지 100g</span>
+            <img src="assets/goldbar_100g.png" alt="24K 헤리티지 프레임 골드바 100g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
+          </div>
+          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
+            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 헤리티지 프레임 골드바 100g</h3>
+            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">시리얼 넘버 각인 · 럭셔리 우드케이스 포함</p>
+            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">22,488,000원</div>
+              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('100g 골드바')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VISIT RESERVATION SECTION -->
+  <section id="booking" class="section">
+    <div class="container">
+      <div class="section-title-wrap">
+        <div class="section-badge"><i class="fa-solid fa-store"></i> VISIT RESERVATION</div>
+        <h2 class="section-title">종로 본점 방문 예약</h2>
+        <p class="section-desc">웨이팅 없이 VIP 전용 감정실에서 맞춤 매입 및 상담을 받아보세요.</p>
+      </div>
+
+      <div class="booking-grid" style="display:grid!important; grid-template-columns: 1fr 1.1fr!important; gap: 2.2rem!important; align-items:start;">
+        <!-- 단일 지점 안내 (종로 본점) -->
+        <div class="single-branch-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-gold-bright); border-radius:20px; padding:2rem; box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+          <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+            <i class="fa-solid fa-location-dot text-gold" style="font-size:1.6rem;"></i>
+            <div>
+              <h3 style="color:var(--text-white); font-size:1.3rem;">GoldLab 종로 본점</h3>
+              <span style="font-size:0.82rem; color:var(--gold-light);">대한민국 귀금속 중심지 메인 본점</span>
+            </div>
+          </div>
+
+          <div style="font-size:0.9rem; color:var(--text-light); line-height:1.8; margin-bottom:1.5rem;">
+            <p><i class="fa-solid fa-map-pin text-gold"></i> <strong>주소:</strong> 서울특별시 종로구 종로3가역 8번 출구 도보 1분</p>
+            <p><i class="fa-solid fa-clock text-gold"></i> <strong>운영시간:</strong> 평일/주말 09:30 ~ 19:30 (연중무휴)</p>
+            <p><i class="fa-solid fa-user-shield text-gold"></i> <strong>시설:</strong> 1:1 VIP 정밀 비파괴 감정실, 무료 안심 주차 지원</p>
+          </div>
+
+          <div style="background:rgba(11,12,16,0.8); border:1px solid var(--border-dark); border-radius:12px; padding:1.2rem;">
+            <div style="font-size:0.85rem; color:var(--gold-light); font-weight:700; margin-bottom:0.4rem;"><i class="fa-solid fa-circle-info"></i> 예약 안내사항</div>
+            <p style="font-size:0.8rem; color:var(--text-muted);">
+              원하시는 날짜와 시간을 버튼으로 클릭해 선택하세요. 이미 타 고객이 예약한 시간대는 [마감] 버튼으로 표시됩니다.
+            </p>
+          </div>
+        </div>
+
+        <!-- 예약 폼 -->
+        <div class="booking-form-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:2rem; box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+          <form id="reservationForm" onsubmit="SubmitReservation(event)">
+            <input type="hidden" id="selectedBranch" value="종로 본점">
+
+            <div class="form-group">
+              <label class="form-label">상담 목적 선택</label>
+              <select class="form-control" id="bookCategory">
+                <option value="고금/주얼리 매입 상담">고금 · 18K/14K · 보석 매입 상담</option>
+                <option value="골드바 구매 및 소액 금투자">순금 골드바 구매 및 소액 콩알금 상담</option>
+                <option value="기업/단체 맞춤 제작">기업/단체 순금 상패 및 맞춤 제작</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">방문 희망 날짜</label>
+              <input type="date" class="form-control" id="bookDate" onchange="RenderTimeSlots()" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">방문 희망 시간 (버튼 클릭 선택 / 마감시간 클릭 불가)</label>
+              <div class="time-slot-grid" id="timeSlotGrid" style="display:grid!important; grid-template-columns: repeat(4, 1fr)!important; gap:0.6rem!important; margin-top:0.5rem; width:100%;">
+                <!-- Dynamic Button Injection by app.js RenderTimeSlots() -->
+              </div>
+              <input type="hidden" id="selectedTime" value="11:00">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">예약자 성함</label>
+              <input type="text" class="form-control" id="bookName" placeholder="예: 홍길동" required>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">연락처</label>
+              <input type="tel" class="form-control" id="bookPhone" placeholder="예: 010-1234-5678" required>
+            </div>
+
+            <button type="submit" class="btn btn-gold" style="width:100%; margin-top:1rem;"><i class="fa-solid fa-paper-plane"></i> 방문 예약 완료하기</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COURIER BUYBACK SECTION (4개 한 줄 레이아웃 보장) -->
+  <section id="courier" class="section" style="background: var(--bg-dark-secondary);">
+    <div class="container">
+      <div class="section-title-wrap">
+        <div class="section-badge"><i class="fa-solid fa-truck-fast"></i> COURIER BUYBACK</div>
+        <h2 class="section-title">비대면 안심 택배 매입 서비스</h2>
+        <p class="section-desc">매장 방문 없이 전국 어디서나 안심 보험 택배로 당일 감정 및 계좌 입금</p>
+      </div>
+
+      <div class="courier-process-grid" style="display:grid!important; grid-template-columns: repeat(4, 1fr)!important; gap: 1.5rem!important; width:100%;">
+        <div class="process-card">
+          <div class="process-step">1</div>
+          <div class="process-title">온라인 매입 신청</div>
+          <div class="process-desc">무료 안심 택배 수거 키트 신청 및 접수</div>
+        </div>
+        <div class="process-card">
+          <div class="process-step">2</div>
+          <div class="process-title">우체국/안심 수거</div>
+          <div class="process-desc">최대 1,000만원 분실 보험 자동 적용 수거</div>
+        </div>
+        <div class="process-card">
+          <div class="process-step">3</div>
+          <div class="process-title">정밀 시약/비파괴 감정</div>
+          <div class="process-desc">개봉 및 성분 분석 과정 영상 녹화 기록</div>
+        </div>
+        <div class="process-card">
+          <div class="process-step">4</div>
+          <div class="process-title">당일 즉시 입금</div>
+          <div class="process-desc">고객 동의 즉시 당일 100% 계좌 입금</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom:1rem;">
+            <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+            <span>GoldLab<span class="gradient-text">&Co.</span></span>
+          </div>
+          <p style="color:var(--text-muted); line-height:1.7;">
+            GoldLab & Co.는 한국표준금시세를 준수하며 투명한 정밀 감정과 안심 보증으로 고객 자산 가치를 최우선으로 생각하는 종로 대표 프리미엄 금 거래소입니다.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="color:var(--text-white); margin-bottom:1rem;">고객 센터 & 운영시간</h4>
+          <p><i class="fa-solid fa-phone text-gold"></i> 대표전화: 1588-GOLD (02-765-GOLD)</p>
+          <p><i class="fa-solid fa-clock text-gold"></i> 평일: 09:30 ~ 19:30</p>
+          <p><i class="fa-solid fa-calendar text-gold"></i> 주말/공휴일: 10:00 ~ 18:00 (연중무휴)</p>
+        </div>
+
+        <div>
+          <h4 style="color:var(--text-white); margin-bottom:1rem;">지점 안내</h4>
+          <p>• 종로 본점: 종로구 종로3가역 8번출구 앞 메인 귀금속 거리</p>
+          <p>• 1:1 VIP 정밀 감정실 운영 (무료 주차 지원)</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>© 2026 GoldLab & Co. All Rights Reserved. 사업자등록번호: 101-86-99999 | 귀금속 분석 감정원 홀마크 공식 인증업체</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- FLOATING ACTION BUTTONS -->
+  <div class="floating-widgets">
+    <div class="float-btn float-kakao" onclick="alert('카카오톡 상담하기 연동중입니다 (GoldLab 챗봇)');" title="카카오톡 1:1 상담"><i class="fa-comment fa-solid"></i></div>
+    <div class="float-btn float-call" onclick="alert('대표번호 1588-GOLD로 전화 연결합니다.');" title="전화 상담"><i class="fa-phone fa-solid"></i></div>
+  </div>
+
+  <!-- HIGH-END LUXURY AUTH MODAL -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <!-- Top Header Row with Back Button & Close Button -->
+      <div style="display:flex; justify-content:space-between; align-items:center; position:absolute; top:1.2rem; left:1.4rem; right:1.4rem; z-index:2;">
+        <button type="button" id="authHeaderBackBtn" onclick="SwitchAuthTab('login')" style="display:none; background:none!important; border:none!important; color:var(--gold-light)!important; font-size:0.9rem; font-weight:700; cursor:pointer; gap:0.4rem; align-items:center;">
+          <i class="fa-solid fa-arrow-left"></i> 뒤로가기
+        </button>
+        <div style="flex:1;"></div>
+        <button class="modal-close" onclick="CloseModal('authModal')" style="position:static;">&times;</button>
+      </div>
+
+      <!-- Brand Luxury Header -->
+      <div class="auth-modal-header" style="margin-top:0.8rem;">
+        <div class="brand-logo" style="justify-content:center; margin-bottom:0.5rem;">
+          <div class="brand-icon" style="width:36px; height:36px; font-size:1.1rem;"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.4rem;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </div>
+        <p style="font-size:0.85rem; color:var(--text-muted); text-align:center;" id="authModalSubTitle">VIP 회원 전용 자산 관리 서비스</p>
+      </div>
+
+      <!-- 1. LOGIN VIEW -->
+      <div id="authViewLogin">
+        <form onsubmit="HandleUserLogin(event)">
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일 주소)</label>
+            <input type="email" class="form-control" id="loginEmail" placeholder="gold@goldlab.co.kr" required value="gold@goldlab.co.kr">
+          </div>
+
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="loginPass" placeholder="••••••••" required value="123456">
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; font-size:0.85rem;">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer; color:var(--text-muted);">
+              <input type="checkbox" id="loginRemember" checked style="accent-color:var(--gold-primary);"> 로그인 상태 유지
+            </label>
+            <button type="button" onclick="SwitchAuthTab('find')" style="background:transparent; border:none; color:var(--gold-light); font-size:0.82rem; cursor:pointer;">아이디 · 비밀번호 찾기</button>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.85rem; font-size:1rem;"><i class="fa-solid fa-right-to-bracket"></i> 로그인 하기</button>
+        </form>
+
+        <div class="auth-form-footer">
+          <span>처음 방문하셨나요?</span>
+          <button type="button" class="auth-switch-link" onclick="SwitchAuthTab('signup')" style="background:none!important; border:none!important; box-shadow:none!important; outline:none!important; color:var(--gold-light)!important; font-weight:700; cursor:pointer; text-decoration:underline; font-size:0.9rem;">
+            간편 회원가입 <i class="fa-solid fa-arrow-right-long"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. SIGN UP VIEW -->
+      <div id="authViewSignup" style="display:none;">
+        <form onsubmit="HandleUserSignup(event)">
+          <div class="form-group">
+            <label class="form-label">성함 / 이름</label>
+            <input type="text" class="form-control" id="signupName" placeholder="예: 김골드" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일 주소)</label>
+            <input type="email" class="form-control" id="signupEmail" placeholder="example@goldlab.co.kr" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="signupPass" placeholder="8자리 이상 입력" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1rem;">
+            <label class="form-label">휴대폰 번호</label>
+            <input type="tel" class="form-control" id="signupPhone" placeholder="010-1234-5678" required>
+          </div>
+
+          <div style="margin-bottom:1.6rem; font-size:0.8rem; color:var(--text-muted);">
+            <label style="display:flex; align-items:center; gap:0.4rem; cursor:pointer;">
+              <input type="checkbox" required checked style="accent-color:var(--gold-primary);"> [필수] 서비스 이용약관 및 개인정보 처리방침 동의
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.85rem; font-size:1rem;"><i class="fa-solid fa-user-plus"></i> 회원가입 완료하기</button>
+        </form>
+
+        <div class="auth-form-footer">
+          <span>이미 계정이 있으신가요?</span>
+          <button type="button" class="auth-switch-link" onclick="SwitchAuthTab('login')" style="background:none!important; border:none!important; box-shadow:none!important; outline:none!important; color:var(--gold-light)!important; font-weight:700; cursor:pointer; text-decoration:underline; font-size:0.9rem;">
+            ← 로그인 화면으로 돌아가기
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. FIND ACCOUNT VIEW -->
+      <div id="authViewFind" style="display:none;">
+        <form onsubmit="HandleFindAccount(event)">
+          <div class="form-group">
+            <label class="form-label">가입된 성함</label>
+            <input type="text" class="form-control" id="findName" placeholder="예: 김골드" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.8rem;">
+            <label class="form-label">가입 시 입력한 휴대폰 번호</label>
+            <input type="tel" class="form-control" id="findPhone" placeholder="010-1234-5678" required>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.85rem; font-size:1rem;"><i class="fa-solid fa-key"></i> 아이디 찾기 / 임시 비밀번호 발송</button>
+        </form>
+
+        <div class="auth-form-footer">
+          <button type="button" class="auth-switch-link" onclick="SwitchAuthTab('login')" style="background:none!important; border:none!important; box-shadow:none!important; outline:none!important; color:var(--gold-light)!important; font-weight:700; cursor:pointer; text-decoration:underline; font-size:0.9rem;">
+            ← 로그인 화면으로 돌아가기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="bookingModal">
+    <div class="modal-box">
+      <button class="modal-close" onclick="CloseModal('bookingModal')">&times;</button>
+      <div style="text-align:center;">
+        <i class="fa-circle-check fa-solid text-gold" style="font-size:3rem; margin-bottom:1rem;"></i>
+        <h3 style="color:var(--text-white); font-size:1.4rem; margin-bottom:0.5rem;">종로 본점 방문 예약이 완료되었습니다</h3>
+        <p style="color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">예약 확인 알림톡이 입력하신 번호로 발송되었습니다.</p>
+        
+        <div style="background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:12px; padding:1.2rem; text-align:left; font-size:0.9rem; margin-bottom:1.5rem;">
+          <p>• <strong>예약번호:</strong> <span id="modalBookNo" class="text-gold">GL-20260728-882</span></p>
+          <p>• <strong>방문지점:</strong> <span id="modalBranch">종로 본점</span></p>
+          <p>• <strong>방문일시:</strong> <span id="modalDateTime">2026-07-29 11:00</span></p>
+          <p>• <strong>예약자:</strong> <span id="modalName">홍길동 (010-****-5678)</span></p>
+          <p>• <strong>상담목적:</strong> <span id="modalCategory">고금 매입 상담</span></p>
+        </div>
+
+        <button class="btn btn-gold" style="width:100%;" onclick="CloseModal('bookingModal')">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application JS Script -->
+  <script src="app.js?v=29"></script>
+</body>
+</html>
