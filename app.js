@@ -884,46 +884,25 @@ function SwitchLedgerTab(tab) {
 }
 
 function RenderMyPageLedger() {
-  const thead = document.getElementById('ledgerTableHeader');
   const tbody = document.getElementById('ledgerTableBody');
+  const thead = document.getElementById('ledgerTableHeader');
   if (!tbody) return;
 
-  if (!currentUser) {
-    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:3rem; color:var(--text-muted); white-space:nowrap;">로그인이 필요한 서비스입니다.<br><button class="btn btn-gold btn-sm" style="margin-top:1rem;" onclick="OpenAuthModal('login')"><i class="fa-solid fa-user-shield"></i> 로그인 하기</button></td></tr>`;
-    return;
-  }
-
-  // Render Dynamic Header based on BUY vs SELL Tab
   if (thead) {
-    if (currentLedgerTab === 'BUY') {
-      thead.innerHTML = `
-        <tr>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목명</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">중량(돈/g)</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">등록 당시 단가</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">총 결제/매수 금액</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
-        </tr>
-      `;
-    } else {
-      thead.innerHTML = `
-        <tr>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목명</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">중량(돈/g)</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">매수 당시 금액</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">현재 실시간 평가액</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">평가 손익 (KRW)</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:180px;">수익률 (비주얼 차트)</th>
-          <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
-        </tr>
-      `;
-    }
+    thead.innerHTML = `
+      <tr>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목명</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">중량(돈/g)</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">매수 당시 단가</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">실시간 현재 시세</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">평가 손익 (KRW)</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:180px;">수익률 (미니 그래프)</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
+      </tr>
+    `;
   }
 
   let totalDonWeight = 0;
@@ -968,47 +947,6 @@ function RenderMyPageLedger() {
       const pnlClass = isPlus ? 'up-val' : 'down-val';
       const icon = isPlus ? '▲' : '▼';
       const exactGrams = (tx.donWeight * 3.75).toFixed(2);
-
-      if (currentLedgerTab === 'BUY') {
-        // PURCHASE LEDGER ROW (Clean, Simple, No evaluation/PnL columns)
-        return `
-          <tr>
-            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.date}</td>
-            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
-              <span style="white-space:nowrap; padding:0.25rem 0.7rem; border-radius:6px; font-size:0.82rem; font-weight:800; background:rgba(212,175,55,0.2); color:var(--gold-light);">매수</span>
-            </td>
-            <td style="white-space:nowrap; font-weight:700; color:var(--text-white); padding:1.1rem 0.9rem;">${tx.itemName}</td>
-            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.purity}</td>
-            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${tx.donWeight}돈 (${exactGrams}g)</td>
-            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${formatWon(tx.unitCost)}원</td>
-            <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800; color:var(--gold-light); padding:1.1rem 0.9rem;">${formatWon(tx.totalCost)}원</td>
-            <td style="white-space:nowrap; text-align:center; padding:1.1rem 0.9rem;">
-              <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="삭제">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </td>
-          </tr>
-        `;
-      } else {
-        // SALE LEDGER ROW (With Visual Progress Bar Chart for Profit Rate)
-        const barWidth = Math.min(Math.abs(profitRate) * 3, 100);
-        const barColor = isPlus ? '#10b981' : '#ef4444';
-
-        return `
-          <tr>
-            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.date}</td>
-            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
-              <span style="white-space:nowrap; padding:0.25rem 0.7rem; border-radius:6px; font-size:0.82rem; font-weight:800; background:rgba(16,185,129,0.2); color:var(--pnl-plus);">매도</span>
-            </td>
-            <td style="white-space:nowrap; font-weight:700; color:var(--text-white); padding:1.1rem 0.9rem;">${tx.itemName}</td>
-            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.purity}</td>
-            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${tx.donWeight}돈 (${exactGrams}g)</td>
-            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${formatWon(tx.totalCost)}원</td>
-            <td style="white-space:nowrap; font-family:var(--font-num); font-weight:700; color:var(--gold-light); padding:1.1rem 0.9rem;">${formatWon(evalAmount)}원</td>
-            <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원</td>
-            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
-              <!-- Visual Profit Rate Progress Bar Chart -->
-              <div style="display:flex; align-items:center; gap:0.6rem; min-width:160px;">
                 <div style="flex:1; height:8px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
                   <div style="width:${barWidth}%; height:100%; background:${barColor}; border-radius:10px; transition:width 0.5s ease;"></div>
                 </div>
