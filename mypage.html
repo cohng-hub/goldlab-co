@@ -44,42 +44,34 @@
 </head>
 <body>
 
-  <!-- STICKY DUAL-TIER HEADER WRAPPER -->
+  <!-- CLEAN SINGLE-TIER LUXURY HEADER -->
   <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark); box-shadow:0 10px 30px rgba(0,0,0,0.8);">
-    <!-- Row 1: Main Navigation Bar -->
-    <div class="top-nav-bar" style="background:rgba(11, 12, 16, 0.95); border-bottom:1px solid rgba(212, 175, 55, 0.2); padding:0.9rem 0;">
+    <nav class="navbar" style="padding:0.9rem 0;">
       <div class="container nav-inner" style="display:flex; justify-content:space-between; align-items:center;">
         <!-- Brand Logo -->
         <a href="index.html" class="brand-logo" style="text-decoration:none;">
           <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
-          <span style="font-size:1.7rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+          <span style="font-size:1.65rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
         </a>
 
-        <!-- Main Navigation Links (Large Font 1.08rem) -->
-        <nav class="nav-menu" id="navMenu">
-          <a href="index.html#hero-split"><i class="fa-solid fa-chart-line"></i> 실시간 시세 그래프</a>
-          <a href="index.html#products"><i class="fa-solid fa-cube"></i> 골드바 라인업</a>
-          <a href="index.html#booking"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a>
-          <a href="mypage.html" class="active"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a>
-          <a href="wholesale.html" id="navWholesaleBtn" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a>
-        </nav>
+        <!-- Main Navigation Links -->
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 실시간 시세 그래프</a></li>
+          <li><a href="index.html#products" class="nav-link"><i class="fa-solid fa-cube"></i> 골드바 라인업</a></li>
+          <li><a href="index.html#booking" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a></li>
+          <li><a href="mypage.html" class="nav-link active"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a></li>
+          <li><a href="wholesale.html" class="nav-link" id="navWholesaleBtn" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
+        </ul>
 
         <!-- Right User Action & Booking Button -->
-        <div style="display:flex; align-items:center; gap:1.2rem;">
+        <div style="display:flex; align-items:center; gap:0.9rem;">
           <div id="authTopSlot">
             <!-- JS Injected User Status -->
           </div>
           <a href="index.html#booking" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
         </div>
       </div>
-    </div>
-
-    <!-- Row 2: Live Price Ticker Bar (2배 대형 크기 폰트) -->
-    <div class="top-bar" style="padding:0.9rem 0!important; background:#050608; border-bottom:1px solid rgba(212, 175, 55, 0.3);">
-      <div class="container" id="topTickerContent" style="font-size:1.25rem!important; font-weight:700;">
-        <!-- JS Dynamic 2X Ticker -->
-      </div>
-    </div>
+    </nav>
   </header>
 
   <!-- MYPAGE ASSET MANAGEMENT MAIN SECTION -->

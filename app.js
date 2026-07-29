@@ -164,8 +164,10 @@ function UpdateAuthUI() {
   if (currentUser) {
     if (slot) {
       slot.innerHTML = `
-        <span style="color:var(--gold-light); font-weight:700; font-size:0.85rem;"><i class="fa-solid fa-user-check"></i> ${currentUser.name} 님</span>
-        <button onclick="LogoutUser()" style="background:rgba(255,255,255,0.08); color:var(--text-light); border:1px solid rgba(255,255,255,0.2); border-radius:30px; padding:0.25rem 0.8rem; font-size:0.78rem; font-weight:600; cursor:pointer; margin-left:0.4rem;">로그아웃</button>
+        <div style="display:inline-flex; align-items:center; gap:0.6rem; background:rgba(224,184,72,0.12); border:1px solid var(--border-dark); padding:0.35rem 0.9rem; border-radius:30px; white-space:nowrap;">
+          <span style="color:var(--gold-light); font-weight:800; font-size:0.92rem;"><i class="fa-solid fa-circle-user"></i> ${currentUser.name} 님</span>
+          <button onclick="LogoutUser()" style="background:rgba(255,255,255,0.12); color:var(--text-light); border:none; border-radius:20px; padding:0.2rem 0.65rem; font-size:0.82rem; font-weight:700; cursor:pointer;">로그아웃</button>
+        </div>
       `;
     }
     if (myName) {
