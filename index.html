@@ -11,11 +11,11 @@
   <!-- Chart.js CDN for High-Quality Interactive Price Chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=36">
+  <link rel="stylesheet" href="style.css?v=37">
 </head>
 <body>
 
-  <!-- STICKY DUAL-TIER HEADER WRAPPER (스크롤 시 상단 상시 고정) -->
+  <!-- STICKY DUAL-TIER HEADER WRAPPER -->
   <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark); box-shadow:0 10px 30px rgba(0,0,0,0.8);">
     <!-- Row 1: Main Navigation Bar -->
     <nav class="navbar" style="border-bottom:1px solid rgba(255,255,255,0.06); padding:0.8rem 0; background:transparent;">
@@ -26,7 +26,7 @@
         </a>
 
         <ul class="nav-menu" id="navMenu">
-          <li><a href="#price-board" class="nav-link active"><i class="fa-solid fa-chart-line"></i> 실시간 시세 그래프</a></li>
+          <li><a href="#hero-split" class="nav-link active"><i class="fa-solid fa-chart-line"></i> 실시간 시세 그래프</a></li>
           <li><a href="#products" class="nav-link"><i class="fa-solid fa-cube"></i> 골드바 라인업</a></li>
           <li><a href="#booking" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a></li>
           <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a></li>
@@ -54,133 +54,84 @@
     </div>
   </header>
 
-  <!-- HERO BRAND INTRO SECTION -->
-  <header class="hero" style="padding:3.5rem 0 3rem 0;">
-    <div class="container hero-grid">
-      <div class="hero-content">
-        <div class="section-badge"><i class="fa-solid fa-award"></i> 대한민국 대표 종로 금 거래소</div>
-        <h1 class="hero-title" style="word-break:keep-all!important; font-size:2.4rem; line-height:1.35; margin-bottom:1.2rem;">
-          투명한 감정과 최적 시세,<br>
-          <span class="gradient-text">GoldLab & Co.</span>에서 경험하세요.
-        </h1>
-        <p class="hero-desc" style="word-break:keep-all!important; font-size:1.05rem; line-height:1.7; margin-bottom:2rem;">
-          한국표준금시세 기준 실시간 적용 · 홀마크 999.9% 순금 보증 · 당일 현금 및 계좌 100% 입금 보장.
-          회원 전용 금 자산 실시간 평가 손익(PnL) 관리 리포트 시스템 제공.
-        </p>
-
-        <div class="hero-btn-group" style="gap:1rem; margin-bottom:2.2rem;">
-          <a href="#price-board" class="btn btn-gold" style="padding:0.85rem 1.8rem; font-size:1.05rem;"><i class="fa-solid fa-chart-line"></i> 오늘 금 시세 그래프 보기</a>
-          <a href="mypage.html" class="btn btn-outline-gold" onclick="OpenMyPageOrLogin(event)" style="padding:0.85rem 1.6rem; font-size:1.05rem;"><i class="fa-solid fa-wallet"></i> 내 금 자산 손익 관리</a>
-        </div>
-
-        <div class="hero-stats" style="display:flex; gap:1.8rem;">
-          <div class="stat-item">
-            <h4 id="statVolume" style="font-size:1.6rem;">120 kg+</h4>
-            <p style="font-size:0.85rem;">누적 순금 거래량</p>
-          </div>
-          <div class="stat-item">
-            <h4 style="font-size:1.6rem;">99.9%</h4>
-            <p style="font-size:0.85rem;">고객 안심 만족도</p>
-          </div>
-          <div class="stat-item">
-            <h4 style="font-size:1.6rem;">당일 100%</h4>
-            <p style="font-size:0.85rem;">매입금 즉시 입금 보장</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="hero-media">
-        <div class="hero-image-wrapper">
-          <img src="assets/goldbar_hero.png" alt="GoldLab 24K Gold Bar" style="max-width:100%; height:auto; filter:drop-shadow(0 20px 40px rgba(0,0,0,0.7));">
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- LIVE MARKET PRICE CHART BOARD SECTION (실시간 금 시세 동향 그래프) -->
-  <section id="price-board" class="section" style="padding-top:2rem;">
+  <!-- 5:5 SPLIT HERO SECTION (첫 화면: 왼쪽에 실시간 시세 그래프 + 오른쪽에 브랜드 소개) -->
+  <section class="hero" id="hero-split" style="padding:3rem 0 4rem 0;">
     <div class="container">
-      <div class="price-board-header" style="margin-bottom:1.8rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
-        <div>
-          <div class="section-badge"><i class="fa-solid fa-chart-area"></i> LIVE PRICE CHART</div>
-          <h2 class="section-title">실시간 금 시세 동향 그래프</h2>
-        </div>
-        <div class="time-stamp" id="liveTimestamp" style="font-size:0.9rem; color:var(--gold-light); font-weight:600;"><i class="fa-regular fa-clock"></i> 실시간 수신중...</div>
-      </div>
-
-      <!-- 국내 / 국제 시세 그래프 전환 토글 탭 -->
-      <div class="market-region-toggle-bar" style="display:flex; justify-content:center; gap:0.8rem; margin-bottom:1.8rem;">
-        <button id="btnMarketDomestic" class="market-region-btn active" onclick="SwitchMarketRegion('DOMESTIC')" style="background:var(--gold-gradient); color:#0b0c10; border:none; padding:0.7rem 1.8rem; border-radius:30px; font-size:1rem; font-weight:800; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.4); display:inline-flex; align-items:center; gap:0.5rem;">
-          <i class="fa-solid fa-shield-halved"></i> 🇰🇷 국내 금 시세 (한국금거래소 KRW / 1돈)
-        </button>
-        <button id="btnMarketGlobal" class="market-region-btn" onclick="SwitchMarketRegion('GLOBAL')" style="background:rgba(255,255,255,0.06); color:var(--text-light); border:1px solid var(--border-dark); padding:0.7rem 1.8rem; border-radius:30px; font-size:1rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:0.5rem;">
-          <i class="fa-solid fa-earth-americas text-gold"></i> 🌐 국제 금 시세 (NYMEX / LBMA USD / oz)
-        </button>
-      </div>
-
-      <!-- Quick Metal Selector Cards -->
-      <div id="metalSelectorCards" style="display:flex!important; flex-direction:row!important; justify-content:space-between; align-items:stretch; gap:1.2rem; margin-bottom:1.8rem; width:100%;">
-        <!-- JS Injected Metal Cards -->
-      </div>
-
-      <!-- Main Interactive Price Chart Card -->
-      <div class="main-chart-card" style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:2.2rem; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
-        <div class="chart-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:1rem;">
-          <div class="chart-title-box">
-            <h3 id="chartMetalTitle" style="font-size:1.45rem; font-weight:800; color:var(--text-white);"><i class="fa-solid fa-chart-line text-gold"></i> 순금 24K (3.75g 1돈) 시세 변동 추이</h3>
-            <span style="font-size:0.88rem; color:var(--text-muted);" id="chartMetalSub">살 때(VAT포함): 825,000원 | 팔 때(매입가): 696,000원</span>
-          </div>
-
-          <div class="chart-period-btns" style="display:flex; gap:0.4rem; background:rgba(11,12,16,0.9); padding:0.35rem; border-radius:10px; border:1px solid var(--border-dark);">
-            <button class="period-btn active" onclick="SetChartPeriod(this, '1M')">1개월</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '3M')">3개월</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '6M')">6개월</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '1Y')">1년</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '3Y')">3년</button>
-          </div>
-        </div>
-
-        <!-- Canvas Chart Container -->
-        <div class="canvas-wrapper" style="position:relative; width:100%; height:380px; margin-bottom:2rem;">
-          <canvas id="goldPriceChart"></canvas>
-        </div>
-
-        <!-- Bottom Chart Stats Banner -->
-        <div class="chart-stats-banner" style="display:flex!important; flex-direction:row!important; justify-content:space-between; align-items:center; gap:1.2rem; background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem 1.6rem; width:100%;">
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">전년 동월 대비 변동</span>
-            <span class="stat-val up-val" id="yoyDiffText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">190,000원 ▲ 29.46%</span>
-          </div>
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">기간 최고 시세</span>
-            <span class="stat-val text-gold" id="highPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">835,000 원</span>
-          </div>
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">기간 최저 시세</span>
-            <span class="stat-val text-white" id="lowPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">805,000 원</span>
-          </div>
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">평균 거래 시세</span>
-            <span class="stat-val text-light" id="avgPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">820,000 원</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Simulator Bar -->
-      <div class="simulator-box" style="margin-top:1.8rem; margin-bottom:0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:16px; padding:1.4rem 1.8rem;">
-        <div class="sim-info" style="display:flex; align-items:center; gap:1rem;">
-          <i class="fa-solid fa-sliders text-gold" style="font-size:1.4rem;"></i>
+      <div style="display:grid; grid-template-columns: 1.15fr 0.85fr; gap:2.5rem; align-items:stretch;">
+        
+        <!-- LEFT HALF (50%): 실시간 금 시세 동향 그래프 카드 -->
+        <div class="main-chart-card" style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:2rem; box-shadow:0 20px 50px rgba(0,0,0,0.6); display:flex; flex-direction:column; justify-content:space-between;">
           <div>
-            <h4 style="font-size:1.05rem; color:var(--text-white);">시세 변동 시뮬레이터 (Simulator)</h4>
-            <p style="font-size:0.85rem; color:var(--text-muted);">시세를 변동시켜 그래프와 마이페이지 금 자산 평가 손익(PnL) 반응을 직접 확인해보세요.</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.6rem;">
+              <div>
+                <span class="section-badge" style="margin-bottom:0.4rem;"><i class="fa-solid fa-shield-halved"></i> 한국금거래소 당일 연동</span>
+                <h3 style="font-size:1.35rem; color:var(--text-white); font-weight:800;" id="chartMetalTitle">
+                  <i class="fa-solid fa-chart-line text-gold"></i> 🇰🇷 실시간 순금 24K (3.75g 1돈) 시세
+                </h3>
+              </div>
+              
+              <!-- Period Buttons -->
+              <div class="chart-period-btns" style="display:flex; gap:0.4rem; background:rgba(255,255,255,0.06); padding:0.3rem; border-radius:10px;">
+                <button class="period-btn active" onclick="SetChartPeriod(this, '1M')">1개월</button>
+                <button class="period-btn" onclick="SetChartPeriod(this, '3M')">3개월</button>
+                <button class="period-btn" onclick="SetChartPeriod(this, '6M')">6개월</button>
+                <button class="period-btn" onclick="SetChartPeriod(this, '1Y')">1년</button>
+              </div>
+            </div>
+
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1.2rem;" id="chartMetalSub">
+              살 때(VAT포함): 825,000원 | 팔 때(매입가): 696,000원
+            </div>
+
+            <!-- Chart Canvas -->
+            <div class="canvas-wrapper" style="position:relative; width:100%; height:270px;">
+              <canvas id="goldPriceChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart Summary Footer Badges -->
+          <div class="chart-stats-banner" style="display:flex; justify-content:space-between; background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:0.9rem 1.2rem; margin-top:1.2rem; font-size:0.88rem;">
+            <div><span style="color:var(--text-muted);">최고 시세:</span> <strong id="highPriceText" style="color:var(--pnl-plus); font-weight:800;">835,000 원</strong></div>
+            <div><span style="color:var(--text-muted);">최저 시세:</span> <strong id="lowPriceText" style="color:var(--pnl-minus); font-weight:800;">805,000 원</strong></div>
+            <div><span style="color:var(--text-muted);">평균 시세:</span> <strong id="avgPriceText" style="color:var(--gold-light); font-weight:800;">820,000 원</strong></div>
           </div>
         </div>
-        <div class="sim-btn-group" style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-          <button class="sim-btn" onclick="SimulateMarketChange(2000)"><i class="fa-solid fa-arrow-up text-gold"></i> +2,000원 상승</button>
-          <button class="sim-btn" onclick="SimulateMarketChange(5000)"><i class="fa-solid fa-angles-up" style="color:var(--pnl-plus)"></i> +5,000원 대폭상승</button>
-          <button class="sim-btn" onclick="SimulateMarketChange(-3000)"><i class="fa-solid fa-arrow-down" style="color:var(--pnl-minus)"></i> -3,000원 하락</button>
-          <button class="sim-btn" onclick="ResetMarketRate()"><i class="fa-solid fa-rotate-left"></i> 시세 원복</button>
+
+        <!-- RIGHT HALF (50%): 브랜드 소개 및 핵심 안내 -->
+        <div style="display:flex; flex-direction:column; justify-content:center; padding:1rem 0;">
+          <div class="section-badge" style="margin-bottom:1rem;"><i class="fa-solid fa-award"></i> 대한민국 대표 종로 금 거래소</div>
+          <h1 class="hero-title" style="font-size:2.3rem!important; line-height:1.35!important; word-break:keep-all!important; margin-bottom:1.2rem;">
+            투명한 감정과 최적 시세,<br>
+            <span class="gradient-text">GoldLab & Co.</span>에서 경험하세요.
+          </h1>
+          <p class="hero-desc" style="font-size:1.05rem!important; line-height:1.7!important; word-break:keep-all!important; margin-bottom:2rem;">
+            한국표준금시세 기준 실시간 연동 · 홀마크 999.9% 순금 보증 · 당일 현금 100% 입금 보장.
+            회원 전용 금 자산 실시간 평가 손익(PnL) 관리 솔루션 제공.
+          </p>
+
+          <!-- Key Metrics -->
+          <div class="hero-stats" style="margin-bottom:2.2rem; display:flex; gap:1.4rem;">
+            <div class="stat-item">
+              <h4 id="statVolume" style="font-size:1.6rem!important;">120 kg+</h4>
+              <p style="font-size:0.85rem!important;">누적 순금 거래량</p>
+            </div>
+            <div class="stat-item">
+              <h4 style="font-size:1.6rem!important;">99.9%</h4>
+              <p style="font-size:0.85rem!important;">고객 안심 만족도</p>
+            </div>
+            <div class="stat-item">
+              <h4 style="font-size:1.6rem!important;">당일 100%</h4>
+              <p style="font-size:0.85rem!important;">즉시 현금/계좌 입금</p>
+            </div>
+          </div>
+
+          <!-- Hero Buttons -->
+          <div class="hero-btn-group" style="display:flex; gap:1rem;">
+            <a href="#booking" class="btn btn-gold" style="padding:0.85rem 1.8rem; font-size:1.05rem;"><i class="fa-solid fa-calendar-check"></i> 빠른 방문예약 하기</a>
+            <a href="mypage.html" class="btn btn-outline-gold" onclick="OpenMyPageOrLogin(event)" style="padding:0.85rem 1.6rem; font-size:1.05rem;"><i class="fa-solid fa-wallet"></i> 내 금 자산 손익 관리</a>
+          </div>
         </div>
+
       </div>
     </div>
   </section>
@@ -565,6 +516,6 @@
   </div>
 
   <!-- Application JS Script -->
-  <script src="app.js?v=36"></script>
+  <script src="app.js?v=37"></script>
 </body>
 </html>
