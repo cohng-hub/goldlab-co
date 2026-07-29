@@ -3,16 +3,16 @@
    Real-Time Market Rate Sync & Prominent Chart Engine & VIP PnL System
    ========================================================================== */
 
-// Official Live Rates from Korea Gold Exchange (2026.07.28)
+// Official Live Rates from Korea Gold Exchange (2026.07.29 Latest)
 const REALTIME_STANDARD_RATES = {
-  "24K_buy": 835000,    // 살 때 (VAT 포함, 3.75g 1돈)
-  "24K_sell": 704000,   // 팔 때 (매입가, 3.75g 1돈)
-  "18K_sell": 517500,   // 18K 팔 때
-  "14K_sell": 401300,   // 14K 팔 때
-  "PT_buy": 329000,     // 백금 살 때
-  "PT_sell": 267000,    // 백금 팔 때
-  "AG_buy": 11170,      // 은 살 때
-  "AG_sell": 9430       // 은 팔 때
+  "24K_buy": 825000,    // 살 때 (VAT 포함, 3.75g 1돈 - 오늘 한국금거래소 최신 시세)
+  "24K_sell": 700000,   // 팔 때 (매입가, 3.75g 1돈)
+  "18K_sell": 514500,   // 18K 팔 때
+  "14K_sell": 399000,   // 14K 팔 때
+  "PT_buy": 327000,     // 백금 살 때
+  "PT_sell": 265000,    // 백금 팔 때
+  "AG_buy": 11050,      // 은 살 때
+  "AG_sell": 9350       // 은 팔 때
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
