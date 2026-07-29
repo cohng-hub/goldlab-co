@@ -404,8 +404,8 @@ function RenderMetalSelectorCards() {
   if (currentMarketRegion === 'DOMESTIC') {
     metals = [
       { key: '24K', title: '🇰🇷 순금 24K (999.9%)', buy: currentRates["24K_buy"], sell: currentRates["24K_sell"] },
-      { key: '18K', title: '🇰🇷 18K 금 (75.0%)', buy: '제품시세', sell: currentRates["18K_sell"] },
-      { key: '14K', title: '🇰🇷 14K 금 (58.5%)', buy: '제품시세', sell: currentRates["14K_sell"] },
+      { key: '18K', title: '🇰🇷 18K 금 (75.0%)', buy: '제품시세적용', sell: currentRates["18K_sell"] },
+      { key: '14K', title: '🇰🇷 14K 금 (58.5%)', buy: '제품시세적용', sell: currentRates["14K_sell"] },
       { key: 'PT', title: '🇰🇷 백금 (Platinum)', buy: currentRates["PT_buy"], sell: currentRates["PT_sell"] },
       { key: 'AG', title: '🇰🇷 은 (Silver 99.9%)', buy: currentRates["AG_buy"], sell: currentRates["AG_sell"] }
     ];
@@ -438,7 +438,10 @@ function RenderMetalSelectorCards() {
           ${typeof m.sell === 'number' ? formatWon(m.sell) + ' 원' : m.sell}
         </div>
         <div style="font-size:0.78rem; color:var(--text-muted); margin-top:0.35rem; white-space:nowrap;">
-          살때(매수가): ${typeof m.buy === 'number' ? formatWon(m.buy) + '원' : m.buy}
+          내가 팔 때(매입가): ${typeof m.sell === 'number' ? formatWon(m.sell) + '원' : m.sell}
+        </div>
+        <div style="font-size:0.75rem; color:var(--gold-light); margin-top:0.15rem; white-space:nowrap;">
+          내가 살 때(VAT포함): ${typeof m.buy === 'number' ? formatWon(m.buy) + '원' : m.buy}
         </div>
       </div>
     `;
