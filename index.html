@@ -11,7 +11,7 @@
   <!-- Chart.js CDN for High-Quality Interactive Price Chart -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Stylesheet -->
-  <link rel="stylesheet" href="style.css?v=39">
+  <link rel="stylesheet" href="style.css?v=40">
 </head>
 <body>
 
@@ -128,7 +128,7 @@
     </div>
   </section>
 
-  <!-- PRODUCTS SHOWCASE SECTION (골드바 라인업 & 중량 선택 모달) -->
+  <!-- PRODUCTS SHOWCASE SECTION (가격 제거 & 통일된 중량 선택 및 예약하기 버튼) -->
   <section id="products" class="section" style="background:var(--bg-dark-secondary);">
     <div class="container">
       <div class="section-title-wrap">
@@ -138,7 +138,7 @@
       </div>
 
       <!-- Luxury 2-Column Product Cards Grid -->
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2.5rem; margin-bottom:3rem;">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2.5rem;">
         
         <!-- CARD 1: 1돈 카드 골드바 -->
         <div class="luxury-product-card" onclick="OpenWeightModal('1돈 카드 골드바')" style="position:relative; overflow:hidden;">
@@ -146,23 +146,17 @@
             <i class="fa-solid fa-credit-card"></i> 카드 포장형 / 선물·소장용
           </span>
           
-          <div style="height:230px; display:flex; justify-content:center; align-items:center; margin:1rem 0;">
+          <div style="height:240px; display:flex; justify-content:center; align-items:center; margin:1rem 0;">
             <img src="assets/gold_card.png" alt="1돈 카드 골드바" style="max-height:100%; object-fit:contain; filter:drop-shadow(0 15px 30px rgba(0,0,0,0.7));">
           </div>
 
           <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.4rem;">
             <h3 style="color:var(--text-white); font-size:1.45rem; font-weight:800; margin-bottom:0.5rem;">24K 순금 1돈 카드 골드바 (3.75g)</h3>
-            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.4rem;">홀마크 999.9% 순금 보증서 일체형 · 고급 카드 패키징</p>
+            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.6rem;">홀마크 999.9% 순금 보증서 일체형 · 고급 카드 패키징</p>
             
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <span style="font-size:0.85rem; color:var(--text-muted);">살 때(VAT포함 당일시세)</span>
-                <div style="font-family:var(--font-num); font-size:1.5rem; font-weight:900; color:var(--gold-light);" id="prodCardPrice">850,000 원</div>
-              </div>
-              <button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); OpenWeightModal('1돈 카드 골드바');">
-                <i class="fa-solid fa-hand-pointer"></i> 중량 선택 및 예약하기
-              </button>
-            </div>
+            <button class="btn btn-gold" onclick="event.stopPropagation(); OpenWeightModal('1돈 카드 골드바');" style="width:100%; padding:0.95rem; font-size:1.05rem; font-weight:800;">
+              <i class="fa-solid fa-hand-pointer"></i> 중량 선택 및 예약하기
+            </button>
           </div>
         </div>
 
@@ -172,41 +166,25 @@
             <i class="fa-solid fa-vault"></i> 헤리티지 프레스 골드바 / 자산 보관용
           </span>
 
-          <div style="height:230px; display:flex; justify-content:center; align-items:center; margin:1rem 0;">
+          <div style="height:240px; display:flex; justify-content:center; align-items:center; margin:1rem 0;">
             <img src="assets/goldbar_10don.png" alt="프리미엄 프레스 골드바" style="max-height:100%; object-fit:contain; filter:drop-shadow(0 15px 30px rgba(0,0,0,0.7));">
           </div>
 
           <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.4rem;">
             <h3 style="color:var(--text-white); font-size:1.45rem; font-weight:800; margin-bottom:0.5rem;">24K 프리미엄 프레스 골드바 (3돈~1kg)</h3>
-            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.4rem;">종로 본점 직영 당일 현장 수령 및 시큐리티 실물 전달</p>
+            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.6rem;">종로 본점 직영 당일 현장 수령 및 시큐리티 실물 전달</p>
             
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <div>
-                <span style="font-size:0.85rem; color:var(--text-muted);">10돈(37.5g) 당일시세 기준</span>
-                <div style="font-family:var(--font-num); font-size:1.5rem; font-weight:900; color:var(--gold-light);" id="prodBarPrice">8,340,000 원</div>
-              </div>
-              <button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); OpenWeightModal('프리미엄 프레스 골드바');">
-                <i class="fa-solid fa-hand-pointer"></i> 규격 중량 고르기
-              </button>
-            </div>
+            <button class="btn btn-gold" onclick="event.stopPropagation(); OpenWeightModal('프리미엄 프레스 골드바');" style="width:100%; padding:0.95rem; font-size:1.05rem; font-weight:800;">
+              <i class="fa-solid fa-hand-pointer"></i> 중량 선택 및 예약하기
+            </button>
           </div>
         </div>
 
       </div>
-
-      <!-- Quick Weight Choice Banner -->
-      <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-dark); border-radius:20px; padding:1.6rem 2.2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.2rem;">
-        <div>
-          <strong style="color:var(--gold-light); font-size:1.1rem;"><i class="fa-solid fa-scale-balanced"></i> 선택 가능한 순금 중량 규격:</strong>
-          <span style="color:var(--text-light); font-size:1.02rem; margin-left:0.8rem;">1g · 1돈(3.75g) · 3돈(11.25g) · 5돈(18.75g) · 10돈(37.5g) · 30돈 · 50돈 · 100돈 · 1kg</span>
-        </div>
-        <button class="btn btn-gold btn-sm" onclick="OpenWeightModal('전 규격 중량 모음')"><i class="fa-solid fa-list-check"></i> 전체 중량 선택하기</button>
-      </div>
-
     </div>
   </section>
 
-  <!-- VISIT RESERVATION SECTION -->
+  <!-- VISIT RESERVATION SECTION (대형 희망시간 버튼 적용) -->
   <section id="booking" class="section">
     <div class="container">
       <div class="section-title-wrap">
@@ -237,41 +215,43 @@
           </div>
         </div>
 
-        <!-- Dynamic Booking Form -->
+        <!-- Dynamic Booking Form (Large Time Slots) -->
         <div class="booking-form-box" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:24px; padding:2.2rem; box-shadow:var(--shadow-card);">
           <form onsubmit="HandleBookingSubmit(event)">
             <input type="hidden" id="selectedBranch" value="종로 본점">
 
             <div class="form-group">
               <label class="form-label"><i class="fa-solid fa-calendar-days text-gold"></i> 방문 희망 날짜</label>
-              <input type="date" class="form-control" id="bookDate" onchange="RenderTimeSlots()" required>
+              <input type="date" class="form-control" id="bookDate" onchange="RenderTimeSlots()" required style="padding:1.1rem; font-size:1.1rem; font-weight:700;">
             </div>
 
-            <div class="form-group">
-              <label class="form-label"><i class="fa-solid fa-clock text-gold"></i> 방문 희망 시간 (실시간 잔여 슬롯)</label>
+            <div class="form-group" style="margin-bottom:1.8rem;">
+              <label class="form-label" style="font-size:1.08rem; font-weight:800; color:var(--gold-light); margin-bottom:0.8rem;">
+                <i class="fa-solid fa-clock text-gold"></i> 방문 희망 시간 (실시간 잔여 슬롯 - 원하는 시간을 터치하세요)
+              </label>
               <input type="hidden" id="selectedTime" value="11:00">
-              <div class="time-slot-grid" id="timeSlotGrid" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:0.75rem;">
-                <!-- JS Injected Time Chips -->
+              <div class="time-slot-grid" id="timeSlotGrid" style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.9rem;">
+                <!-- JS Injected Large Time Chips -->
               </div>
             </div>
 
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem;">
               <div class="form-group">
                 <label class="form-label">예약자 성함</label>
-                <input type="text" class="form-control" id="bookName" placeholder="예: 홍길동" required>
+                <input type="text" class="form-control" id="bookName" placeholder="예: 홍길동" required style="padding:0.95rem; font-size:1.05rem;">
               </div>
               <div class="form-group">
                 <label class="form-label">연락처</label>
-                <input type="tel" class="form-control" id="bookPhone" placeholder="010-1234-5678" required>
+                <input type="tel" class="form-control" id="bookPhone" placeholder="010-1234-5678" required style="padding:0.95rem; font-size:1.05rem;">
               </div>
             </div>
 
             <div class="form-group" style="margin-bottom:2rem;">
               <label class="form-label">상담 및 매매 희망 목적</label>
-              <input type="text" class="form-control" id="bookCategory" placeholder="예: 24K 순금 10돈 구매 또는 고금 매입 상담" required>
+              <input type="text" class="form-control" id="bookCategory" placeholder="예: 24K 순금 10돈 구매 또는 고금 매입 상담" required style="padding:0.95rem; font-size:1.05rem;">
             </div>
 
-            <button type="submit" class="btn btn-gold" style="width:100%; padding:1rem; font-size:1.1rem; font-weight:800;">
+            <button type="submit" class="btn btn-gold" style="width:100%; padding:1.1rem; font-size:1.15rem; font-weight:900;">
               <i class="fa-solid fa-calendar-check"></i> 종로 본점 방문 예약 완료하기
             </button>
           </form>
@@ -336,35 +316,30 @@
     <div class="float-btn float-call" onclick="alert('대표번호 1588-GOLD로 전화 연결합니다.');" title="전화 상담"><i class="fa-phone fa-solid"></i></div>
   </div>
 
-  <!-- PRODUCT WEIGHT SELECTION MODAL -->
+  <!-- PRODUCT WEIGHT SELECTION MODAL (예상 시세 박스 제거) -->
   <div class="modal-overlay" id="weightSelectModal">
-    <div class="modal-box">
+    <div class="modal-box" style="max-width:600px;">
       <button class="modal-close" onclick="CloseModal('weightSelectModal')">&times;</button>
-      <div style="text-align:center; margin-bottom:1.8rem;">
-        <i class="fa-solid fa-scale-balanced text-gold" style="font-size:2.8rem; margin-bottom:0.8rem;"></i>
-        <h3 style="color:var(--text-white); font-size:1.55rem; font-weight:800;" id="modalTargetProdTitle">24K 골드바 규격 중량 선택</h3>
-        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">원하시는 순금 규격을 선택하시면 방문예약 폼으로 자동 이동합니다.</p>
+      <div style="text-align:center; margin-bottom:2rem;">
+        <i class="fa-solid fa-scale-balanced text-gold" style="font-size:3rem; margin-bottom:0.8rem;"></i>
+        <h3 style="color:var(--text-white); font-size:1.65rem; font-weight:900;" id="modalTargetProdTitle">24K 골드바 규격 중량 선택</h3>
+        <p style="color:var(--text-muted); font-size:1rem; margin-top:0.4rem;">원하시는 순금 규격을 선택하시면 방문예약 폼으로 자동 이동합니다.</p>
       </div>
 
       <!-- Weight Options Grid -->
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:0.9rem; margin-bottom:2rem;" id="weightGridBtns">
-        <button type="button" onclick="SelectProductWeight('1g (0.26돈)', 240450)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1rem 0.6rem; font-weight:700; font-size:1rem; cursor:pointer;">1g (0.26돈)</button>
-        <button type="button" onclick="SelectProductWeight('1돈 (3.75g)', 850000)" class="weight-btn active" style="background:var(--gold-gradient); color:#000; border:none; border-radius:14px; padding:1rem 0.6rem; font-weight:800; font-size:1rem; cursor:pointer; box-shadow:0 0 15px rgba(224,184,72,0.4);">1돈 (3.75g)</button>
-        <button type="button" onclick="SelectProductWeight('3돈 (11.25g)', 2520000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1rem 0.6rem; font-weight:700; font-size:1rem; cursor:pointer;">3돈 (11.25g)</button>
-        <button type="button" onclick="SelectProductWeight('5돈 (18.75g)', 4180000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1rem 0.6rem; font-weight:700; font-size:1rem; cursor:pointer;">5돈 (18.75g)</button>
-        <button type="button" onclick="SelectProductWeight('10돈 (37.5g)', 8340000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1rem 0.6rem; font-weight:700; font-size:1rem; cursor:pointer;">10돈 (37.5g)</button>
-        <button type="button" onclick="SelectProductWeight('30돈 (112.5g)', 24900000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1rem 0.6rem; font-weight:700; font-size:1rem; cursor:pointer;">30돈 (112.5g)</button>
-        <button type="button" onclick="SelectProductWeight('50돈 (187.5g)', 41400000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1rem 0.6rem; font-weight:700; font-size:1rem; cursor:pointer;">50돈 (187.5g)</button>
-        <button type="button" onclick="SelectProductWeight('100돈 (375g)', 82500000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1rem 0.6rem; font-weight:700; font-size:1rem; cursor:pointer;">100돈 (375g)</button>
-        <button type="button" onclick="SelectProductWeight('1kg (266.6돈)', 220000000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--gold-light); border-radius:14px; padding:1rem 0.6rem; font-weight:800; font-size:1rem; cursor:pointer;">1kg (266.6돈)</button>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1rem; margin-bottom:2.2rem;" id="weightGridBtns">
+        <button type="button" onclick="SelectProductWeight('1g (0.26돈)', 240450)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1.1rem 0.6rem; font-weight:800; font-size:1.05rem; cursor:pointer;">1g (0.26돈)</button>
+        <button type="button" onclick="SelectProductWeight('1돈 (3.75g)', 850000)" class="weight-btn active" style="background:var(--gold-gradient); color:#000; border:none; border-radius:14px; padding:1.1rem 0.6rem; font-weight:900; font-size:1.05rem; cursor:pointer; box-shadow:0 0 18px rgba(224,184,72,0.45);">1돈 (3.75g)</button>
+        <button type="button" onclick="SelectProductWeight('3돈 (11.25g)', 2520000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1.1rem 0.6rem; font-weight:800; font-size:1.05rem; cursor:pointer;">3돈 (11.25g)</button>
+        <button type="button" onclick="SelectProductWeight('5돈 (18.75g)', 4180000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1.1rem 0.6rem; font-weight:800; font-size:1.05rem; cursor:pointer;">5돈 (18.75g)</button>
+        <button type="button" onclick="SelectProductWeight('10돈 (37.5g)', 8340000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1.1rem 0.6rem; font-weight:800; font-size:1.05rem; cursor:pointer;">10돈 (37.5g)</button>
+        <button type="button" onclick="SelectProductWeight('30돈 (112.5g)', 24900000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1.1rem 0.6rem; font-weight:800; font-size:1.05rem; cursor:pointer;">30돈 (112.5g)</button>
+        <button type="button" onclick="SelectProductWeight('50돈 (187.5g)', 41400000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1.1rem 0.6rem; font-weight:800; font-size:1.05rem; cursor:pointer;">50돈 (187.5g)</button>
+        <button type="button" onclick="SelectProductWeight('100돈 (375g)', 82500000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--text-white); border-radius:14px; padding:1.1rem 0.6rem; font-weight:800; font-size:1.05rem; cursor:pointer;">100돈 (375g)</button>
+        <button type="button" onclick="SelectProductWeight('1kg (266.6돈)', 220000000)" class="weight-btn" style="background:#090b10; border:1px solid var(--border-dark); color:var(--gold-light); border-radius:14px; padding:1.1rem 0.6rem; font-weight:900; font-size:1.05rem; cursor:pointer;">1kg (266.6돈)</button>
       </div>
 
-      <div style="background:rgba(10,12,18,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:1.4rem; margin-bottom:1.8rem; display:flex; justify-content:space-between; align-items:center;">
-        <span style="color:var(--text-muted); font-size:0.98rem;">선택하신 규격 예상 시세:</span>
-        <strong id="modalCalcPrice" style="font-family:var(--font-num); font-size:1.45rem; color:var(--gold-light); font-weight:900;">850,000 원</strong>
-      </div>
-
-      <button type="button" class="btn btn-gold" style="width:100%; padding:1rem; font-size:1.1rem; font-weight:800;" onclick="ConfirmWeightAndBook()">
+      <button type="button" class="btn btn-gold" style="width:100%; padding:1.1rem; font-size:1.15rem; font-weight:900;" onclick="ConfirmWeightAndBook()">
         <i class="fa-solid fa-calendar-check"></i> 선택한 중량으로 종로 본점 방문예약하기
       </button>
     </div>
@@ -508,6 +483,6 @@
   </div>
 
   <!-- Application JS Script -->
-  <script src="app.js?v=39"></script>
+  <script src="app.js?v=40"></script>
 </body>
 </html>

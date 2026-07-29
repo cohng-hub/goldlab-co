@@ -713,19 +713,19 @@ function RenderTimeSlots() {
 
     if (isBooked) {
       return `
-        <button type="button" class="time-chip disabled-chip" disabled style="background:#181a24!important; border:1px solid rgba(255,255,255,0.08)!important; color:#64748b!important; cursor:not-allowed!important; text-decoration:line-through;">
+        <button type="button" class="time-chip disabled-chip" disabled style="background:#141722!important; border:1px solid rgba(255,255,255,0.08)!important; color:#64748b!important; cursor:not-allowed!important; text-decoration:line-through; padding:0.95rem 0.6rem!important; font-size:1.05rem!important; font-weight:700!important; border-radius:14px!important;">
           ${t} [마감]
         </button>
       `;
     } else if (isSel) {
       return `
-        <button type="button" class="time-chip selected" onclick="SelectTimeSlot(this, '${t}')" style="background:linear-gradient(135deg, #f9e076 0%, #d4af37 100%)!important; color:#0b0c10!important; border:1px solid #f9e076!important; font-weight:800!important; box-shadow:0 0 14px rgba(212,175,55,0.45)!important;">
+        <button type="button" class="time-chip selected" onclick="SelectTimeSlot(this, '${t}')" style="background:var(--gold-gradient)!important; color:#0b0c10!important; border:none!important; font-weight:900!important; font-size:1.15rem!important; padding:0.95rem 0.6rem!important; border-radius:14px!important; box-shadow:0 0 20px rgba(224,184,72,0.5)!important;">
           ${t}
         </button>
       `;
     } else {
       return `
-        <button type="button" class="time-chip" onclick="SelectTimeSlot(this, '${t}')" style="background:rgba(11,12,16,0.9)!important; border:1px solid var(--border-dark)!important; color:var(--text-light)!important; font-weight:600;">
+        <button type="button" class="time-chip" onclick="SelectTimeSlot(this, '${t}')" style="background:#090b10!important; border:1px solid var(--border-dark)!important; color:var(--text-white)!important; font-weight:800!important; font-size:1.1rem!important; padding:0.95rem 0.6rem!important; border-radius:14px!important; cursor:pointer;">
           ${t}
         </button>
       `;
