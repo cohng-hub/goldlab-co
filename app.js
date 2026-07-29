@@ -285,6 +285,11 @@ function OpenMyPageOrLogin(e) {
 // 2. Real-Time Rate Sync & Prominent Chart Engine
 // --------------------------------------------------------------------------
 function FetchRealTimeGoldRates() {
+  const savedOffset = localStorage.getItem('goldlab_rate_offset');
+  if (savedOffset !== null) {
+    rateOffset = parseInt(savedOffset) || 0;
+  }
+
   const sell24K = REALTIME_STANDARD_RATES["24K_sell"] + rateOffset;
   const buy24K = REALTIME_STANDARD_RATES["24K_buy"] + rateOffset;
   const sell18K = REALTIME_STANDARD_RATES["18K_sell"] + Math.round(rateOffset * 0.75);
@@ -648,11 +653,13 @@ function UpdateChartData() {
 
 function SimulateMarketChange(delta) {
   rateOffset += delta;
+  localStorage.setItem('goldlab_rate_offset', rateOffset.toString());
   FetchRealTimeGoldRates();
 }
 
 function ResetMarketRate() {
   rateOffset = 0;
+  localStorage.setItem('goldlab_rate_offset', '0');
   FetchRealTimeGoldRates();
 }
 
@@ -1077,9 +1084,17 @@ function AddMyTransaction(e) {
 
   const unitCost = Math.round(totalCost / donWeight);
 
+  let formattedDate = date;
+  if (date && date.includes('-')) {
+    formattedDate = date.replace(/-/g, '.');
+  } else if (!date) {
+    const today = new Date();
+    formattedDate = `${today.getFullYear()}.${String(today.getMonth()+1).padStart(2,'0')}.${String(today.getDate()).padStart(2,'0')}`;
+  }
+
   const newTx = {
     id: Date.now(),
-    date: date.replace(/-/g, '.'),
+    date: formattedDate,
     type,
     itemName,
     purity,

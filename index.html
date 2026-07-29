@@ -32,7 +32,7 @@
           <a href="#products"><i class="fa-solid fa-cube"></i> 골드바 라인업</a>
           <a href="#booking"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a>
           <a href="mypage.html" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a>
-          <a href="wholesale.html" id="navWholesaleBtn" style="color:var(--gold-light); font-weight:800; display:none;"><i class="fa-solid fa-building"></i> B2B 도매센터</a>
+          <a href="wholesale.html" id="navWholesaleBtn" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a>
         </nav>
 
         <!-- Right User Action & Booking Button -->
@@ -57,168 +57,81 @@
     </div>
   </header>
 
-  <!-- LIVE MARKET PRICE CHART BOARD SECTION -->
-  <section id="price-board" class="section">
-    <div class="container">
-      <div class="price-board-header" style="margin-bottom:1.8rem;">
-        <div>
-          <div class="section-badge"><i class="fa-solid fa-chart-area"></i> LIVE PRICE CHART</div>
-          <h2 class="section-title">실시간 금 시세 동향 그래프</h2>
-        </div>
-        <div class="time-stamp" id="liveTimestamp"><i class="fa-regular fa-clock"></i> 실시간 수신중...</div>
-      </div>
-
-      <!-- 국내 / 국제 시세 그래프 전환 토글 탭 -->
-      <div class="market-region-toggle-bar" style="display:flex; justify-content:center; gap:0.8rem; margin-bottom:1.5rem;">
-        <button id="btnMarketDomestic" class="market-region-btn active" onclick="SwitchMarketRegion('DOMESTIC')" style="background:var(--gold-gradient); color:#0b0c10; border:none; padding:0.65rem 1.6rem; border-radius:30px; font-size:0.95rem; font-weight:800; cursor:pointer; box-shadow:0 0 15px rgba(212,175,55,0.4); display:inline-flex; align-items:center; gap:0.5rem;">
-          <i class="fa-solid fa-shield-halved"></i> 🇰🇷 국내 금 시세 (한국금거래소 KRW / 1돈)
-        </button>
-        <button id="btnMarketGlobal" class="market-region-btn" onclick="SwitchMarketRegion('GLOBAL')" style="background:rgba(255,255,255,0.06); color:var(--text-light); border:1px solid var(--border-dark); padding:0.65rem 1.6rem; border-radius:30px; font-size:0.95rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:0.5rem;">
-          <i class="fa-solid fa-earth-americas text-gold"></i> 🌐 국제 금 시세 (NYMEX / LBMA USD / oz)
-        </button>
-      </div>
-
-      <!-- 2. Quick Metal Selector Cards -->
-      <div id="metalSelectorCards" style="display:flex!important; flex-direction:row!important; justify-content:space-between; align-items:stretch; gap:1.2rem; margin-bottom:1.8rem; width:100%;">
-        <!-- JS Injected 5 Cards -->
-      </div>
-
-      <!-- 3. Prominent Main Interactive Price Chart Card -->
-      <div class="main-chart-card" style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:2.2rem; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
-        <div class="chart-header-row" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; flex-wrap:wrap; gap:1rem;">
-          <div class="chart-title-box">
-            <h3 id="chartMetalTitle" style="font-size:1.4rem; font-weight:800; color:var(--text-white);"><i class="fa-solid fa-chart-line text-gold"></i> 순금 24K (3.75g 1돈) 시세 변동 추이</h3>
-            <span style="font-size:0.8rem; color:var(--text-muted);" id="chartMetalSub">살 때(VAT포함): 835,000원 | 팔 때(매입가): 704,000원</span>
-          </div>
-
-          <div class="chart-period-btns" style="display:flex; gap:0.4rem; background:rgba(11,12,16,0.9); padding:0.35rem; border-radius:10px; border:1px solid var(--border-dark);">
-            <button class="period-btn active" onclick="SetChartPeriod(this, '1M')">1개월</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '3M')">3개월</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '6M')">6개월</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '1Y')">1년</button>
-            <button class="period-btn" onclick="SetChartPeriod(this, '3Y')">3년</button>
-          </div>
-        </div>
-
-        <!-- Canvas Chart Container -->
-        <div class="canvas-wrapper" style="position:relative; width:100%; height:380px; margin-bottom:2rem;">
-          <canvas id="goldPriceChart"></canvas>
-        </div>
-
-        <!-- Bottom Chart Stats Banner -->
-        <div class="chart-stats-banner" style="display:flex!important; flex-direction:row!important; justify-content:space-between; align-items:center; gap:1.2rem; background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem 1.6rem; width:100%;">
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">전년 동월 대비 변동</span>
-            <span class="stat-val up-val" id="yoyDiffText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">190,000원 ▲ 29.46%</span>
-          </div>
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">기간 최고 시세</span>
-            <span class="stat-val text-gold" id="highPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">838,000 원</span>
-          </div>
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">기간 최저 시세</span>
-            <span class="stat-val text-white" id="lowPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">798,000 원</span>
-          </div>
-          <div class="chart-stat-chip" style="flex:1; display:flex; flex-direction:column;">
-            <span class="stat-lbl" style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.2rem;">평균 거래 시세</span>
-            <span class="stat-val text-light" id="avgPriceText" style="font-family:var(--font-num); font-size:1.15rem; font-weight:800;">815,400 원</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Simulator Bar -->
-      <div class="simulator-box" style="margin-top:1.8rem; margin-bottom:0; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:16px; padding:1.4rem 1.8rem;">
-        <div class="sim-info" style="display:flex; align-items:center; gap:1rem;">
-          <i class="fa-solid fa-sliders text-gold" style="font-size:1.4rem;"></i>
-          <div>
-            <h4>시세 변동 시뮬레이터 (Simulator)</h4>
-            <p style="font-size:0.8rem; color:var(--text-muted);">시세를 변동시켜 그래프와 마이페이지 금 자산 평가 손익(PnL) 반응을 직접 확인해보세요.</p>
-          </div>
-        </div>
-        <div class="sim-btn-group" style="display:flex; gap:0.6rem; flex-wrap:wrap;">
-          <button class="sim-btn" onclick="SimulateMarketChange(2000)"><i class="fa-solid fa-arrow-up text-gold"></i> +2,000원 상승</button>
-          <button class="sim-btn" onclick="SimulateMarketChange(5000)"><i class="fa-solid fa-angles-up" style="color:var(--pnl-plus)"></i> +5,000원 대폭상승</button>
-          <button class="sim-btn" onclick="SimulateMarketChange(-3000)"><i class="fa-solid fa-arrow-down" style="color:var(--pnl-minus)"></i> -3,000원 하락</button>
-          <button class="sim-btn" onclick="ResetMarketRate()"><i class="fa-solid fa-rotate-left"></i> 시세 원복</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- GOLD BAR & MINI GOLD PRODUCTS SECTION (4개 한 줄 레이아웃 보장) -->
-  <section id="products" class="section" style="background: var(--bg-dark-secondary);">
+  <!-- PRODUCTS SHOWCASE SECTION (골드바 라인업 단일화 & 중량 선택 모달) -->
+  <section id="products" class="section" style="background:var(--bg-dark-secondary);">
     <div class="container">
       <div class="section-title-wrap">
-        <div class="section-badge"><i class="fa-solid fa-boxes-stacked"></i> GOLD PORTFOLIO</div>
-        <h2 class="section-title">GoldLab 프리미엄 골드바 & 미니 콩알금</h2>
-        <p class="section-desc">1g 미니 자산 형성용 콩알금부터 1000g 실속 투자용 골드바까지</p>
+        <span class="section-badge"><i class="fa-solid fa-gem"></i> PREMIUM GOLD LINEUP</span>
+        <h2 class="section-title">999.9% 순금 골드바 라인업</h2>
+        <p class="section-desc">홀마크 분석 감정원 공식 인증 보증서 기본 동봉 · 원하시는 중량을 선택하여 방문 예약을 진행하세요.</p>
       </div>
 
-      <div class="product-grid" style="display:grid!important; grid-template-columns: repeat(4, 1fr)!important; gap: 1.4rem!important; width:100%;">
-        <!-- Product 1 -->
-        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
-          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
-            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-seedling text-gold"></i> MZ 소액 자산 형성</span>
-            <img src="assets/gold_beans.png" alt="24K 999.9 미니 콩알금 1g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
+      <!-- Luxury 2-Column Product Cards Grid -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2.2rem; margin-bottom:3rem;">
+        
+        <!-- CARD 1: 1돈 카드 골드바 -->
+        <div class="luxury-product-card" onclick="OpenWeightModal('1돈 카드 골드바')" style="background:linear-gradient(180deg, #151824 0%, #0d0f17 100%); border:1px solid rgba(212,175,55,0.35); border-radius:24px; padding:2rem; cursor:pointer; transition:all 0.3s ease; position:relative; overflow:hidden;" onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#f9e076';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(212,175,55,0.35)';">
+          <span style="position:absolute; top:1.2rem; left:1.2rem; background:rgba(212,175,55,0.15); border:1px solid var(--border-dark); color:var(--gold-light); font-size:0.78rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:30px;">
+            <i class="fa-solid fa-credit-card"></i> 카드 포장형 / 선물·소장용
+          </span>
+          
+          <div style="height:220px; display:flex; justify-content:center; align-items:center; margin:1.5rem 0;">
+            <img src="assets/gold_card.png" alt="1돈 카드 골드바" style="max-height:100%; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.6));">
           </div>
-          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
-            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 999.9 미니 콩알금 1g</h3>
-            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">귀여운 병 패키징 & 홀마크 순금 999.9 보증서 포함</p>
-            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">240,450원</div>
-              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('1g 콩알금')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
+
+          <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.2rem;">
+            <h3 style="color:var(--text-white); font-size:1.35rem; font-weight:800; margin-bottom:0.4rem;">24K 순금 1돈 카드 골드바 (3.75g)</h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem;">홀마크 999.9% 순금 보증서 일체형 · 고급 카드 패키징</p>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-size:0.8rem; color:var(--text-muted);">살 때(VAT포함 당일시세)</span>
+                <div style="font-family:var(--font-num); font-size:1.4rem; font-weight:800; color:var(--gold-light);" id="prodCardPrice">850,000 원</div>
+              </div>
+              <button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); OpenWeightModal('1돈 카드 골드바');" style="padding:0.6rem 1.2rem; font-size:0.9rem;">
+                <i class="fa-solid fa-hand-pointer"></i> 중량 선택 및 예약하기
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Product 2 -->
-        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
-          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
-            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-credit-card text-gold"></i> 베스트셀러 1돈</span>
-            <img src="assets/gold_card.png" alt="24K 카드형 골드바 3.75g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
+        <!-- CARD 2: 프리미엄 프레스 골드바 -->
+        <div class="luxury-product-card" onclick="OpenWeightModal('프리미엄 프레스 골드바')" style="background:linear-gradient(180deg, #151824 0%, #0d0f17 100%); border:1px solid rgba(212,175,55,0.35); border-radius:24px; padding:2rem; cursor:pointer; transition:all 0.3s ease; position:relative; overflow:hidden;" onmouseover="this.style.transform='translateY(-6px)'; this.style.borderColor='#f9e076';" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(212,175,55,0.35)';">
+          <span style="position:absolute; top:1.2rem; left:1.2rem; background:rgba(212,175,55,0.15); border:1px solid var(--border-dark); color:var(--gold-light); font-size:0.78rem; font-weight:700; padding:0.3rem 0.8rem; border-radius:30px;">
+            <i class="fa-solid fa-vault"></i> 헤리티지 프레스 골드바 / 자산 보관용
+          </span>
+
+          <div style="height:220px; display:flex; justify-content:center; align-items:center; margin:1.5rem 0;">
+            <img src="assets/goldbar_10don.png" alt="프리미엄 프레스 골드바" style="max-height:100%; object-fit:contain; filter:drop-shadow(0 15px 25px rgba(0,0,0,0.6));">
           </div>
-          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
-            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 카드형 골드바 3.75g (1돈)</h3>
-            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">보관 및 선물용 고급 카드 패키지 보증서</p>
-            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">860,000원</div>
-              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('3.75g 카드 골드바')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
+
+          <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.2rem;">
+            <h3 style="color:var(--text-white); font-size:1.35rem; font-weight:800; margin-bottom:0.4rem;">24K 프리미엄 프레스 골드바 (3돈~1kg)</h3>
+            <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1.2rem;">종로 본점 직영 당일 현장 수령 및 시큐리티 실물 전달</p>
+            
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <span style="font-size:0.8rem; color:var(--text-muted);">10돈(37.5g) 당일시세 기준</span>
+                <div style="font-family:var(--font-num); font-size:1.4rem; font-weight:800; color:var(--gold-light);" id="prodBarPrice">8,340,000 원</div>
+              </div>
+              <button class="btn btn-gold btn-sm" onclick="event.stopPropagation(); OpenWeightModal('프리미엄 프레스 골드바');" style="padding:0.6rem 1.2rem; font-size:0.9rem;">
+                <i class="fa-solid fa-hand-pointer"></i> 규격 중량 고르기
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- Product 3 -->
-        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
-          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
-            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-shield-halved text-gold"></i> 실속 투자형 10돈</span>
-            <img src="assets/goldbar_10don.png" alt="24K 프리미엄 골드바 37.5g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
-          </div>
-          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
-            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 프리미엄 골드바 37.5g (10돈)</h3>
-            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">공임 최소화 · 한국표준금거래소 인증 마크</p>
-            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">8,440,000원</div>
-              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('37.5g 골드바')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Product 4 -->
-        <div class="luxury-product-card" style="background: linear-gradient(180deg, #151824 0%, #0d0f17 100%); border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6); display: flex; flex-direction: column;">
-          <div class="product-img-box" style="position: relative; width: 100%; height: 180px !important; max-height: 180px !important; background: #090a0f; overflow: hidden;">
-            <span class="product-tag-pill" style="position: absolute; top: 0.8rem; left: 0.8rem; background: rgba(11, 12, 16, 0.92); border: 1px solid rgba(249, 224, 118, 0.5); color: var(--gold-light); padding: 0.25rem 0.75rem; border-radius: 30px; font-size: 0.75rem; font-weight: 700; z-index: 2;"><i class="fa-solid fa-crown text-gold"></i> VIP 헤리티지 100g</span>
-            <img src="assets/goldbar_100g.png" alt="24K 헤리티지 프레임 골드바 100g" style="width: 100%; height: 180px !important; max-height: 180px !important; object-fit: cover !important;">
-          </div>
-          <div class="product-info-body" style="padding: 1.3rem; display: flex; flex-direction: column; flex: 1;">
-            <h3 class="product-title" style="font-size: 1.08rem; font-weight: 800; color: var(--text-white); margin-bottom: 0.35rem;">24K 헤리티지 프레임 골드바 100g</h3>
-            <p class="product-desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.2rem;">시리얼 넘버 각인 · 럭셔리 우드케이스 포함</p>
-            <div class="product-price-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 0.9rem; border-top: 1px solid rgba(255, 255, 255, 0.08);">
-              <div class="product-price-val" style="font-family: var(--font-num); font-size: 1.2rem; font-weight: 800; color: var(--gold-light);">22,488,000원</div>
-              <button class="btn btn-gold btn-sm" onclick="QuickInquiry('100g 골드바')" style="padding: 0.45rem 0.9rem; font-size: 0.82rem;"><i class="fa-solid fa-paper-plane"></i> 구매 문의</button>
-            </div>
-          </div>
-        </div>
       </div>
+
+      <!-- Quick Weight Choice Banner -->
+      <div style="background:rgba(212,175,55,0.06); border:1px solid var(--border-dark); border-radius:18px; padding:1.4rem 2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <strong style="color:var(--gold-light); font-size:1.05rem;"><i class="fa-solid fa-scale-balanced"></i> 선택 가능한 순금 중량 규격:</strong>
+          <span style="color:var(--text-light); font-size:0.95rem; margin-left:0.8rem;">1g · 1돈(3.75g) · 3돈(11.25g) · 5돈(18.75g) · 10돈(37.5g) · 30돈 · 50돈 · 100돈 · 1kg</span>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="OpenWeightModal('전 규격 중량 모음')" style="font-size:0.9rem;"><i class="fa-solid fa-list-check"></i> 전체 중량 선택하기</button>
+      </div>
+
     </div>
   </section>
 
