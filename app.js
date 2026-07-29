@@ -62,8 +62,8 @@ const INITIAL_TRANSACTIONS = [
     itemName: '24K 콩알금 5g (1.33돈)',
     purity: '24K',
     donWeight: 1.33,
-    unitCost: 690000,
-    totalCost: 917700
+    unitCost: 670000,
+    totalCost: 891100
   }
 ];
 
