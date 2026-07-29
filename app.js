@@ -777,7 +777,7 @@ function QuickInquiry(prodName) {
 // 4. MyPage Member Asset & Daily PnL Engine (mypage.html 1줄 보장 및 삭제)
 // --------------------------------------------------------------------------
 function LoadMyTransactions() {
-  const stored = localStorage.getItem('goldlab_my_transactions_v4');
+  const stored = localStorage.getItem('goldlab_my_transactions_v5');
   if (stored) {
     myTransactions = JSON.parse(stored);
   } else {
@@ -787,7 +787,7 @@ function LoadMyTransactions() {
 }
 
 function SaveMyTransactions() {
-  localStorage.setItem('goldlab_my_transactions_v4', JSON.stringify(myTransactions));
+  localStorage.setItem('goldlab_my_transactions_v5', JSON.stringify(myTransactions));
 }
 
 function RenderMyPageLedger() {
