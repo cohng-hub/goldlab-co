@@ -947,20 +947,37 @@ function RenderMyPageLedger() {
       const pnlClass = isPlus ? 'up-val' : 'down-val';
       const icon = isPlus ? '▲' : '▼';
       const exactGrams = (tx.donWeight * 3.75).toFixed(2);
-                <div style="flex:1; height:8px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
-                  <div style="width:${barWidth}%; height:100%; background:${barColor}; border-radius:10px; transition:width 0.5s ease;"></div>
-                </div>
-                <span class="${pnlClass}" style="font-weight:800; font-size:0.85rem; font-family:var(--font-num);">${icon} ${profitRate}%</span>
+      const barWidth = Math.min(Math.abs(profitRate) * 3, 100);
+      const barColor = isPlus ? '#10b981' : '#ef4444';
+
+      return `
+        <tr>
+          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.date}</td>
+          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+            <span style="white-space:nowrap; padding:0.3rem 0.8rem; border-radius:6px; font-size:0.85rem; font-weight:800; ${tx.type === '매도' ? 'background:rgba(16,185,129,0.2); color:var(--pnl-plus);' : 'background:rgba(224,184,72,0.2); color:var(--gold-light);'}">${tx.type || '매수'}</span>
+          </td>
+          <td style="white-space:nowrap; font-weight:700; color:var(--text-white); padding:1.1rem 0.9rem;">${tx.itemName}</td>
+          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.purity}</td>
+          <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${tx.donWeight}돈 (${exactGrams}g)</td>
+          <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${formatWon(tx.unitCost)}원</td>
+          <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800; color:var(--gold-light); padding:1.1rem 0.9rem;">${formatWon(currentRateForPurity)}원 / 돈</td>
+          <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원</td>
+          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+            <!-- Visual Profit Rate Progress Bar Chart -->
+            <div style="display:flex; align-items:center; gap:0.6rem; min-width:160px;">
+              <div style="flex:1; height:10px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
+                <div style="width:${barWidth}%; height:100%; background:${barColor}; border-radius:10px; transition:width 0.5s ease;"></div>
               </div>
-            </td>
-            <td style="white-space:nowrap; text-align:center; padding:1.1rem 0.9rem;">
-              <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="삭제">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </td>
-          </tr>
-        `;
-      }
+              <span class="${pnlClass}" style="font-weight:800; font-size:0.9rem; font-family:var(--font-num);">${icon} ${profitRate}%</span>
+            </div>
+          </td>
+          <td style="white-space:nowrap; text-align:center; padding:1.1rem 0.9rem;">
+            <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="삭제" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:var(--pnl-minus); border-radius:8px; padding:0.4rem 0.7rem; cursor:pointer;">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+          </td>
+        </tr>
+      `;
     }).join('');
   }
 
