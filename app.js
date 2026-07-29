@@ -470,7 +470,7 @@ function UpdateProductPrices(buy24K) {
 // Chart.js High-Definition Interactive Price Graph
 // --------------------------------------------------------------------------
 function InitPriceChart() {
-  const ctx = document.getElementById('goldPriceChart');
+  const ctx = document.getElementById('heroPriceChart') || document.getElementById('goldPriceChart');
   if (!ctx) return;
 
   const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 350);
@@ -790,7 +790,92 @@ function SaveMyTransactions() {
   localStorage.setItem('goldlab_my_transactions_v5', JSON.stringify(myTransactions));
 }
 
+let currentLedgerTab = 'BUY';
+let selectedProductWeight = '1돈 (3.75g)';
+let selectedProductPrice = 850000;
+let selectedProductTitle = '24K 순금 골드바';
+
+function OpenWeightModal(title) {
+  selectedProductTitle = title || '24K 순금 골드바';
+  const modalTitle = document.getElementById('modalTargetProdTitle');
+  if (modalTitle) modalTitle.innerText = `${selectedProductTitle} 규격 중량 선택`;
+  
+  SelectProductWeight('1돈 (3.75g)', 850000);
+  document.getElementById('weightSelectModal').classList.add('active');
+}
+
+function SelectProductWeight(weightStr, priceNum) {
+  selectedProductWeight = weightStr;
+  selectedProductPrice = priceNum;
+
+  const btns = document.querySelectorAll('.weight-btn');
+  btns.forEach(b => {
+    b.classList.remove('active');
+    b.style.background = '#141722';
+    b.style.color = 'var(--text-white)';
+    b.style.border = '1px solid var(--border-dark)';
+    b.style.boxShadow = 'none';
+    if (b.innerText.includes(weightStr.split(' ')[0])) {
+      b.classList.add('active');
+      b.style.background = 'var(--gold-gradient)';
+      b.style.color = '#000';
+      b.style.border = 'none';
+      b.style.boxShadow = '0 0 12px rgba(212,175,55,0.4)';
+    }
+  });
+
+  const priceEl = document.getElementById('modalCalcPrice');
+  if (priceEl) priceEl.innerText = `${formatWon(priceNum)} 원`;
+}
+
+function ConfirmWeightAndBook() {
+  CloseModal('weightSelectModal');
+  const catInput = document.getElementById('bookCategory');
+  if (catInput) {
+    catInput.value = `${selectedProductTitle} (${selectedProductWeight}) 구매 예약`;
+  }
+  
+  // Smooth Scroll to Booking Section
+  const bookingSec = document.getElementById('booking');
+  if (bookingSec) {
+    bookingSec.scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function SwitchLedgerTab(tab) {
+  currentLedgerTab = tab;
+  const btnBuy = document.getElementById('tabLedgerBuy');
+  const btnSell = document.getElementById('tabLedgerSell');
+
+  if (tab === 'BUY') {
+    if (btnBuy) {
+      btnBuy.style.background = 'var(--gold-gradient)';
+      btnBuy.style.color = '#000';
+      btnBuy.style.fontWeight = '800';
+    }
+    if (btnSell) {
+      btnSell.style.background = 'transparent';
+      btnSell.style.color = 'var(--text-muted)';
+      btnSell.style.fontWeight = '700';
+    }
+  } else {
+    if (btnSell) {
+      btnSell.style.background = 'var(--gold-gradient)';
+      btnSell.style.color = '#000';
+      btnSell.style.fontWeight = '800';
+    }
+    if (btnBuy) {
+      btnBuy.style.background = 'transparent';
+      btnBuy.style.color = 'var(--text-muted)';
+      btnBuy.style.fontWeight = '700';
+    }
+  }
+
+  RenderMyPageLedger();
+}
+
 function RenderMyPageLedger() {
+  const thead = document.getElementById('ledgerTableHeader');
   const tbody = document.getElementById('ledgerTableBody');
   if (!tbody) return;
 
@@ -799,14 +884,67 @@ function RenderMyPageLedger() {
     return;
   }
 
+  // Render Dynamic Header based on BUY vs SELL Tab
+  if (thead) {
+    if (currentLedgerTab === 'BUY') {
+      thead.innerHTML = `
+        <tr>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목명</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">중량(돈/g)</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">등록 당시 단가</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">총 결제/매수 금액</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
+        </tr>
+      `;
+    } else {
+      thead.innerHTML = `
+        <tr>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목명</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">중량(돈/g)</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">매수 당시 금액</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">현재 실시간 평가액</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem;">평가 손익 (KRW)</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:180px;">수익률 (비주얼 차트)</th>
+          <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
+        </tr>
+      `;
+    }
+  }
+
   let totalDonWeight = 0;
   let totalCostSum = 0;
   let totalEvalSum = 0;
 
-  if (myTransactions.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding:2.5rem; color:var(--text-muted); white-space:nowrap;">등록된 거래 내역이 없습니다. '+ 내 금 매매/보유 내역 추가' 버튼으로 자유롭게 등록해보세요.</td></tr>`;
+  const filteredTxList = myTransactions.filter(tx => {
+    if (currentLedgerTab === 'BUY') return (tx.type || '매수') === '매수';
+    return (tx.type || '매수') === '매도';
+  });
+
+  // Calculate Overall Totals from ALL transactions
+  myTransactions.forEach(tx => {
+    let currentRateForPurity = currentRates["24K_sell"];
+    if (tx.purity === '18K') currentRateForPurity = currentRates["18K_sell"];
+    else if (tx.purity === '14K') currentRateForPurity = currentRates["14K_sell"];
+    else if (tx.purity === 'PT') currentRateForPurity = currentRates["PT_sell"];
+    else if (tx.purity === 'AG') currentRateForPurity = currentRates["AG_sell"];
+
+    const evalAmount = Math.round(tx.donWeight * currentRateForPurity);
+    totalDonWeight += parseFloat(tx.donWeight);
+    totalCostSum += parseInt(tx.totalCost);
+    totalEvalSum += evalAmount;
+  });
+
+  if (filteredTxList.length === 0) {
+    const emptyMsg = currentLedgerTab === 'BUY' ? '등록된 매수 내역이 없습니다.' : '등록된 매도 내역이 없습니다.';
+    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:3rem; color:var(--text-muted); white-space:nowrap;">${emptyMsg}<br><button class="btn btn-gold btn-sm" style="margin-top:1rem;" onclick="OpenAddTransactionModal()"><i class="fa-solid fa-plus"></i> 신규 내역 등록하기</button></td></tr>`;
   } else {
-    tbody.innerHTML = myTransactions.map(tx => {
+    tbody.innerHTML = filteredTxList.map(tx => {
       let currentRateForPurity = currentRates["24K_sell"];
       if (tx.purity === '18K') currentRateForPurity = currentRates["18K_sell"];
       else if (tx.purity === '14K') currentRateForPurity = currentRates["14K_sell"];
@@ -817,36 +955,65 @@ function RenderMyPageLedger() {
       const pnlAmount = evalAmount - tx.totalCost;
       const profitRate = tx.totalCost > 0 ? ((pnlAmount / tx.totalCost) * 100).toFixed(2) : 0;
 
-      totalDonWeight += parseFloat(tx.donWeight);
-      totalCostSum += parseInt(tx.totalCost);
-      totalEvalSum += evalAmount;
-
       const isPlus = pnlAmount >= 0;
       const pnlClass = isPlus ? 'up-val' : 'down-val';
-      const badgeClass = isPlus ? 'badge-plus' : 'badge-minus';
       const icon = isPlus ? '▲' : '▼';
+      const exactGrams = (tx.donWeight * 3.75).toFixed(2);
 
-      return `
-        <tr>
-          <td style="white-space:nowrap;">${tx.date}</td>
-          <td style="white-space:nowrap;">
-            <span style="white-space:nowrap; padding:0.25rem 0.6rem; border-radius:6px; font-size:0.8rem; font-weight:700; ${tx.type === '매수' ? 'background:rgba(212,175,55,0.2); color:var(--gold-light);' : 'background:rgba(16,185,129,0.2); color:var(--pnl-plus);'}">${tx.type || '매수'}</span>
-          </td>
-          <td style="white-space:nowrap; font-weight:600; color:var(--text-white);">${tx.itemName}</td>
-          <td style="white-space:nowrap;">${tx.purity}</td>
-          <td style="white-space:nowrap; font-family:var(--font-num);">${tx.donWeight}돈 (${(tx.donWeight*3.75).toFixed(1)}g)</td>
-          <td style="white-space:nowrap; font-family:var(--font-num);">${formatWon(tx.unitCost)}원</td>
-          <td style="white-space:nowrap; font-family:var(--font-num);">${formatWon(tx.totalCost)}원</td>
-          <td style="white-space:nowrap; font-family:var(--font-num); font-weight:700; color:var(--gold-light);">${formatWon(evalAmount)}원</td>
-          <td style="white-space:nowrap; font-family:var(--font-num); font-weight:700;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원</td>
-          <td style="white-space:nowrap;"><span class="badge-pnl ${badgeClass}" style="white-space:nowrap;">${icon} ${profitRate}%</span></td>
-          <td style="white-space:nowrap; text-align:center;">
-            <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="거래 내역 삭제">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
-          </td>
-        </tr>
-      `;
+      if (currentLedgerTab === 'BUY') {
+        // PURCHASE LEDGER ROW (Clean, Simple, No evaluation/PnL columns)
+        return `
+          <tr>
+            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.date}</td>
+            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+              <span style="white-space:nowrap; padding:0.25rem 0.7rem; border-radius:6px; font-size:0.82rem; font-weight:800; background:rgba(212,175,55,0.2); color:var(--gold-light);">매수</span>
+            </td>
+            <td style="white-space:nowrap; font-weight:700; color:var(--text-white); padding:1.1rem 0.9rem;">${tx.itemName}</td>
+            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.purity}</td>
+            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${tx.donWeight}돈 (${exactGrams}g)</td>
+            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${formatWon(tx.unitCost)}원</td>
+            <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800; color:var(--gold-light); padding:1.1rem 0.9rem;">${formatWon(tx.totalCost)}원</td>
+            <td style="white-space:nowrap; text-align:center; padding:1.1rem 0.9rem;">
+              <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="삭제">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      } else {
+        // SALE LEDGER ROW (With Visual Progress Bar Chart for Profit Rate)
+        const barWidth = Math.min(Math.abs(profitRate) * 3, 100);
+        const barColor = isPlus ? '#10b981' : '#ef4444';
+
+        return `
+          <tr>
+            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.date}</td>
+            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+              <span style="white-space:nowrap; padding:0.25rem 0.7rem; border-radius:6px; font-size:0.82rem; font-weight:800; background:rgba(16,185,129,0.2); color:var(--pnl-plus);">매도</span>
+            </td>
+            <td style="white-space:nowrap; font-weight:700; color:var(--text-white); padding:1.1rem 0.9rem;">${tx.itemName}</td>
+            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.purity}</td>
+            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${tx.donWeight}돈 (${exactGrams}g)</td>
+            <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${formatWon(tx.totalCost)}원</td>
+            <td style="white-space:nowrap; font-family:var(--font-num); font-weight:700; color:var(--gold-light); padding:1.1rem 0.9rem;">${formatWon(evalAmount)}원</td>
+            <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원</td>
+            <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+              <!-- Visual Profit Rate Progress Bar Chart -->
+              <div style="display:flex; align-items:center; gap:0.6rem; min-width:160px;">
+                <div style="flex:1; height:8px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
+                  <div style="width:${barWidth}%; height:100%; background:${barColor}; border-radius:10px; transition:width 0.5s ease;"></div>
+                </div>
+                <span class="${pnlClass}" style="font-weight:800; font-size:0.85rem; font-family:var(--font-num);">${icon} ${profitRate}%</span>
+              </div>
+            </td>
+            <td style="white-space:nowrap; text-align:center; padding:1.1rem 0.9rem;">
+              <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="삭제">
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </td>
+          </tr>
+        `;
+      }
     }).join('');
   }
 
@@ -861,7 +1028,7 @@ function RenderMyPageLedger() {
   const pEl = document.getElementById('myPnlAmount');
   const bEl = document.getElementById('myPnlBadge');
 
-  if (wEl) wEl.innerHTML = `${(totalDonWeight * 3.75).toFixed(1)}g <span style="font-size:0.9rem; font-weight:400; color:var(--text-muted);">(${totalDonWeight.toFixed(2)}돈)</span>`;
+  if (wEl) wEl.innerHTML = `${(totalDonWeight * 3.75).toFixed(2)}g <span style="font-size:0.9rem; font-weight:400; color:var(--text-muted);">(${totalDonWeight.toFixed(2)}돈)</span>`;
   if (cEl) cEl.innerText = `${formatWon(totalCostSum)} 원`;
   if (eEl) eEl.innerText = `${formatWon(totalEvalSum)} 원`;
   

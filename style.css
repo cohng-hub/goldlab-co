@@ -125,11 +125,14 @@ button, input, select {
 /* --------------------------------------------------------------------------
    TOP BAR & NAVBAR
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   TOP BAR & NAVBAR (2배 시세 띠 바 & 폰트 크기 확대)
+   -------------------------------------------------------------------------- */
 .top-bar {
   background: #050608;
-  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
-  font-size: 0.82rem;
-  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  font-size: 1.15rem;
+  padding: 0.9rem 0;
   position: relative;
   z-index: 101;
 }
@@ -156,12 +159,13 @@ button, input, select {
   gap: 0.4rem;
   background: var(--gold-gradient);
   color: #000;
-  font-weight: 800;
-  font-size: 0.72rem;
-  padding: 0.18rem 0.6rem;
-  border-radius: 4px;
+  font-weight: 900;
+  font-size: 0.95rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: 6px;
   white-space: nowrap;
   flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(212,175,55,0.4);
 }
 
 .ticker-marquee {
@@ -173,6 +177,8 @@ button, input, select {
   scrollbar-width: none;
   font-family: var(--font-num);
   color: var(--text-light);
+  font-size: 1.2rem;
+  font-weight: 700;
 }
 
 .ticker-marquee::-webkit-scrollbar { display: none; }
@@ -182,16 +188,16 @@ button, input, select {
   align-items: center;
   gap: 0.4rem;
   white-space: nowrap;
-  font-size: 0.82rem;
+  font-size: 1.15rem;
 }
 
 .ticker-price {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-gold);
 }
 
-.up-val { color: var(--pnl-plus); font-weight: 600; }
-.down-val { color: var(--pnl-minus); font-weight: 600; }
+.up-val { color: var(--pnl-plus); font-weight: 700; }
+.down-val { color: var(--pnl-minus); font-weight: 700; }
 
 .top-bar-right {
   display: flex;
@@ -209,7 +215,7 @@ button, input, select {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-bottom: 1px solid var(--border-dark);
-  padding: 0.85rem 0;
+  padding: 1.1rem 0;
 }
 
 .nav-inner {
@@ -223,40 +229,43 @@ button, input, select {
   align-items: center;
   gap: 0.7rem;
   font-family: var(--font-serif);
-  font-size: 1.6rem;
+  font-size: 1.75rem;
   font-weight: 900;
   letter-spacing: 1.2px;
 }
 
 .brand-icon {
-  width: 38px;
-  height: 38px;
+  width: 42px;
+  height: 42px;
   background: var(--gold-gradient);
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #0b0c10;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
 }
 
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 2.2rem;
 }
 
-.nav-link {
-  font-size: 0.95rem;
-  font-weight: 600;
+.nav-menu a, .nav-link {
+  font-size: 1.08rem !important;
+  font-weight: 700 !important;
   color: var(--text-light);
   transition: color 0.2s ease;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
 }
 
-.nav-link:hover, .nav-link.active {
-  color: var(--gold-light);
+.nav-menu a:hover, .nav-menu a.active, .nav-link:hover, .nav-link.active {
+  color: var(--gold-light) !important;
 }
 
 .nav-actions {
