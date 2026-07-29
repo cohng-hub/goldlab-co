@@ -893,13 +893,10 @@ function RenderMyPageLedger() {
       <tr>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
-        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목명</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목 및 중량</th>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
-        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">중량(돈/g)</th>
-        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">매수 당시 단가</th>
-        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">실시간 현재 시세</th>
-        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">평가 손익 (KRW)</th>
-        <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:180px;">수익률 (미니 그래프)</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:340px;">실시간 손익 미니 비교표 (단가 VS 현재시세 VS 손익)</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem;">총 원금/매수금액</th>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
       </tr>
     `;
@@ -930,7 +927,7 @@ function RenderMyPageLedger() {
 
   if (filteredTxList.length === 0) {
     const emptyMsg = currentLedgerTab === 'BUY' ? '등록된 매수 내역이 없습니다.' : '등록된 매도 내역이 없습니다.';
-    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding:3rem; color:var(--text-muted); white-space:nowrap;">${emptyMsg}<br><button class="btn btn-gold btn-sm" style="margin-top:1rem;" onclick="OpenAddTransactionModal()"><i class="fa-solid fa-plus"></i> 신규 내역 등록하기</button></td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:3rem; color:var(--text-muted); white-space:nowrap;">${emptyMsg}<br><button class="btn btn-gold btn-sm" style="margin-top:1rem;" onclick="OpenAddTransactionModal()"><i class="fa-solid fa-plus"></i> 신규 내역 등록하기</button></td></tr>`;
   } else {
     tbody.innerHTML = filteredTxList.map(tx => {
       let currentRateForPurity = currentRates["24K_sell"];
@@ -952,28 +949,51 @@ function RenderMyPageLedger() {
 
       return `
         <tr>
-          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.date}</td>
-          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+          <td style="white-space:nowrap; padding:1.2rem 0.9rem;">${tx.date}</td>
+          <td style="white-space:nowrap; padding:1.2rem 0.9rem;">
             <span style="white-space:nowrap; padding:0.3rem 0.8rem; border-radius:6px; font-size:0.85rem; font-weight:800; ${tx.type === '매도' ? 'background:rgba(16,185,129,0.2); color:var(--pnl-plus);' : 'background:rgba(224,184,72,0.2); color:var(--gold-light);'}">${tx.type || '매수'}</span>
           </td>
-          <td style="white-space:nowrap; font-weight:700; color:var(--text-white); padding:1.1rem 0.9rem;">${tx.itemName}</td>
-          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">${tx.purity}</td>
-          <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${tx.donWeight}돈 (${exactGrams}g)</td>
-          <td style="white-space:nowrap; font-family:var(--font-num); padding:1.1rem 0.9rem;">${formatWon(tx.unitCost)}원</td>
-          <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800; color:var(--gold-light); padding:1.1rem 0.9rem;">${formatWon(currentRateForPurity)}원 / 돈</td>
-          <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원</td>
-          <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
-            <!-- Visual Profit Rate Progress Bar Chart -->
-            <div style="display:flex; align-items:center; gap:0.6rem; min-width:160px;">
-              <div style="flex:1; height:10px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
-                <div style="width:${barWidth}%; height:100%; background:${barColor}; border-radius:10px; transition:width 0.5s ease;"></div>
+          <td style="white-space:nowrap; padding:1.2rem 0.9rem;">
+            <div style="font-weight:800; color:var(--text-white); font-size:1.02rem;">${tx.itemName}</div>
+            <div style="font-size:0.85rem; color:var(--text-muted); font-family:var(--font-num); margin-top:0.15rem;">${tx.donWeight}돈 (${exactGrams}g)</div>
+          </td>
+          <td style="white-space:nowrap; font-weight:700; color:var(--gold-light); padding:1.2rem 0.9rem;">${tx.purity}</td>
+          
+          <!-- 실시간 손익 미니 비교표 (Mini Price & PnL Table) -->
+          <td style="padding:0.9rem;">
+            <div style="background:rgba(9,11,16,0.95); border:1px solid var(--border-dark); border-radius:14px; padding:0.8rem 1rem; min-width:330px;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center;">
+                <thead>
+                  <tr style="color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08);">
+                    <th style="padding-bottom:0.35rem; font-weight:600;">등록 당시 단가</th>
+                    <th style="padding-bottom:0.35rem; font-weight:600;">현재 실시간 시세</th>
+                    <th style="padding-bottom:0.35rem; font-weight:600;">평가 손익</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="font-family:var(--font-num); font-weight:800; font-size:0.95rem;">
+                    <td style="padding-top:0.45rem; color:var(--text-light);">${formatWon(tx.unitCost)}원</td>
+                    <td style="padding-top:0.45rem; color:var(--gold-light);">${formatWon(currentRateForPurity)}원</td>
+                    <td style="padding-top:0.45rem;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원</td>
+                  </tr>
+                </tbody>
+              </table>
+              <div style="display:flex; align-items:center; gap:0.6rem; margin-top:0.55rem; padding-top:0.45rem; border-top:1px dashed rgba(255,255,255,0.08);">
+                <div style="flex:1; height:7px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
+                  <div style="width:${barWidth}%; height:100%; background:${barColor}; border-radius:10px; transition:width 0.5s ease;"></div>
+                </div>
+                <span class="${pnlClass}" style="font-weight:900; font-size:0.85rem; font-family:var(--font-num);">${icon} ${profitRate}%</span>
               </div>
-              <span class="${pnlClass}" style="font-weight:800; font-size:0.9rem; font-family:var(--font-num);">${icon} ${profitRate}%</span>
             </div>
           </td>
-          <td style="white-space:nowrap; text-align:center; padding:1.1rem 0.9rem;">
-            <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="삭제" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:var(--pnl-minus); border-radius:8px; padding:0.4rem 0.7rem; cursor:pointer;">
-              <i class="fa-solid fa-trash-can"></i>
+
+          <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800; color:var(--text-white); font-size:1.08rem; padding:1.2rem 0.9rem;">
+            ${formatWon(tx.totalCost)}원
+          </td>
+          
+          <td style="white-space:nowrap; text-align:center; padding:1.2rem 0.9rem;">
+            <button type="button" class="delete-btn" onclick="DeleteTransaction('${tx.id}', event)" title="삭제" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.3); color:var(--pnl-minus); border-radius:8px; padding:0.4rem 0.75rem; cursor:pointer; font-weight:700;">
+              <i class="fa-solid fa-trash-can"></i> 삭제
             </button>
           </td>
         </tr>
