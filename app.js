@@ -155,6 +155,8 @@ function LoadAuthState() {
   UpdateAuthUI();
 }
 
+let currentSignupUserType = 'PERSONAL';
+
 function UpdateAuthUI() {
   const slot = document.getElementById('authTopSlot');
   const myName = document.getElementById('myUserName');
@@ -162,22 +164,26 @@ function UpdateAuthUI() {
   const topUserEl = document.getElementById('mypageTopUser');
 
   if (currentUser) {
+    const isBiz = currentUser.userType === 'BIZ';
+    const badgeIcon = isBiz ? '<i class="fa-solid fa-building text-gold"></i>' : '<i class="fa-solid fa-circle-user"></i>';
+    const userDisplayLabel = isBiz ? `🏢 ${currentUser.name} (사업자)` : `${currentUser.name} 님`;
+
     if (slot) {
       slot.innerHTML = `
         <div style="display:inline-flex; align-items:center; gap:0.6rem; background:rgba(224,184,72,0.12); border:1px solid var(--border-dark); padding:0.35rem 0.9rem; border-radius:30px; white-space:nowrap;">
-          <span style="color:var(--gold-light); font-weight:800; font-size:0.92rem;"><i class="fa-solid fa-circle-user"></i> ${currentUser.name} 님</span>
+          <span style="color:var(--gold-light); font-weight:800; font-size:0.92rem;">${badgeIcon} ${userDisplayLabel}</span>
           <button onclick="LogoutUser()" style="background:rgba(255,255,255,0.12); color:var(--text-light); border:none; border-radius:20px; padding:0.2rem 0.65rem; font-size:0.82rem; font-weight:700; cursor:pointer;">로그아웃</button>
         </div>
       `;
     }
     if (myName) {
-      myName.innerHTML = `${currentUser.name} <span style="font-weight:400; font-size:1.1rem; color:var(--text-muted);">회원님의 금 자산 관리 솔루션</span>`;
+      myName.innerHTML = `${currentUser.name} <span style="font-weight:400; font-size:1.1rem; color:var(--text-muted);">${isBiz ? 'B2B 사업자 회원님' : '회원님의 금 자산 관리 솔루션'}</span>`;
     }
     if (myTier) {
-      myTier.innerHTML = `<i class="fa-solid fa-crown text-gold"></i> ${currentUser.tier || 'VIP PLATINUM MEMBER'}`;
+      myTier.innerHTML = `<i class="fa-solid fa-crown text-gold"></i> ${currentUser.tier || (isBiz ? 'B2B VIP MEMBER' : 'VIP PLATINUM MEMBER')}`;
     }
     if (topUserEl) {
-      topUserEl.innerHTML = `<i class="fa-solid fa-user-check"></i> ${currentUser.name} 회원님 (${currentUser.tier || 'VIP MEMBER'})`;
+      topUserEl.innerHTML = `<i class="fa-solid fa-user-check"></i> ${currentUser.name} (${currentUser.tier || 'VIP MEMBER'})`;
     }
   } else {
     if (slot) {
@@ -188,6 +194,8 @@ function UpdateAuthUI() {
       `;
     }
   }
+
+  CheckWholesaleAccess();
 }
 
 function OpenAuthModal(tab = 'login') {
@@ -206,14 +214,21 @@ function SwitchAuthTab(tab) {
   if (vSignup) vSignup.style.display = 'none';
   if (vFind) vFind.style.display = 'none';
 
-  if (tab === 'login') {
+  if (tab === 'login' || tab === 'login_biz') {
     if (vLogin) vLogin.style.display = 'block';
-    if (subTitle) subTitle.innerText = 'VIP 회원 전용 자산 관리 서비스';
+    if (subTitle) subTitle.innerText = tab === 'login_biz' ? '🏢 B2B 사업자 회원 전용 로그인' : 'VIP 회원 전용 자산 관리 서비스';
     if (backBtn) backBtn.style.display = 'none';
-  } else if (tab === 'signup') {
+    if (tab === 'login_biz') {
+      const emailInput = document.getElementById('loginEmail');
+      if (emailInput) emailInput.value = 'biz@goldlab.co.kr';
+    }
+  } else if (tab === 'signup' || tab === 'signup_biz') {
     if (vSignup) vSignup.style.display = 'block';
-    if (subTitle) subTitle.innerText = 'GoldLab & Co. 30초 간편 회원가입';
+    if (subTitle) subTitle.innerText = tab === 'signup_biz' ? '🏢 B2B 사업자 30초 회원가입' : 'GoldLab & Co. 30초 간편 회원가입';
     if (backBtn) backBtn.style.display = 'inline-flex';
+    if (tab === 'signup_biz') {
+      SwitchSignupUserType('BIZ');
+    }
   } else if (tab === 'find') {
     if (vFind) vFind.style.display = 'block';
     if (subTitle) subTitle.innerText = '계정 아이디 찾기 및 비밀번호 재설정';
@@ -221,23 +236,79 @@ function SwitchAuthTab(tab) {
   }
 }
 
+function SwitchSignupUserType(type) {
+  currentSignupUserType = type;
+  const btnPersonal = document.getElementById('btnSignupPersonal');
+  const btnBiz = document.getElementById('btnSignupBiz');
+  const bizFields = document.getElementById('signupBizFields');
+  const nameLabel = document.getElementById('signupNameLabel');
+
+  if (type === 'BIZ') {
+    if (btnPersonal) {
+      btnPersonal.style.background = 'transparent';
+      btnPersonal.style.color = 'var(--text-muted)';
+    }
+    if (btnBiz) {
+      btnBiz.style.background = 'var(--gold-gradient)';
+      btnBiz.style.color = '#000';
+    }
+    if (bizFields) bizFields.style.display = 'block';
+    if (nameLabel) nameLabel.innerText = '대표자 성함';
+  } else {
+    if (btnPersonal) {
+      btnPersonal.style.background = 'var(--gold-gradient)';
+      btnPersonal.style.color = '#000';
+    }
+    if (btnBiz) {
+      btnBiz.style.background = 'transparent';
+      btnBiz.style.color = 'var(--text-muted)';
+    }
+    if (bizFields) bizFields.style.display = 'none';
+    if (nameLabel) nameLabel.innerText = '성함 / 이름';
+  }
+}
+
 function HandleUserLogin(e) {
   e.preventDefault();
   const email = document.getElementById('loginEmail').value;
+  const loginUserType = document.getElementById('loginUserTypeSelect')?.value || 'AUTO';
+
+  let isBiz = email.includes('biz') || loginUserType === 'BIZ';
   const name = email.split('@')[0];
 
-  currentUser = {
-    name: name === 'gold' ? '김골드' : name,
-    email: email,
-    phone: '010-8888-9999',
-    tier: 'VIP PLATINUM MEMBER'
-  };
+  if (isBiz) {
+    currentUser = {
+      name: '(주)종로골드 주얼리',
+      email: email,
+      phone: '02-765-8888',
+      userType: 'BIZ',
+      bizName: '(주)종로골드 주얼리',
+      bizNo: '101-86-77777',
+      tier: 'B2B VIP MEMBER'
+    };
+  } else {
+    currentUser = {
+      name: name === 'gold' ? '김골드' : name,
+      email: email,
+      phone: '010-8888-9999',
+      userType: 'PERSONAL',
+      tier: 'VIP PLATINUM MEMBER'
+    };
+  }
 
   localStorage.setItem('goldlab_logged_user', JSON.stringify(currentUser));
   UpdateAuthUI();
   CloseModal('authModal');
-  alert(`환영합니다, ${currentUser.name} 회원님! 성공적으로 로그인되었습니다.`);
-  window.location.href = 'mypage.html';
+
+  if (isBiz) {
+    alert(`[🏢 B2B 사업자 로그인] 환영합니다, ${currentUser.name} 사업자 회원님! 도매 센터로 이동합니다.`);
+    window.location.href = 'wholesale.html';
+  } else {
+    alert(`[👤 일반 로그인] 환영합니다, ${currentUser.name} 회원님! 성공적으로 로그인되었습니다.`);
+    if (window.location.pathname.includes('wholesale.html')) {
+      window.location.href = 'mypage.html';
+    }
+  }
 }
 
 function HandleUserSignup(e) {
@@ -245,19 +316,41 @@ function HandleUserSignup(e) {
   const name = document.getElementById('signupName').value;
   const email = document.getElementById('signupEmail').value;
   const phone = document.getElementById('signupPhone').value;
+  const isBiz = currentSignupUserType === 'BIZ';
+  const bizName = document.getElementById('signupBizName')?.value || name + ' 주얼리';
+  const bizNo = document.getElementById('signupBizNo')?.value || '101-86-00000';
 
-  currentUser = {
-    name,
-    email,
-    phone,
-    tier: 'GOLD MEMBER'
-  };
+  if (isBiz) {
+    currentUser = {
+      name: bizName,
+      email,
+      phone,
+      userType: 'BIZ',
+      bizName,
+      bizNo,
+      tier: 'B2B MEMBER'
+    };
+  } else {
+    currentUser = {
+      name,
+      email,
+      phone,
+      userType: 'PERSONAL',
+      tier: 'GOLD MEMBER'
+    };
+  }
 
   localStorage.setItem('goldlab_logged_user', JSON.stringify(currentUser));
   UpdateAuthUI();
   CloseModal('authModal');
-  alert(`축하합니다! ${name}님, GoldLab & Co. 간편 회원가입이 완료되었습니다.`);
-  window.location.href = 'mypage.html';
+
+  if (isBiz) {
+    alert(`축하합니다! ${bizName} (사업자등록번호: ${bizNo}) B2B 사업자 회원가입이 완료되었습니다.`);
+    window.location.href = 'wholesale.html';
+  } else {
+    alert(`축하합니다! ${name}님, GoldLab & Co. 회원가입이 완료되었습니다.`);
+    window.location.href = 'mypage.html';
+  }
 }
 
 function HandleFindAccount(e) {
@@ -273,6 +366,9 @@ function LogoutUser() {
   currentUser = null;
   localStorage.removeItem('goldlab_logged_user');
   UpdateAuthUI();
+  if (window.location.pathname.includes('wholesale.html')) {
+    CheckWholesaleAccess();
+  }
 }
 
 function OpenMyPageOrLogin(e) {
@@ -280,6 +376,36 @@ function OpenMyPageOrLogin(e) {
     if (e) e.preventDefault();
     alert('마이페이지 금 자산 관리는 로그인 후 이용 가능합니다.');
     OpenAuthModal('login');
+  }
+}
+
+function OpenWholesaleOrAlert(e) {
+  if (!currentUser || currentUser.userType !== 'BIZ') {
+    if (e) e.preventDefault();
+    alert('🏢 B2B 도매센터는 사업자등록증이 인증된 사업자 회원 전용 공간입니다.\n사업자 계정으로 로그인 또는 사업자 회원가입을 진행해주세요.');
+    OpenAuthModal('login_biz');
+    if (window.location.pathname.includes('wholesale.html')) {
+      CheckWholesaleAccess();
+    }
+  } else {
+    if (!window.location.pathname.includes('wholesale.html')) {
+      window.location.href = 'wholesale.html';
+    }
+  }
+}
+
+function CheckWholesaleAccess() {
+  const gateEl = document.getElementById('b2bGuardGateCard');
+  const contentEl = document.getElementById('b2bContentSection');
+
+  if (!gateEl || !contentEl) return;
+
+  if (currentUser && currentUser.userType === 'BIZ') {
+    gateEl.style.display = 'none';
+    contentEl.style.display = 'block';
+  } else {
+    gateEl.style.display = 'block';
+    contentEl.style.display = 'none';
   }
 }
 

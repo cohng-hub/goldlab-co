@@ -31,7 +31,7 @@
           <li><a href="#products" class="nav-link"><i class="fa-solid fa-cube"></i> 골드바 라인업</a></li>
           <li><a href="#booking" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a></li>
           <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a></li>
-          <li><a href="wholesale.html" class="nav-link" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
+          <li><a href="wholesale.html" class="nav-link" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
         </ul>
 
         <!-- Right User Action & Booking Button -->
@@ -450,6 +450,14 @@
       <div id="authViewLogin">
         <form onsubmit="HandleUserLogin(event)">
           <div class="form-group">
+            <label class="form-label">로그인 유형 선택</label>
+            <select class="form-control" id="loginUserTypeSelect" onchange="if(this.value==='BIZ') document.getElementById('loginEmail').value='biz@goldlab.co.kr'; else document.getElementById('loginEmail').value='gold@goldlab.co.kr';">
+              <option value="PERSONAL">👤 일반 회원 로그인 (자산 관리)</option>
+              <option value="BIZ">🏢 사업자 회원 로그인 (B2B 도매 전용)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
             <label class="form-label">아이디 (이메일 주소)</label>
             <input type="email" class="form-control" id="loginEmail" placeholder="gold@goldlab.co.kr" required value="gold@goldlab.co.kr">
           </div>
@@ -459,7 +467,7 @@
             <input type="password" class="form-control" id="loginPass" placeholder="••••••••" required value="123456">
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; font-size:0.92rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; font-size:0.92rem;">
             <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; color:var(--text-muted);">
               <input type="checkbox" id="loginRemember" checked style="accent-color:var(--gold-primary);"> 로그인 상태 유지
             </label>
@@ -477,12 +485,35 @@
         </div>
       </div>
 
-      <!-- 2. SIGN UP VIEW -->
+      <!-- 2. SIGN UP VIEW (일반 vs 사업자 독립 회원가입 탭) -->
       <div id="authViewSignup" style="display:none;">
+        
+        <!-- Signup Type Switcher Tabs -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; background:rgba(9,11,16,0.9); padding:0.35rem; border-radius:12px; border:1px solid var(--border-dark); margin-bottom:1.5rem;">
+          <button type="button" id="btnSignupPersonal" onclick="SwitchSignupUserType('PERSONAL')" style="background:var(--gold-gradient); color:#000; font-weight:800; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; font-size:0.92rem;">
+            👤 일반 고객 회원가입
+          </button>
+          <button type="button" id="btnSignupBiz" onclick="SwitchSignupUserType('BIZ')" style="background:transparent; color:var(--text-muted); font-weight:800; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; font-size:0.92rem;">
+            🏢 사업자 회원가입 (B2B)
+          </button>
+        </div>
+
         <form onsubmit="HandleUserSignup(event)">
+          <!-- BIZ Additional Fields -->
+          <div id="signupBizFields" style="display:none;">
+            <div class="form-group">
+              <label class="form-label text-gold">상호명 (사업자명)</label>
+              <input type="text" class="form-control" id="signupBizName" placeholder="예: (주)종로골드 주얼리">
+            </div>
+            <div class="form-group">
+              <label class="form-label text-gold">사업자등록번호 (10자리)</label>
+              <input type="text" class="form-control" id="signupBizNo" placeholder="101-86-77777">
+            </div>
+          </div>
+
           <div class="form-group">
-            <label class="form-label">성함 / 이름</label>
-            <input type="text" class="form-control" id="signupName" placeholder="예: 김골드" required>
+            <label class="form-label" id="signupNameLabel">성함 / 이름</label>
+            <input type="text" class="form-control" id="signupName" placeholder="예: 홍길동" required>
           </div>
 
           <div class="form-group">
