@@ -1039,7 +1039,7 @@ function RenderMyPageLedger() {
         <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목 및 중량</th>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
-        <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:340px;">실시간 손익 미니 비교표 (단가 VS 현재시세 VS 손익)</th>
+        <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:360px;">실시간 손익 및 시세 등락 추이</th>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem;">총 원금/매수금액</th>
         <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
       </tr>
@@ -1088,8 +1088,6 @@ function RenderMyPageLedger() {
       const pnlClass = isPlus ? 'up-val' : 'down-val';
       const icon = isPlus ? '▲' : '▼';
       const exactGrams = (tx.donWeight * 3.75).toFixed(2);
-      const barWidth = Math.min(Math.abs(profitRate) * 3, 100);
-      const barColor = isPlus ? '#10b981' : '#ef4444';
 
       return `
         <tr>
@@ -1103,10 +1101,10 @@ function RenderMyPageLedger() {
           </td>
           <td style="white-space:nowrap; font-weight:700; color:var(--gold-light); padding:1.2rem 0.9rem;">${tx.purity}</td>
           
-          <!-- 실시간 손익 미니 비교표 (Mini Price & PnL Table) -->
+          <!-- 실시간 손익 미니 비교표 & 등락 추이 라인 그래프 (Chart.js Sparkline) -->
           <td style="padding:0.9rem;">
-            <div style="background:rgba(9,11,16,0.95); border:1px solid var(--border-dark); border-radius:14px; padding:0.8rem 1rem; min-width:330px;">
-              <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center;">
+            <div style="background:rgba(9,11,16,0.95); border:1px solid var(--border-dark); border-radius:14px; padding:0.8rem 1rem; min-width:360px;">
+              <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center; margin-bottom:0.5rem;">
                 <thead>
                   <tr style="color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08);">
                     <th style="padding-bottom:0.35rem; font-weight:600;">등록 당시 단가</th>
@@ -1118,15 +1116,14 @@ function RenderMyPageLedger() {
                   <tr style="font-family:var(--font-num); font-weight:800; font-size:0.95rem;">
                     <td style="padding-top:0.45rem; color:var(--text-light);">${formatWon(tx.unitCost)}원</td>
                     <td style="padding-top:0.45rem; color:var(--gold-light);">${formatWon(currentRateForPurity)}원</td>
-                    <td style="padding-top:0.45rem;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원</td>
+                    <td style="padding-top:0.45rem;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원 (${icon}${profitRate}%)</td>
                   </tr>
                 </tbody>
               </table>
-              <div style="display:flex; align-items:center; gap:0.6rem; margin-top:0.55rem; padding-top:0.45rem; border-top:1px dashed rgba(255,255,255,0.08);">
-                <div style="flex:1; height:7px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden;">
-                  <div style="width:${barWidth}%; height:100%; background:${barColor}; border-radius:10px; transition:width 0.5s ease;"></div>
-                </div>
-                <span class="${pnlClass}" style="font-weight:900; font-size:0.85rem; font-family:var(--font-num);">${icon} ${profitRate}%</span>
+
+              <!-- Canvas Mini Line Chart (등록시점~현재 시세 등락 추이) -->
+              <div style="position:relative; width:100%; height:95px; border-top:1px dashed rgba(255,255,255,0.08); padding-top:0.4rem;">
+                <canvas id="txSparkChart_${tx.id}"></canvas>
               </div>
             </div>
           </td>
@@ -1143,6 +1140,11 @@ function RenderMyPageLedger() {
         </tr>
       `;
     }).join('');
+
+    // Mount Canvas Sparkline Line Charts for each transaction
+    setTimeout(() => {
+      RenderTxSparklineCharts(filteredTxList);
+    }, 50);
   }
 
   // Summary Card Calculations
