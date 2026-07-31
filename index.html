@@ -451,7 +451,7 @@
         <form onsubmit="HandleUserLogin(event)">
           <div class="form-group">
             <label class="form-label">로그인 유형 선택</label>
-            <select class="form-control" id="loginUserTypeSelect" onchange="if(this.value==='BIZ') document.getElementById('loginEmail').value='biz@goldlab.co.kr'; else document.getElementById('loginEmail').value='gold@goldlab.co.kr';">
+            <select class="form-control" id="loginUserTypeSelect">
               <option value="PERSONAL">👤 일반 회원 로그인 (자산 관리)</option>
               <option value="BIZ">🏢 사업자 회원 로그인 (B2B 도매 전용)</option>
             </select>
@@ -459,12 +459,12 @@
 
           <div class="form-group">
             <label class="form-label">아이디 (이메일 주소)</label>
-            <input type="email" class="form-control" id="loginEmail" placeholder="gold@goldlab.co.kr" required value="gold@goldlab.co.kr">
+            <input type="email" class="form-control" id="loginEmail" placeholder="example@goldlab.co.kr" required>
           </div>
 
           <div class="form-group" style="margin-bottom:1.2rem;">
             <label class="form-label">비밀번호</label>
-            <input type="password" class="form-control" id="loginPass" placeholder="••••••••" required value="123456">
+            <input type="password" class="form-control" id="loginPass" placeholder="••••••••" required>
           </div>
 
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; font-size:0.92rem;">

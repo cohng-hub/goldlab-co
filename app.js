@@ -218,10 +218,14 @@ function SwitchAuthTab(tab) {
     if (vLogin) vLogin.style.display = 'block';
     if (subTitle) subTitle.innerText = tab === 'login_biz' ? '🏢 B2B 사업자 회원 전용 로그인' : 'VIP 회원 전용 자산 관리 서비스';
     if (backBtn) backBtn.style.display = 'none';
-    if (tab === 'login_biz') {
-      const emailInput = document.getElementById('loginEmail');
-      if (emailInput) emailInput.value = 'biz@goldlab.co.kr';
+    const typeSelect = document.getElementById('loginUserTypeSelect');
+    if (typeSelect) {
+      typeSelect.value = tab === 'login_biz' ? 'BIZ' : 'PERSONAL';
     }
+    const emailInput = document.getElementById('loginEmail');
+    const passInput = document.getElementById('loginPass');
+    if (emailInput) emailInput.value = '';
+    if (passInput) passInput.value = '';
   } else if (tab === 'signup' || tab === 'signup_biz') {
     if (vSignup) vSignup.style.display = 'block';
     if (subTitle) subTitle.innerText = tab === 'signup_biz' ? '🏢 B2B 사업자 30초 회원가입' : 'GoldLab & Co. 30초 간편 회원가입';
