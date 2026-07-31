@@ -1080,14 +1080,8 @@ function RenderMyPageLedger() {
       else if (tx.purity === 'PT') currentRateForPurity = currentRates["PT_sell"];
       else if (tx.purity === 'AG') currentRateForPurity = currentRates["AG_sell"];
 
-      const evalAmount = Math.round(tx.donWeight * currentRateForPurity);
-      const pnlAmount = evalAmount - tx.totalCost;
-      const profitRate = tx.totalCost > 0 ? ((pnlAmount / tx.totalCost) * 100).toFixed(2) : 0;
-
-      const isPlus = pnlAmount >= 0;
-      const pnlClass = isPlus ? 'up-val' : 'down-val';
-      const icon = isPlus ? '▲' : '▼';
       const exactGrams = (tx.donWeight * 3.75).toFixed(2);
+      const svgGraphHtml = GenerateTxSvgSparkline(tx, currentRateForPurity);
 
       return `
         <tr>
@@ -1101,31 +1095,9 @@ function RenderMyPageLedger() {
           </td>
           <td style="white-space:nowrap; font-weight:700; color:var(--gold-light); padding:1.2rem 0.9rem;">${tx.purity}</td>
           
-          <!-- 실시간 손익 미니 비교표 & 등락 추이 라인 그래프 (Chart.js Sparkline) -->
+          <!-- 실시간 손익 및 시세 등락 라인 그래프 (SVG Sparkline Line Graph) -->
           <td style="padding:0.9rem;">
-            <div style="background:rgba(9,11,16,0.95); border:1px solid var(--border-dark); border-radius:14px; padding:0.8rem 1rem; min-width:360px;">
-              <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center; margin-bottom:0.5rem;">
-                <thead>
-                  <tr style="color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08);">
-                    <th style="padding-bottom:0.35rem; font-weight:600;">등록 당시 단가</th>
-                    <th style="padding-bottom:0.35rem; font-weight:600;">현재 실시간 시세</th>
-                    <th style="padding-bottom:0.35rem; font-weight:600;">평가 손익</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style="font-family:var(--font-num); font-weight:800; font-size:0.95rem;">
-                    <td style="padding-top:0.45rem; color:var(--text-light);">${formatWon(tx.unitCost)}원</td>
-                    <td style="padding-top:0.45rem; color:var(--gold-light);">${formatWon(currentRateForPurity)}원</td>
-                    <td style="padding-top:0.45rem;" class="${pnlClass}">${icon} ${formatWon(Math.abs(pnlAmount))}원 (${icon}${profitRate}%)</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <!-- Canvas Mini Line Chart (등록시점~현재 시세 등락 추이) -->
-              <div style="position:relative; width:100%; height:95px; border-top:1px dashed rgba(255,255,255,0.08); padding-top:0.4rem;">
-                <canvas id="txSparkChart_${tx.id}"></canvas>
-              </div>
-            </div>
+            ${svgGraphHtml}
           </td>
 
           <td style="white-space:nowrap; font-family:var(--font-num); font-weight:800; color:var(--text-white); font-size:1.08rem; padding:1.2rem 0.9rem;">
@@ -1140,11 +1112,6 @@ function RenderMyPageLedger() {
         </tr>
       `;
     }).join('');
-
-    // Mount Canvas Sparkline Line Charts for each transaction
-    setTimeout(() => {
-      RenderTxSparklineCharts(filteredTxList);
-    }, 50);
   }
 
   // Summary Card Calculations
@@ -1178,6 +1145,110 @@ function RenderMyPageLedger() {
     pctEl.innerText = `${isOverallPlus ? '+' : ''}${overallRate}% ${isOverallPlus ? '상승' : '변동'}`;
     pctEl.style.color = isOverallPlus ? 'var(--pnl-plus)' : 'var(--pnl-minus)';
   }
+}
+
+function GenerateTxSvgSparkline(tx, currentRateForPurity) {
+  const startPrice = tx.unitCost;
+  const endPrice = currentRateForPurity;
+  const diff = (endPrice * tx.donWeight) - tx.totalCost;
+  const priceDiff = endPrice - startPrice;
+  const isPlus = diff >= 0;
+  const lineColor = isPlus ? '#10b981' : '#ef4444';
+
+  const w = 330;
+  const h = 55;
+  const paddingX = 14;
+  const paddingY = 10;
+
+  const count = 6;
+  const maxVal = Math.max(startPrice, endPrice) + Math.abs(priceDiff) * 0.2 + 2000;
+  const minVal = Math.min(startPrice, endPrice) - Math.abs(priceDiff) * 0.2 - 2000;
+  const range = maxVal - minVal || 1;
+
+  const points = [];
+  for (let i = 0; i < count; i++) {
+    const x = paddingX + ((w - paddingX * 2) * (i / (count - 1)));
+    let val;
+    if (i === 0) val = startPrice;
+    else if (i === count - 1) val = endPrice;
+    else {
+      const linear = startPrice + (priceDiff * (i / (count - 1)));
+      const wave = Math.sin(i * 1.7) * Math.abs(priceDiff) * 0.3;
+      val = linear + wave;
+    }
+    const y = (h - paddingY) - (((val - minVal) / range) * (h - paddingY * 2));
+    points.push({ x: x.toFixed(1), y: y.toFixed(1), val: Math.round(val) });
+  }
+
+  let d = `M ${points[0].x},${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i];
+    const p1 = points[i + 1];
+    const cp1x = (parseFloat(p0.x) + (parseFloat(p1.x) - parseFloat(p0.x)) * 0.5).toFixed(1);
+    const cp1y = p0.y;
+    const cp2x = cp1x;
+    const cp2y = p1.y;
+    d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p1.x},${p1.y}`;
+  }
+
+  const polyPoints = `${points[0].x},${h + 5} ${points.map(p => `${p.x},${p.y}`).join(' ')} ${points[points.length-1].x},${h + 5}`;
+  const dotsSvg = points.map((p, idx) => {
+    if (idx === 0) return `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${lineColor}" stroke="#000" stroke-width="1.5"/>`;
+    if (idx === points.length - 1) return `<circle cx="${p.x}" cy="${p.y}" r="5" fill="${lineColor}" stroke="#ffffff" stroke-width="2"/>`;
+    return `<circle cx="${p.x}" cy="${p.y}" r="2.5" fill="${lineColor}" opacity="0.8"/>`;
+  }).join('');
+
+  const now = new Date();
+  const todayStr = `${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
+  const profitRate = tx.totalCost > 0 ? ((diff / tx.totalCost) * 100).toFixed(2) : '0.00';
+
+  return `
+    <div style="background:rgba(9,11,16,0.95); border:1px solid var(--border-dark); border-radius:14px; padding:0.85rem 1.1rem; min-width:360px;">
+      <!-- Table Header & Stats -->
+      <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center; margin-bottom:0.6rem;">
+        <thead>
+          <tr style="color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08);">
+            <th style="padding-bottom:0.35rem; font-weight:600;">등록 당시 단가</th>
+            <th style="padding-bottom:0.35rem; font-weight:600;">현재 실시간 시세</th>
+            <th style="padding-bottom:0.35rem; font-weight:600;">평가 손익</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="font-family:var(--font-num); font-weight:800; font-size:0.95rem;">
+            <td style="padding-top:0.45rem; color:var(--text-light);">${formatWon(tx.unitCost)}원</td>
+            <td style="padding-top:0.45rem; color:var(--gold-light);">${formatWon(currentRateForPurity)}원</td>
+            <td style="padding-top:0.45rem;" class="${isPlus ? 'up-val' : 'down-val'}">${isPlus ? '▲' : '▼'} ${formatWon(Math.abs(diff))}원 (${isPlus ? '+' : ''}${profitRate}%)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- SVG LINE GRAPH (등록시점 ~ 현재 시세 실시간 등락 그래프) -->
+      <div style="border-top:1px dashed rgba(255,255,255,0.12); background:rgba(0,0,0,0.3); border-radius:10px; padding:0.6rem 0.8rem 0.4rem 0.8rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem; font-size:0.75rem; color:var(--text-muted);">
+          <span><i class="fa-solid fa-chart-line text-gold"></i> 등록일 (${tx.date})</span>
+          <span style="color:${lineColor}; font-weight:800; font-size:0.78rem;">${isPlus ? '▲ 실시간 수익 추세' : '▼ 실시간 손실 추세'}</span>
+          <span>오늘 (${todayStr})</span>
+        </div>
+
+        <svg viewBox="0 0 330 55" style="width:100%; height:55px; overflow:visible;">
+          <defs>
+            <linearGradient id="grad_svg_${tx.id}" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="${lineColor}" stop-opacity="0.45"/>
+              <stop offset="100%" stop-color="${lineColor}" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+          <polygon points="${polyPoints}" fill="url(#grad_svg_${tx.id})" />
+          <path d="${d}" fill="none" stroke="${lineColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          ${dotsSvg}
+        </svg>
+
+        <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); font-family:var(--font-num); margin-top:0.25rem;">
+          <span style="color:var(--text-light); font-weight:700;">시작가: ${formatWon(startPrice)}원</span>
+          <span style="color:${lineColor}; font-weight:800;">현재가: ${formatWon(endPrice)}원</span>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 function OpenAddTransactionModal() {
