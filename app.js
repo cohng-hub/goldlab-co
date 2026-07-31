@@ -348,11 +348,25 @@ function UpdateLiveMarketDisplay() {
     `;
   }
 
-  // Hero Price Summary
+  // Hero Price Summary & Left Hero Card Live Rate Updates
   const heroSummary = document.getElementById('heroPriceSummary');
   if (heroSummary) {
     heroSummary.innerText = `24K ${formatWon(sell24K)}원 / 돈 (한국금거래소 매입가)`;
   }
+
+  const elBuy24k = document.getElementById('heroBuy24k');
+  const elSell24k = document.getElementById('heroSell24k');
+  const elSell18k = document.getElementById('heroSell18k');
+  const elSell14k = document.getElementById('heroSell14k');
+  const elSellPt = document.getElementById('heroSellPt');
+  const elSellAg = document.getElementById('heroSellAg');
+
+  if (elBuy24k) elBuy24k.innerText = `${formatWon(buy24K)}원`;
+  if (elSell24k) elSell24k.innerText = `${formatWon(sell24K)}원`;
+  if (elSell18k) elSell18k.innerHTML = `${formatWon(sell18K)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
+  if (elSell14k) elSell14k.innerHTML = `${formatWon(sell14K)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
+  if (elSellPt) elSellPt.innerHTML = `${formatWon(sellPT)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
+  if (elSellAg) elSellAg.innerHTML = `${formatWon(sellAG)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/g</span>`;
 
   // Live Timestamp
   const now = new Date();
