@@ -3,16 +3,16 @@
    Real-Time Market Rate Sync & Prominent Chart Engine & VIP PnL System
    ========================================================================== */
 
-// Official Live Rates from Korea Gold Exchange (2026.07.29 Official Exact)
+// Official Live Rates from Korea Gold Exchange (2026.07.31 Official Exact)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 825000,    // 내가 살 때 (VAT 포함, 3.75g 1돈) -10,000 (-1.21%)
-  "24K_sell": 696000,   // 내가 팔 때 (금방금방 앱기준, 3.75g 1돈) -6,000 (-0.86%)
-  "18K_sell": 511600,   // 18K 팔 때 -4,400 (-0.86%)
-  "14K_sell": 396800,   // 14K 팔 때 -3,400 (-0.86%)
-  "PT_buy": 328000,     // 백금 살 때 -1,000 (-0.3%)
-  "PT_sell": 266000,    // 백금 팔 때 -1,000 (-0.38%)
-  "AG_buy": 11080,      // 은 살 때 -90 (-0.81%)
-  "AG_sell": 9360       // 은 팔 때 -70 (-0.75%)
+  "24K_buy": 822000,    // 내가 살 때 (VAT 포함, 3.75g 1돈) -1,000 (-0.12%)
+  "24K_sell": 692000,   // 내가 팔 때 (3.75g 1돈) 0 (0%)
+  "18K_sell": 508700,   // 18K 팔 때 0 (0%)
+  "14K_sell": 394500,   // 14K 팔 때 0 (0%)
+  "PT_buy": 327000,     // 백금 살 때 +3,000 (+0.92%)
+  "PT_sell": 265000,    // 백금 팔 때 +2,000 (+0.75%)
+  "AG_buy": 11090,      // 은 살 때 +60 (+0.54%)
+  "AG_sell": 9370       // 은 팔 때 +60 (+0.64%)
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
@@ -458,22 +458,22 @@ function UpdateLiveMarketDisplay() {
   if (topTicker) {
     topTicker.innerHTML = `
       <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:nowrap; white-space:nowrap; overflow-x:auto;">
-        <span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 공식 실시간 연동</span>
+        <span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 공식 실시간 연동 (2026.07.31)</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>순금 24K 살때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(buy24K)}원</strong> <span class="down-val">▼10,000 (-1.21%)</span></span>
+        <span>순금 24K 살때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(buy24K)}원</strong> <span class="down-val">▼1,000 (-0.12%)</span></span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>순금 24K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell24K)}원</strong> <span class="down-val">▼6,000 (-0.86%)</span></span>
+        <span>순금 24K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell24K)}원</strong> <span style="color:var(--text-muted); font-weight:700;">보합 (0%)</span></span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>18K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell18K)}원</strong> <span class="down-val">▼4,400 (-0.86%)</span></span>
+        <span>18K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell18K)}원</strong> <span style="color:var(--text-muted); font-weight:700;">보합 (0%)</span></span>
       </div>
       <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:nowrap; white-space:nowrap; overflow-x:auto; color:var(--text-muted);">
-        <span>14K 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sell14K)}원</strong> <span class="down-val">▼3,400 (-0.86%)</span></span>
+        <span>14K 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sell14K)}원</strong> <span style="color:var(--text-muted); font-weight:700;">보합 (0%)</span></span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>백금 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellPT)}원</strong> <span class="down-val">▼1,000</span></span>
+        <span>백금 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellPT)}원</strong> <span class="up-val">▲2,000 (+0.75%)</span></span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>은 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellAG)}원</strong> <span class="down-val">▼70</span></span>
+        <span>은 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellAG)}원</strong> <span class="up-val">▲60 (+0.64%)</span></span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span style="font-size:0.75rem; color:var(--gold-light);">(VAT포함 3.75g 1돈 기준 한국금거래소 공식 시세)</span>
+        <span style="font-size:0.75rem; color:var(--gold-light);">(VAT포함 3.75g 1돈 기준 한국금거래소 당일 고시 시세)</span>
       </div>
     `;
   }
