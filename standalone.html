@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>로컬 AI 딥리서치 스레드 & X 글 생성기</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+KR:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '"Noto Sans KR"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            darkbg: '#080a10',
+            cardbg: 'rgba(15, 23, 42, 0.65)',
+            accentPurple: '#a855f7',
+            accentPink: '#ec4899',
+            accentCyan: '#06b6d4',
+          },
+          animation: {
+            'glow-purple': 'glowPurple 2s infinite alternate',
+          },
+          keyframes: {
+            glowPurple: {
+              '0%': { boxShadow: '0 0 15px rgba(168, 85, 247, 0.2), 0 0 30px rgba(168, 85, 247, 0.1)' },
+              '100%': { boxShadow: '0 0 25px rgba(168, 85, 247, 0.5), 0 0 45px rgba(168, 85, 247, 0.25)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- React & ReactDOM (cdnjs Cloudflare CDN - 100% Reliable in Korea) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel Standalone for JSX -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.10/babel.min.js" crossorigin></script>
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      background-color: #080a10;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Ambient radial-gradient background lights */
+    .bg-radial-lights {
+      background-image: 
+        radial-gradient(circle at 12% 15%, rgba(168, 85, 247, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 88% 85%, rgba(6, 182, 212, 0.15) 0%, transparent 45%);
+    }
+
+    /* Glassmorphism Card */
+    .glass-card {
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card-hover {
+      transition: all 0.2s ease-in-out;
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(168, 85, 247, 0.3);
+      box-shadow: 0 8px 32px 0 rgba(168, 85, 247, 0.15);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.4);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.25);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(168, 85, 247, 0.5);
+    }
+
+    /* Typing cursor */
+    .typing-cursor::after {
+      content: '▊';
+      display: inline-block;
+      margin-left: 2px;
+      color: #a855f7;
+      animation: blink 0.8s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .gradient-btn {
+      background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #06b6d4 100%);
+      transition: all 0.3s ease;
+    }
+    .gradient-btn:hover {
+      opacity: 0.92;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+    }
+  </style>
+</head>
+<body class="bg-darkbg bg-radial-lights text-slate-100 min-h-screen flex flex-col antialiased">
+  <div id="root"></div>
+
+  <script type="text/babel" data-presets="react">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    const DEFAULT_BASE_URL = 'http://127.0.0.1:1234';
+
+    const TONE_DESCRIPTIONS = {
+      'viral': '바이럴 후킹형 — 강렬한 호기심 유발, 짧고 임팩트 있는 문장, 반전과 넘버링 활용',
+      'friendly': '친근·유쾌형 — 따뜻하고 공감대를 형성하는 어투, 일상적인 표현과 위트, 대화하듯 편안한 스타일',
+      'expert': '전문가형 — 신뢰감 있고 논리적인 어투, 데이터와 인사이트 중심, 깊이 있는 통찰 제시',
+      'direct': '직설·팩트폭격형 — 거품 없는 솔직하고 대담한 어투, 핵심만 팩트로 찌르는 직관적인 문장'
+    };
+
+    // Clean <think>...</think> tags (including unclosed <think>...)
+    function filterThinkTags(text) {
+      if (!text) return '';
+      let cleaned = text.replace(/<think>[\s\S]*?<\/think>/gi, '');
+      cleaned = cleaned.replace(/<think>[\s\S]*/gi, '');
+      return cleaned;
+    }
+
+    // Parse posts from delimiter ###POST### or fallbacks
+    function parsePosts(text) {
+      if (!text) return [];
+      const cleaned = filterThinkTags(text).trim();
+      if (!cleaned) return [];
+
+      // 1. Multi-pattern regex delimiter: ###POST###, ### 1/5, ### 1., [1/5], 1/5, ---
+      const postDelimiterRegex = /(?:#{2,}\s*POST\s*#{2,}|#{2,}\s*\d+[\/\.]\d*|(?:\r?\n){2,}(?:\[?\d+[\/\.]\d*\]?|\d+\.)\s*|---|\*\*\*)/gi;
+
+      let rawParts = cleaned.split(postDelimiterRegex);
+
+      let validParts = rawParts
+        .map(p => {
+          let str = p.trim();
+          // Strip leftover markdown headings or bold headers dumped by LLM
+          str = str.replace(/^#{1,6}\s*\d+[\/\.]\d*/gi, '');
+          str = str.replace(/^\[?\d+[\/\.]\d*\]?/gi, '');
+          str = str.replace(/\*\*(?:타깃 독자 분석|직거래소에서|전문가와|금니와 부러진|부러진 금반지|주요 독자층|핵심 페인포인트|후킹 앵글)[\s\S]*?\*\*/gi, '');
+          return str.trim();
+        })
+        .filter(p => p.length > 0);
+
+      if (validParts.length > 0) {
+        return validParts.map((content, idx) => ({
+          id: `post-${idx + 1}-${content.slice(0, 10).replace(/\s+/g, '')}`,
+          content,
+          charCount: content.length
+        }));
+      }
+
+      return [{
+        id: `post-0-${Date.now()}`,
+        content: cleaned,
+        charCount: cleaned.length
+      }];
+    }
+
+    function App() {
+      // AI Engine & API Key States
+      const [engine, setEngine] = useState(() => {
+        try { return localStorage.getItem('gold_ai_engine') || 'gemini'; } catch(e) { return 'gemini'; }
+      });
+      const [geminiApiKey, setGeminiApiKey] = useState(() => {
+        try { return localStorage.getItem('gold_gemini_api_key') || ''; } catch(e) { return ''; }
+      });
+      const [inputGeminiKey, setInputGeminiKey] = useState(geminiApiKey);
+      const [geminiModel, setGeminiModel] = useState('gemini-1.5-flash');
+      const [geminiModelList, setGeminiModelList] = useState([]);
+
+      // Dynamic Gemini Model Discovery via ModelService.ListModels
+      const fetchGeminiModels = async (key) => {
+        if (!key || !key.trim()) return [];
+        const cleanKey = key.trim();
+        const urls = [
+          `https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`,
+          `https://generativelanguage.googleapis.com/v1/models?key=${cleanKey}`
+        ];
+        for (const url of urls) {
+          try {
+            const res = await fetch(url);
+            if (res.ok) {
+              const data = await res.json();
+              const valid = (data.models || [])
+                .filter(m => m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent'))
+                .map(m => m.name.replace(/^models\//, ''));
+              if (valid.length > 0) return valid;
+            }
+          } catch (e) {}
+        }
+        return [];
+      };
+
+      // LM Studio & Health Check States
+      const [baseUrl, setBaseUrl] = useState(DEFAULT_BASE_URL);
+      const [models, setModels] = useState([]);
+      const [selectedModel, setSelectedModel] = useState('');
+      const [isConnected, setIsConnected] = useState(false);
+      const [isCheckingHealth, setIsCheckingHealth] = useState(false);
+
+      // UI Settings Modal & Error Banner
+      const [showSettingsModal, setShowSettingsModal] = useState(false);
+      const [settingsInputUrl, setSettingsInputUrl] = useState(DEFAULT_BASE_URL);
+      const [testMessage, setTestMessage] = useState(null);
+      const [errorMessage, setErrorMessage] = useState(null);
+
+      // Form States
+      const [generationMode, setGenerationMode] = useState('deep'); // 'deep' | 'fast'
+      const [platform, setPlatform] = useState('threads'); // 'threads' (500) | 'twitter' (280)
+      const [postLength, setPostLength] = useState('short'); // 'single' (1) | 'short' (4-5) | 'long' (7-9)
+      const [tone, setTone] = useState('viral');
+      const [topic, setTopic] = useState('');
+      const [targetAudience, setTargetAudience] = useState('');
+      const [keyNotes, setKeyNotes] = useState('');
+
+      // Generation Execution States
+      const [isGenerating, setIsGenerating] = useState(false);
+      const [currentStep, setCurrentStep] = useState(0); // 0: idle, 1: research, 2: strategy, 3: final
+      const [reasoningText, setReasoningText] = useState('');
+
+      // Content Outputs
+      const [researchOutput, setResearchOutput] = useState('');
+      const [strategyOutput, setStrategyOutput] = useState('');
+      const [finalRawOutput, setFinalRawOutput] = useState('');
+
+      // Accordion & Report View States
+      const [isReportOpen, setIsReportOpen] = useState(true);
+      const [activeReportTab, setActiveReportTab] = useState('research'); // 'research' | 'strategy'
+
+      // History state (last 20 memory items)
+      const [history, setHistory] = useState([]);
+
+      // Copy feedback states
+      const [copiedCardId, setCopiedCardId] = useState(null);
+      const [copiedAll, setCopiedAll] = useState(false);
+
+      // References for streaming & auto scroll
+      const abortControllerRef = useRef(null);
+      const reportContentRef = useRef(null);
+
+      const maxCharLimit = platform === 'threads' ? 500 : 280;
+
+      useEffect(() => {
+        localStorage.setItem('gold_ai_engine', engine);
+      }, [engine]);
+
+      useEffect(() => {
+        localStorage.setItem('gold_gemini_api_key', geminiApiKey);
+        if (geminiApiKey.trim()) {
+          fetchGeminiModels(geminiApiKey).then(m => {
+            if (m.length > 0) setGeminiModelList(m);
+          });
+        }
+      }, [geminiApiKey]);
+
+      // 1. Health Check Function (GET /v1/models, 4s timeout, excludes 'embed')
+      const checkHealth = async (targetUrl = baseUrl) => {
+        setIsCheckingHealth(true);
+        let activeUrl = targetUrl;
+
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 4000);
+          let res;
+
+          try {
+            res = await fetch(`${targetUrl.replace(/\/$/, '')}/v1/models`, {
+              method: 'GET',
+              signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+          } catch (directErr) {
+            clearTimeout(timeoutId);
+            if (window.location.origin && window.location.origin.startsWith('http') && window.location.origin !== targetUrl) {
+              const fallbackController = new AbortController();
+              const fallbackTimeout = setTimeout(() => fallbackController.abort(), 4000);
+              res = await fetch(`${window.location.origin}/v1/models`, {
+                method: 'GET',
+                signal: fallbackController.signal
+              });
+              clearTimeout(fallbackTimeout);
+              activeUrl = window.location.origin;
+              setBaseUrl(activeUrl);
+            } else {
+              throw directErr;
+            }
+          }
+
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+
+          const availableModels = (data.data || [])
+            .map(m => m.id)
+            .filter(id => !id.toLowerCase().includes('embed'));
+
+          setModels(availableModels);
+          setIsConnected(true);
+
+          if (availableModels.length > 0) {
+            if (!selectedModel || !availableModels.includes(selectedModel)) {
+              setSelectedModel(availableModels[0]);
+            }
+          } else {
+            setSelectedModel('');
+          }
+          return { success: true, count: availableModels.length };
+        } catch (err) {
+          setIsConnected(false);
+          setModels([]);
+          return { success: false, error: err.message };
+        } finally {
+          setIsCheckingHealth(false);
+        }
+      };
+
+      // Auto periodic health check every 15s (skip during generation)
+      useEffect(() => {
+        checkHealth(baseUrl);
+        const interval = setInterval(() => {
+          if (!isGenerating && engine === 'lmstudio') {
+            checkHealth(baseUrl);
+          }
+        }, 15000);
+        return () => clearInterval(interval);
+      }, [baseUrl, isGenerating, engine]);
+
+      // Save settings modal
+      const handleSaveSettings = async () => {
+        const cleanKey = inputGeminiKey.trim();
+        setGeminiApiKey(cleanKey);
+        const cleanUrl = settingsInputUrl.trim().replace(/\/$/, '');
+        setBaseUrl(cleanUrl);
+
+        if (engine === 'lmstudio') {
+          const result = await checkHealth(cleanUrl);
+          if (result.success) {
+            setTestMessage({ type: 'success', text: `LM Studio 연결 성공! (${result.count}개 모델 검색됨)` });
+          } else {
+            setTestMessage({ type: 'error', text: 'LM Studio 서버 연결 실패' });
+            return;
+          }
+        } else {
+          if (!cleanKey) {
+            setTestMessage({ type: 'error', text: 'Gemini API 키를 입력해주세요.' });
+            return;
+          }
+          setTestMessage({ type: 'info', text: 'Google API 키 확인 중...' });
+          const liveModels = await fetchGeminiModels(cleanKey);
+          if (liveModels.length > 0) {
+            setGeminiModelList(liveModels);
+            if (!liveModels.includes(geminiModel)) setGeminiModel(liveModels[0]);
+            setTestMessage({ type: 'success', text: `연결 성공! (${liveModels.length}개 Gemini 모델 확인됨)` });
+          } else {
+            setTestMessage({ type: 'error', text: 'Gemini API 키를 확인해주세요. (Google AI Studio 키 필요)' });
+            return;
+          }
+        }
+
+        setTimeout(() => {
+          setShowSettingsModal(false);
+          setTestMessage(null);
+        }, 1200);
+      };
+
+      // Auto scroll streaming text box
+      const scrollToBottom = () => {
+        if (reportContentRef.current) {
+          reportContentRef.current.scrollTop = reportContentRef.current.scrollHeight;
+        }
+      };
+
+      // 2. Generic Streaming Chat Completion Handler (Gemini & LM Studio SSE)
+      const streamCompletion = async ({ systemPrompt, userMessage, temperature = 0.75, maxTokens = 4096, onToken, onReasoning = () => {} }) => {
+        const controller = new AbortController();
+        abortControllerRef.current = controller;
+
+        if (engine === 'gemini') {
+          const cleanKey = geminiApiKey.trim();
+          if (!cleanKey) {
+            setShowSettingsModal(true);
+            throw new Error('Google Gemini API 키가 설정되지 않았습니다. ⚙️ 설정 창에서 무료 키를 입력해 주세요.');
+          }
+
+          let candidateNames = [];
+          if (geminiModel) candidateNames.push(geminiModel);
+          if (geminiModelList.length > 0) {
+            candidateNames = [...candidateNames, ...geminiModelList];
+          }
+          candidateNames = [...candidateNames, 'gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.5-pro-latest', 'gemini-2.0-flash-exp', 'gemini-pro']
+            .filter((v, i, a) => v && a.indexOf(v) === i);
+
+          let success = false;
+          let lastErrorMsg = '';
+
+          for (const modelId of candidateNames) {
+            const apiVersions = ['v1beta', 'v1'];
+            for (const apiVer of apiVersions) {
+              const url = `https://generativelanguage.googleapis.com/${apiVer}/models/${modelId}:streamGenerateContent?alt=sse&key=${cleanKey}`;
+              try {
+                const res = await fetch(url, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  signal: controller.signal,
+                  body: JSON.stringify({
+                    contents: [
+                      { role: 'user', parts: [{ text: `[시스템 지침]\n${systemPrompt}\n\n[사용자 요청]\n${userMessage}` }] }
+                    ],
+                    generationConfig: {
+                      temperature: temperature,
+                      maxOutputTokens: maxTokens
+                    }
+                  })
+                });
+
+                if (res.ok) {
+                  const reader = res.body.getReader();
+                  const decoder = new TextDecoder('utf-8');
+                  let buffer = '';
+
+                  while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    buffer += decoder.decode(value, { stream: true });
+
+                    const lines = buffer.split('\n');
+                    buffer = lines.pop() || '';
+
+                    for (const line of lines) {
+                      const trimmed = line.trim();
+                      if (!trimmed || !trimmed.startsWith('data: ')) continue;
+                      const jsonStr = trimmed.slice(6);
+                      try {
+                        const parsed = JSON.parse(jsonStr);
+                        const candidates = parsed.candidates || [];
+                        for (const cand of candidates) {
+                          const parts = cand.content?.parts || [];
+                          for (const pt of parts) {
+                            if (pt.text) onToken(pt.text);
+                          }
+                        }
+                      } catch (e) {}
+                    }
+                  }
+
+                  success = true;
+                  if (geminiModel !== modelId) setGeminiModel(modelId);
+                  break;
+                } else {
+                  // Fallback: Non-streaming generateContent
+                  const nsUrl = `https://generativelanguage.googleapis.com/${apiVer}/models/${modelId}:generateContent?key=${cleanKey}`;
+                  const nsRes = await fetch(nsUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    signal: controller.signal,
+                    body: JSON.stringify({
+                      contents: [
+                        { role: 'user', parts: [{ text: `[시스템 지침]\n${systemPrompt}\n\n[사용자 요청]\n${userMessage}` }] }
+                      ],
+                      generationConfig: {
+                        temperature: temperature,
+                        maxOutputTokens: maxTokens
+                      }
+                    })
+                  });
+
+                  if (nsRes.ok) {
+                    const nsData = await nsRes.json();
+                    const text = nsData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    if (text) {
+                      onToken(text);
+                      success = true;
+                      if (geminiModel !== modelId) setGeminiModel(modelId);
+                      break;
+                    }
+                  } else {
+                    const errJson = await res.json().catch(() => ({}));
+                    lastErrorMsg = errJson.error?.message || `HTTP ${res.status}`;
+                  }
+                }
+              } catch (e) {
+                lastErrorMsg = e.message;
+              }
+            }
+            if (success) break;
+          }
+
+          if (!success) {
+            throw new Error(`Google Gemini API 오류: ${lastErrorMsg || '유효한 Gemini API Key를 확인해주세요.'}`);
+          }
+          return;
+        }
+
+        // LM Studio Streaming Execution
+        const response = await fetch(`${baseUrl.replace(/\/$/, '')}/v1/chat/completions`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            model: selectedModel,
+            messages: [
+              { role: 'system', content: systemPrompt },
+              { role: 'user', content: userMessage }
+            ],
+            temperature: temperature,
+            max_tokens: maxTokens,
+            stream: true
+          })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          throw new Error(`[LM Studio API 오류 ${response.status}] ${errText}`);
+        }
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || !trimmed.startsWith('data: ')) continue;
+            const dataStr = trimmed.slice(6);
+            if (dataStr === '[DONE]') continue;
+
+            try {
+              const parsed = JSON.parse(dataStr);
+              const delta = parsed.choices?.[0]?.delta || {};
+
+              const reasoningChunk = delta.reasoning_content || delta.reasoning;
+              if (reasoningChunk) {
+                onReasoning(reasoningChunk);
+              }
+
+              if (delta.content) {
+                onToken(delta.content);
+              }
+            } catch (e) {}
+          }
+        }
+      };
+
+      // Stop generation handler
+      const handleStopGeneration = () => {
+        if (abortControllerRef.current) {
+          abortControllerRef.current.abort();
+          abortControllerRef.current = null;
+        }
+        setIsGenerating(false);
+        setErrorMessage('사용자가 글 생성을 중단했습니다.');
+      };
+
+      // 3. Main Generation Pipeline Trigger
+      const handleStartGenerate = async () => {
+        if (!topic.trim()) {
+          setErrorMessage('주제를 입력해주세요.');
+          return;
+        }
+        if (!isConnected) {
+          setShowSettingsModal(true);
+          setErrorMessage('LM Studio 서버에 연결되어 있지 않습니다. 서버 상태를 확인해주세요.');
+          return;
+        }
+        if (!selectedModel) {
+          setErrorMessage('사용 가능한 LLM 모델이 선택되지 않았습니다.');
+          return;
+        }
+
+        setErrorMessage(null);
+        setIsGenerating(true);
+        setReasoningText('');
+        setResearchOutput('');
+        setStrategyOutput('');
+        setFinalRawOutput('');
+        setIsReportOpen(true);
+
+        const targetCountDesc = postLength === 'single' ? '단일 포스트(1개)' : (postLength === 'short' ? '숏 스레드(4~5개)' : '롱 스레드(7~9개)');
+        const toneDesc = TONE_DESCRIPTIONS[tone] || tone;
+
+        try {
+          if (generationMode === 'deep') {
+            // === DEEP RESEARCH 3-STEP PIPELINE ===
+
+            // --- STEP 1: Deep Research (temp 0.4, max_tokens 4096) ---
+            setCurrentStep(1);
+            setActiveReportTab('research');
+
+            const step1System = `소셜미디어 콘텐츠 전략 리서처. 글을 쓰지 말고 리서치만 할 것
+
+반드시 아래 마크다운 헤딩 형식을 엄격히 지켜서 출력하라:
+## 타깃 독자 분석
+## 핵심 페인포인트
+(3가지)
+## 핵심 인사이트
+(구체적 숫자·사례 포함 5가지)
+## 흔한 오해
+## 후킹 앵글 후보
+(첫 문장 후보 3가지)`;
+
+            const step1User = `[리서치 요청]
+- 주제: ${topic}
+${targetAudience ? `- 타깃 독자: ${targetAudience}` : ''}
+${keyNotes ? `- 강조 메시지/추가 메모: ${keyNotes}` : ''}`;
+
+            let accumulatedStep1 = '';
+            await streamCompletion({
+              systemPrompt: step1System,
+              userMessage: step1User,
+              temperature: 0.4,
+              maxTokens: 4096,
+              onReasoning: (chunk) => setReasoningText(prev => prev + chunk),
+              onToken: (chunk) => {
+                accumulatedStep1 += chunk;
+                setResearchOutput(accumulatedStep1);
+                scrollToBottom();
+              }
+            });
+
+            // --- STEP 2: Strategy Outline (temp 0.5, max_tokens 3072) ---
+            setCurrentStep(2);
+            setActiveReportTab('strategy');
+            setReasoningText('');
+
+            const step2System = `스레드 구성 전문가. 개별 요약글이 아닌 '하나로 완벽하게 연결되는 연속 스토리 아크(Story Arc)' 설계도만 작성하라.
+
+반드시 아래 마크다운 헤딩 형식을 엄격히 지켜서 출력하라:
+## 선택한 후킹 앵글
+(1개 + 이유)
+## 스레드 연결 구조 (Story Chain)
+- 1번 포스트: 파격 후킹 + 공감 떡밥 ("이유는 아래 카드 공개👇")
+- 2번 포스트: 떡밥 연결 + 오해 해소/이유 제시 ("비밀 장소 공개👇")
+- 3번 포스트: 핵심 해결책 (종로 총판 직거래소 안내)
+- 마지막 포스트: 정리 + [저장/공유] + "📍 자세한 위치/상담은 1st 댓글 확인!"
+## 관통하는 한 문장`;
+
+            const step2User = `[스레드 설계 요청]
+- 플랫폼: ${platform === 'threads' ? 'Threads (500자)' : '𝕏 Twitter (280자)'} (${targetCountDesc})
+- 어투: ${toneDesc}
+- 주제: ${topic}
+
+[1단계 리서치 보고서 전문]:
+${accumulatedStep1}`;
+
+            let accumulatedStep2 = '';
+            await streamCompletion({
+              systemPrompt: step2System,
+              userMessage: step2User,
+              temperature: 0.5,
+              maxTokens: 3072,
+              onReasoning: (chunk) => setReasoningText(prev => prev + chunk),
+              onToken: (chunk) => {
+                accumulatedStep2 += chunk;
+                setStrategyOutput(accumulatedStep2);
+                scrollToBottom();
+              }
+            });
+
+            // --- STEP 3: Final Writing (temp 0.75, max_tokens 4096) ---
+            setCurrentStep(3);
+            setReasoningText('');
+
+            const step3System = `너는 수십만 팔로워를 보유한 최정상 바이럴 스레드/인스타그램 마케터다.
+
+[핵심 작성 원칙 — 연속적인 스토리텔링 체인 (Story Chain)]:
+각 포스트는 절대 독립된 글이 아니다! 포스트 1부터 마지막 포스트까지 드라마처럼 하나의 연속된 이야기로 이어져야 한다.
+
+1. 포스트 1 (후킹 & 떡밥): 강렬한 호기심으로 시작하고, 카드의 맨 끝은 반드시 다음 카드를 읽지 않고는 못 참게 만드는 '떡밥/클리프행어' 문장으로 끝낼 것 ("모르면 30% 손해 보는 이유, 아래 카드에서 공개합니다. 👇")
+2. 포스트 2 (이유 & 빌드업): 포스트 1의 떡밥을 바로 이어받아 오해/이유를 풀어주고, 끝부분은 해결책 카드로 연결할 것 ("그 마법 같은 직거래 장소가 어디냐면...👇")
+3. 포스트 3 (핵심 솔루션): 종로 총판 직거래소 등 실전 최고가 해결책을 명확히 공개할 것! ("그럼 어떻게 방문해야 할까요?👇")
+4. 마지막 포스트 (단문 120자 절대 엄수): 이전 카드 내용을 절대로 길게 다시 재요약하지 말 것! 오직 3줄 이내로 매우 짧게 마무리하라: [마무리 1줄] + [저장 🔖 공유 🔁] + [📍 정확한 매장 위치와 무료 시세 문의는 바로 아래 1st 댓글 확인! 🏢]
+5. 포스트 분량: 모든 카드는 100~200자 내외로 매우 짧고 임팩트 있게 작성할 것 (1문장 10~15자, 빈 줄 자주 넣을 것).
+6. 금지 사항: "1/5", "2/5" 같은 숫자나 별개의 개별 요약글 절대 금지. 포스트 사이 구분은 오직 ###POST### 로만 구분.
+
+[작성 예시 — 100% 하나로 연결되는 스토리 체인]:
+
+###POST###
+서랍 속에 그냥 방치해둔
+부러진 금반지나 금니 있으신가요? 😳
+
+안 쓰는 금니 하나로
+치킨 5마리 값 벌 수 있는데
+그냥 놔두는 분들 진짜 많죠.
+
+근데 동네 금은방 가기 전에
+진짜 조심해야 할 사실 하나...😱
+
+모르면 30% 손해 보는 이유,
+바로 아래 카드에서 공개합니다. 👇
+
+###POST###
+동네 금은방에 그냥 팔면
+왜 30%나 손해를 볼까요? 🧐
+
+바로 중간 유통 수수료와
+감정 방식의 차이 때문입니다!
+
+동네 매장은 여러 유통 단계를 거쳐서
+수수료를 떼고 시세를 낮게 치지만...
+
+진짜 당일 최고 시세 100% 다 받는
+마법 같은 직거래 장소가 따로 있다는 사실! ✨
+
+그 비밀 장소가 어디냐면...👇
+
+###POST###
+바로 대한민국 귀금속의 중심,
+'종로 총판 직거래소'입니다! 💡
+
+중간 유통 거품을 싹 빼고
+눈앞에서 정밀 저울 측정과
+시약 감정을 직접 확인한 뒤
+
+당일 최고 시세 그대로
+계좌에 1초 만에 현금 입금! 🔥
+
+그럼 어떻게 방문해야 최고가 받을까요? 👇
+
+###POST###
+집에 안 쓰는 순금, 14k/18k,
+치금(금니), 부러진 반지가 있다면
+
+나중에 찾기 편하게 [저장 🔖] 해두고
+지인들에게 [공유 🔁] 해주세요! 💕
+
+📍 정확한 매장 위치와 무료 시세 문의는
+바로 아래 [첫 번째 댓글]을 확인하세요! 🏢`;
+
+            const step3User = `[최종 글 작성 요청]
+- 주제: ${topic}
+- 어투: ${toneDesc}
+${keyNotes ? `- 강조 메시지: ${keyNotes}` : ''}
+
+[리서치 보고서 전문]:
+${accumulatedStep1}
+
+[설계도 전문]:
+${accumulatedStep2}`;
+
+            let accumulatedStep3 = '';
+            await streamCompletion({
+              systemPrompt: step3System,
+              userMessage: step3User,
+              temperature: 0.75,
+              maxTokens: 4096,
+              onReasoning: (chunk) => setReasoningText(prev => prev + chunk),
+              onToken: (chunk) => {
+                accumulatedStep3 += chunk;
+                setFinalRawOutput(accumulatedStep3);
+              }
+            });
+
+            // Deep research complete: auto-collapse report panel & save history
+            setIsReportOpen(false);
+            addToHistory({
+              topic,
+              mode: 'deep',
+              platform,
+              postLength,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              research: accumulatedStep1,
+              strategy: accumulatedStep2,
+              finalRaw: accumulatedStep3
+            });
+
+          } else {
+            // === FAST GENERATION MODE (⚡ 1 STEP) ===
+            setCurrentStep(3);
+            setReasoningText('');
+
+            const fastSystem = `너는 수십만 팔로워를 보유한 최정상 바이럴 스레드/인스타그램 마케터다.
+
+[핵심 작성 원칙 — 연속적인 스토리텔링 체인 (Story Chain)]:
+각 포스트는 절대 독립된 글이 아니다! 포스트 1부터 마지막 포스트까지 드라마처럼 하나의 연속된 이야기로 이어져야 한다.
+
+1. 포스트 1 (후킹 & 떡밥): 강렬한 호기심으로 시작하고, 카드의 맨 끝은 반드시 다음 카드를 읽지 않고는 못 참게 만드는 '떡밥/클리프행어' 문장으로 끝낼 것 ("모르면 30% 손해 보는 이유, 아래 카드에서 공개합니다. 👇")
+2. 포스트 2 (이유 & 빌드업): 포스트 1의 떡밥을 바로 이어받아 오해/이유를 풀어주고, 끝부분은 해결책 카드로 연결할 것 ("그 마법 같은 직거래 장소가 어디냐면...👇")
+3. 포스트 3 (핵심 솔루션): 종로 총판 직거래소 등 실전 최고가 해결책을 명확히 공개할 것! ("그럼 어떻게 방문해야 할까요?👇")
+4. 마지막 포스트 (단문 120자 절대 엄수): 이전 카드 내용을 절대로 길게 다시 재요약하지 말 것! 오직 3줄 이내로 매우 짧게 마무리하라: [마무리 1줄] + [저장 🔖 공유 🔁] + [📍 정확한 매장 위치와 무료 시세 문의는 바로 아래 1st 댓글 확인! 🏢]
+5. 포스트 분량: 모든 카드는 100~200자 내외로 매우 짧고 임팩트 있게 작성할 것 (1문장 10~15자, 빈 줄 자주 넣을 것).
+6. 금지 사항: "1/5", "2/5" 같은 숫자나 별개의 개별 요약글 절대 금지. 포스트 사이 구분은 오직 ###POST### 로만 구분.
+
+[작성 예시 — 100% 하나로 연결되는 스토리 체인]:
+
+###POST###
+서랍 속에 그냥 방치해둔
+부러진 금반지나 금니 있으신가요? 😳
+
+안 쓰는 금니 하나로
+치킨 5마리 값 벌 수 있는데
+그냥 놔두는 분들 진짜 많죠.
+
+근데 동네 금은방 가기 전에
+진짜 조심해야 할 사실 하나...😱
+
+모르면 30% 손해 보는 이유,
+바로 아래 카드에서 공개합니다. 👇
+
+###POST###
+동네 금은방에 그냥 팔면
+왜 30%나 손해를 볼까요? 🧐
+
+바로 중간 유통 수수료와
+감정 방식의 차이 때문입니다!
+
+동네 매장은 여러 유통 단계를 거쳐서
+수수료를 떼고 시세를 낮게 치지만...
+
+진짜 당일 최고 시세 100% 다 받는
+마법 같은 직거래 장소가 따로 있다는 사실! ✨
+
+그 비밀 장소가 어디냐면...👇
+
+###POST###
+바로 대한민국 귀금속의 중심,
+'종로 총판 직거래소'입니다! 💡
+
+중간 유통 거품을 싹 빼고
+눈앞에서 정밀 저울 측정과
+시약 감정을 직접 확인한 뒤
+
+당일 최고 시세 그대로
+계좌에 1초 만에 현금 입금! 🔥
+
+그럼 어떻게 방문해야 최고가 받을까요? 👇
+
+###POST###
+집에 안 쓰는 순금, 14k/18k,
+치금(금니), 부러진 반지가 있다면
+
+나중에 찾기 편하게 [저장 🔖] 해두고
+지인들에게 [공유 🔁] 해주세요! 💕
+
+📍 정확한 매장 위치와 무료 시세 문의는
+바로 아래 [첫 번째 댓글]을 확인하세요! 🏢`;
+
+            const fastUser = `[포스트 작성]
+- 주제: ${topic}
+${targetAudience ? `- 타깃 독자: ${targetAudience}` : ''}
+${keyNotes ? `- 강조 메시지/추가 메모: ${keyNotes}` : ''}`;
+
+            let accumulatedFast = '';
+            await streamCompletion({
+              systemPrompt: fastSystem,
+              userMessage: fastUser,
+              temperature: 0.75,
+              maxTokens: 4096,
+              onReasoning: (chunk) => setReasoningText(prev => prev + chunk),
+              onToken: (chunk) => {
+                accumulatedFast += chunk;
+                setFinalRawOutput(accumulatedFast);
+              }
+            });
+
+            addToHistory({
+              topic,
+              mode: 'fast',
+              platform,
+              postLength,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              research: '',
+              strategy: '',
+              finalRaw: accumulatedFast
+            });
+          }
+        } catch (err) {
+          if (err.name !== 'AbortError') {
+            setErrorMessage(err.message || '글 생성 중 오류가 발생했습니다.');
+          }
+        } finally {
+          setIsGenerating(false);
+          setCurrentStep(0);
+          abortControllerRef.current = null;
+        }
+      };
+
+      // Add to memory history (max 20)
+      const addToHistory = (item) => {
+        setHistory(prev => [
+          { id: `hist-${Date.now()}`, ...item },
+          ...prev.slice(0, 19)
+        ]);
+      };
+
+      // Restore from history
+      const handleRestoreHistory = (item) => {
+        setTopic(item.topic);
+        setGenerationMode(item.mode);
+        setPlatform(item.platform);
+        setPostLength(item.postLength);
+        setResearchOutput(item.research || '');
+        setStrategyOutput(item.strategy || '');
+        setFinalRawOutput(item.finalRaw || '');
+        setIsReportOpen(!!(item.research || item.strategy));
+      };
+
+      // Parsed posts memoized
+      const parsedPosts = useMemo(() => parsePosts(finalRawOutput), [finalRawOutput]);
+
+      // Auto-trim helper for posts exceeding character limit
+      const handleTrimPost = (index) => {
+        const posts = [...parsedPosts];
+        if (!posts[index]) return;
+        let content = posts[index].content;
+
+        const lines = content.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        let trimmedLines = [];
+        let curCount = 0;
+
+        for (const line of lines) {
+          if (curCount + line.length + 2 <= maxCharLimit - 20) {
+            trimmedLines.push(line);
+            curCount += line.length + 2;
+          } else {
+            if (line.includes('댓글') || line.includes('저장') || line.includes('공유') || line.includes('📍')) {
+              trimmedLines.push(line);
+            }
+          }
+        }
+
+        posts[index].content = trimmedLines.join('\n\n');
+        const newRaw = posts.map(p => p.content).join('\n\n###POST###\n\n');
+        setFinalRawOutput(newRaw);
+      };
+
+      // Copy single post
+      const handleCopyPost = (postContent, id) => {
+        navigator.clipboard.writeText(postContent);
+        setCopiedCardId(id);
+        setTimeout(() => setCopiedCardId(null), 2000);
+      };
+
+      // Copy all posts & trigger confetti
+      const handleCopyAllPosts = () => {
+        if (parsedPosts.length === 0) return;
+        const fullText = parsedPosts.map(p => p.content).join('\n\n---\n\n');
+        navigator.clipboard.writeText(fullText);
+        setCopiedAll(true);
+        setTimeout(() => setCopiedAll(false), 2500);
+
+        if (window.confetti) {
+          window.confetti({
+            particleCount: 80,
+            spread: 70,
+            origin: { y: 0.6 }
+          });
+        }
+      };
+
+      return (
+        <div className="min-h-screen flex flex-col justify-between p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full">
+          {/* Header */}
+          <header className="mb-6 glass-card rounded-2xl p-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4 border border-white/10 shadow-xl">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
+                <i className="fa-solid fa-brain text-xl"></i>
+              </div>
+              <div>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight flex items-center gap-2">
+                  <span className="gradient-text">로컬 AI 딥리서치</span>
+                  <span className="text-slate-200">스레드 & X 글 생성기</span>
+                </h1>
+                <p className="text-xs text-slate-400">LM Studio 기반 3단계 소셜 콘텐츠 파이프라인</p>
+              </div>
+            </div>
+
+            {/* Connection Status & Model Dropdown */}
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="p-1 bg-slate-900/90 rounded-xl border border-slate-800 flex items-center gap-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setEngine('gemini')}
+                  className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition ${
+                    engine === 'gemini' 
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-md' 
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <i className="fa-solid fa-bolt text-amber-300"></i>
+                  <span>Gemini Flash (추천 - 깨짐 0%)</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setEngine('lmstudio')}
+                  className={`px-3 py-1.5 rounded-lg font-bold flex items-center gap-1.5 transition ${
+                    engine === 'lmstudio' 
+                      ? 'bg-slate-700 text-white shadow-md' 
+                      : 'text-slate-400 hover:text-slate-200'
+                  }`}
+                >
+                  <i className="fa-solid fa-desktop"></i>
+                  <span>로컬 LM Studio</span>
+                </button>
+              </div>
+
+              {engine === 'lmstudio' ? (
+                <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border ${
+                  isConnected 
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
+                    : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${isConnected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-500'}`}></span>
+                  <span>{isCheckingHealth ? '확인 중...' : (isConnected ? 'LM Studio 연결됨' : 'LM Studio 오프라인')}</span>
+                </div>
+              ) : (
+                <div className={`px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-2 border ${
+                  geminiApiKey ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' : 'bg-amber-500/10 border-amber-500/30 text-amber-400'
+                }`}>
+                  <span className={`w-2 h-2 rounded-full ${geminiApiKey ? 'bg-emerald-400' : 'bg-amber-400 animate-pulse'}`}></span>
+                  <span>{geminiApiKey ? 'Gemini 준비 완료' : 'API 키 필요'}</span>
+                </div>
+              )}
+
+              {engine === 'lmstudio' && isConnected && models.length > 0 && (
+                <div className="relative">
+                  <select
+                    value={selectedModel}
+                    onChange={(e) => setSelectedModel(e.target.value)}
+                    className="bg-slate-900/80 text-xs text-slate-200 font-mono border border-slate-700 rounded-lg px-3 py-1.5 focus:outline-none focus:border-purple-500 cursor-pointer max-w-[180px] truncate"
+                  >
+                    {models.map(m => (
+                      <option key={m} value={m}>{m}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {engine === 'gemini' && (
+                <div className="relative">
+                  <select
+                    value={geminiModel}
+                    onChange={(e) => setGeminiModel(e.target.value)}
+                    className="bg-slate-900/80 text-xs text-purple-300 font-mono border border-purple-800/50 rounded-lg px-3 py-1.5 focus:outline-none focus:border-purple-400 cursor-pointer max-w-[200px] truncate"
+                  >
+                    {geminiModelList.length > 0 ? (
+                      geminiModelList.map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))
+                    ) : (
+                      <>
+                        <option value="gemini-1.5-flash">gemini-1.5-flash (초고속)</option>
+                        <option value="gemini-1.5-pro">gemini-1.5-pro (고성능)</option>
+                        <option value="gemini-2.0-flash-exp">gemini-2.0-flash (최신)</option>
+                      </>
+                    )}
+                  </select>
+                </div>
+              )}
+
+              <button
+                onClick={() => {
+                  setSettingsInputUrl(baseUrl);
+                  setInputGeminiKey(geminiApiKey);
+                  setShowSettingsModal(true);
+                }}
+                className="w-8 h-8 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 flex items-center justify-center transition border border-slate-700"
+                title="AI 엔진 및 API 설정"
+              >
+                <i className="fa-solid fa-gear text-sm"></i>
+              </button>
+            </div>
+          </header>
+
+          {/* Main Error Banner */}
+          {errorMessage && (
+            <div className="mb-6 p-4 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-200 text-sm flex items-start justify-between gap-3 animate-fade-in">
+              <div className="flex items-center gap-2">
+                <i className="fa-solid fa-triangle-exclamation text-rose-400 text-base"></i>
+                <span>{errorMessage}</span>
+              </div>
+              <button onClick={() => setErrorMessage(null)} className="text-rose-400 hover:text-rose-200">
+                <i className="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+          )}
+
+          {/* Main Layout (lg:grid-cols-12) */}
+          <main className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start flex-1">
+            
+            {/* Left 4-Col Input Form */}
+            <div className="lg:col-span-4 flex flex-col gap-6">
+              <div className="glass-card rounded-2xl p-5 md:p-6 space-y-5 shadow-xl">
+                
+                {/* Mode Toggle */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">생성 모드 선택</label>
+                  <div className="grid grid-cols-2 gap-2 p-1 bg-slate-900/90 rounded-xl border border-slate-800">
+                    <button
+                      type="button"
+                      onClick={() => setGenerationMode('deep')}
+                      className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition ${
+                        generationMode === 'deep'
+                          ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <i className="fa-solid fa-brain text-sm"></i>
+                      <span>🧠 딥리서치(3단계)</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setGenerationMode('fast')}
+                      className={`py-2 px-3 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition ${
+                        generationMode === 'fast'
+                          ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      <i className="fa-solid fa-bolt text-sm"></i>
+                      <span>⚡ 빠른 생성</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Platform Selector */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">플랫폼 선택</label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setPlatform('threads')}
+                      className={`p-3 rounded-xl border text-left transition flex items-center gap-3 ${
+                        platform === 'threads'
+                          ? 'border-purple-500 bg-purple-500/10 text-purple-300'
+                          : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-700'
+                      }`}
+                    >
+                      <i className="fa-brands fa-threads text-lg text-slate-200"></i>
+                      <div>
+                        <div className="text-xs font-bold text-slate-200">🧵 Threads</div>
+                        <div className="text-[10px] text-slate-400">포스트당 500자</div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setPlatform('twitter')}
+                      className={`p-3 rounded-xl border text-left transition flex items-center gap-3 ${
+                        platform === 'twitter'
+                          ? 'border-cyan-500 bg-cyan-500/10 text-cyan-300'
+                          : 'border-slate-800 bg-slate-900/50 text-slate-400 hover:border-slate-700'
+                      }`}
+                    >
+                      <i className="fa-brands fa-x-twitter text-lg text-slate-200"></i>
+                      <div>
+                        <div className="text-xs font-bold text-slate-200">𝕏 Twitter</div>
+                        <div className="text-[10px] text-slate-400">포스트당 280자</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Length & Format Selector */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">글 형태 / 분량</label>
+                  <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-900/90 rounded-xl border border-slate-800 text-center">
+                    <button
+                      type="button"
+                      onClick={() => setPostLength('single')}
+                      className={`py-2 px-2 rounded-lg text-xs font-medium transition ${
+                        postLength === 'single' ? 'bg-slate-700 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      단일 포스트(1개)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPostLength('short')}
+                      className={`py-2 px-2 rounded-lg text-xs font-medium transition ${
+                        postLength === 'short' ? 'bg-slate-700 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      숏 스레드(4~5개)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPostLength('long')}
+                      className={`py-2 px-2 rounded-lg text-xs font-medium transition ${
+                        postLength === 'long' ? 'bg-slate-700 text-white font-bold' : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                    >
+                      롱 스레드(7~9개)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Tone Select */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">어투 선택</label>
+                  <select
+                    value={tone}
+                    onChange={(e) => setTone(e.target.value)}
+                    className="w-full bg-slate-900/90 text-xs text-slate-200 border border-slate-700 rounded-xl px-3 py-2.5 focus:outline-none focus:border-purple-500 cursor-pointer"
+                  >
+                    <option value="viral">🔥 바이럴 후킹형 (강렬한 호기심 유발, 짧고 임팩트 있는 문장, 반전과 넘버링 활용)</option>
+                    <option value="friendly">😊 친근·유쾌형 (따뜻하고 공감대를 형성하는 어투, 일상적인 표현과 위트)</option>
+                    <option value="expert">💎 전문가형 (신뢰감 있고 논리적인 어투, 데이터와 인사이트 중심)</option>
+                    <option value="direct">🎯 직설형 (거품 없는 솔직하고 대담한 어투, 핵심만 팩트로 찌르는 문장)</option>
+                  </select>
+                </div>
+
+                {/* Topic, Target Audience, Key Notes */}
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-300 mb-1">
+                      주제 <span className="text-rose-400">*</span>
+                    </label>
+                    <textarea
+                      rows={3}
+                      value={topic}
+                      onChange={(e) => setTopic(e.target.value)}
+                      placeholder="예: LM Studio로 로컬 AI 모델 구축하고 생산성 10배 높인 경험"
+                      className="w-full bg-slate-900/90 text-xs text-slate-200 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-purple-500 resize-none"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">타깃 독자 (선택)</label>
+                    <input
+                      type="text"
+                      value={targetAudience}
+                      onChange={(e) => setTargetAudience(e.target.value)}
+                      placeholder="예: AI에 관심 있는 개발자, 1인 창업가"
+                      className="w-full bg-slate-900/90 text-xs text-slate-200 border border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 mb-1">강조 메시지 / 추가 메모 (선택)</label>
+                    <textarea
+                      rows={2}
+                      value={keyNotes}
+                      onChange={(e) => setKeyNotes(e.target.value)}
+                      placeholder="예: 클라우드 API 비용 절감 사례 강조할 것"
+                      className="w-full bg-slate-900/90 text-xs text-slate-200 border border-slate-700 rounded-xl p-3 focus:outline-none focus:border-purple-500 resize-none"
+                    />
+                  </div>
+                </div>
+
+                {/* Generate Button / Stop Button */}
+                <div className="pt-2">
+                  {!isGenerating ? (
+                    <button
+                      type="button"
+                      onClick={handleStartGenerate}
+                      disabled={!isConnected || !topic.trim()}
+                      className={`w-full py-3.5 px-4 rounded-xl text-sm font-bold text-white gradient-btn flex items-center justify-center gap-2 shadow-lg ${
+                        (!isConnected || !topic.trim()) ? 'opacity-50 cursor-not-allowed' : 'hover:scale-[1.01]'
+                      }`}
+                    >
+                      <i className="fa-solid fa-wand-magic-sparkles"></i>
+                      <span>{generationMode === 'deep' ? '🧠 딥리서치 스레드 생성' : '⚡ 빠른 글 생성'}</span>
+                    </button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        disabled
+                        className="flex-1 py-3 px-4 rounded-xl text-xs font-bold bg-purple-900/50 text-purple-200 border border-purple-500/50 flex items-center justify-center gap-2 animate-pulse"
+                      >
+                        <i className="fa-solid fa-spinner fa-spin"></i>
+                        <span>
+                          {currentStep === 1 && '리서치 중...'}
+                          {currentStep === 2 && '전략 설계 중...'}
+                          {currentStep === 3 && '글 작성 중...'}
+                        </span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleStopGeneration}
+                        className="px-4 py-3 bg-rose-600/80 hover:bg-rose-600 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1 transition"
+                        title="생성 중단"
+                      >
+                        <i className="fa-solid fa-square"></i>
+                        <span>⏹ 중단</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* History Memory Panel (Recent 20) */}
+              {history.length > 0 && (
+                <div className="glass-card rounded-2xl p-4 border border-white/10 shadow-xl space-y-3">
+                  <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <i className="fa-solid fa-clock-rotate-left"></i> 최근 생성 기록 ({history.length})
+                    </span>
+                    <span className="text-[10px] text-slate-500">메모리 저장</span>
+                  </div>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {history.map(item => (
+                      <div
+                        key={item.id}
+                        onClick={() => handleRestoreHistory(item)}
+                        className="p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800/80 border border-slate-800/80 hover:border-purple-500/40 cursor-pointer transition flex items-center justify-between gap-2 group"
+                      >
+                        <div className="truncate flex-1">
+                          <div className="text-xs font-medium text-slate-200 truncate group-hover:text-purple-300">
+                            {item.topic}
+                          </div>
+                          <div className="text-[10px] text-slate-500 flex items-center gap-2">
+                            <span>{item.timestamp}</span>
+                            <span>•</span>
+                            <span className="uppercase">{item.platform}</span>
+                          </div>
+                        </div>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono ${
+                          item.mode === 'deep' ? 'bg-purple-950/80 text-purple-300 border border-purple-800/50' : 'bg-amber-950/80 text-amber-300 border border-amber-800/50'
+                        }`}>
+                          {item.mode === 'deep' ? '🧠 Deep' : '⚡ Fast'}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Right 8-Col Results Area */}
+            <div className="lg:col-span-8 space-y-6">
+
+              {/* 1. Pipeline Status Bar */}
+              <div className="glass-card rounded-2xl p-4 border border-white/10 shadow-xl">
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  
+                  {/* Step 1 Card */}
+                  <div className={`p-3 rounded-xl border transition flex flex-col items-center gap-1 ${
+                    currentStep === 1
+                      ? 'bg-purple-950/60 border-purple-500 text-purple-200 animate-glow-purple'
+                      : (researchOutput ? 'bg-slate-900/80 border-emerald-500/40 text-emerald-300' : 'bg-slate-900/40 border-slate-800 text-slate-500')
+                  }`}>
+                    <div className="text-xs font-semibold flex items-center gap-1">
+                      {researchOutput ? <i className="fa-solid fa-circle-check text-emerald-400"></i> : <span className="font-mono">1.</span>}
+                      <span>딥리서치</span>
+                    </div>
+                    <span className="text-[10px] opacity-75">
+                      {currentStep === 1 ? '시장 분석 진행 중...' : (researchOutput ? '완료' : (generationMode === 'fast' ? '스킵됨' : '대기 중'))}
+                    </span>
+                  </div>
+
+                  {/* Step 2 Card */}
+                  <div className={`p-3 rounded-xl border transition flex flex-col items-center gap-1 ${
+                    currentStep === 2
+                      ? 'bg-purple-950/60 border-purple-500 text-purple-200 animate-glow-purple'
+                      : (strategyOutput ? 'bg-slate-900/80 border-emerald-500/40 text-emerald-300' : 'bg-slate-900/40 border-slate-800 text-slate-500')
+                  }`}>
+                    <div className="text-xs font-semibold flex items-center gap-1">
+                      {strategyOutput ? <i className="fa-solid fa-circle-check text-emerald-400"></i> : <span className="font-mono">2.</span>}
+                      <span>전략 설계</span>
+                    </div>
+                    <span className="text-[10px] opacity-75">
+                      {currentStep === 2 ? '구조 설계 진행 중...' : (strategyOutput ? '완료' : (generationMode === 'fast' ? '스킵됨' : '대기 중'))}
+                    </span>
+                  </div>
+
+                  {/* Step 3 Card */}
+                  <div className={`p-3 rounded-xl border transition flex flex-col items-center gap-1 ${
+                    currentStep === 3
+                      ? 'bg-purple-950/60 border-purple-500 text-purple-200 animate-glow-purple'
+                      : (finalRawOutput && !isGenerating ? 'bg-slate-900/80 border-emerald-500/40 text-emerald-300' : 'bg-slate-900/40 border-slate-800 text-slate-500')
+                  }`}>
+                    <div className="text-xs font-semibold flex items-center gap-1">
+                      {finalRawOutput && !isGenerating ? <i className="fa-solid fa-circle-check text-emerald-400"></i> : <span className="font-mono">3.</span>}
+                      <span>최종 작성</span>
+                    </div>
+                    <span className="text-[10px] opacity-75">
+                      {currentStep === 3 ? '글 작성 중...' : (finalRawOutput && !isGenerating ? '완료' : '대기 중')}
+                    </span>
+                  </div>
+
+                </div>
+              </div>
+
+              {/* 2. Reasoning Indicator (If model streams reasoning) */}
+              {reasoningText && (
+                <div className="p-3 rounded-xl bg-purple-950/40 border border-purple-500/30 text-purple-200 text-xs font-mono flex items-center gap-2">
+                  <i className="fa-solid fa-brain text-purple-400 animate-pulse"></i>
+                  <span>🧠 모델이 깊게 생각하는 중... ({reasoningText.length.toLocaleString()}자 추론)</span>
+                </div>
+              )}
+
+              {/* 3. Research & Strategy Report Panel (Collapsible Accordion) */}
+              {(researchOutput || strategyOutput) && (
+                <div className="glass-card rounded-2xl border border-white/10 shadow-xl overflow-hidden">
+                  
+                  {/* Panel Header */}
+                  <div
+                    onClick={() => setIsReportOpen(!isReportOpen)}
+                    className="p-4 bg-slate-900/80 hover:bg-slate-900 cursor-pointer flex items-center justify-between border-b border-slate-800 transition"
+                  >
+                    <div className="flex items-center gap-3">
+                      <i className="fa-solid fa-file-invoice text-purple-400 text-sm"></i>
+                      <span className="text-xs font-bold text-slate-200">리서치 보고서 & 스레드 설계도</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-slate-400">
+                        {isReportOpen ? '접기' : '펼치기'}
+                      </span>
+                      <i className={`fa-solid fa-chevron-down text-xs text-slate-400 transition-transform ${isReportOpen ? 'rotate-180' : ''}`}></i>
+                    </div>
+                  </div>
+
+                  {/* Panel Body */}
+                  {isReportOpen && (
+                    <div className="p-4 space-y-4">
+                      {/* Tabs */}
+                      <div className="flex border-b border-slate-800 text-xs font-semibold">
+                        <button
+                          onClick={() => setActiveReportTab('research')}
+                          className={`py-2 px-4 border-b-2 transition ${
+                            activeReportTab === 'research'
+                              ? 'border-purple-500 text-purple-300'
+                              : 'border-transparent text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          1단계 리서치 보고서
+                        </button>
+                        <button
+                          onClick={() => setActiveReportTab('strategy')}
+                          className={`py-2 px-4 border-b-2 transition ${
+                            activeReportTab === 'strategy'
+                              ? 'border-purple-500 text-purple-300'
+                              : 'border-transparent text-slate-400 hover:text-slate-200'
+                          }`}
+                        >
+                          2단계 스레드 설계도
+                        </button>
+                      </div>
+
+                      {/* Content Box */}
+                      <div
+                        ref={reportContentRef}
+                        className="bg-slate-950/80 rounded-xl p-4 max-h-80 overflow-y-auto font-mono text-xs text-slate-300 whitespace-pre-wrap leading-relaxed border border-slate-800"
+                      >
+                        {activeReportTab === 'research' ? (
+                          researchOutput ? (
+                            <span className={currentStep === 1 ? 'typing-cursor' : ''}>{researchOutput}</span>
+                          ) : (
+                            <span className="text-slate-500 italic">리서치 보고서 대기 중...</span>
+                          )
+                        ) : (
+                          strategyOutput ? (
+                            <span className={currentStep === 2 ? 'typing-cursor' : ''}>{strategyOutput}</span>
+                          ) : (
+                            <span className="text-slate-500 italic">스레드 설계도 대기 중...</span>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 4. Thread Cards Preview */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <i className="fa-solid fa-comments text-purple-400 text-sm"></i>
+                    <h2 className="text-sm font-bold text-slate-200">SNS 포스트 미리보기</h2>
+                    {parsedPosts.length > 0 && (
+                      <span className="text-xs px-2.5 py-0.5 rounded-full bg-purple-950 border border-purple-800/60 text-purple-300 font-mono">
+                        총 {parsedPosts.length}개 포스트
+                      </span>
+                    )}
+                  </div>
+
+                  {parsedPosts.length > 0 && (
+                    <button
+                      onClick={handleCopyAllPosts}
+                      className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition border border-slate-700 flex items-center gap-1.5"
+                    >
+                      <i className={`fa-solid ${copiedAll ? 'fa-check text-emerald-400' : 'fa-copy'}`}></i>
+                      <span>{copiedAll ? '복사됨!' : '전체 복사'}</span>
+                    </button>
+                  )}
+                </div>
+
+                {/* Posts Stack */}
+                {parsedPosts.length > 0 ? (
+                  <div className="space-y-0 relative">
+                    {parsedPosts.map((post, idx) => {
+                      const isOverLimit = post.charCount > maxCharLimit;
+
+                      return (
+                        <div key={post.id || idx} className="relative group">
+                          {/* Vertical Connecting Line */}
+                          {idx < parsedPosts.length - 1 && (
+                            <div className="absolute left-7 top-14 bottom-0 w-0.5 bg-slate-800 group-hover:bg-purple-500/30 transition z-0"></div>
+                          )}
+
+                          <div className="glass-card rounded-2xl p-5 mb-4 border border-white/10 shadow-lg relative z-10 glass-card-hover">
+                            {/* Author & Actions Header */}
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-purple-500 via-pink-500 to-cyan-500 p-0.5">
+                                  <div className="w-full h-full rounded-full bg-slate-900 flex items-center justify-center text-xs font-bold text-white">
+                                    AI
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                                    <span>소셜 크리에이터</span>
+                                    <i className="fa-solid fa-circle-check text-[10px] text-cyan-400"></i>
+                                  </div>
+                                  <div className="text-[10px] text-slate-400 font-mono">
+                                    @{platform === 'threads' ? 'threads_creator' : 'x_creator'}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-mono text-slate-400 bg-slate-900 px-2 py-0.5 rounded-md border border-slate-800">
+                                  {idx + 1} / {parsedPosts.length}
+                                </span>
+                                <button
+                                  onClick={() => handleCopyPost(post.content, post.id)}
+                                  className="w-7 h-7 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 flex items-center justify-center text-xs transition border border-slate-700"
+                                  title="포스트 복사"
+                                >
+                                  <i className={`fa-solid ${copiedCardId === post.id ? 'fa-check text-emerald-400' : 'fa-copy'}`}></i>
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Card Content Body */}
+                            <div className="text-xs text-slate-200 whitespace-pre-wrap leading-relaxed font-sans mb-4">
+                              {post.content}
+                              {isGenerating && idx === parsedPosts.length - 1 && currentStep === 3 && (
+                                <span className="typing-cursor"></span>
+                              )}
+                            </div>
+
+                            {/* Card Footer: Character Count Indicator */}
+                            <div className="flex items-center justify-between border-t border-slate-800/60 pt-3 text-[10px]">
+                              <div className="flex items-center gap-4 text-slate-400">
+                                <span className="hover:text-pink-400 cursor-pointer transition"><i className="fa-regular fa-heart"></i></span>
+                                <span className="hover:text-cyan-400 cursor-pointer transition"><i className="fa-regular fa-comment"></i></span>
+                                <span className="hover:text-purple-400 cursor-pointer transition"><i className="fa-solid fa-arrows-rotate"></i></span>
+                              </div>
+
+                              <div className="flex items-center gap-2">
+                                {isOverLimit && (
+                                  <button
+                                    onClick={() => handleTrimPost(idx)}
+                                    className="px-2 py-0.5 rounded-md bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-sans text-[10px] font-bold transition border border-amber-500/40 flex items-center gap-1 cursor-pointer"
+                                    title="글자 수 초과 문장 1초 자동 축소"
+                                  >
+                                    <span>✂️ 1초 축소</span>
+                                  </button>
+                                )}
+                                <div className={`font-mono font-semibold px-2 py-0.5 rounded-md border ${
+                                  isOverLimit 
+                                    ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' 
+                                    : 'bg-slate-900 border-slate-800 text-slate-400'
+                                }`}>
+                                  {isOverLimit && <i className="fa-solid fa-triangle-exclamation mr-1 text-amber-400"></i>}
+                                  <span>{post.charCount.toLocaleString()} / {maxCharLimit}자</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="glass-card rounded-2xl p-12 text-center border border-white/10 shadow-xl flex flex-col items-center justify-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-slate-800/60 text-slate-400 flex items-center justify-center text-xl mb-1">
+                      <i className="fa-solid fa-pen-nib"></i>
+                    </div>
+                    <div className="text-sm font-bold text-slate-300">소셜 미디어 글이 생성되면 이곳에 표시됩니다</div>
+                    <p className="text-xs text-slate-500 max-w-sm">
+                      좌측 폼에 주제를 입력하고 [딥리서치 스레드 생성] 버튼을 누르면 LM Studio가 3단계 파이프라인으로 바이럴 포스트를 작성합니다.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </main>
+
+          {/* Footer */}
+          <footer className="mt-10 py-4 text-center text-xs text-slate-500 border-t border-slate-800/60 flex items-center justify-center gap-2">
+            <i className="fa-solid fa-shield-halved text-emerald-400"></i>
+            <span>100% 로컬 실행 · 데이터는 외부로 전송되지 않습니다</span>
+          </footer>
+
+          {/* Settings Modal */}
+          {showSettingsModal && (
+            <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4">
+              <div className="glass-card rounded-2xl p-6 max-w-md w-full border border-white/15 shadow-2xl space-y-4">
+                <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+                  <h3 className="text-sm font-bold text-slate-200 flex items-center gap-2">
+                    <i className="fa-solid fa-sliders text-purple-400"></i>
+                    <span>AI 엔진 및 API 설정</span>
+                  </h3>
+                  <button
+                    onClick={() => setShowSettingsModal(false)}
+                    className="text-slate-400 hover:text-slate-200 text-xs"
+                  >
+                    <i className="fa-solid fa-xmark text-sm"></i>
+                  </button>
+                </div>
+
+                <div className="space-y-4 text-xs">
+                  {/* Google Gemini API Key Section */}
+                  <div className="p-3 bg-purple-950/30 rounded-xl border border-purple-800/40 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <label className="text-xs font-bold text-purple-300 flex items-center gap-1.5">
+                        <i className="fa-solid fa-key"></i>
+                        <span>Google Gemini API Key (무료)</span>
+                      </label>
+                      <a 
+                        href="https://aistudio.google.com/app/apikey" 
+                        target="_blank" 
+                        rel="noreferrer" 
+                        className="text-[11px] text-cyan-400 hover:underline flex items-center gap-1 font-medium"
+                      >
+                        <span>무료 키 발급받기</span>
+                        <i className="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                      </a>
+                    </div>
+                    <input
+                      type="password"
+                      value={inputGeminiKey}
+                      onChange={(e) => setInputGeminiKey(e.target.value)}
+                      placeholder="AIzaSy..."
+                      className="w-full bg-slate-900 font-mono text-slate-200 border border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:border-purple-500"
+                    />
+                    <p className="text-[10px] text-slate-400">
+                      💡 Google AI Studio에서 발급받은 키를 입력하시면 글자 깨짐 없는 100% 완벽한 한국어 글이 초고속 생성됩니다.
+                    </p>
+                  </div>
+
+                  {/* LM Studio Server URL Section */}
+                  <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 space-y-2">
+                    <label className="block text-slate-300 font-semibold mb-1">LM Studio Server Base URL</label>
+                    <input
+                      type="text"
+                      value={settingsInputUrl}
+                      onChange={(e) => setSettingsInputUrl(e.target.value)}
+                      placeholder="http://127.0.0.1:1234"
+                      className="w-full bg-slate-900 font-mono text-slate-200 border border-slate-700 rounded-xl px-3 py-2 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+
+                  {testMessage && (
+                    <div className={`p-2.5 rounded-lg border text-xs flex items-center gap-2 ${
+                      testMessage.type === 'success' 
+                        ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300' 
+                        : 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                    }`}>
+                      <i className={`fa-solid ${testMessage.type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'}`}></i>
+                      <span>{testMessage.text}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+                  <button
+                    type="button"
+                    onClick={handleSaveSettings}
+                    className="w-full py-2.5 rounded-xl text-xs font-bold text-white gradient-btn shadow-md"
+                  >
+                    저장 및 설정 완료
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>

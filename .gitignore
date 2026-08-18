@@ -1,0 +1,5 @@
+node_modules/
+*.log
+scratch_test.json
+.DS_Store
+.vscode/
