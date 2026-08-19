@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>골드랩앤코 4분할 한국어 인스타그램 웹툰 카드</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&family=Gmarket+Sans:wght@700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body {
+      background-color: #080a10;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .font-heavy {
+      font-weight: 900;
+    }
+    .bubble {
+      position: relative;
+      background: #ffffff;
+      color: #0f172a;
+      border-radius: 18px;
+      padding: 10px 14px;
+      font-weight: 800;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      border: 2px solid #000;
+    }
+    .bubble-dark {
+      background: #1e1b4b;
+      color: #f8fafc;
+      border: 2px solid #a855f7;
+    }
+    .bubble-gold {
+      background: linear-gradient(135deg, #fef08a 0%, #eab308 100%);
+      color: #713f12;
+      border: 2px solid #ca8a04;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col items-center justify-center p-6">
+
+  <!-- Download Header Controls -->
+  <div class="mb-6 flex items-center gap-4">
+    <button onclick="downloadComic()" class="px-6 py-3 bg-gradient-to-r from-amber-500 via-purple-600 to-pink-500 text-white font-bold rounded-2xl shadow-xl hover:opacity-90 transition text-sm flex items-center gap-2">
+      <span>📸 1080x1080 한국어 웹툰 이미지 다운로드 (PNG)</span>
+    </button>
+  </div>
+
+  <!-- 1080x1080 Instagram 4-Panel Canvas Card -->
+  <div id="comic-canvas" class="w-[600px] h-[600px] bg-[#0c0d14] border-4 border-amber-500/40 rounded-3xl p-4 grid grid-cols-2 grid-rows-2 gap-3 shadow-2xl relative overflow-hidden">
+    
+    <!-- Watermark Header -->
+    <div class="absolute top-2 right-4 text-[10px] font-bold text-amber-400/60 tracking-wider">
+      GOLDLAB & CO · 종로 총판 직거래소
+    </div>
+
+    <!-- PANEL 1 (Top Left) -->
+    <div class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 border-2 border-indigo-500/40 rounded-2xl p-3 flex flex-col justify-between relative overflow-hidden">
+      <div class="inline-block px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-extrabold w-fit shadow">
+        1컷: 서랍 속 발견 😳
+      </div>
+      
+      <div class="my-auto space-y-2 text-center">
+        <div class="text-4xl">😱💍</div>
+        <div class="bubble text-xs text-left leading-snug">
+          "집 구석 서랍에 굴러다니는 끊어진 14K 목걸이, 얼마 하겠어?"
+        </div>
+      </div>
+
+      <div class="text-[11px] font-black text-rose-400 text-center">
+        🚨 동네 금방 가면 15만원 감가 손해!
+      </div>
+    </div>
+
+    <!-- PANEL 2 (Top Right) -->
+    <div class="bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 border-2 border-purple-500/40 rounded-2xl p-3 flex flex-col justify-between relative overflow-hidden">
+      <div class="inline-block px-2.5 py-0.5 rounded-full bg-purple-600 text-white text-[10px] font-extrabold w-fit shadow">
+        2컷: 왜 손해 볼까? 🧐
+      </div>
+
+      <div class="my-auto space-y-2">
+        <div class="text-xs font-bold text-purple-200 text-center bg-slate-900/80 py-1 rounded-lg border border-purple-800">
+          [동네 매장 ➔ 도매 ➔ 종로]
+        </div>
+        <div class="bubble bubble-dark text-[11px] leading-snug">
+          "복잡한 유통 거품 + 큐빅 무게 핑계로 매입가를 확 깎아버립니다!"
+        </div>
+      </div>
+
+      <div class="text-[11px] font-black text-purple-300 text-center">
+        💸 중간 유통 마진의 비밀...
+      </div>
+    </div>
+
+    <!-- PANEL 3 (Bottom Left) -->
+    <div class="bg-gradient-to-br from-slate-900 via-amber-950 to-slate-900 border-2 border-amber-500/40 rounded-2xl p-3 flex flex-col justify-between relative overflow-hidden">
+      <div class="inline-block px-2.5 py-0.5 rounded-full bg-amber-600 text-white text-[10px] font-extrabold w-fit shadow">
+        3컷: 직거래 성지 공개 💡
+      </div>
+
+      <div class="my-auto space-y-2 text-center">
+        <div class="text-3xl">⚖️✨</div>
+        <div class="bubble bubble-gold text-[11px] leading-snug text-left">
+          "종로 총판은 중간 마진 0원! 눈앞에서 큐빅 제거 후 순수 금 무게만 100% 측정!"
+        </div>
+      </div>
+
+      <div class="text-[11px] font-black text-amber-300 text-center">
+        ✨ 1:1 정밀 저울 시약 감정
+      </div>
+    </div>
+
+    <!-- PANEL 4 (Bottom Right) -->
+    <div class="bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 border-2 border-emerald-500/40 rounded-2xl p-3 flex flex-col justify-between relative overflow-hidden">
+      <div class="inline-block px-2.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold w-fit shadow">
+        4컷: 당일 100% 현금化 🔥
+      </div>
+
+      <div class="my-auto space-y-1.5 text-center">
+        <div class="text-3xl">💵🏢</div>
+        <div class="text-xs font-black text-amber-300">
+          종로 골드랩앤코 (Goldlab & co)
+        </div>
+        <div class="text-[10px] font-semibold text-slate-200 bg-slate-900/90 py-1 px-2 rounded-md border border-emerald-500/30">
+          📍 종로3가역 8번 출구 도보 1분
+        </div>
+      </div>
+
+      <div class="text-[11px] font-black text-emerald-400 text-center">
+        💰 당일 최고 시세 100% 현금 지급!
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function downloadComic() {
+      const element = document.getElementById('comic-canvas');
+      html2canvas(element, { scale: 2 }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'korean_4panel_webtoon_goldlab.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>
