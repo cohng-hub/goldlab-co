@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B 도매센터 | GoldLab & Co. 종로 귀금속 도매 우대 라운지</title>
+  <meta name="description" content="GoldLab & Co. B2B 사업자 전용 도매 우대 시세 및 대량 매입·포상용 골드바 납품 솔루션">
+  
+  <!-- FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css?v=45">
+</head>
+<body>
+
+  <!-- CLEAN SINGLE-TIER LUXURY HEADER -->
+  <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark); box-shadow:0 10px 30px rgba(0,0,0,0.8);">
+    <nav class="navbar" style="padding:0.9rem 0;">
+      <div class="container nav-inner" style="display:flex; justify-content:space-between; align-items:center;">
+        <!-- Brand Logo -->
+        <a href="index.html" class="brand-logo" style="text-decoration:none;">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.65rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </a>
+
+        <!-- Main Navigation Links -->
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 실시간 시세 그래프</a></li>
+          <li><a href="index.html#products" class="nav-link"><i class="fa-solid fa-cube"></i> 골드바 라인업</a></li>
+          <li><a href="index.html#booking" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a></li>
+          <li><a href="wholesale.html" class="nav-link active" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
+        </ul>
+
+        <!-- Right User Action & Booking Button -->
+        <div style="display:flex; align-items:center; gap:0.9rem; white-space:nowrap;">
+          <div id="authTopSlot" style="display:inline-flex; align-items:center; white-space:nowrap;">
+            <!-- JS Injected User Status -->
+          </div>
+          <a href="index.html#booking" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- B2B WHOLESALE CONTENT MAIN -->
+  <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
+
+    <!-- 1. 사업자 비로그인/일반로그인 접속 시 노출되는 깔끔한 B2B 사업자 게이트 카트 (하단 내용 완전 차단) -->
+    <div id="b2bGuardGateCard" style="display:block; background:linear-gradient(135deg, #151824 0%, #0b0c10 100%); border:2px solid var(--border-gold-bright); border-radius:24px; padding:4rem 2.5rem; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.7); max-width:860px; margin:2rem auto;">
+      <div style="width:90px; height:90px; background:rgba(224,184,72,0.12); border:1px solid var(--border-gold-bright); border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.6rem auto;">
+        <i class="fa-solid fa-building-shield text-gold" style="font-size:3.2rem;"></i>
+      </div>
+      
+      <span class="section-badge" style="margin-bottom:1rem; font-size:0.9rem;"><i class="fa-solid fa-lock"></i> B2B BUSINESS ONLY</span>
+      
+      <h2 style="color:var(--text-white); font-size:2.2rem; font-weight:900; margin-bottom:1rem; word-break:keep-all;">
+        B2B 사업자 회원 전용 라운지입니다
+      </h2>
+      
+      <p style="color:var(--text-muted); font-size:1.1rem; line-height:1.75; max-width:650px; margin:0 auto 2.2rem auto; word-break:keep-all;">
+        본 페이지는 사업자등록증이 인증된 B2B 귀금속 소매점 및 기업체 대량 납품 사업자 전용 공간입니다.<br>
+        <strong style="color:var(--gold-light);">사업자 계정으로 로그인</strong> 또는 <strong style="color:var(--gold-light);">사업자 회원가입</strong> 후 실시간 도매 단가표 및 수량 할인표 이용이 가능합니다.
+      </p>
+
+      <div style="display:flex; justify-content:center; gap:1.2rem; flex-wrap:wrap;">
+        <button class="btn btn-gold" onclick="OpenAuthModal('login_biz')" style="padding:1rem 2.2rem; font-size:1.1rem; font-weight:900;">
+          <i class="fa-solid fa-building"></i> B2B 사업자 로그인
+        </button>
+        <button class="btn btn-outline-gold" onclick="OpenAuthModal('signup_biz')" style="padding:1rem 2rem; font-size:1.1rem; font-weight:800;">
+          <i class="fa-solid fa-file-signature"></i> 30초 사업자 회원가입
+        </button>
+      </div>
+    </div>
+
+    <!-- 2. 사업자 계정(BIZ) 로그인 시에만 노출되는 B2B 도매센터 콘텐츠 -->
+    <div id="b2bContentSection" style="display:none;">
+      
+      <!-- B2B Banner -->
+      <div style="background:linear-gradient(135deg, #151824 0%, #0d0f17 100%); border:1px solid rgba(212,175,55,0.35); border-radius:24px; padding:2.5rem; margin-bottom:2.5rem; box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+        <div class="section-badge" style="margin-bottom:1rem;"><i class="fa-solid fa-building-flag"></i> B2B 사업자 회원 우대 라운지</div>
+        <h1 style="font-size:2.2rem; font-weight:800; color:var(--text-white); margin-bottom:0.8rem; word-break:keep-all;">
+          종로 귀금속 도매 우대 시세 및 <span class="gradient-text">대량 대금 결제·납품 솔루션</span>
+        </h1>
+        <p style="color:var(--text-muted); font-size:1.02rem; line-height:1.7; max-width:800px; word-break:keep-all;">
+          GoldLab & Co.는 귀금속 소매점, 감정원, 기업체 포상용 대량 수량 공급 사업자를 위해 당일 최적의 B2B 도매 수수료 할인율과 우선 물량 배정을 제공합니다.
+        </p>
+      </div>
+
+      <!-- B2B Wholesale Table Section -->
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; margin-bottom:2.5rem;">
+        
+        <!-- B2B Wholesale Rate Card -->
+        <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+          <h3 style="color:var(--text-white); font-size:1.3rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.6rem;">
+            <i class="fa-solid fa-coins text-gold"></i> B2B 사업자 당일 특별 도매 시세
+          </h3>
+          <table class="ledger-table" style="width:100%;">
+            <thead>
+              <tr>
+                <th>품목</th>
+                <th>일반 도매가 (돈당)</th>
+                <th>B2B 대량 우대가</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight:700; color:var(--text-white);">24K 순금 골드바 (999.9)</td>
+                <td>825,000 원</td>
+                <td style="color:var(--gold-light); font-weight:800;">821,000 원 (▼4,000원 우대)</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700; color:var(--text-white);">18K 고금 (75.0%)</td>
+                <td>511,600 원</td>
+                <td style="color:var(--gold-light); font-weight:800;">514,000 원 (▲2,400원 매입우대)</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700; color:var(--text-white);">14K 고금 (58.5%)</td>
+                <td>396,800 원</td>
+                <td style="color:var(--gold-light); font-weight:800;">399,000 원 (▲2,200원 매입우대)</td>
+              </tr>
+              <tr>
+                <td style="font-weight:700; color:var(--text-white);">100g 덩어리 순금</td>
+                <td>22,220,000 원</td>
+                <td style="color:var(--gold-light); font-weight:800;">22,050,000 원 (특별할인)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- B2B Volume Discount Table -->
+        <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+          <h3 style="color:var(--text-white); font-size:1.3rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.6rem;">
+            <i class="fa-solid fa-boxes-packing text-gold"></i> 중량 구간별 B2B 수량 할인표
+          </h3>
+          <ul style="list-style:none; padding:0; margin:0; line-height:2.2; font-size:0.95rem; color:var(--text-light);">
+            <li style="border-bottom:1px solid rgba(255,255,255,0.06); padding:0.4rem 0; display:flex; justify-content:space-between;">
+              <span>• 10돈 ~ 50돈 미만</span>
+              <strong style="color:var(--gold-light);">기본 도매가 적용</strong>
+            </li>
+            <li style="border-bottom:1px solid rgba(255,255,255,0.06); padding:0.4rem 0; display:flex; justify-content:space-between;">
+              <span>• 50돈 ~ 100돈 미만</span>
+              <strong style="color:var(--gold-light);">돈당 2,000원 추가 수량 할인</strong>
+            </li>
+            <li style="border-bottom:1px solid rgba(255,255,255,0.06); padding:0.4rem 0; display:flex; justify-content:space-between;">
+              <span>• 100돈 ~ 300돈 미만</span>
+              <strong style="color:var(--gold-light);">돈당 3,500원 추가 수량 할인 + 당일 무료 배송</strong>
+            </li>
+            <li style="padding:0.4rem 0; display:flex; justify-content:space-between;">
+              <span>• 300돈 이상 / 1kg 단위</span>
+              <strong style="color:var(--gold-light);">B2B 전담 매니저 별도 견적 협의</strong>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- B2B Bulk Direct Inquiry Form -->
+      <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:24px; padding:2.2rem;">
+        <h3 style="color:var(--text-white); font-size:1.35rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.6rem;">
+          <i class="fa-solid fa-paper-plane text-gold"></i> B2B 대량 거래 및 도매 견적 문의
+        </h3>
+        <form onsubmit="alert('B2B 도매 견적 문의가 성공적으로 접수되었습니다. 담당 매니저가 30분 이내로 연락드립니다.'); return false;">
+          <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:1.2rem; margin-bottom:1.2rem;">
+            <div class="form-group">
+              <label class="form-label">상호명 (사업자명)</label>
+              <input type="text" class="form-control" placeholder="예: (주)종로골드 주얼리" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">사업자등록번호</label>
+              <input type="text" class="form-control" placeholder="101-86-77777" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">담당자 연락처</label>
+              <input type="tel" class="form-control" placeholder="010-0000-0000" required>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem;">
+            <div class="form-group">
+              <label class="form-label">희망 거래 품목</label>
+              <select class="form-control">
+                <option>24K 프레스 골드바 대량 매입</option>
+                <option>100g 덩어리 금 매입</option>
+                <option>기업 포상용 1돈/3돈 카드 골드바 제작</option>
+                <option>18K/14K 고금 대량 매각</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">목표 수량 / 중량</label>
+              <input type="text" class="form-control" placeholder="예: 50돈 또는 1kg" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem; font-size:1.05rem; font-weight:800;">
+            <i class="fa-solid fa-handshake"></i> B2B 도매 우대 견적 신청하기
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom:1rem;">
+            <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+            <span>GoldLab<span class="gradient-text">&Co.</span></span>
+          </div>
+          <p style="color:var(--text-muted); line-height:1.75;">
+            GoldLab & Co.는 한국표준금시세를 준수하며 투명한 정밀 감정과 안심 보증으로 고객 자산 가치를 최우선으로 생각하는 종로 대표 프리미엄 금 거래소입니다.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="color:var(--text-white); margin-bottom:1.2rem; font-size:1.15rem;">고객 센터 & 운영시간</h4>
+          <p><i class="fa-solid fa-phone text-gold"></i> 대표전화: 1588-GOLD (02-765-GOLD)</p>
+          <p><i class="fa-solid fa-clock text-gold"></i> 평일: 11:00 ~ 18:00</p>
+          <p><i class="fa-solid fa-calendar text-gold"></i> 주말/공휴일: 휴무</p>
+        </div>
+
+        <div>
+          <h4 style="color:var(--text-white); margin-bottom:1.2rem; font-size:1.15rem;">지점 안내</h4>
+          <p>• 종로 본점: 돈화문로6나길 28-12 제일빌딩 307호</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.8rem; margin-top:2rem; font-size:0.88rem; color:var(--text-muted); line-height:1.8;">
+        <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; font-weight:600; color:var(--text-light);">
+          <div style="display:flex; gap:1.4rem; flex-wrap:wrap;">
+            <a href="#" onclick="alert('서비스 이용약관 준비중입니다.'); return false;" style="color:var(--text-light); text-decoration:none;">이용약관</a>
+            <span style="color:rgba(255,255,255,0.2);">|</span>
+            <a href="#" onclick="alert('개인정보 처리방침 안내입니다.'); return false;" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">개인정보 처리방침</a>
+            <span style="color:rgba(255,255,255,0.2);">|</span>
+            <a href="#" onclick="alert('사업자등록정보 및 법인 정보 확인용 링크입니다.'); return false;" style="color:var(--text-light); text-decoration:none;">사업자정보확인</a>
+          </div>
+          <div><i class="fa-solid fa-certificate text-gold"></i> 귀금속 분석 감정원 홀마크 공식 인증업체</div>
+        </div>
+        <p style="margin-bottom:0.3rem;">
+          상호명: GoldLab & Co. (골드랩앤코) | 대표자: OOO | 사업자등록번호: 101-86-99999 | 통신판매업신고: 제 2026-서울종로-0000호
+        </p>
+        <p style="margin-bottom:0.3rem;">
+          소재지: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 개인정보보호책임자: OOO (contact@goldlab.co.kr)
+        </p>
+        <p>© 2026 GoldLab & Co. All Rights Reserved. 본 웹사이트의 모든 시세 및 자산관리 시스템 콘텐츠는 저작권법의 보호를 받습니다.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUTH MODAL WITH INDEPENDENT PERSONAL vs BIZ SIGNUP -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box" style="max-width:540px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; position:absolute; top:1.4rem; left:1.6rem; right:1.6rem; z-index:2;">
+        <button type="button" id="authHeaderBackBtn" onclick="SwitchAuthTab('login')" style="display:none; background:none!important; border:none!important; color:var(--gold-light)!important; font-size:0.95rem; font-weight:700; cursor:pointer; gap:0.4rem; align-items:center;">
+          <i class="fa-solid fa-arrow-left"></i> 뒤로가기
+        </button>
+        <div style="flex:1;"></div>
+        <button class="modal-close" onclick="CloseModal('authModal')" style="position:static;">&times;</button>
+      </div>
+
+      <div class="auth-modal-header" style="margin-top:1rem;">
+        <div class="brand-logo" style="justify-content:center; margin-bottom:0.6rem;">
+          <div class="brand-icon" style="width:38px; height:38px; font-size:1.15rem;"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.5rem;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </div>
+        <p style="font-size:0.92rem; color:var(--text-muted); text-align:center;" id="authModalSubTitle">VIP 회원 전용 자산 관리 서비스</p>
+      </div>
+
+      <!-- 1. LOGIN VIEW -->
+      <div id="authViewLogin">
+        <form onsubmit="HandleUserLogin(event)">
+          <div class="form-group">
+            <label class="form-label">로그인 유형 선택</label>
+            <select class="form-control" id="loginUserTypeSelect">
+              <option value="PERSONAL">👤 일반 회원 로그인 (자산 관리)</option>
+              <option value="BIZ">🏢 사업자 회원 로그인 (B2B 도매 전용)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일 주소)</label>
+            <input type="email" class="form-control" id="loginEmail" placeholder="example@goldlab.co.kr" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.2rem;">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="loginPass" placeholder="••••••••" required>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; font-size:0.92rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; color:var(--text-muted);">
+              <input type="checkbox" id="loginRemember" checked style="accent-color:var(--gold-primary);"> 로그인 상태 유지
+            </label>
+            <button type="button" onclick="SwitchAuthTab('find')" style="background:transparent; border:none; color:var(--gold-light); font-size:0.9rem; cursor:pointer;">아이디 · 비밀번호 찾기</button>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem; font-size:1.05rem;"><i class="fa-solid fa-right-to-bracket"></i> 로그인 하기</button>
+        </form>
+
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.95rem; color:var(--text-muted);">
+          <span>처음 방문하셨나요?</span>
+          <button type="button" onclick="SwitchAuthTab('signup')" style="background:none; border:none; color:var(--gold-light); font-weight:800; cursor:pointer; text-decoration:underline; margin-left:0.5rem;">
+            간편 회원가입 <i class="fa-solid fa-arrow-right-long"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. SIGN UP VIEW (일반 vs 사업자 독립 회원가입 탭) -->
+      <div id="authViewSignup" style="display:none;">
+        
+        <!-- Signup Type Switcher Tabs -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; background:rgba(9,11,16,0.9); padding:0.35rem; border-radius:12px; border:1px solid var(--border-dark); margin-bottom:1.5rem;">
+          <button type="button" id="btnSignupPersonal" onclick="SwitchSignupUserType('PERSONAL')" style="background:var(--gold-gradient); color:#000; font-weight:800; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; font-size:0.92rem;">
+            👤 일반 고객 회원가입
+          </button>
+          <button type="button" id="btnSignupBiz" onclick="SwitchSignupUserType('BIZ')" style="background:transparent; color:var(--text-muted); font-weight:800; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; font-size:0.92rem;">
+            🏢 사업자 회원가입 (B2B)
+          </button>
+        </div>
+
+        <form onsubmit="HandleUserSignup(event)">
+          <!-- BIZ Additional Fields -->
+          <div id="signupBizFields" style="display:none;">
+            <div class="form-group">
+              <label class="form-label text-gold">상호명 (사업자명)</label>
+              <input type="text" class="form-control" id="signupBizName" placeholder="예: (주)종로골드 주얼리">
+            </div>
+            <div class="form-group">
+              <label class="form-label text-gold">사업자등록번호 (10자리)</label>
+              <input type="text" class="form-control" id="signupBizNo" placeholder="101-86-77777">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="signupNameLabel">성함 / 이름</label>
+            <input type="text" class="form-control" id="signupName" placeholder="예: 홍길동" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일 주소)</label>
+            <input type="email" class="form-control" id="signupEmail" placeholder="example@goldlab.co.kr" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="signupPass" placeholder="8자리 이상 입력" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.2rem;">
+            <label class="form-label">휴대폰 번호</label>
+            <input type="tel" class="form-control" id="signupPhone" placeholder="010-1234-5678" required>
+          </div>
+
+          <div style="margin-bottom:1.8rem; font-size:0.88rem; color:var(--text-muted);">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+              <input type="checkbox" required checked style="accent-color:var(--gold-primary);"> [필수] 서비스 이용약관 및 개인정보 처리방침 동의
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem; font-size:1.05rem;"><i class="fa-solid fa-user-plus"></i> 회원가입 완료하기</button>
+        </form>
+
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.95rem; color:var(--text-muted);">
+          <span>이미 계정이 있으신가요?</span>
+          <button type="button" onclick="SwitchAuthTab('login')" style="background:none; border:none; color:var(--gold-light); font-weight:800; cursor:pointer; text-decoration:underline; margin-left:0.5rem;">
+            ← 로그인 화면으로 돌아가기
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. FIND ACCOUNT VIEW -->
+      <div id="authViewFind" style="display:none;">
+        <form onsubmit="HandleFindAccount(event)">
+          <div class="form-group">
+            <label class="form-label">가입된 성함</label>
+            <input type="text" class="form-control" id="findName" placeholder="예: 홍길동" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:2rem;">
+            <label class="form-label">가입 시 입력한 휴대폰 번호</label>
+            <input type="tel" class="form-control" id="findPhone" placeholder="010-1234-5678" required>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem; font-size:1.05rem;"><i class="fa-solid fa-key"></i> 아이디 찾기 / 임시 비밀번호 발송</button>
+        </form>
+
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.95rem;">
+          <button type="button" onclick="SwitchAuthTab('login')" style="background:none; border:none; color:var(--gold-light); font-weight:800; cursor:pointer; text-decoration:underline;">
+            ← 로그인 화면으로 돌아가기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Application JS Script -->
+  <script src="app.js?v=45"></script>
+</body>
+</html>
