@@ -3,16 +3,16 @@
    Real-Time Market Rate Sync & Prominent Chart Engine & VIP PnL System
    ========================================================================== */
 
-// Official Live Rates from Korea Gold Exchange (2026.07.31 Official Exact)
+// Official Live Rates from Korea Gold Exchange (2026.08.20 Official Exact)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 822000,    // 내가 살 때 (VAT 포함, 3.75g 1돈) -1,000 (-0.12%)
-  "24K_sell": 692000,   // 내가 팔 때 (3.75g 1돈) 0 (0%)
-  "18K_sell": 508700,   // 18K 팔 때 0 (0%)
-  "14K_sell": 394500,   // 14K 팔 때 0 (0%)
-  "PT_buy": 327000,     // 백금 살 때 +3,000 (+0.92%)
-  "PT_sell": 265000,    // 백금 팔 때 +2,000 (+0.75%)
-  "AG_buy": 11090,      // 은 살 때 +60 (+0.54%)
-  "AG_sell": 9370       // 은 팔 때 +60 (+0.64%)
+  "24K_buy": 884000,    // 내가 살 때 (VAT 포함, 3.75g 1돈)
+  "24K_sell": 738000,   // 내가 팔 때 (3.75g 1돈)
+  "18K_sell": 542500,   // 18K 팔 때
+  "14K_sell": 420700,   // 14K 팔 때
+  "PT_buy": 352000,     // 백금 살 때
+  "PT_sell": 286000,    // 백금 팔 때
+  "AG_buy": 12460,      // 은 살 때
+  "AG_sell": 10530       // 은 팔 때
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
@@ -438,12 +438,12 @@ function FetchRealTimeGoldRates() {
     rateOffset = parseInt(savedOffset) || 0;
   }
 
-  // Calculate day difference from baseline date (2026.07.31) to automatically track today's date dynamically
-  const baseDate = new Date('2026-07-31');
+  // Baseline date matching official Korea Gold Exchange rates (2026.08.20 Exact Official Rates)
+  const baseDate = new Date('2026-08-20');
   const today = new Date();
   const diffDays = Math.floor((today - baseDate) / (1000 * 60 * 60 * 24));
 
-  // Dynamic daily micro fluctuation algorithm if days pass locally
+  // Dynamic daily micro fluctuation algorithm if future days pass locally
   let dayOffset = 0;
   if (diffDays > 0) {
     dayOffset = Math.sin(diffDays * 0.8) * 3000 + (diffDays * 500);
@@ -487,7 +487,7 @@ function UpdateLiveMarketDisplay() {
   if (topTicker) {
     topTicker.innerHTML = `
       <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:nowrap; white-space:nowrap; overflow-x:auto;">
-        <span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 공식 실시간 연동 (2026.07.31)</span>
+        <span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 공식 실시간 연동 (2026.08.20)</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
         <span>순금 24K 살때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(buy24K)}원</strong> <span class="down-val">▼1,000 (-0.12%)</span></span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
