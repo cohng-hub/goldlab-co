@@ -99,11 +99,11 @@ window.addEventListener('load', () => {
   }
 });
 
-// Real-Time KGE & International Financial Market Sync Engine
+// Real-Time KGE & International Financial Market Sync Engine (Permanent Live Sync)
 async function SyncLiveKGERates() {
   try {
     // 1. Fetch Real-time USD/KRW Exchange Rate
-    const fxRes = await fetch('https://open.er-api.com/v6/latest/USD');
+    const fxRes = await fetch('https://open.er-api.com/v6/latest/USD?t=' + Date.now(), { cache: 'no-store' });
     if (fxRes.ok) {
       const fxData = await fxRes.json();
       const usdKrw = fxData.rates ? fxData.rates.KRW : 1468.5;
@@ -111,15 +111,19 @@ async function SyncLiveKGERates() {
       if (fxEl) fxEl.innerText = `${usdKrw.toFixed(2)} KRW/$`;
     }
 
-    // 2. Fetch Live Korea Gold Exchange Rates via Robust Proxy Fallbacks
+    // 2. Fetch Live Korea Gold Exchange Rates with Cache-Busting & Multi-Proxy Fallbacks
+    const targetUrl = 'https://www.koreagoldx.co.kr/?_t=' + Date.now();
     const proxies = [
-      'https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.koreagoldexchange.co.kr/'),
-      'https://corsproxy.io/?' + encodeURIComponent('https://www.koreagoldexchange.co.kr/')
+      'https://api.allorigins.win/get?disableCache=true&url=' + encodeURIComponent(targetUrl),
+      'https://corsproxy.io/?' + encodeURIComponent(targetUrl)
     ];
 
     for (const pUrl of proxies) {
       try {
-        const kgeRes = await fetch(pUrl);
+        const kgeRes = await fetch(pUrl, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
+        });
         if (kgeRes.ok) {
           let htmlText = '';
           if (pUrl.includes('allorigins')) {
@@ -133,8 +137,10 @@ async function SyncLiveKGERates() {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(htmlText, 'text/html');
             const textContent = htmlDoc.body.innerText;
-            const buyMatch = textContent.match(/순금시세[^\d]*([\d,]{6,7})/);
-            const sellMatch = textContent.match(/내가 팔 때[^\d]*([\d,]{6,7})/);
+
+            // Extract exact rates from koreagoldx.co.kr live DOM
+            const buyMatch = textContent.match(/(?:내가\s*살\s*때|순금시세)[^\d]*([\d,]{6,7})/i);
+            const sellMatch = textContent.match(/내가\s*팔\s*때[^\d]*([\d,]{6,7})/i);
 
             if (buyMatch && buyMatch[1]) {
               const parsedBuy = parseInt(buyMatch[1].replace(/,/g, ''));
@@ -154,7 +160,7 @@ async function SyncLiveKGERates() {
           }
         }
       } catch (err) {
-        // Try next proxy fallback
+        // Fallback to next live proxy stream
       }
     }
   } catch (e) {
