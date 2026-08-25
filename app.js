@@ -3,16 +3,16 @@
    Real-Time Market Rate Sync & Prominent Chart Engine & VIP PnL System
    ========================================================================== */
 
-// Official Live Rates from Korea Gold Exchange (2026.08.25 Official Exact)
+// Official Live Rates from Korea Gold Exchange (2026.08.25 Exact Screenshot Sync)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 919000,    // 내가 살 때 (VAT 포함, 3.75g 1돈)
-  "24K_sell": 765000,   // 내가 팔 때 (3.75g 1돈)
-  "18K_sell": 565200,   // 18K 팔 때
-  "14K_sell": 438300,   // 14K 팔 때
-  "PT_buy": 365000,     // 백금 살 때
-  "PT_sell": 298000,    // 백금 팔 때
-  "AG_buy": 13200,      // 은 살 때
-  "AG_sell": 11100       // 은 팔 때
+  "24K_buy": 908000,    // 내가 살 때 (VAT 포함, 3.75g 1돈)
+  "24K_sell": 758000,   // 내가 팔 때 (3.75g 1돈)
+  "18K_sell": 557200,   // 18K 팔 때
+  "14K_sell": 432100,   // 14K 팔 때
+  "PT_buy": 362000,     // 백금 살 때
+  "PT_sell": 294000,    // 백금 팔 때
+  "AG_buy": 12510,      // 은 살 때
+  "AG_sell": 10570       // 은 팔 때
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
@@ -146,8 +146,8 @@ async function SyncLiveKGERates() {
               const parsedSell = parseInt(sellMatch[1].replace(/,/g, ''));
               if (parsedSell > 400000 && parsedSell < 1200000) {
                 REALTIME_STANDARD_RATES["24K_sell"] = parsedSell;
-                REALTIME_STANDARD_RATES["18K_sell"] = Math.round(parsedSell * 0.7388);
-                REALTIME_STANDARD_RATES["14K_sell"] = Math.round(parsedSell * 0.5729);
+                REALTIME_STANDARD_RATES["18K_sell"] = Math.round(parsedSell * 0.73509);
+                REALTIME_STANDARD_RATES["14K_sell"] = Math.round(parsedSell * 0.57005);
               }
             }
             break;
