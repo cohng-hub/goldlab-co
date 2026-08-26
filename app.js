@@ -5,14 +5,14 @@
 
 // Official Live Rates from Korea Gold Exchange (koreagoldx.co.kr 100% Exact Official Rates)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 914000,    // 내가 살 때 (VAT 포함, 3.75g 1돈)
-  "24K_sell": 764000,   // 내가 팔 때 (금방금방 앱 기준 / 고금 매입가, 3.75g 1돈)
-  "18K_sell": 561600,   // 18K 팔 때 (제품시세적용, 3.75g 1돈)
-  "14K_sell": 435500,   // 14K 팔 때 (제품시세적용, 3.75g 1돈)
-  "PT_buy": 364000,     // 백금 살 때 (3.75g 1돈)
-  "PT_sell": 295000,    // 백금 팔 때 (자사백금기준, 3.75g 1돈)
-  "AG_buy": 12790,      // 은 살 때 (자사실버바기준, 3.75g 1돈)
-  "AG_sell": 10810      // 은 팔 때 (자사실버바기준, 3.75g 1돈)
+  "24K_buy": 914000,
+  "24K_sell": 764000,
+  "18K_sell": 561600,
+  "14K_sell": 435500,
+  "PT_buy": 364000,
+  "PT_sell": 295000,
+  "AG_buy": 12790,
+  "AG_sell": 10810
 };
 
 let REALTIME_RATE_CHANGES = {

@@ -1,0 +1,35 @@
+name: Daily Korea Gold Exchange Rates Auto-Sync
+
+on:
+  schedule:
+    # 1. Every day at 10:00 AM KST (01:00 UTC)
+    - cron: '0 1 * * *'
+    # 2. Every day at 03:00 PM KST (06:00 UTC)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger via GitHub Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  sync-rates:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Gold Rate Sync Script
+        run: node scripts/sync-kge-rates.js
+
+      - name: Commit and Push Updated Rates
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action (GoldLab AutoSync)"
+          git add app.js index.html wholesale.html mypage.html
+          git diff --quiet && git diff --staged --quiet || (git commit -m "[Auto-Sync] Update Korea Gold Exchange official rates" && git push)
