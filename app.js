@@ -3,20 +3,35 @@
    Real-Time Market Rate Sync & Prominent Chart Engine & VIP PnL System
    ========================================================================== */
 
-// Official Live Rates from Korea Gold Exchange (2026.08.25 Exact Screenshot Sync)
+// Official Live Rates from Korea Gold Exchange (koreagoldx.co.kr 100% Exact Official Rates)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 908000,    // 내가 살 때 (VAT 포함, 3.75g 1돈)
-  "24K_sell": 758000,   // 내가 팔 때 (3.75g 1돈)
-  "18K_sell": 557200,   // 18K 팔 때
-  "14K_sell": 432100,   // 14K 팔 때
-  "PT_buy": 362000,     // 백금 살 때
-  "PT_sell": 294000,    // 백금 팔 때
-  "AG_buy": 12510,      // 은 살 때
-  "AG_sell": 10570       // 은 팔 때
+  "24K_buy": 914000,    // 내가 살 때 (VAT 포함, 3.75g 1돈)
+  "24K_sell": 764000,   // 내가 팔 때 (금방금방 앱 기준 / 고금 매입가, 3.75g 1돈)
+  "18K_sell": 561600,   // 18K 팔 때 (제품시세적용, 3.75g 1돈)
+  "14K_sell": 435500,   // 14K 팔 때 (제품시세적용, 3.75g 1돈)
+  "PT_buy": 364000,     // 백금 살 때 (3.75g 1돈)
+  "PT_sell": 295000,    // 백금 팔 때 (자사백금기준, 3.75g 1돈)
+  "AG_buy": 12790,      // 은 살 때 (자사실버바기준, 3.75g 1돈)
+  "AG_sell": 10810      // 은 팔 때 (자사실버바기준, 3.75g 1돈)
+};
+
+let REALTIME_RATE_CHANGES = {
+  "24K_buy_diff": 7000,
+  "24K_buy_per": 0.77,
+  "24K_sell_diff": 5000,
+  "24K_sell_per": 0.65,
+  "18K_sell_diff": 3700,
+  "18K_sell_per": 0.66,
+  "14K_sell_diff": 2800,
+  "14K_sell_per": 0.64,
+  "PT_sell_diff": 4000,
+  "PT_sell_per": 1.36,
+  "AG_sell_diff": 260,
+  "AG_sell_per": 2.41,
+  "date": "2026.08.26"
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
-let rateOffset = 0;
 let currentUser = null;
 let priceChartInstance = null;
 let activeMetalKey = '24K';
@@ -71,6 +86,7 @@ let myTransactions = [];
 
 // Initialize App on DOM Load
 document.addEventListener('DOMContentLoaded', () => {
+  try { localStorage.removeItem('goldlab_rate_offset'); } catch (e) {}
   try { LoadAuthState(); } catch (e) { console.error('LoadAuthState error:', e); }
   try { LoadMyTransactions(); } catch (e) { console.error('LoadMyTransactions error:', e); }
   try { LoadBookedSlots(); } catch (e) { console.error('LoadBookedSlots error:', e); }
@@ -99,75 +115,113 @@ window.addEventListener('load', () => {
   }
 });
 
-// Real-Time KGE & International Financial Market Sync Engine (Permanent Live Sync)
+// Real-Time KGE & International Financial Market Sync Engine (Official Live Sync)
 async function SyncLiveKGERates() {
   try {
     // 1. Fetch Real-time USD/KRW Exchange Rate
-    const fxRes = await fetch('https://open.er-api.com/v6/latest/USD?t=' + Date.now(), { cache: 'no-store' });
-    if (fxRes.ok) {
-      const fxData = await fxRes.json();
-      const usdKrw = fxData.rates ? fxData.rates.KRW : 1468.5;
-      const fxEl = document.getElementById('spotFxVal');
-      if (fxEl) fxEl.innerText = `${usdKrw.toFixed(2)} KRW/$`;
+    try {
+      const fxRes = await fetch('https://open.er-api.com/v6/latest/USD?t=' + Date.now(), { cache: 'no-store' });
+      if (fxRes.ok) {
+        const fxData = await fxRes.json();
+        const usdKrw = fxData.rates ? fxData.rates.KRW : 1468.5;
+        const fxEl = document.getElementById('spotFxVal');
+        if (fxEl) fxEl.innerText = `${usdKrw.toFixed(2)} KRW/$`;
+      }
+    } catch (e) {
+      // Exchange rate fallback
     }
 
-    // 2. Fetch Live Korea Gold Exchange Rates with Cache-Busting & Multi-Proxy Fallbacks
-    const targetUrl = 'https://www.koreagoldx.co.kr/?_t=' + Date.now();
-    const proxies = [
-      'https://api.allorigins.win/get?disableCache=true&url=' + encodeURIComponent(targetUrl),
-      'https://corsproxy.io/?' + encodeURIComponent(targetUrl)
+    // 2. Fetch Live Korea Gold Exchange Official API (/api/main or /api/gold-rates)
+    const endpoints = [
+      '/api/gold-rates', // 1st Priority: Local server proxy
+      'https://koreagoldx.co.kr/api/main', // 2nd Priority: Direct KGE API
+      'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://koreagoldx.co.kr/api/main'),
+      'https://corsproxy.io/?' + encodeURIComponent('https://koreagoldx.co.kr/api/main')
     ];
 
-    for (const pUrl of proxies) {
+    let fetchedData = null;
+
+    for (const url of endpoints) {
       try {
-        const kgeRes = await fetch(pUrl, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate', 'Pragma': 'no-cache' }
-        });
-        if (kgeRes.ok) {
-          let htmlText = '';
-          if (pUrl.includes('allorigins')) {
-            const data = await kgeRes.json();
-            htmlText = data ? data.contents || '' : '';
-          } else {
-            htmlText = await kgeRes.text();
-          }
+        const fetchOptions = {
+          method: url.startsWith('/') || url.includes('koreagoldx') ? 'POST' : 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          },
+          cache: 'no-store'
+        };
 
-          if (htmlText) {
-            const parser = new DOMParser();
-            const htmlDoc = parser.parseFromString(htmlText, 'text/html');
-            const textContent = htmlDoc.body.innerText;
+        if (url.startsWith('/') || url.includes('koreagoldx.co.kr/api/main')) {
+          fetchOptions.body = JSON.stringify({});
+        }
 
-            // Extract exact rates from koreagoldx.co.kr live DOM
-            const buyMatch = textContent.match(/(?:내가\s*살\s*때|순금시세)[^\d]*([\d,]{6,7})/i);
-            const sellMatch = textContent.match(/내가\s*팔\s*때[^\d]*([\d,]{6,7})/i);
-
-            if (buyMatch && buyMatch[1]) {
-              const parsedBuy = parseInt(buyMatch[1].replace(/,/g, ''));
-              if (parsedBuy > 500000 && parsedBuy < 1500000) {
-                REALTIME_STANDARD_RATES["24K_buy"] = parsedBuy;
-              }
-            }
-            if (sellMatch && sellMatch[1]) {
-              const parsedSell = parseInt(sellMatch[1].replace(/,/g, ''));
-              if (parsedSell > 400000 && parsedSell < 1200000) {
-                REALTIME_STANDARD_RATES["24K_sell"] = parsedSell;
-                REALTIME_STANDARD_RATES["18K_sell"] = Math.round(parsedSell * 0.73509);
-                REALTIME_STANDARD_RATES["14K_sell"] = Math.round(parsedSell * 0.57005);
-              }
-            }
+        const res = await fetch(url, fetchOptions);
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.officialPrice4 && json.officialPrice4.s_pure) {
+            fetchedData = json;
             break;
           }
         }
       } catch (err) {
-        // Fallback to next live proxy stream
+        // Try next fallback endpoint
       }
     }
+
+    if (fetchedData && fetchedData.officialPrice4) {
+      const p = fetchedData.officialPrice4;
+      REALTIME_STANDARD_RATES["24K_buy"] = Number(p.s_pure) || REALTIME_STANDARD_RATES["24K_buy"];
+      REALTIME_STANDARD_RATES["24K_sell"] = Number(p.p_pure) || REALTIME_STANDARD_RATES["24K_sell"];
+      REALTIME_STANDARD_RATES["18K_sell"] = Number(p.p_18k) || REALTIME_STANDARD_RATES["18K_sell"];
+      REALTIME_STANDARD_RATES["14K_sell"] = Number(p.p_14k) || REALTIME_STANDARD_RATES["14K_sell"];
+      REALTIME_STANDARD_RATES["PT_buy"] = Number(p.s_white) || REALTIME_STANDARD_RATES["PT_buy"];
+      REALTIME_STANDARD_RATES["PT_sell"] = Number(p.p_white) || REALTIME_STANDARD_RATES["PT_sell"];
+      REALTIME_STANDARD_RATES["AG_buy"] = Number(p.s_silver) || REALTIME_STANDARD_RATES["AG_buy"];
+      REALTIME_STANDARD_RATES["AG_sell"] = Number(p.p_silver) || REALTIME_STANDARD_RATES["AG_sell"];
+
+      REALTIME_RATE_CHANGES = {
+        "24K_buy_diff": p.turm_s_pure || 0,
+        "24K_buy_per": p.per_s_pure || 0,
+        "24K_sell_diff": p.turm_p_pure || 0,
+        "24K_sell_per": p.per_p_pure || 0,
+        "18K_sell_diff": p.turm_p_18k || 0,
+        "18K_sell_per": p.per_p_18k || 0,
+        "14K_sell_diff": p.turm_p_14k || 0,
+        "14K_sell_per": p.per_p_14k || 0,
+        "PT_sell_diff": p.turm_p_white || 0,
+        "PT_sell_per": p.per_p_white || 0,
+        "AG_sell_diff": p.turm_p_silver || 0,
+        "AG_sell_per": p.per_p_silver || 0,
+        "date": p.date ? p.date.substring(0, 10).replace(/-/g, '.') : new Date().toISOString().substring(0, 10).replace(/-/g, '.')
+      };
+
+      // Save official live sync data to cache
+      localStorage.setItem('goldlab_kge_live_cache', JSON.stringify({
+        rates: REALTIME_STANDARD_RATES,
+        changes: REALTIME_RATE_CHANGES,
+        timestamp: Date.now()
+      }));
+
+      currentRates = { ...REALTIME_STANDARD_RATES };
+    }
   } catch (e) {
-    console.log('[GoldLab Engine] Live KGE Auto-Sync active.');
+    console.log('[GoldLab Engine] Live KGE Auto-Sync fallback maintained.');
   }
 
   UpdateLiveMarketDisplay();
+}
+
+// Helper: Format Diff Badges (▲/▼/보합)
+function formatDiffBadge(diff, per) {
+  if (diff > 0) {
+    return `<span class="up-val">▲${formatWon(Math.abs(diff))} (+${per}%)</span>`;
+  } else if (diff < 0) {
+    return `<span class="down-val">▼${formatWon(Math.abs(diff))} (-${Math.abs(per)}%)</span>`;
+  } else {
+    return `<span style="color:var(--text-muted); font-weight:700;">보합 (0%)</span>`;
+  }
 }
 
 // Helper: Format Number
@@ -455,44 +509,21 @@ function CheckWholesaleAccess() {
 // 2. Real-Time Rate Sync & Prominent Chart Engine
 // --------------------------------------------------------------------------
 function FetchRealTimeGoldRates() {
-  const savedOffset = localStorage.getItem('goldlab_rate_offset');
-  if (savedOffset !== null) {
-    rateOffset = parseInt(savedOffset) || 0;
+  // Load cached real official rates from localStorage if available
+  const cachedRates = localStorage.getItem('goldlab_kge_live_cache');
+  if (cachedRates) {
+    try {
+      const parsed = JSON.parse(cachedRates);
+      if (parsed.rates && parsed.rates["24K_buy"]) {
+        REALTIME_STANDARD_RATES = { ...parsed.rates };
+        if (parsed.changes) REALTIME_RATE_CHANGES = { ...parsed.changes };
+      }
+    } catch (e) {
+      console.warn('Cached rates parse error:', e);
+    }
   }
 
-  // Baseline date matching official Korea Gold Exchange rates (2026.08.20 Exact Official Rates)
-  const baseDate = new Date('2026-08-20');
-  const today = new Date();
-  const diffDays = Math.floor((today - baseDate) / (1000 * 60 * 60 * 24));
-
-  // Dynamic daily micro fluctuation algorithm if future days pass locally
-  let dayOffset = 0;
-  if (diffDays > 0) {
-    dayOffset = Math.sin(diffDays * 0.8) * 3000 + (diffDays * 500);
-  }
-
-  const totalOffset = rateOffset + Math.round(dayOffset);
-
-  const sell24K = REALTIME_STANDARD_RATES["24K_sell"] + totalOffset;
-  const buy24K = REALTIME_STANDARD_RATES["24K_buy"] + totalOffset;
-  const sell18K = REALTIME_STANDARD_RATES["18K_sell"] + Math.round(totalOffset * 0.75);
-  const sell14K = REALTIME_STANDARD_RATES["14K_sell"] + Math.round(totalOffset * 0.585);
-  const sellPT = REALTIME_STANDARD_RATES["PT_sell"] + Math.round(totalOffset * 0.45);
-  const sellAG = REALTIME_STANDARD_RATES["AG_sell"] + Math.round(totalOffset * 0.015);
-  const buyPT = REALTIME_STANDARD_RATES["PT_buy"] + totalOffset;
-  const buyAG = REALTIME_STANDARD_RATES["AG_buy"] + totalOffset;
-
-  currentRates = {
-    "24K_buy": buy24K,
-    "24K_sell": sell24K,
-    "18K_sell": sell18K,
-    "14K_sell": sell14K,
-    "PT_buy": buyPT,
-    "PT_sell": sellPT,
-    "AG_buy": buyAG,
-    "AG_sell": sellAG
-  };
-
+  currentRates = { ...REALTIME_STANDARD_RATES };
   UpdateLiveMarketDisplay();
 }
 
@@ -504,27 +535,35 @@ function UpdateLiveMarketDisplay() {
   const sellPT = currentRates["PT_sell"];
   const sellAG = currentRates["AG_sell"];
 
-  // Top Ticker (2-Line Neat Layout with Exact KGE Rates)
+  const chg24Buy = formatDiffBadge(REALTIME_RATE_CHANGES["24K_buy_diff"], REALTIME_RATE_CHANGES["24K_buy_per"]);
+  const chg24Sell = formatDiffBadge(REALTIME_RATE_CHANGES["24K_sell_diff"], REALTIME_RATE_CHANGES["24K_sell_per"]);
+  const chg18Sell = formatDiffBadge(REALTIME_RATE_CHANGES["18K_sell_diff"], REALTIME_RATE_CHANGES["18K_sell_per"]);
+  const chg14Sell = formatDiffBadge(REALTIME_RATE_CHANGES["14K_sell_diff"], REALTIME_RATE_CHANGES["14K_sell_per"]);
+  const chgPtSell = formatDiffBadge(REALTIME_RATE_CHANGES["PT_sell_diff"], REALTIME_RATE_CHANGES["PT_sell_per"]);
+  const chgAgSell = formatDiffBadge(REALTIME_RATE_CHANGES["AG_sell_diff"], REALTIME_RATE_CHANGES["AG_sell_per"]);
+  const syncDate = REALTIME_RATE_CHANGES.date || '2026.08.26';
+
+  // Top Ticker (2-Line Neat Layout with Exact KGE Rates & Real Diffs)
   const topTicker = document.getElementById('topTickerContent');
   if (topTicker) {
     topTicker.innerHTML = `
       <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:nowrap; white-space:nowrap; overflow-x:auto;">
-        <span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 공식 실시간 연동 (2026.08.20)</span>
+        <span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 공식 실시간 연동 (${syncDate})</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>순금 24K 살때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(buy24K)}원</strong> <span class="down-val">▼1,000 (-0.12%)</span></span>
+        <span>순금 24K 살때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(buy24K)}원</strong> ${chg24Buy}</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>순금 24K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell24K)}원</strong> <span style="color:var(--text-muted); font-weight:700;">보합 (0%)</span></span>
+        <span>순금 24K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell24K)}원</strong> ${chg24Sell}</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>18K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell18K)}원</strong> <span style="color:var(--text-muted); font-weight:700;">보합 (0%)</span></span>
+        <span>18K 팔때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(sell18K)}원</strong> ${chg18Sell}</span>
       </div>
       <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:nowrap; white-space:nowrap; overflow-x:auto; color:var(--text-muted);">
-        <span>14K 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sell14K)}원</strong> <span style="color:var(--text-muted); font-weight:700;">보합 (0%)</span></span>
+        <span>14K 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sell14K)}원</strong> ${chg14Sell}</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>백금 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellPT)}원</strong> <span class="up-val">▲2,000 (+0.75%)</span></span>
+        <span>백금 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellPT)}원</strong> ${chgPtSell}</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span>은 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellAG)}원</strong> <span class="up-val">▲60 (+0.64%)</span></span>
+        <span>은 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellAG)}원</strong> ${chgAgSell}</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span style="font-size:0.75rem; color:var(--gold-light);">(VAT포함 3.75g 1돈 기준 한국금거래소 당일 고시 시세)</span>
+        <span style="font-size:0.75rem; color:var(--gold-light);">(VAT포함 3.75g 1돈 기준 한국금거래소 당일 공식 고시 시세)</span>
       </div>
     `;
   }
@@ -547,7 +586,7 @@ function UpdateLiveMarketDisplay() {
   if (elSell18k) elSell18k.innerHTML = `${formatWon(sell18K)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
   if (elSell14k) elSell14k.innerHTML = `${formatWon(sell14K)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
   if (elSellPt) elSellPt.innerHTML = `${formatWon(sellPT)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
-  if (elSellAg) elSellAg.innerHTML = `${formatWon(sellAG)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/g</span>`;
+  if (elSellAg) elSellAg.innerHTML = `${formatWon(sellAG)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
 
   // Live Timestamp
   const now = new Date();
@@ -556,6 +595,25 @@ function UpdateLiveMarketDisplay() {
   if (timestampEl) {
     timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 실시간 수신중 (${timeStr})`;
   }
+
+  // B2B Wholesale Table Rates Update (if present)
+  const elB2b24k = document.getElementById('b2bRate24k');
+  const elB2b24kSpecial = document.getElementById('b2bRate24kSpecial');
+  const elB2b18k = document.getElementById('b2bRate18k');
+  const elB2b18kSpecial = document.getElementById('b2bRate18kSpecial');
+  const elB2b14k = document.getElementById('b2bRate14k');
+  const elB2b14kSpecial = document.getElementById('b2bRate14kSpecial');
+  const elB2b100g = document.getElementById('b2bRate100g');
+  const elB2b100gSpecial = document.getElementById('b2bRate100gSpecial');
+
+  if (elB2b24k) elB2b24k.innerText = `${formatWon(buy24K)} 원`;
+  if (elB2b24kSpecial) elB2b24kSpecial.innerText = `${formatWon(buy24K - 5000)} 원 (▼5,000원 우대)`;
+  if (elB2b18k) elB2b18k.innerText = `${formatWon(sell18K)} 원`;
+  if (elB2b18kSpecial) elB2b18kSpecial.innerText = `${formatWon(sell18K + 2900)} 원 (▲2,900원 매입우대)`;
+  if (elB2b14k) elB2b14k.innerText = `${formatWon(sell14K)} 원`;
+  if (elB2b14kSpecial) elB2b14kSpecial.innerText = `${formatWon(sell14K + 2500)} 원 (▲2,500원 매입우대)`;
+  if (elB2b100g) elB2b100g.innerText = `${formatWon(Math.round(buy24K * 26.6667))} 원`;
+  if (elB2b100gSpecial) elB2b100gSpecial.innerText = `${formatWon(Math.round((buy24K - 5000) * 26.6667))} 원 (대량특별할인)`;
 
   RenderMetalSelectorCards();
   UpdateProductPrices(buy24K);
