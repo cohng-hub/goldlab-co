@@ -509,17 +509,22 @@ function CheckWholesaleAccess() {
 // 2. Real-Time Rate Sync & Prominent Chart Engine
 // --------------------------------------------------------------------------
 function FetchRealTimeGoldRates() {
-  // Load cached real official rates from localStorage if available
+  // Load cached real official rates from localStorage ONLY if it is newer or valid for today
   const cachedRates = localStorage.getItem('goldlab_kge_live_cache');
   if (cachedRates) {
     try {
       const parsed = JSON.parse(cachedRates);
-      if (parsed.rates && parsed.rates["24K_buy"]) {
+      const isDateValid = parsed.changes && parsed.changes.date && parsed.changes.date >= REALTIME_RATE_CHANGES.date;
+      const isFresh = parsed.timestamp && (Date.now() - parsed.timestamp < 4 * 60 * 60 * 1000);
+      if (isDateValid && isFresh && parsed.rates && parsed.rates["24K_buy"]) {
         REALTIME_STANDARD_RATES = { ...parsed.rates };
         if (parsed.changes) REALTIME_RATE_CHANGES = { ...parsed.changes };
+      } else {
+        localStorage.removeItem('goldlab_kge_live_cache');
       }
     } catch (e) {
       console.warn('Cached rates parse error:', e);
+      localStorage.removeItem('goldlab_kge_live_cache');
     }
   }
 
