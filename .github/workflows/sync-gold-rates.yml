@@ -2,10 +2,10 @@ name: Daily Korea Gold Exchange Rates Auto-Sync
 
 on:
   schedule:
-    # 1. Every day at 10:00 AM KST (01:00 UTC)
-    - cron: '0 1 * * *'
-    # 2. Every day at 03:00 PM KST (06:00 UTC)
-    - cron: '0 6 * * *'
+    # 1. Morning Market Opening Window (10:15, 10:35, 10:55, 11:15, 11:35 KST / 01:15, 01:35, 01:55, 02:15, 02:35 UTC)
+    - cron: '15,35,55 1,2 * * 1-6'
+    # 2. Afternoon & Closing Market Window (12:00 ~ 17:30 KST, Every 30 mins / 03:00 ~ 08:30 UTC)
+    - cron: '0,30 3-8 * * 1-6'
   workflow_dispatch: # Allow manual trigger via GitHub Actions tab
 
 permissions:
