@@ -1,9 +1,11 @@
 /**
  * Korea Gold Exchange (koreagoldx.co.kr) Real-Time Rate Sync Engine
+ * High-resiliency script for GitHub Actions & Local execution
  * Automatically fetches official exchange rates and updates app.js & index.html
  */
 
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
@@ -13,19 +15,25 @@ const INDEX_HTML_PATH = path.join(ROOT_DIR, 'index.html');
 const WHOLESALE_HTML_PATH = path.join(ROOT_DIR, 'wholesale.html');
 const MYPAGE_HTML_PATH = path.join(ROOT_DIR, 'mypage.html');
 
-function fetchKGERates() {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function requestKGEApi(timeoutMs = 25000) {
   return new Promise((resolve, reject) => {
     const postData = JSON.stringify({});
     const req = https.request('https://koreagoldx.co.kr/api/main', {
       method: 'POST',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
         'Content-Type': 'application/json;charset=UTF-8',
+        'Accept': 'application/json, text/plain, */*',
         'Origin': 'https://koreagoldx.co.kr',
         'Referer': 'https://koreagoldx.co.kr/',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
         'Content-Length': Buffer.byteLength(postData)
       },
-      timeout: 10000
+      timeout: timeoutMs
     }, (res) => {
       let body = '';
       res.on('data', chunk => body += chunk);
@@ -35,7 +43,7 @@ function fetchKGERates() {
         }
         try {
           const json = JSON.parse(body);
-          if (!json.officialPrice4) {
+          if (!json.officialPrice4 || !json.officialPrice4.s_pure) {
             return reject(new Error('KGE API response missing officialPrice4 field'));
           }
           resolve(json.officialPrice4);
@@ -48,7 +56,7 @@ function fetchKGERates() {
     req.on('error', reject);
     req.on('timeout', () => {
       req.destroy();
-      reject(new Error('KGE API request timed out'));
+      reject(new Error(`KGE API request timed out after ${timeoutMs}ms`));
     });
 
     req.write(postData);
@@ -56,10 +64,30 @@ function fetchKGERates() {
   });
 }
 
+async function fetchWithRetries(maxRetries = 4) {
+  let lastError = null;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    console.log(`📡 [GoldLab Sync] Connection Attempt ${attempt}/${maxRetries}...`);
+    try {
+      const data = await requestKGEApi(25000);
+      return data;
+    } catch (err) {
+      lastError = err;
+      console.warn(`⚠️ [GoldLab Sync] Attempt ${attempt} failed: ${err.message}`);
+      if (attempt < maxRetries) {
+        const waitTime = attempt * 2000;
+        console.log(`⏳ Waiting ${waitTime / 1000}s before next attempt...`);
+        await sleep(waitTime);
+      }
+    }
+  }
+  throw lastError;
+}
+
 async function main() {
   console.log('🔄 [GoldLab Sync] Fetching Korea Gold Exchange official rates...');
   try {
-    const p = await fetchKGERates();
+    const p = await fetchWithRetries(4);
     console.log('✅ [GoldLab Sync] Successfully fetched rates from KGE:', {
       date: p.date,
       s_pure: p.s_pure,
