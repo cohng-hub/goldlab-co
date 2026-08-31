@@ -37,11 +37,14 @@ async function fetchKGEWithFetch(timeoutMs = 15000) {
 
     clearTimeout(timeoutId);
 
+    const rawText = await res.text();
+    console.log(`[Diagnostic] HTTP Status: ${res.status}, Body length: ${rawText.length}, Sample: ${rawText.substring(0, 200)}`);
+
     if (!res.ok) {
-      throw new Error(`KGE API responded with HTTP status ${res.status}`);
+      throw new Error(`KGE API responded with HTTP status ${res.status}: ${rawText.substring(0, 100)}`);
     }
 
-    const json = await res.json();
+    const json = JSON.parse(rawText);
     if (!json.officialPrice4 || !json.officialPrice4.s_pure) {
       throw new Error('KGE API response is missing officialPrice4 data');
     }
@@ -49,6 +52,7 @@ async function fetchKGEWithFetch(timeoutMs = 15000) {
     return json.officialPrice4;
   } catch (err) {
     clearTimeout(timeoutId);
+    console.error(`[Diagnostic] Fetch Catch Error: ${err.name} - ${err.message}`);
     throw err;
   }
 }
