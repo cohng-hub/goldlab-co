@@ -7,6 +7,10 @@ on:
     # 2. Afternoon & Closing Market Window (13:00 ~ 18:00 KST, Every 30 mins / 04:00 ~ 09:00 UTC)
     - cron: '*/30 4-9 * * 1-6'
   workflow_dispatch: # Allow manual trigger via GitHub Actions tab
+  push:
+    paths:
+      - '.github/workflows/sync-gold-rates.yml'
+      - 'scripts/sync-kge-rates.js'
 
 permissions:
   contents: write
