@@ -1,12 +1,10 @@
 @echo off
-chcp 65001 > nul
 title 골드랩 - 한국금거래소 공식 시세 즉시 동기화
 echo ========================================================
 echo   [골드랩] 한국금거래소 공식 실시간 시세 동기화 시작...
 echo ========================================================
 echo.
-cd /d "%~dp0"
-node scripts\sync-and-push.js
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Set-Location 'c:\Users\WD\Desktop\작업용\ju\골드랩 작업'; node scripts\sync-and-push.js"
 echo.
 echo ========================================================
 echo   동기화 작업이 완료되었습니다. (로그: scripts\sync-log.txt)
