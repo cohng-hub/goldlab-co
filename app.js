@@ -1174,6 +1174,53 @@ function AddDemoTestMember() {
   alert(`테스트 회원 [${demoUser.name} / 24K ${weight}돈 등록]이 성공적으로 생성되었습니다!`);
 }
 
+function DeleteMasterMember(memberId, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  const members = GetMasterMembersDB();
+  const target = members.find(m => m.id === memberId);
+  const targetName = target ? target.name : '해당 회원';
+
+  if (!confirm(`[회원 삭제 확인]\n'${targetName}' 회원을 명단에서 완전히 삭제하시겠습니까?\n해당 회원의 금 자산 거래 장부도 함께 삭제됩니다.`)) {
+    return;
+  }
+
+  const updated = members.filter(m => m.id !== memberId);
+  SaveMasterMembersDB(updated);
+  localStorage.setItem('goldlab_samples_cleared', 'true');
+
+  if (currentInspectingMemberId === memberId) {
+    CloseModal('masterMemberLedgerModal');
+  }
+
+  RenderMasterDashboard();
+  alert(`'${targetName}' 회원이 성공적으로 삭제되었습니다.`);
+}
+
+function DeleteInspectedMember() {
+  if (!currentInspectingMemberId) return;
+  DeleteMasterMember(currentInspectingMemberId);
+}
+
+function ClearAllSampleMembers() {
+  const members = GetMasterMembersDB();
+  if (members.length === 0) {
+    alert('현재 등록된 회원이 없습니다.');
+    return;
+  }
+
+  if (!confirm(`[전체 명단 비우기]\n현재 등록된 모든 회원(${members.length}명) 및 샘플 데이터를 완전히 삭제하시겠습니까?\n\n삭제 후에는 실제 가입하는 고객만 깨끗하게 표시됩니다.`)) {
+    return;
+  }
+
+  SaveMasterMembersDB([]);
+  localStorage.setItem('goldlab_samples_cleared', 'true');
+  RenderMasterDashboard();
+  alert('모든 회원 및 샘플 데이터가 삭제되었습니다.\n이제 실제 신규 회원만 깔끔하게 등록됩니다.');
+}
+
 function OpenMyPageOrLogin(e) {
   if (!currentUser) {
     if (e) e.preventDefault();
