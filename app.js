@@ -1923,6 +1923,7 @@ function LoadMyTransactions() {
 
 function SaveMyTransactions() {
   localStorage.setItem('goldlab_my_transactions_v5', JSON.stringify(myTransactions));
+  SyncUserTransactionsToMasterDB();
 }
 
 let currentLedgerTab = 'BUY';
