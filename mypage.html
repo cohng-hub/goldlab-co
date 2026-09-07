@@ -175,8 +175,9 @@
             <option value="RATE_DESC">수익률 높은순</option>
           </select>
         </div>
-        <div style="display:flex; gap:0.6rem;">
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
           <button class="btn btn-sm btn-outline-gold" onclick="AddDemoTestMember()"><i class="fa-solid fa-user-plus"></i> 테스트 회원 추가</button>
+          <button class="btn btn-sm" onclick="ClearAllSampleMembers()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:var(--pnl-minus); font-weight:800; border-radius:10px; padding:0.5rem 1rem; cursor:pointer;"><i class="fa-solid fa-trash-can"></i> 샘플 데이터 전체 비우기</button>
         </div>
       </div>
 
@@ -443,9 +444,10 @@
             <span><i class="fa-solid fa-calendar text-gold"></i> 가입일: <span id="inspectMemberJoinDate">2026.08.15</span></span>
           </div>
         </div>
-        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap; align-items:center;">
           <a id="inspectCallBtn" href="tel:" class="btn btn-gold btn-sm"><i class="fa-solid fa-phone"></i> 고객 상담 전화</a>
           <a id="inspectSmsBtn" href="sms:" class="btn btn-outline-gold btn-sm"><i class="fa-solid fa-comment-sms"></i> 문자 발송</a>
+          <button type="button" class="btn btn-sm" onclick="DeleteInspectedMember()" style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.35); color:var(--pnl-minus); font-weight:800; border-radius:10px;"><i class="fa-solid fa-trash-can"></i> 회원 삭제</button>
         </div>
       </div>
 
@@ -489,7 +491,7 @@
   </div>
 
   <!-- Application JS Script -->
-  <script src="app.js?v=202609070642"></script>
+  <script src="app.js?v=202609070655"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Direct Auth Guard for MyPage

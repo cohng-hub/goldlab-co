@@ -244,11 +244,16 @@ let currentMasterView = 'ADMIN';
 let currentInspectingMemberId = null;
 
 function GetMasterMembersDB() {
+  const cleared = localStorage.getItem('goldlab_samples_cleared');
   const stored = localStorage.getItem('goldlab_master_members_db_v1');
-  if (stored) {
+  if (stored !== null) {
     try {
       return JSON.parse(stored);
     } catch(e) { console.error('Master DB parse error:', e); }
+  }
+
+  if (cleared === 'true') {
+    return [];
   }
 
   // Pre-populated realistic initial VIP and B2B members for immediate testing
