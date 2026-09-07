@@ -235,12 +235,166 @@ function ToggleMobileMenu() {
 }
 
 // --------------------------------------------------------------------------
-// 1. Auth & Session Management System
+// 1. Auth & Master Admin CRM System
 // --------------------------------------------------------------------------
+const MASTER_EMAIL = 'goldlabnco@naver.com';
+const MASTER_PASS = 'usmpik201663';
+
+let currentMasterView = 'ADMIN';
+let currentInspectingMemberId = null;
+
+function GetMasterMembersDB() {
+  const stored = localStorage.getItem('goldlab_master_members_db_v1');
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch(e) { console.error('Master DB parse error:', e); }
+  }
+
+  // Pre-populated realistic initial VIP and B2B members for immediate testing
+  const initialMembers = [
+    {
+      id: 'usr_gold_01',
+      name: '김골드',
+      email: 'gold@goldlab.co.kr',
+      phone: '010-8888-9999',
+      pass: '1234',
+      userType: 'PERSONAL',
+      tier: 'VIP PLATINUM MEMBER',
+      joinDate: '2026.08.15 14:20',
+      note: '종로 본점 VIP 단골 고객 / 순금 골드바 위주 집중 투자',
+      transactions: [
+        {
+          id: 1723700400000,
+          date: '2026.08.15',
+          type: '매수',
+          itemName: '24K 순금 골드바 10돈',
+          purity: '24K',
+          donWeight: 10,
+          unitCost: 680000,
+          totalCost: 6800000
+        },
+        {
+          id: 1724218800000,
+          date: '2026.08.21',
+          type: '매수',
+          itemName: '18K 체인 목걸이 3돈',
+          purity: '18K',
+          donWeight: 3,
+          unitCost: 483333,
+          totalCost: 1450000
+        }
+      ]
+    },
+    {
+      id: 'usr_lee_02',
+      name: '이서윤',
+      email: 'seoyun.lee@naver.com',
+      phone: '010-3344-7788',
+      pass: '1234',
+      userType: 'PERSONAL',
+      tier: 'GOLD MEMBER',
+      joinDate: '2026.08.28 11:15',
+      note: '온라인 시세 조회 후 매수 등록 / 추가 매수 상담 희망',
+      transactions: [
+        {
+          id: 1724823300000,
+          date: '2026.08.28',
+          type: '매수',
+          itemName: '24K 순금 골드바 5돈',
+          purity: '24K',
+          donWeight: 5,
+          unitCost: 690000,
+          totalCost: 3450000
+        }
+      ]
+    },
+    {
+      id: 'usr_biz_03',
+      name: '(주)종로골드 주얼리',
+      email: 'biz_jongro@goldlab.co.kr',
+      phone: '02-765-8888',
+      pass: '1234',
+      userType: 'BIZ',
+      bizName: '(주)종로골드 주얼리',
+      bizNo: '101-86-77777',
+      tier: 'B2B VIP MEMBER',
+      joinDate: '2026.08.10 09:40',
+      note: '종로 3가 대형 도매 거래처 / 덩어리 및 백금 바 정기 매입',
+      transactions: [
+        {
+          id: 1723273200000,
+          date: '2026.08.10',
+          type: '매수',
+          itemName: '24K 순금 덩어리 50돈',
+          purity: '24K',
+          donWeight: 50,
+          unitCost: 670000,
+          totalCost: 33500000
+        },
+        {
+          id: 1723878000000,
+          date: '2026.08.17',
+          type: '매수',
+          itemName: '백금(PT) 인곳 바 10돈',
+          purity: 'PT',
+          donWeight: 10,
+          unitCost: 420000,
+          totalCost: 4200000
+        }
+      ]
+    },
+    {
+      id: 'usr_park_04',
+      name: '박민우',
+      email: 'minwoo.park@kakao.com',
+      phone: '010-5566-1234',
+      pass: '1234',
+      userType: 'PERSONAL',
+      tier: 'GOLD MEMBER',
+      joinDate: '2026.09.02 16:50',
+      note: '예물 14K 커플링 등록 고객 / 매도 시세 문의 예정',
+      transactions: [
+        {
+          id: 1725263400000,
+          date: '2026.09.02',
+          type: '매수',
+          itemName: '14K 다이아 커플링 2돈',
+          purity: '14K',
+          donWeight: 2,
+          unitCost: 360000,
+          totalCost: 720000
+        }
+      ]
+    }
+  ];
+
+  localStorage.setItem('goldlab_master_members_db_v1', JSON.stringify(initialMembers));
+  return initialMembers;
+}
+
+function SaveMasterMembersDB(members) {
+  localStorage.setItem('goldlab_master_members_db_v1', JSON.stringify(members));
+}
+
+function SyncUserTransactionsToMasterDB() {
+  if (!currentUser || currentUser.role === 'MASTER_ADMIN') return;
+  const members = GetMasterMembersDB();
+  const idx = members.findIndex(m => m.id === currentUser.id || m.email.toLowerCase() === currentUser.email.toLowerCase());
+  if (idx !== -1) {
+    members[idx].transactions = [...myTransactions];
+    SaveMasterMembersDB(members);
+  }
+}
+
 function LoadAuthState() {
   const savedUser = localStorage.getItem('goldlab_logged_user');
   if (savedUser) {
-    currentUser = JSON.parse(savedUser);
+    try {
+      currentUser = JSON.parse(savedUser);
+    } catch(e) {
+      currentUser = null;
+    }
   } else {
     currentUser = null;
   }
@@ -254,28 +408,49 @@ function UpdateAuthUI() {
   const myName = document.getElementById('myUserName');
   const myTier = document.getElementById('myUserTier');
   const topUserEl = document.getElementById('mypageTopUser');
+  const masterSwitcher = document.getElementById('masterModeSwitcher');
 
   if (currentUser) {
+    const isMaster = currentUser.role === 'MASTER_ADMIN';
     const isBiz = currentUser.userType === 'BIZ';
-    const badgeIcon = isBiz ? '<i class="fa-solid fa-building text-gold"></i>' : '<i class="fa-solid fa-circle-user"></i>';
-    const userDisplayLabel = isBiz ? `🏢 ${currentUser.name} (사업자)` : `${currentUser.name} 님`;
 
     if (slot) {
-      slot.innerHTML = `
-        <div style="display:inline-flex; align-items:center; gap:0.6rem; background:rgba(224,184,72,0.12); border:1px solid var(--border-dark); padding:0.35rem 0.9rem; border-radius:30px; white-space:nowrap;">
-          <span style="color:var(--gold-light); font-weight:800; font-size:0.92rem;">${badgeIcon} ${userDisplayLabel}</span>
-          <button onclick="LogoutUser()" style="background:rgba(255,255,255,0.12); color:var(--text-light); border:none; border-radius:20px; padding:0.2rem 0.65rem; font-size:0.82rem; font-weight:700; cursor:pointer;">로그아웃</button>
-        </div>
-      `;
+      if (isMaster) {
+        slot.innerHTML = `
+          <div style="display:inline-flex; align-items:center; gap:0.55rem; background:linear-gradient(135deg, rgba(224,184,72,0.2) 0%, rgba(147,51,234,0.2) 100%); border:1px solid #e0b848; padding:0.35rem 0.85rem; border-radius:30px; white-space:nowrap; box-shadow:0 0 15px rgba(224,184,72,0.35);">
+            <span style="color:#f5e4a2; font-weight:900; font-size:0.9rem;"><i class="fa-solid fa-crown" style="color:#e0b848;"></i> 👑 마스터 대표</span>
+            <a href="mypage.html?tab=master" style="background:var(--gold-gradient); color:#000; border-radius:20px; padding:0.2rem 0.65rem; font-size:0.8rem; font-weight:800; text-decoration:none;">관제센터</a>
+            <button onclick="LogoutUser()" style="background:rgba(255,255,255,0.15); color:var(--text-light); border:none; border-radius:20px; padding:0.2rem 0.6rem; font-size:0.78rem; font-weight:700; cursor:pointer;">로그아웃</button>
+          </div>
+        `;
+      } else {
+        const badgeIcon = isBiz ? '<i class="fa-solid fa-building text-gold"></i>' : '<i class="fa-solid fa-circle-user"></i>';
+        const userDisplayLabel = isBiz ? `🏢 ${currentUser.name} (사업자)` : `${currentUser.name} 님`;
+        slot.innerHTML = `
+          <div style="display:inline-flex; align-items:center; gap:0.6rem; background:rgba(224,184,72,0.12); border:1px solid var(--border-dark); padding:0.35rem 0.9rem; border-radius:30px; white-space:nowrap;">
+            <span style="color:var(--gold-light); font-weight:800; font-size:0.92rem;">${badgeIcon} ${userDisplayLabel}</span>
+            <button onclick="LogoutUser()" style="background:rgba(255,255,255,0.12); color:var(--text-light); border:none; border-radius:20px; padding:0.2rem 0.65rem; font-size:0.82rem; font-weight:700; cursor:pointer;">로그아웃</button>
+          </div>
+        `;
+      }
     }
+
     if (myName) {
-      myName.innerHTML = `${currentUser.name} <span style="font-weight:400; font-size:1.1rem; color:var(--text-muted);">${isBiz ? 'B2B 사업자 회원님' : '회원님의 금 자산 관리 솔루션'}</span>`;
+      if (isMaster) {
+        myName.innerHTML = `${currentUser.name} <span style="font-weight:400; font-size:1.1rem; color:var(--gold-light);">(최고 관리자)</span>`;
+      } else {
+        myName.innerHTML = `${currentUser.name} <span style="font-weight:400; font-size:1.1rem; color:var(--text-muted);">${isBiz ? 'B2B 사업자 회원님' : '회원님의 금 자산 관리 솔루션'}</span>`;
+      }
     }
     if (myTier) {
       myTier.innerHTML = `<i class="fa-solid fa-crown text-gold"></i> ${currentUser.tier || (isBiz ? 'B2B VIP MEMBER' : 'VIP PLATINUM MEMBER')}`;
     }
     if (topUserEl) {
       topUserEl.innerHTML = `<i class="fa-solid fa-user-check"></i> ${currentUser.name} (${currentUser.tier || 'VIP MEMBER'})`;
+    }
+
+    if (masterSwitcher) {
+      masterSwitcher.style.display = isMaster ? 'flex' : 'none';
     }
   } else {
     if (slot) {
@@ -284,6 +459,9 @@ function UpdateAuthUI() {
           <i class="fa-solid fa-user-shield"></i> 로그인 / 회원가입
         </button>
       `;
+    }
+    if (masterSwitcher) {
+      masterSwitcher.style.display = 'none';
     }
   }
 
@@ -366,37 +544,80 @@ function SwitchSignupUserType(type) {
 
 function HandleUserLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
+  const email = (document.getElementById('loginEmail')?.value || '').trim();
+  const pass = (document.getElementById('loginPass')?.value || '').trim();
   const loginUserType = document.getElementById('loginUserTypeSelect')?.value || 'AUTO';
+
+  // 1. MASTER ADMIN AUTHENTICATION
+  if (email.toLowerCase() === MASTER_EMAIL.toLowerCase()) {
+    if (pass === MASTER_PASS) {
+      currentUser = {
+        id: 'master_admin',
+        name: '황미숙 대표 (마스터)',
+        email: MASTER_EMAIL,
+        role: 'MASTER_ADMIN',
+        userType: 'MASTER',
+        tier: '👑 MASTER ADMIN',
+        phone: '010-4017-4988'
+      };
+      localStorage.setItem('goldlab_logged_user', JSON.stringify(currentUser));
+      UpdateAuthUI();
+      CloseModal('authModal');
+      alert(`[👑 마스터 관리자 인증 완료]\n황미숙 대표님, 환영합니다!\n골드랩 전체 회원 및 금 자산 장부 관제센터로 연결합니다.`);
+      window.location.href = 'mypage.html?tab=master';
+      return;
+    } else {
+      alert('[로그인 실패] 마스터 관리자 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
+      return;
+    }
+  }
+
+  // 2. REGULAR / B2B MEMBER AUTHENTICATION
+  const members = GetMasterMembersDB();
+  let foundMember = members.find(m => m.email.toLowerCase() === email.toLowerCase());
 
   let isBiz = email.includes('biz') || loginUserType === 'BIZ';
   const name = email.split('@')[0];
 
-  if (isBiz) {
-    currentUser = {
-      name: '(주)종로골드 주얼리',
+  if (!foundMember) {
+    // If not in DB yet, auto-register as realistic member record
+    const now = new Date();
+    const joinDate = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+    foundMember = {
+      id: 'usr_' + Date.now(),
+      name: isBiz ? '(주)종로골드 주얼리' : (name === 'gold' ? '김골드' : name),
       email: email,
-      phone: '02-765-8888',
-      userType: 'BIZ',
-      bizName: '(주)종로골드 주얼리',
-      bizNo: '101-86-77777',
-      tier: 'B2B VIP MEMBER'
+      phone: isBiz ? '02-765-8888' : '010-8888-9999',
+      pass: pass || '1234',
+      userType: isBiz ? 'BIZ' : 'PERSONAL',
+      bizName: isBiz ? '(주)종로골드 주얼리' : '',
+      bizNo: isBiz ? '101-86-77777' : '',
+      tier: isBiz ? 'B2B VIP MEMBER' : 'VIP PLATINUM MEMBER',
+      joinDate: joinDate,
+      note: '온라인 로그인 고객',
+      transactions: []
     };
-  } else {
-    currentUser = {
-      name: name === 'gold' ? '김골드' : name,
-      email: email,
-      phone: '010-8888-9999',
-      userType: 'PERSONAL',
-      tier: 'VIP PLATINUM MEMBER'
-    };
+    members.unshift(foundMember);
+    SaveMasterMembersDB(members);
   }
 
+  currentUser = foundMember;
   localStorage.setItem('goldlab_logged_user', JSON.stringify(currentUser));
+
+  // Sync member transactions to personal ledger
+  if (foundMember.transactions && foundMember.transactions.length > 0) {
+    myTransactions = [...foundMember.transactions];
+  } else {
+    myTransactions = [...INITIAL_TRANSACTIONS];
+    foundMember.transactions = [...myTransactions];
+    SaveMasterMembersDB(members);
+  }
+  SaveMyTransactions();
+
   UpdateAuthUI();
   CloseModal('authModal');
 
-  if (isBiz) {
+  if (currentUser.userType === 'BIZ') {
     alert(`[🏢 B2B 사업자 로그인] 환영합니다, ${currentUser.name} 사업자 회원님! 도매 센터로 이동합니다.`);
     window.location.href = 'wholesale.html';
   } else {
@@ -409,34 +630,55 @@ function HandleUserLogin(e) {
 
 function HandleUserSignup(e) {
   e.preventDefault();
-  const name = document.getElementById('signupName').value;
-  const email = document.getElementById('signupEmail').value;
-  const phone = document.getElementById('signupPhone').value;
+  const name = (document.getElementById('signupName')?.value || '').trim();
+  const email = (document.getElementById('signupEmail')?.value || '').trim();
+  const pass = (document.getElementById('signupPass')?.value || '').trim();
+  const phone = (document.getElementById('signupPhone')?.value || '').trim();
   const isBiz = currentSignupUserType === 'BIZ';
-  const bizName = document.getElementById('signupBizName')?.value || name + ' 주얼리';
-  const bizNo = document.getElementById('signupBizNo')?.value || '101-86-00000';
+  const bizName = (document.getElementById('signupBizName')?.value || '').trim() || name + ' 주얼리';
+  const bizNo = (document.getElementById('signupBizNo')?.value || '').trim() || '101-86-00000';
 
-  if (isBiz) {
-    currentUser = {
-      name: bizName,
-      email,
-      phone,
-      userType: 'BIZ',
-      bizName,
-      bizNo,
-      tier: 'B2B MEMBER'
-    };
-  } else {
-    currentUser = {
-      name,
-      email,
-      phone,
-      userType: 'PERSONAL',
-      tier: 'GOLD MEMBER'
-    };
+  // Guard against master email registration
+  if (email.toLowerCase() === MASTER_EMAIL.toLowerCase()) {
+    alert('마스터 관리자 계정 아이디로는 일반 회원가입을 하실 수 없습니다. 로그인 창에서 마스터 비밀번호로 로그인해 주세요.');
+    SwitchAuthTab('login');
+    return;
   }
 
+  const members = GetMasterMembersDB();
+  const existing = members.find(m => m.email.toLowerCase() === email.toLowerCase());
+  if (existing) {
+    alert('이미 등록된 이메일 계정입니다. 로그인해 주세요.');
+    SwitchAuthTab('login');
+    return;
+  }
+
+  const now = new Date();
+  const joinDate = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const newUser = {
+    id: 'usr_' + Date.now(),
+    name: isBiz ? bizName : name,
+    email: email,
+    phone: phone,
+    pass: pass || '1234',
+    userType: isBiz ? 'BIZ' : 'PERSONAL',
+    bizName: isBiz ? bizName : '',
+    bizNo: isBiz ? bizNo : '',
+    tier: isBiz ? 'B2B MEMBER' : 'GOLD MEMBER',
+    joinDate: joinDate,
+    note: isBiz ? '신규 B2B 도매 가입' : '신규 온라인 가입 고객',
+    transactions: []
+  };
+
+  members.unshift(newUser);
+  SaveMasterMembersDB(members);
+
+  currentUser = newUser;
   localStorage.setItem('goldlab_logged_user', JSON.stringify(currentUser));
+  myTransactions = [];
+  SaveMyTransactions();
+
   UpdateAuthUI();
   CloseModal('authModal');
 
@@ -465,6 +707,466 @@ function LogoutUser() {
   if (window.location.pathname.includes('wholesale.html')) {
     CheckWholesaleAccess();
   }
+}
+
+// --------------------------------------------------------------------------
+// 1-1. Master Admin CRM & Ledger Dashboard Controller
+// --------------------------------------------------------------------------
+function SwitchMasterView(view) {
+  if (!currentUser || currentUser.role !== 'MASTER_ADMIN') return;
+  currentMasterView = view;
+
+  const btnAdmin = document.getElementById('btnTabMasterAdmin');
+  const btnPersonal = document.getElementById('btnTabMasterPersonal');
+  const adminSec = document.getElementById('masterAdminSection');
+  const personalSec = document.getElementById('personalAssetSection');
+
+  if (view === 'ADMIN') {
+    if (btnAdmin) {
+      btnAdmin.style.background = 'var(--gold-gradient)';
+      btnAdmin.style.color = '#000';
+    }
+    if (btnPersonal) {
+      btnPersonal.style.background = 'rgba(255,255,255,0.08)';
+      btnPersonal.style.color = 'var(--text-muted)';
+    }
+    if (adminSec) adminSec.style.display = 'block';
+    if (personalSec) personalSec.style.display = 'none';
+    RenderMasterDashboard();
+  } else {
+    if (btnAdmin) {
+      btnAdmin.style.background = 'rgba(255,255,255,0.08)';
+      btnAdmin.style.color = 'var(--text-muted)';
+    }
+    if (btnPersonal) {
+      btnPersonal.style.background = 'var(--gold-gradient)';
+      btnPersonal.style.color = '#000';
+    }
+    if (adminSec) adminSec.style.display = 'none';
+    if (personalSec) personalSec.style.display = 'block';
+    RenderMyPageLedger();
+  }
+}
+
+function RefreshMasterData() {
+  RenderMasterDashboard();
+  alert('전체 회원 명부와 실시간 금 자산 손익 데이터가 최신 시세로 갱신되었습니다.');
+}
+
+function CalculateMemberAssetSummary(member) {
+  const txList = member.transactions || [];
+  let totalDonWeight = 0;
+  let totalCostSum = 0;
+  let totalEvalSum = 0;
+
+  txList.forEach(tx => {
+    let rate = currentRates["24K_sell"] || 470000;
+    if (tx.purity === '18K') rate = currentRates["18K_sell"] || 345000;
+    else if (tx.purity === '14K') rate = currentRates["14K_sell"] || 268000;
+    else if (tx.purity === 'PT') rate = currentRates["PT_sell"] || 185000;
+    else if (tx.purity === 'AG') rate = currentRates["AG_sell"] || 5400;
+
+    const evalAmt = rate * tx.donWeight;
+
+    if (tx.type === '매수') {
+      totalDonWeight += tx.donWeight;
+      totalCostSum += tx.totalCost;
+      totalEvalSum += evalAmt;
+    } else {
+      totalDonWeight -= tx.donWeight;
+    }
+  });
+
+  if (totalDonWeight < 0) totalDonWeight = 0;
+  const diff = totalEvalSum - totalCostSum;
+  const profitRate = totalCostSum > 0 ? ((diff / totalCostSum) * 100).toFixed(2) : '0.00';
+
+  return {
+    txCount: txList.length,
+    totalDonWeight,
+    totalGrams: (totalDonWeight * 3.75).toFixed(2),
+    totalCostSum,
+    totalEvalSum,
+    diff,
+    profitRate,
+    isPlus: diff >= 0
+  };
+}
+
+function RenderMasterDashboard() {
+  const members = GetMasterMembersDB();
+  
+  let overallMembersCount = members.length;
+  let personalCount = 0;
+  let bizCount = 0;
+  let totalDonSum = 0;
+  let totalCostSum = 0;
+  let totalEvalSum = 0;
+
+  members.forEach(m => {
+    if (m.userType === 'BIZ') bizCount++;
+    else personalCount++;
+
+    const summary = CalculateMemberAssetSummary(m);
+    totalDonSum += summary.totalDonWeight;
+    totalCostSum += summary.totalCostSum;
+    totalEvalSum += summary.totalEvalSum;
+  });
+
+  const overallDiff = totalEvalSum - totalCostSum;
+  const overallRate = totalCostSum > 0 ? ((overallDiff / totalCostSum) * 100).toFixed(2) : '0.00';
+  const isOverallPlus = overallDiff >= 0;
+
+  // Update KPI Cards
+  const kpiTotalMemEl = document.getElementById('masterKpiTotalMembers');
+  const kpiTypesEl = document.getElementById('masterKpiMemberTypes');
+  const kpiWeightEl = document.getElementById('masterKpiTotalWeight');
+  const kpiWeightGramEl = document.getElementById('masterKpiWeightGram');
+  const kpiCostEl = document.getElementById('masterKpiTotalCost');
+  const kpiPnlEl = document.getElementById('masterKpiTotalPnl');
+  const kpiPnlRateEl = document.getElementById('masterKpiPnlRate');
+  const badgeCountEl = document.getElementById('masterMemberCountBadge');
+
+  if (kpiTotalMemEl) kpiTotalMemEl.innerText = `${overallMembersCount}명`;
+  if (kpiTypesEl) kpiTypesEl.innerText = `일반 VIP ${personalCount}명 | B2B 도매 ${bizCount}개사`;
+  if (kpiWeightEl) kpiWeightEl.innerText = `${totalDonSum.toFixed(2)}돈`;
+  if (kpiWeightGramEl) kpiWeightGramEl.innerText = `${(totalDonSum * 3.75).toFixed(2)}g (1돈=3.75g)`;
+  if (kpiCostEl) kpiCostEl.innerText = `${formatWon(totalCostSum)} 원`;
+  
+  if (kpiPnlEl) {
+    kpiPnlEl.innerText = `${isOverallPlus ? '+' : ''}${formatWon(overallDiff)} 원`;
+    kpiPnlEl.style.color = isOverallPlus ? 'var(--pnl-plus)' : 'var(--pnl-minus)';
+  }
+  if (kpiPnlRateEl) {
+    kpiPnlRateEl.innerText = `당일 한국금거래소 시세 기준 (${isOverallPlus ? '+' : ''}${overallRate}%)`;
+    kpiPnlRateEl.style.color = isOverallPlus ? 'var(--pnl-plus)' : 'var(--pnl-minus)';
+  }
+  if (badgeCountEl) {
+    badgeCountEl.innerText = `(총 ${overallMembersCount}명 등록)`;
+  }
+
+  RenderMasterMembersTable();
+}
+
+function RenderMasterMembersTable() {
+  const tbody = document.getElementById('masterMemberTableBody');
+  if (!tbody) return;
+
+  const members = GetMasterMembersDB();
+  const search = (document.getElementById('masterSearchInput')?.value || '').trim().toLowerCase();
+  const typeFilter = document.getElementById('masterTypeFilter')?.value || 'ALL';
+  const pnlFilter = document.getElementById('masterPnlFilter')?.value || 'ALL';
+  const sort = document.getElementById('masterSortSelect')?.value || 'JOIN_DESC';
+
+  // Filter
+  let filtered = members.filter(m => {
+    const summary = CalculateMemberAssetSummary(m);
+
+    // Search query
+    if (search) {
+      const matchName = (m.name || '').toLowerCase().includes(search);
+      const matchBiz = (m.bizName || '').toLowerCase().includes(search);
+      const matchEmail = (m.email || '').toLowerCase().includes(search);
+      const matchPhone = (m.phone || '').toLowerCase().includes(search);
+      if (!matchName && !matchBiz && !matchEmail && !matchPhone) return false;
+    }
+
+    // Type filter
+    if (typeFilter !== 'ALL' && m.userType !== typeFilter) return false;
+
+    // PnL filter
+    if (pnlFilter === 'PROFIT' && !summary.isPlus) return false;
+    if (pnlFilter === 'LOSS' && summary.isPlus) return false;
+    if (pnlFilter === 'HAS_TX' && summary.txCount === 0) return false;
+
+    return true;
+  });
+
+  // Sort
+  filtered.sort((a, b) => {
+    const sumA = CalculateMemberAssetSummary(a);
+    const sumB = CalculateMemberAssetSummary(b);
+
+    if (sort === 'WEIGHT_DESC') return sumB.totalDonWeight - sumA.totalDonWeight;
+    if (sort === 'COST_DESC') return sumB.totalCostSum - sumA.totalCostSum;
+    if (sort === 'PROFIT_DESC') return sumB.diff - sumA.diff;
+    if (sort === 'RATE_DESC') return parseFloat(sumB.profitRate) - parseFloat(sumA.profitRate);
+    // Default: JOIN_DESC
+    return (b.joinDate || '').localeCompare(a.joinDate || '');
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="9" style="text-align:center; padding:3rem; color:var(--text-muted);">
+          조건에 일치하는 회원이 없습니다.
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map(m => {
+    const summary = CalculateMemberAssetSummary(m);
+    const isBiz = m.userType === 'BIZ';
+    const badgeClass = isBiz ? 'badge-master-biz' : 'badge-master-vip';
+    const badgeLabel = isBiz ? '🏢 B2B 도매' : '👤 일반 VIP';
+    const pnlColor = summary.isPlus ? 'var(--pnl-plus)' : 'var(--pnl-minus)';
+    const pnlSign = summary.isPlus ? '▲ +' : '▼ ';
+
+    return `
+      <tr class="master-table-row">
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem; font-size:0.88rem; color:var(--text-muted);">${m.joinDate || '-'}</td>
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+          <span class="${badgeClass}">${badgeLabel}</span>
+        </td>
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem;">
+          <div style="font-weight:800; color:var(--text-white); font-size:1.02rem;">${m.name}</div>
+          ${isBiz && m.bizNo ? `<div style="font-size:0.8rem; color:var(--gold-light);">등록번호: ${m.bizNo}</div>` : ''}
+        </td>
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem; font-family:var(--font-num); color:var(--text-light);">
+          <a href="tel:${m.phone}" style="color:var(--text-light); text-decoration:none;"><i class="fa-solid fa-phone" style="color:var(--gold-primary); font-size:0.85rem;"></i> ${m.phone}</a>
+        </td>
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem; font-family:var(--font-num); color:var(--text-muted); font-size:0.88rem;">${m.email}</td>
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem; font-family:var(--font-num);">
+          ${summary.totalDonWeight > 0 ? `<span style="font-weight:800; color:var(--gold-light); font-size:1.02rem;">${summary.totalDonWeight.toFixed(2)}돈</span> <span style="font-size:0.82rem; color:var(--text-muted);">(${summary.totalGrams}g)</span>` : '<span style="color:var(--text-muted); font-size:0.85rem;">미등록</span>'}
+        </td>
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem; font-family:var(--font-num); font-weight:700; color:var(--text-white);">
+          ${summary.totalCostSum > 0 ? `${formatWon(summary.totalCostSum)}원` : '-'}
+        </td>
+        <td style="white-space:nowrap; padding:1.1rem 0.9rem; font-family:var(--font-num);">
+          ${summary.totalCostSum > 0 ? `
+            <div style="color:${pnlColor}; font-weight:900; font-size:0.98rem;">${pnlSign}${formatWon(Math.abs(summary.diff))}원</div>
+            <div style="color:${pnlColor}; font-size:0.8rem; font-weight:700;">(${pnlSign}${summary.profitRate}%)</div>
+          ` : '<span style="color:var(--text-muted); font-size:0.85rem;">-</span>'}
+        </td>
+        <td style="white-space:nowrap; text-align:center; padding:1.1rem 0.9rem;">
+          <button class="master-btn-action" onclick="OpenInspectMemberModal('${m.id}')">
+            <i class="fa-solid fa-magnifying-glass-chart"></i> 상세 장부 열람
+          </button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function OpenInspectMemberModal(memberId) {
+  const members = GetMasterMembersDB();
+  const m = members.find(item => item.id === memberId);
+  if (!m) {
+    alert('해당 회원을 찾을 수 없습니다.');
+    return;
+  }
+
+  currentInspectingMemberId = memberId;
+
+  // Profile Header
+  const nameEl = document.getElementById('inspectMemberName');
+  const badgeEl = document.getElementById('inspectMemberBadge');
+  const phoneEl = document.getElementById('inspectMemberPhone');
+  const emailEl = document.getElementById('inspectMemberEmail');
+  const joinEl = document.getElementById('inspectMemberJoinDate');
+  const callBtn = document.getElementById('inspectCallBtn');
+  const smsBtn = document.getElementById('inspectSmsBtn');
+  const noteInput = document.getElementById('inspectMemberNoteInput');
+
+  if (nameEl) nameEl.innerText = `${m.name} 회원님`;
+  if (badgeEl) {
+    badgeEl.className = m.userType === 'BIZ' ? 'badge-master-biz' : 'badge-master-vip';
+    badgeEl.innerText = m.tier || (m.userType === 'BIZ' ? 'B2B VIP' : 'VIP PLATINUM');
+  }
+  if (phoneEl) phoneEl.innerText = m.phone || '-';
+  if (emailEl) emailEl.innerText = m.email || '-';
+  if (joinEl) joinEl.innerText = m.joinDate || '-';
+  if (callBtn) callBtn.href = `tel:${m.phone}`;
+  if (smsBtn) smsBtn.href = `sms:${m.phone}`;
+  if (noteInput) noteInput.value = m.note || '';
+
+  // Calculate Asset Summary
+  const summary = CalculateMemberAssetSummary(m);
+  const kpiGrid = document.getElementById('inspectKpiGrid');
+  if (kpiGrid) {
+    kpiGrid.innerHTML = `
+      <div class="master-kpi-card" style="padding:1.1rem 1.3rem;">
+        <div class="master-kpi-title" style="margin-bottom:0.3rem;"><i class="fa-solid fa-coins text-gold"></i> 보유 금 중량</div>
+        <div class="master-kpi-val" style="font-size:1.35rem;">${summary.totalDonWeight.toFixed(2)}돈</div>
+        <div class="master-kpi-sub" style="margin-top:0.2rem;">${summary.totalGrams}g (등록 장부 합계)</div>
+      </div>
+      <div class="master-kpi-card" style="padding:1.1rem 1.3rem;">
+        <div class="master-kpi-title" style="margin-bottom:0.3rem;"><i class="fa-solid fa-wallet text-gold"></i> 총 매수 원금</div>
+        <div class="master-kpi-val" style="font-size:1.35rem;">${formatWon(summary.totalCostSum)}원</div>
+        <div class="master-kpi-sub" style="margin-top:0.2rem;">구매/등록 당시 실결제 기준</div>
+      </div>
+      <div class="master-kpi-card" style="padding:1.1rem 1.3rem;">
+        <div class="master-kpi-title" style="margin-bottom:0.3rem;"><i class="fa-solid fa-chart-pie text-gold"></i> 현재 시세 평가액</div>
+        <div class="master-kpi-val text-gold" style="font-size:1.35rem;">${formatWon(summary.totalEvalSum)}원</div>
+        <div class="master-kpi-sub" style="margin-top:0.2rem;">한국금거래소 당일 매도가 기준</div>
+      </div>
+      <div class="master-kpi-card" style="padding:1.1rem 1.3rem;">
+        <div class="master-kpi-title" style="margin-bottom:0.3rem;"><i class="fa-solid fa-chart-line text-gold"></i> 실시간 평가손익</div>
+        <div class="master-kpi-val" style="font-size:1.35rem; color:${summary.isPlus ? 'var(--pnl-plus)' : 'var(--pnl-minus)'};">${summary.isPlus ? '+' : ''}${formatWon(summary.diff)}원</div>
+        <div class="master-kpi-sub" style="margin-top:0.2rem; color:${summary.isPlus ? 'var(--pnl-plus)' : 'var(--pnl-minus)'}; font-weight:700;">수익률: ${summary.isPlus ? '+' : ''}${summary.profitRate}%</div>
+      </div>
+    `;
+  }
+
+  // Transactions Table
+  const tbody = document.getElementById('inspectTxTableBody');
+  const txList = m.transactions || [];
+  if (tbody) {
+    if (txList.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center; padding:2.5rem; color:var(--text-muted);">
+            이 회원이 아직 마이페이지에 등록한 금 매매/보유 거래 내역이 없습니다.
+          </td>
+        </tr>
+      `;
+    } else {
+      tbody.innerHTML = txList.map(tx => {
+        let rate = currentRates["24K_sell"] || 470000;
+        if (tx.purity === '18K') rate = currentRates["18K_sell"] || 345000;
+        else if (tx.purity === '14K') rate = currentRates["14K_sell"] || 268000;
+        else if (tx.purity === 'PT') rate = currentRates["PT_sell"] || 185000;
+        else if (tx.purity === 'AG') rate = currentRates["AG_sell"] || 5400;
+
+        const evalAmt = rate * tx.donWeight;
+        const diff = evalAmt - tx.totalCost;
+        const ratePct = tx.totalCost > 0 ? ((diff / tx.totalCost) * 100).toFixed(2) : '0.00';
+        const isPlus = diff >= 0;
+        const sparkline = GenerateTxSvgSparkline(tx, rate);
+
+        return `
+          <tr>
+            <td style="white-space:nowrap; padding:0.9rem;">${tx.date}</td>
+            <td style="white-space:nowrap; padding:0.9rem;">
+              <span style="padding:0.2rem 0.6rem; border-radius:6px; font-size:0.8rem; font-weight:800; ${tx.type === '매도' ? 'background:rgba(16,185,129,0.2); color:var(--pnl-plus);' : 'background:rgba(224,184,72,0.2); color:var(--gold-light);'}">${tx.type || '매수'}</span>
+            </td>
+            <td style="white-space:nowrap; padding:0.9rem;">
+              <div style="font-weight:800; color:var(--text-white);">${tx.itemName}</div>
+              <div style="font-size:0.8rem; color:var(--text-muted); font-family:var(--font-num);">${tx.donWeight}돈 (${(tx.donWeight * 3.75).toFixed(2)}g)</div>
+            </td>
+            <td style="white-space:nowrap; font-weight:800; color:var(--gold-light); padding:0.9rem;">${tx.purity}</td>
+            <td style="padding:0.6rem 0.9rem;">
+              ${sparkline}
+            </td>
+            <td style="white-space:nowrap; font-family:var(--font-num); font-weight:700; color:var(--text-white); padding:0.9rem;">
+              ${formatWon(tx.totalCost)}원
+            </td>
+            <td style="white-space:nowrap; font-family:var(--font-num); padding:0.9rem;">
+              <div style="font-weight:800; color:var(--text-white);">${formatWon(evalAmt)}원</div>
+              <div style="font-size:0.82rem; font-weight:700; color:${isPlus ? 'var(--pnl-plus)' : 'var(--pnl-minus)'};">
+                ${isPlus ? '▲ +' : '▼ '}${formatWon(Math.abs(diff))}원 (${isPlus ? '+' : ''}${ratePct}%)
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+  }
+
+  const modal = document.getElementById('masterMemberLedgerModal');
+  if (modal) modal.classList.add('active');
+}
+
+function SaveInspectedMemberNote() {
+  if (!currentInspectingMemberId) return;
+  const noteInput = document.getElementById('inspectMemberNoteInput');
+  const newNote = (noteInput?.value || '').trim();
+
+  const members = GetMasterMembersDB();
+  const idx = members.findIndex(m => m.id === currentInspectingMemberId);
+  if (idx !== -1) {
+    members[idx].note = newNote;
+    SaveMasterMembersDB(members);
+    alert('고객 상담 메모가 성공적으로 저장되었습니다!');
+  }
+}
+
+function ExportMasterMembersCSV() {
+  const members = GetMasterMembersDB();
+  if (members.length === 0) {
+    alert('내보낼 회원 데이터가 없습니다.');
+    return;
+  }
+
+  let csvContent = '\uFEFF가입일시,회원구분,성함/상호명,대표자명,사업자번호,연락처,아이디(이메일),보유금중량(돈),보유금중량(g),총매수원금(원),실시간평가금액(원),평가손익(원),수익률(%),관리자메모\n';
+
+  members.forEach(m => {
+    const s = CalculateMemberAssetSummary(m);
+    const isBiz = m.userType === 'BIZ';
+    const row = [
+      `"${m.joinDate || ''}"`,
+      `"${isBiz ? 'B2B 도매 사업자' : '일반 고객 VIP'}"`,
+      `"${m.name || ''}"`,
+      `"${isBiz ? (m.bizName || m.name) : m.name}"`,
+      `"${m.bizNo || '-'}"`,
+      `"${m.phone || ''}"`,
+      `"${m.email || ''}"`,
+      `"${s.totalDonWeight.toFixed(2)}"`,
+      `"${s.totalGrams}"`,
+      `"${s.totalCostSum}"`,
+      `"${s.totalEvalSum}"`,
+      `"${s.diff}"`,
+      `"${s.profitRate}%"`,
+      `"${(m.note || '').replace(/"/g, '""')}"`
+    ];
+    csvContent += row.join(',') + '\n';
+  });
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const todayStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+  a.href = url;
+  a.download = `골드랩앤코_전체회원및자산장부_${todayStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function AddDemoTestMember() {
+  const randomNum = Math.floor(1000 + Math.random() * 9000);
+  const isBiz = Math.random() > 0.5;
+  const now = new Date();
+  const joinDate = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  const weight = isBiz ? Math.floor(10 + Math.random() * 40) : Math.floor(2 + Math.random() * 10);
+  const unitPrice = 670000 + Math.floor(Math.random() * 20000);
+  const totalCost = weight * unitPrice;
+
+  const demoUser = {
+    id: 'usr_demo_' + Date.now(),
+    name: isBiz ? `(주)골드랩 테스트 파트너${randomNum}` : `신규회원${randomNum}`,
+    email: `test${randomNum}@goldlab.co.kr`,
+    phone: `010-${randomNum}-${String(randomNum).split('').reverse().join('')}`,
+    pass: '1234',
+    userType: isBiz ? 'BIZ' : 'PERSONAL',
+    bizName: isBiz ? `(주)골드랩 테스트 파트너${randomNum}` : '',
+    bizNo: isBiz ? `101-86-${randomNum}` : '',
+    tier: isBiz ? 'B2B MEMBER' : 'GOLD MEMBER',
+    joinDate: joinDate,
+    note: '테스트 생성 가입 데이터',
+    transactions: [
+      {
+        id: Date.now(),
+        date: joinDate.split(' ')[0],
+        type: '매수',
+        itemName: isBiz ? '24K 순금 덩어리' : '24K 순금 골드바',
+        purity: '24K',
+        donWeight: weight,
+        unitCost: unitPrice,
+        totalCost: totalCost
+      }
+    ]
+  };
+
+  const members = GetMasterMembersDB();
+  members.unshift(demoUser);
+  SaveMasterMembersDB(members);
+  RenderMasterDashboard();
+  alert(`테스트 회원 [${demoUser.name} / 24K ${weight}돈 등록]이 성공적으로 생성되었습니다!`);
 }
 
 function OpenMyPageOrLogin(e) {

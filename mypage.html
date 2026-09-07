@@ -78,112 +78,249 @@
 
   <!-- MYPAGE ASSET MANAGEMENT MAIN SECTION -->
   <main class="container" style="padding-top:2.5rem; padding-bottom:5rem;">
-    <!-- Welcome Header Card -->
-    <div class="mypage-welcome-card" style="background:linear-gradient(135deg, #151824 0%, #0d0f17 100%); border:1px solid rgba(212,175,55,0.35); border-radius:24px; padding:2rem 2.5rem; margin-bottom:2.2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.2rem; box-shadow:0 15px 35px rgba(0,0,0,0.5);">
-      <div style="display:flex; align-items:center; gap:1.4rem;">
-        <div style="width:60px; height:60px; border-radius:50%; background:var(--gold-gradient); display:flex; justify-content:center; align-items:center; color:#0b0c10; font-size:1.8rem; box-shadow:0 0 20px rgba(212,175,55,0.5);">
-          <i class="fa-solid fa-user-shield"></i>
-        </div>
-        <div>
-          <h2 style="color:var(--text-white); font-size:1.6rem; font-weight:800; margin-bottom:0.3rem;" id="myUserName">
-            김골드 <span style="font-size:1rem; font-weight:400; color:var(--text-muted);">회원님의 금 자산 관리 솔루션</span>
-          </h2>
-          <div style="font-size:0.88rem; color:var(--gold-light); font-weight:700;" id="myUserTier">
-            <i class="fa-solid fa-crown text-gold"></i> VIP PLATINUM MEMBER
+
+    <!-- 0. MASTER ADMIN MODE SWITCHER BAR (Only visible to Master Admin) -->
+    <div id="masterModeSwitcher" style="display:none; margin-bottom:2rem; background:linear-gradient(135deg, rgba(224,184,72,0.18) 0%, rgba(147,51,234,0.18) 100%); border:1px solid #e0b848; border-radius:18px; padding:0.9rem 1.4rem; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; box-shadow:0 0 25px rgba(224,184,72,0.25);">
+      <div style="display:flex; align-items:center; gap:0.9rem;">
+        <span style="background:var(--gold-gradient); color:#000; font-weight:900; padding:0.35rem 0.8rem; border-radius:12px; font-size:0.88rem;"><i class="fa-solid fa-crown"></i> 마스터 관제 모드</span>
+        <span style="color:var(--text-light); font-size:0.95rem; font-weight:700;">골드랩앤코 최고 관리자 권한으로 접속 중입니다.</span>
+      </div>
+      <div style="display:flex; gap:0.6rem;">
+        <button id="btnTabMasterAdmin" class="btn btn-sm" onclick="SwitchMasterView('ADMIN')" style="background:var(--gold-gradient); color:#000; font-weight:800; border:none; padding:0.5rem 1.2rem; border-radius:10px; cursor:pointer;">
+          <i class="fa-solid fa-users-viewfinder"></i> 전체 회원 & 자산 장부 관제센터
+        </button>
+        <button id="btnTabMasterPersonal" class="btn btn-sm" onclick="SwitchMasterView('PERSONAL')" style="background:rgba(255,255,255,0.08); color:var(--text-muted); font-weight:700; border:1px solid var(--border-dark); padding:0.5rem 1.2rem; border-radius:10px; cursor:pointer;">
+          <i class="fa-solid fa-wallet"></i> 내 개인 자산 관리 모드
+        </button>
+      </div>
+    </div>
+
+    <!-- 1. MASTER ADMIN DASHBOARD SECTION -->
+    <section id="masterAdminSection" style="display:none;">
+      <!-- Master Welcome Header Card -->
+      <div style="background:linear-gradient(135deg, #151824 0%, #0d0f17 100%); border:1px solid #e0b848; border-radius:24px; padding:2rem 2.5rem; margin-bottom:2.2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.2rem; box-shadow:0 15px 35px rgba(0,0,0,0.6);">
+        <div style="display:flex; align-items:center; gap:1.4rem;">
+          <div style="width:65px; height:65px; border-radius:50%; background:var(--gold-gradient); display:flex; justify-content:center; align-items:center; color:#0b0c10; font-size:2rem; box-shadow:0 0 25px rgba(224,184,72,0.6);">
+            <i class="fa-solid fa-crown"></i>
+          </div>
+          <div>
+            <div style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(224,184,72,0.15); border:1px solid rgba(224,184,72,0.4); border-radius:30px; padding:0.25rem 0.85rem; font-size:0.8rem; font-weight:800; color:var(--gold-light); margin-bottom:0.4rem;">
+              <i class="fa-solid fa-shield-halved"></i> MASTER CONTROL CENTER
+            </div>
+            <h2 style="color:var(--text-white); font-size:1.65rem; font-weight:900; margin-bottom:0.3rem;">
+              골드랩앤코 전체 회원 & 금 자산 장부 통합 관제센터
+            </h2>
+            <p style="font-size:0.92rem; color:var(--text-muted); margin:0;">
+              가입 회원들의 실시간 등록 현황 및 금 매매/보유 장부를 실시간 한국금거래소 시세 기반으로 모니터링합니다.
+            </p>
           </div>
         </div>
-      </div>
-
-      <div style="display:flex; gap:1rem; flex-wrap:wrap;">
-        <button class="btn btn-gold" onclick="OpenAddTransactionModal()"><i class="fa-solid fa-plus"></i> 내 금 매매/보유 내역 추가</button>
-        <button class="btn btn-outline-gold" onclick="LogoutUserAndRedirect()"><i class="fa-solid fa-right-from-bracket"></i> 로그아웃</button>
-      </div>
-    </div>
-
-    <!-- Re-sell Opportunity Alert Banner -->
-    <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:18px; padding:1.4rem 2rem; margin-bottom:2.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.2rem;">
-      <div style="display:flex; align-items:center; gap:1rem;">
-        <div style="width:42px; height:42px; border-radius:50%; background:rgba(16,185,129,0.2); display:flex; justify-content:center; align-items:center; color:var(--pnl-plus); font-size:1.2rem;">
-          <i class="fa-solid fa-coins"></i>
-        </div>
-        <div>
-          <h4 style="color:var(--text-white); font-size:1.1rem; margin-bottom:0.25rem;">💡 금 시세 상승! 보유 금 자산 현금화 타이밍 안내</h4>
-          <p style="color:var(--text-muted); font-size:0.9rem;">
-            등록하신 24K 순금 골드바 시세가 매수 시점 대비 <strong id="resellPercentText" style="color:var(--pnl-plus); font-weight:800;">+7.08% 상승</strong>했습니다. 지금 종로 본점에 방문하시면 최고가로 즉시 현금 매입해 드립니다.
-          </p>
-        </div>
-      </div>
-      <a href="index.html#booking" class="btn btn-gold btn-sm" style="padding:0.7rem 1.4rem; font-size:0.92rem;"><i class="fa-solid fa-calendar-check"></i> 종로 본점 방문예약 ➔</a>
-    </div>
-
-    <!-- PnL Asset Summary Cards Grid -->
-    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1.5rem; margin-bottom:2.5rem;">
-      <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
-        <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">총 등록 보유 중량</div>
-        <div class="pnl-card-val" id="myTotalWeight" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800; color:var(--text-white);">80.0g <span style="font-size:0.9rem; font-weight:400; color:var(--text-muted);">(21.33돈)</span></div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">24K 순금 / 18K / 14K 포함 (1돈=3.75g)</div>
-      </div>
-
-      <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
-        <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">최초 총 매입/투자 금액</div>
-        <div class="pnl-card-val" id="myTotalCost" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800; color:var(--text-white);">12,191,100 원</div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">구매/등록 당시 실지급 금액 기준</div>
-      </div>
-
-      <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
-        <div>
-          <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;"><i class="fa-solid fa-chart-pie text-gold"></i> 현재 금 시세 평가 금액</div>
-          <div class="pnl-card-val text-gold" id="myCurrentEval" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800;">13,001,680 원</div>
-        </div>
-        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
-          (당일 한국금거래소 내가 팔 때 매입가 기준)
+        <div style="display:flex; gap:0.8rem; flex-wrap:wrap;">
+          <button class="btn btn-gold" onclick="ExportMasterMembersCSV()"><i class="fa-solid fa-file-excel"></i> 엑셀(CSV) 다운로드</button>
+          <button class="btn btn-outline-gold" onclick="RefreshMasterData()"><i class="fa-solid fa-rotate"></i> 실시간 새로고침</button>
+          <button class="btn btn-outline-gold" onclick="LogoutUserAndRedirect()"><i class="fa-solid fa-right-from-bracket"></i> 로그아웃</button>
         </div>
       </div>
 
-      <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
-        <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">실시간 평가 손익 (PnL)</div>
-        <div class="pnl-card-val" id="myPnlAmount" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800; color:var(--pnl-plus);">+810,580 원</div>
-        <div id="myPnlBadge" class="badge-pnl badge-plus" style="margin-top:0.4rem; display:inline-block;"><i class="fa-solid fa-caret-up"></i> +6.65% (수익중)</div>
-      </div>
-    </div>
-
-    <!-- TRANSACTION LEDGER WITH BUY vs SELL TABS -->
-    <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:24px; padding:2rem; box-shadow:0 15px 35px rgba(0,0,0,0.4);">
-      <div class="ledger-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-        <div>
-          <h3 style="color:var(--text-white); font-size:1.35rem; font-weight:800;"><i class="fa-solid fa-receipt text-gold"></i> 내 금 매매 및 보유 거래 장부 (Transaction Ledger)</h3>
-          <span style="font-size:0.85rem; color:var(--text-muted);">실시간 한국금거래소 시세에 연동되어 손익률이 자동 반영됩니다. (1돈 = 3.75g)</span>
+      <!-- Master 4 KPI Cards Grid -->
+      <div class="master-kpi-grid" id="masterKpiGrid">
+        <div class="master-kpi-card">
+          <div class="master-kpi-title"><i class="fa-solid fa-users text-gold"></i> 총 가입 회원 수</div>
+          <div class="master-kpi-val" id="masterKpiTotalMembers">0명</div>
+          <div class="master-kpi-sub" id="masterKpiMemberTypes">일반 0명 | B2B 도매 0개사</div>
         </div>
 
-        <!-- BUY vs SELL TABS SWITCHER -->
-        <div style="display:flex; gap:0.5rem; background:rgba(11,12,16,0.9); padding:0.4rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <button type="button" id="tabLedgerBuy" class="btn btn-sm" onclick="SwitchLedgerTab('BUY')" style="background:var(--gold-gradient); color:#000; font-weight:800; border:none; padding:0.5rem 1.4rem; border-radius:8px; cursor:pointer;">
-            <i class="fa-solid fa-cart-shopping"></i> 매수 장부 (내가 산 내역)
-          </button>
-          <button type="button" id="tabLedgerSell" class="btn btn-sm" onclick="SwitchLedgerTab('SELL')" style="background:transparent; color:var(--text-muted); font-weight:700; border:none; padding:0.5rem 1.4rem; border-radius:8px; cursor:pointer;">
-            <i class="fa-solid fa-money-bill-wave"></i> 매도 장부 (내가 판 내역)
-          </button>
+        <div class="master-kpi-card">
+          <div class="master-kpi-title"><i class="fa-solid fa-coins text-gold"></i> 회원 전체 보유 금 중량</div>
+          <div class="master-kpi-val" id="masterKpiTotalWeight">0.00돈</div>
+          <div class="master-kpi-sub" id="masterKpiWeightGram">0.00g (1돈=3.75g)</div>
+        </div>
+
+        <div class="master-kpi-card">
+          <div class="master-kpi-title"><i class="fa-solid fa-wallet text-gold"></i> 회원 전체 매수 총액</div>
+          <div class="master-kpi-val" id="masterKpiTotalCost">0 원</div>
+          <div class="master-kpi-sub">고객 최초 등록 매입원가 합계</div>
+        </div>
+
+        <div class="master-kpi-card">
+          <div class="master-kpi-title"><i class="fa-solid fa-chart-line text-gold"></i> 실시간 평가손익 (PnL)</div>
+          <div class="master-kpi-val" id="masterKpiTotalPnl" style="color:var(--pnl-plus);">+0 원</div>
+          <div class="master-kpi-sub" id="masterKpiPnlRate">당일 한국금거래소 시세 기준 (+0.00%)</div>
         </div>
       </div>
 
-      <!-- Ledger Table Wrapper -->
-      <div class="ledger-table-wrap" style="overflow-x:auto;">
-        <table class="ledger-table" style="width:100%; border-collapse:collapse;">
-          <thead id="ledgerTableHeader">
-            <tr>
-              <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
-              <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
-              <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목 및 중량</th>
-              <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
-              <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:340px;">실시간 손익 미니 비교표 (단가 VS 현재시세 VS 손익)</th>
-              <th style="white-space:nowrap; padding:1.1rem 0.9rem;">총 원금/매수금액</th>
-              <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
-            </tr>
-          </thead>
-          <tbody id="ledgerTableBody">
-            <!-- JS Injected -->
-          </tbody>
-        </table>
+      <!-- Master Filter & Search Bar -->
+      <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:18px; padding:1.2rem 1.5rem; margin-bottom:1.8rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div style="display:flex; align-items:center; gap:1rem; flex-wrap:wrap; flex:1;">
+          <div style="position:relative; min-width:280px; flex:1;">
+            <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:1rem; top:50%; transform:translateY(-50%); color:var(--text-muted);"></i>
+            <input type="text" id="masterSearchInput" class="master-filter-input" style="width:100%; padding-left:2.5rem;" placeholder="회원 성함, 상호명, 휴대폰번호, 이메일 검색..." oninput="RenderMasterMembersTable()">
+          </div>
+          <select id="masterTypeFilter" class="master-filter-input" onchange="RenderMasterMembersTable()">
+            <option value="ALL">전체 회원 구분</option>
+            <option value="PERSONAL">👤 일반 고객 회원만</option>
+            <option value="BIZ">🏢 B2B 도매 사업자만</option>
+          </select>
+          <select id="masterPnlFilter" class="master-filter-input" onchange="RenderMasterMembersTable()">
+            <option value="ALL">전체 손익 상태</option>
+            <option value="PROFIT">▲ 수익 중인 회원만</option>
+            <option value="LOSS">▼ 손실 중인 회원만</option>
+            <option value="HAS_TX">장부 등록 회원만</option>
+          </select>
+          <select id="masterSortSelect" class="master-filter-input" onchange="RenderMasterMembersTable()">
+            <option value="JOIN_DESC">가입일 최신순</option>
+            <option value="WEIGHT_DESC">금 보유량 많은순</option>
+            <option value="COST_DESC">매수금액 큰순</option>
+            <option value="PROFIT_DESC">평가수익금 높은순</option>
+            <option value="RATE_DESC">수익률 높은순</option>
+          </select>
+        </div>
+        <div style="display:flex; gap:0.6rem;">
+          <button class="btn btn-sm btn-outline-gold" onclick="AddDemoTestMember()"><i class="fa-solid fa-user-plus"></i> 테스트 회원 추가</button>
+        </div>
+      </div>
+
+      <!-- Master Members Table Section -->
+      <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:24px; padding:1.8rem; box-shadow:0 15px 35px rgba(0,0,0,0.4); margin-bottom:2.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap; gap:1rem;">
+          <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800;">
+            <i class="fa-solid fa-users text-gold"></i> 전체 회원 명부 및 금 자산 현황
+            <span id="masterMemberCountBadge" style="font-size:0.88rem; font-weight:700; color:var(--gold-light); margin-left:0.5rem;">(총 0명)</span>
+          </h3>
+          <span style="font-size:0.85rem; color:var(--text-muted);"><i class="fa-solid fa-circle-info text-gold"></i> [상세 장부 열람] 버튼을 클릭하면 해당 회원의 세부 금 매매 장부와 수익률을 확인하실 수 있습니다.</span>
+        </div>
+        <div class="ledger-table-wrap" style="overflow-x:auto;">
+          <table class="ledger-table" style="width:100%; border-collapse:collapse;">
+            <thead>
+              <tr>
+                <th style="white-space:nowrap;">가입일시</th>
+                <th style="white-space:nowrap;">구분</th>
+                <th style="white-space:nowrap;">성함 / 상호명</th>
+                <th style="white-space:nowrap;">연락처</th>
+                <th style="white-space:nowrap;">아이디(이메일)</th>
+                <th style="white-space:nowrap;">등록 금 중량</th>
+                <th style="white-space:nowrap;">총 매수원금</th>
+                <th style="white-space:nowrap;">현재 평가손익</th>
+                <th style="white-space:nowrap; text-align:center;">자산 장부 열람</th>
+              </tr>
+            </thead>
+            <tbody id="masterMemberTableBody">
+              <!-- Injected by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. PERSONAL ASSET MANAGEMENT SECTION (Standard User View) -->
+    <div id="personalAssetSection">
+      <!-- Welcome Header Card -->
+      <div class="mypage-welcome-card" style="background:linear-gradient(135deg, #151824 0%, #0d0f17 100%); border:1px solid rgba(212,175,55,0.35); border-radius:24px; padding:2rem 2.5rem; margin-bottom:2.2rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.2rem; box-shadow:0 15px 35px rgba(0,0,0,0.5);">
+        <div style="display:flex; align-items:center; gap:1.4rem;">
+          <div style="width:60px; height:60px; border-radius:50%; background:var(--gold-gradient); display:flex; justify-content:center; align-items:center; color:#0b0c10; font-size:1.8rem; box-shadow:0 0 20px rgba(212,175,55,0.5);">
+            <i class="fa-solid fa-user-shield"></i>
+          </div>
+          <div>
+            <h2 style="color:var(--text-white); font-size:1.6rem; font-weight:800; margin-bottom:0.3rem;" id="myUserName">
+              김골드 <span style="font-size:1rem; font-weight:400; color:var(--text-muted);">회원님의 금 자산 관리 솔루션</span>
+            </h2>
+            <div style="font-size:0.88rem; color:var(--gold-light); font-weight:700;" id="myUserTier">
+              <i class="fa-solid fa-crown text-gold"></i> VIP PLATINUM MEMBER
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:1rem; flex-wrap:wrap;">
+          <button class="btn btn-gold" onclick="OpenAddTransactionModal()"><i class="fa-solid fa-plus"></i> 내 금 매매/보유 내역 추가</button>
+          <button class="btn btn-outline-gold" onclick="LogoutUserAndRedirect()"><i class="fa-solid fa-right-from-bracket"></i> 로그아웃</button>
+        </div>
+      </div>
+
+      <!-- Re-sell Opportunity Alert Banner -->
+      <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:18px; padding:1.4rem 2rem; margin-bottom:2.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.2rem;">
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <div style="width:42px; height:42px; border-radius:50%; background:rgba(16,185,129,0.2); display:flex; justify-content:center; align-items:center; color:var(--pnl-plus); font-size:1.2rem;">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <div>
+            <h4 style="color:var(--text-white); font-size:1.1rem; margin-bottom:0.25rem;">💡 금 시세 상승! 보유 금 자산 현금화 타이밍 안내</h4>
+            <p style="color:var(--text-muted); font-size:0.9rem;">
+              등록하신 24K 순금 골드바 시세가 매수 시점 대비 <strong id="resellPercentText" style="color:var(--pnl-plus); font-weight:800;">+7.08% 상승</strong>했습니다. 지금 종로 본점에 방문하시면 최고가로 즉시 현금 매입해 드립니다.
+            </p>
+          </div>
+        </div>
+        <a href="index.html#booking" class="btn btn-gold btn-sm" style="padding:0.7rem 1.4rem; font-size:0.92rem;"><i class="fa-solid fa-calendar-check"></i> 종로 본점 방문예약 ➔</a>
+      </div>
+
+      <!-- PnL Asset Summary Cards Grid -->
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1.5rem; margin-bottom:2.5rem;">
+        <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
+          <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">총 등록 보유 중량</div>
+          <div class="pnl-card-val" id="myTotalWeight" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800; color:var(--text-white);">80.0g <span style="font-size:0.9rem; font-weight:400; color:var(--text-muted);">(21.33돈)</span></div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">24K 순금 / 18K / 14K 포함 (1돈=3.75g)</div>
+        </div>
+
+        <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
+          <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">최초 총 매입/투자 금액</div>
+          <div class="pnl-card-val" id="myTotalCost" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800; color:var(--text-white);">12,191,100 원</div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">구매/등록 당시 실지급 금액 기준</div>
+        </div>
+
+        <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
+          <div>
+            <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;"><i class="fa-solid fa-chart-pie text-gold"></i> 현재 금 시세 평가 금액</div>
+            <div class="pnl-card-val text-gold" id="myCurrentEval" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800;">13,001,680 원</div>
+          </div>
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.4rem;">
+            (당일 한국금거래소 내가 팔 때 매입가 기준)
+          </div>
+        </div>
+
+        <div class="pnl-card" style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:20px; padding:1.5rem;">
+          <div class="pnl-card-title" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.5rem;">실시간 평가 손익 (PnL)</div>
+          <div class="pnl-card-val" id="myPnlAmount" style="font-family:var(--font-num); font-size:1.6rem; font-weight:800; color:var(--pnl-plus);">+810,580 원</div>
+          <div id="myPnlBadge" class="badge-pnl badge-plus" style="margin-top:0.4rem; display:inline-block;"><i class="fa-solid fa-caret-up"></i> +6.65% (수익중)</div>
+        </div>
+      </div>
+
+      <!-- TRANSACTION LEDGER WITH BUY vs SELL TABS -->
+      <div style="background:var(--bg-dark-secondary); border:1px solid var(--border-dark); border-radius:24px; padding:2rem; box-shadow:0 15px 35px rgba(0,0,0,0.4);">
+        <div class="ledger-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h3 style="color:var(--text-white); font-size:1.35rem; font-weight:800;"><i class="fa-solid fa-receipt text-gold"></i> 내 금 매매 및 보유 거래 장부 (Transaction Ledger)</h3>
+            <span style="font-size:0.85rem; color:var(--text-muted);">실시간 한국금거래소 시세에 연동되어 손익률이 자동 반영됩니다. (1돈 = 3.75g)</span>
+          </div>
+
+          <!-- BUY vs SELL TABS SWITCHER -->
+          <div style="display:flex; gap:0.5rem; background:rgba(11,12,16,0.9); padding:0.4rem; border-radius:12px; border:1px solid var(--border-dark);">
+            <button type="button" id="tabLedgerBuy" class="btn btn-sm" onclick="SwitchLedgerTab('BUY')" style="background:var(--gold-gradient); color:#000; font-weight:800; border:none; padding:0.5rem 1.4rem; border-radius:8px; cursor:pointer;">
+              <i class="fa-solid fa-cart-shopping"></i> 매수 장부 (내가 산 내역)
+            </button>
+            <button type="button" id="tabLedgerSell" class="btn btn-sm" onclick="SwitchLedgerTab('SELL')" style="background:transparent; color:var(--text-muted); font-weight:700; border:none; padding:0.5rem 1.4rem; border-radius:8px; cursor:pointer;">
+              <i class="fa-solid fa-money-bill-wave"></i> 매도 장부 (내가 판 내역)
+            </button>
+          </div>
+        </div>
+
+        <!-- Ledger Table Wrapper -->
+        <div class="ledger-table-wrap" style="overflow-x:auto;">
+          <table class="ledger-table" style="width:100%; border-collapse:collapse;">
+            <thead id="ledgerTableHeader">
+              <tr>
+                <th style="white-space:nowrap; padding:1.1rem 0.9rem;">거래일자</th>
+                <th style="white-space:nowrap; padding:1.1rem 0.9rem;">구분</th>
+                <th style="white-space:nowrap; padding:1.1rem 0.9rem;">품목 및 중량</th>
+                <th style="white-space:nowrap; padding:1.1rem 0.9rem;">순도</th>
+                <th style="white-space:nowrap; padding:1.1rem 0.9rem; min-width:340px;">실시간 손익 미니 비교표 (단가 VS 현재시세 VS 손익)</th>
+                <th style="white-space:nowrap; padding:1.1rem 0.9rem;">총 원금/매수금액</th>
+                <th style="white-space:nowrap; padding:1.1rem 0.9rem; text-align:center;">삭제</th>
+              </tr>
+            </thead>
+            <tbody id="ledgerTableBody">
+              <!-- JS Injected -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </main>
@@ -288,8 +425,71 @@
     </div>
   </div>
 
+  <!-- MASTER MEMBER LEDGER INSPECTION MODAL -->
+  <div class="modal-overlay" id="masterMemberLedgerModal">
+    <div class="modal-box" style="max-width:980px; width:95%; max-height:90vh; overflow-y:auto; padding:2.5rem 2.2rem; background:linear-gradient(145deg, #131722 0%, #0d0f17 100%); border:1px solid #e0b848; box-shadow:0 25px 60px rgba(0,0,0,0.85);">
+      <button class="modal-close" onclick="CloseModal('masterMemberLedgerModal')">&times;</button>
+      
+      <!-- Customer Header Profile -->
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1.2rem; border-bottom:1px solid rgba(255,255,255,0.08); padding-bottom:1.5rem; margin-bottom:1.8rem;">
+        <div>
+          <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:0.4rem;">
+            <h3 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin:0;" id="inspectMemberName">김골드 회원님</h3>
+            <span id="inspectMemberBadge" class="badge-master-vip">VIP PLATINUM</span>
+          </div>
+          <div style="font-size:0.92rem; color:var(--text-muted); display:flex; gap:1.2rem; flex-wrap:wrap;">
+            <span><i class="fa-solid fa-phone text-gold"></i> <span id="inspectMemberPhone">010-8888-9999</span></span>
+            <span><i class="fa-solid fa-envelope text-gold"></i> <span id="inspectMemberEmail">gold@goldlab.co.kr</span></span>
+            <span><i class="fa-solid fa-calendar text-gold"></i> 가입일: <span id="inspectMemberJoinDate">2026.08.15</span></span>
+          </div>
+        </div>
+        <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+          <a id="inspectCallBtn" href="tel:" class="btn btn-gold btn-sm"><i class="fa-solid fa-phone"></i> 고객 상담 전화</a>
+          <a id="inspectSmsBtn" href="sms:" class="btn btn-outline-gold btn-sm"><i class="fa-solid fa-comment-sms"></i> 문자 발송</a>
+        </div>
+      </div>
+
+      <!-- Customer Asset KPI Banner -->
+      <div class="master-kpi-grid" style="margin-bottom:1.8rem;" id="inspectKpiGrid">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Customer Transactions Table -->
+      <h4 style="color:var(--text-white); font-size:1.15rem; font-weight:800; margin-bottom:1rem;">
+        <i class="fa-solid fa-receipt text-gold"></i> 고객 등록 금 거래 내역 장부
+      </h4>
+      <div class="ledger-table-wrap" style="overflow-x:auto; margin-bottom:1.8rem; background:rgba(0,0,0,0.3); border-radius:14px; border:1px solid rgba(255,255,255,0.06);">
+        <table class="ledger-table" style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="white-space:nowrap; padding:0.9rem;">거래일자</th>
+              <th style="white-space:nowrap; padding:0.9rem;">구분</th>
+              <th style="white-space:nowrap; padding:0.9rem;">품목 및 중량</th>
+              <th style="white-space:nowrap; padding:0.9rem;">순도</th>
+              <th style="white-space:nowrap; padding:0.9rem; min-width:320px;">실시간 시세 등락 추세</th>
+              <th style="white-space:nowrap; padding:0.9rem;">총 매수원금</th>
+              <th style="white-space:nowrap; padding:0.9rem;">현재 평가금액 (손익)</th>
+            </tr>
+          </thead>
+          <tbody id="inspectTxTableBody">
+            <!-- Injected by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Admin Note Section -->
+      <div style="background:rgba(224,184,72,0.06); border:1px solid rgba(224,184,72,0.25); border-radius:14px; padding:1.2rem 1.5rem;">
+        <h5 style="color:var(--gold-light); font-size:0.95rem; font-weight:800; margin-bottom:0.5rem;"><i class="fa-solid fa-clipboard-user"></i> 마스터 관리자 고객 상담 메모</h5>
+        <div style="display:flex; gap:0.8rem;">
+          <input type="text" id="inspectMemberNoteInput" class="master-filter-input" style="flex:1;" placeholder="예: 24K 순금 10돈 고점 매도 상담 진행 완료">
+          <button class="btn btn-gold btn-sm" onclick="SaveInspectedMemberNote()"><i class="fa-solid fa-floppy-disk"></i> 메모 저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Application JS Script -->
-  <script src="app.js?v=202609070635"></script>
+  <script src="app.js?v=202609070642"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       // Direct Auth Guard for MyPage
@@ -297,7 +497,18 @@
       if (!savedUser) {
         alert('마이페이지 금 자산 관리는 로그인 후 이용 가능합니다.');
         window.location.href = 'index.html';
+        return;
       }
+
+      // Check URL parameters or Master role
+      const urlParams = new URLSearchParams(window.location.search);
+      const isMasterTab = urlParams.get('tab') === 'master';
+      try {
+        const u = JSON.parse(savedUser);
+        if (u.role === 'MASTER_ADMIN') {
+          SwitchMasterView(isMasterTab ? 'ADMIN' : 'ADMIN');
+        }
+      } catch(e) {}
     });
 
     function LogoutUserAndRedirect() {
