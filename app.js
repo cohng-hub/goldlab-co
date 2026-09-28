@@ -2034,9 +2034,13 @@ function QuickInquiry(prodName) {
 // 4. MyPage Member Asset & Daily PnL Engine (mypage.html 1줄 보장 및 삭제)
 // --------------------------------------------------------------------------
 function LoadMyTransactions() {
-  const stored = localStorage.getItem('goldlab_my_transactions_v6');
+  const stored = localStorage.getItem('goldlab_my_transactions_v6') || localStorage.getItem('goldlab_my_transactions_v5');
   if (stored) {
-    myTransactions = JSON.parse(stored);
+    try {
+      myTransactions = JSON.parse(stored);
+    } catch(e) {
+      myTransactions = [...INITIAL_TRANSACTIONS];
+    }
   } else {
     myTransactions = [...INITIAL_TRANSACTIONS];
     SaveMyTransactions();
@@ -2154,6 +2158,22 @@ function RenderMyPageLedger() {
   let totalDonWeight = 0;
   let totalCostSum = 0;
   let totalEvalSum = 0;
+
+  // Calculate Overall Totals from transactions for Top KPI Cards & Banner
+  myTransactions.forEach(tx => {
+    if ((tx.type || '매수') !== '매수') return;
+
+    let rate = currentRates["24K_buy"] || 808000;
+    if (tx.purity === '18K') rate = Math.round((currentRates["24K_buy"] || 808000) * 0.75 * 0.98);
+    else if (tx.purity === '14K') rate = Math.round((currentRates["24K_buy"] || 808000) * 0.585 * 0.98);
+    else if (tx.purity === 'PT') rate = currentRates["PT_buy"] || 329000;
+    else if (tx.purity === 'AG') rate = currentRates["AG_buy"] || 11370;
+
+    const evalAmount = Math.round(parseFloat(tx.donWeight || 0) * rate);
+    totalDonWeight += parseFloat(tx.donWeight || 0);
+    totalCostSum += parseInt(tx.totalCost || 0);
+    totalEvalSum += evalAmount;
+  });
 
   const filteredTxList = myTransactions.filter(tx => {
     if (currentLedgerTab === 'BUY') return (tx.type || '매수') === '매수';
