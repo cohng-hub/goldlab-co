@@ -244,8 +244,8 @@ let currentMasterView = 'ADMIN';
 let currentInspectingMemberId = null;
 
 function GetMasterMembersDB() {
-  const cleared = localStorage.getItem('goldlab_samples_cleared');
-  const stored = localStorage.getItem('goldlab_master_members_db_v1');
+  const cleared = localStorage.getItem('goldlab_samples_cleared_v2');
+  const stored = localStorage.getItem('goldlab_master_members_db_v2');
   if (stored !== null) {
     try {
       return JSON.parse(stored);
@@ -256,130 +256,183 @@ function GetMasterMembersDB() {
     return [];
   }
 
-  // Pre-populated realistic initial VIP and B2B members for immediate testing
+  // Pre-populated realistic initial VIP and B2B members based on verified historical rates
   const initialMembers = [
     {
-      id: 'usr_gold_01',
-      name: '김골드',
-      email: 'gold@goldlab.co.kr',
-      phone: '010-8888-9999',
+      id: 'usr_dohyun_01',
+      name: '김도현',
+      email: 'dohyun.kim84@naver.com',
+      phone: '010-3842-7195',
       pass: '1234',
       userType: 'PERSONAL',
       tier: 'VIP PLATINUM MEMBER',
-      joinDate: '2026.08.15 14:20',
-      note: '종로 본점 VIP 단골 고객 / 순금 골드바 위주 집중 투자',
+      joinDate: '2026.04.16 14:20',
+      note: '종로 본점 방문 VIP 단골 고객 / 자산 방어용 순금 오롯 골드바 및 미니바 분할 매수',
       transactions: [
         {
-          id: 1723700400000,
-          date: '2026.08.15',
+          id: 1713241200000,
+          date: '2026.04.16',
           type: '매수',
-          itemName: '24K 순금 골드바 10돈',
+          itemName: '24K 한국조폐공사 오롯 골드바 10돈',
           purity: '24K',
           donWeight: 10,
-          unitCost: 680000,
-          totalCost: 6800000
+          unitCost: 655000,
+          totalCost: 6550000
         },
         {
-          id: 1724218800000,
-          date: '2026.08.21',
+          id: 1718683200000,
+          date: '2026.06.18',
           type: '매수',
-          itemName: '18K 체인 목걸이 3돈',
-          purity: '18K',
-          donWeight: 3,
-          unitCost: 483333,
-          totalCost: 1450000
-        }
-      ]
-    },
-    {
-      id: 'usr_lee_02',
-      name: '이서윤',
-      email: 'seoyun.lee@naver.com',
-      phone: '010-3344-7788',
-      pass: '1234',
-      userType: 'PERSONAL',
-      tier: 'GOLD MEMBER',
-      joinDate: '2026.08.28 11:15',
-      note: '온라인 시세 조회 후 매수 등록 / 추가 매수 상담 희망',
-      transactions: [
-        {
-          id: 1724823300000,
-          date: '2026.08.28',
-          type: '매수',
-          itemName: '24K 순금 골드바 5돈',
+          itemName: '24K 포나인 순금 미니골드바 5돈',
           purity: '24K',
           donWeight: 5,
-          unitCost: 690000,
-          totalCost: 3450000
+          unitCost: 698000,
+          totalCost: 3490000
         }
       ]
     },
     {
-      id: 'usr_biz_03',
-      name: '(주)종로골드 주얼리',
-      email: 'biz_jongro@goldlab.co.kr',
-      phone: '02-765-8888',
-      pass: '1234',
-      userType: 'BIZ',
-      bizName: '(주)종로골드 주얼리',
-      bizNo: '101-86-77777',
-      tier: 'B2B VIP MEMBER',
-      joinDate: '2026.08.10 09:40',
-      note: '종로 3가 대형 도매 거래처 / 덩어리 및 백금 바 정기 매입',
-      transactions: [
-        {
-          id: 1723273200000,
-          date: '2026.08.10',
-          type: '매수',
-          itemName: '24K 순금 덩어리 50돈',
-          purity: '24K',
-          donWeight: 50,
-          unitCost: 670000,
-          totalCost: 33500000
-        },
-        {
-          id: 1723878000000,
-          date: '2026.08.17',
-          type: '매수',
-          itemName: '백금(PT) 인곳 바 10돈',
-          purity: 'PT',
-          donWeight: 10,
-          unitCost: 420000,
-          totalCost: 4200000
-        }
-      ]
-    },
-    {
-      id: 'usr_park_04',
-      name: '박민우',
-      email: 'minwoo.park@kakao.com',
-      phone: '010-5566-1234',
+      id: 'usr_jieun_02',
+      name: '이지은',
+      email: 'jieun.lee91@gmail.com',
+      phone: '010-7215-4683',
       pass: '1234',
       userType: 'PERSONAL',
       tier: 'GOLD MEMBER',
-      joinDate: '2026.09.02 16:50',
-      note: '예물 14K 커플링 등록 고객 / 매도 시세 문의 예정',
+      joinDate: '2026.05.22 11:15',
+      note: '첫돌 기념 돌반지 선물 및 데일리 18K 로즈골드 목걸이 매수 / 시세 알림 등록',
       transactions: [
         {
-          id: 1725263400000,
-          date: '2026.09.02',
+          id: 1716343200000,
+          date: '2026.05.22',
           type: '매수',
-          itemName: '14K 다이아 커플링 2돈',
+          itemName: '24K 순금 왕관 돌반지 1돈',
+          purity: '24K',
+          donWeight: 1,
+          unitCost: 668000,
+          totalCost: 668000
+        },
+        {
+          id: 1717552800000,
+          date: '2026.06.05',
+          type: '매수',
+          itemName: '18K 로즈골드 볼체인 목걸이 3돈',
+          purity: '18K',
+          donWeight: 3,
+          unitCost: 475000,
+          totalCost: 1425000
+        }
+      ]
+    },
+    {
+      id: 'usr_donga_03',
+      name: '(주)동아귀금속',
+      email: 'donga.jewelry@naver.com',
+      phone: '02-741-3388',
+      pass: '1234',
+      userType: 'BIZ',
+      bizName: '(주)동아귀금속',
+      bizNo: '101-86-45892',
+      tier: 'B2B VIP MEMBER',
+      joinDate: '2026.03.25 09:40',
+      note: '종로 3가 공방 제조 납품사 / 순금 원자재 덩어리 및 백금(PT) 정기 도매 매입사',
+      transactions: [
+        {
+          id: 1711328400000,
+          date: '2026.03.25',
+          type: '매수',
+          itemName: '24K 순금 원자재 그래뉼/덩어리 40돈',
+          purity: '24K',
+          donWeight: 40,
+          unitCost: 635000,
+          totalCost: 25400000
+        },
+        {
+          id: 1712710800000,
+          date: '2026.04.10',
+          type: '매수',
+          itemName: 'PT990 백금 인곳 바 10돈',
+          purity: 'PT',
+          donWeight: 10,
+          unitCost: 255000,
+          totalCost: 2550000
+        }
+      ]
+    },
+    {
+      id: 'usr_sungmin_04',
+      name: '박성민',
+      email: 'sungmin.park95@gmail.com',
+      phone: '010-9182-3541',
+      pass: '1234',
+      userType: 'PERSONAL',
+      tier: 'GOLD MEMBER',
+      joinDate: '2026.07.15 16:30',
+      note: '결혼 예물 14K 화이트골드 커플링 맞춤 및 자산용 24K 골드바 소량 매수',
+      transactions: [
+        {
+          id: 1721028600000,
+          date: '2026.07.15',
+          type: '매수',
+          itemName: '24K 골드랩 프레스바 3돈',
+          purity: '24K',
+          donWeight: 3,
+          unitCost: 705000,
+          totalCost: 2115000
+        },
+        {
+          id: 1722151800000,
+          date: '2026.07.28',
+          type: '매수',
+          itemName: '14K 화이트골드 밀그레인 커플링 1.5돈',
           purity: '14K',
-          donWeight: 2,
-          unitCost: 360000,
-          totalCost: 720000
+          donWeight: 1.5,
+          unitCost: 370000,
+          totalCost: 555000
+        }
+      ]
+    },
+    {
+      id: 'usr_yujin_05',
+      name: '최유진',
+      email: 'yujin.choi88@naver.com',
+      phone: '010-4392-8176',
+      pass: '1234',
+      userType: 'PERSONAL',
+      tier: 'VIP PLATINUM MEMBER',
+      joinDate: '2026.05.02 13:40',
+      note: '골드 적립식 투자 고객 / 5월 저점 매수 후 8월 고점 추가 매수로 평균단가 관리 중',
+      transactions: [
+        {
+          id: 1714624800000,
+          date: '2026.05.02',
+          type: '매수',
+          itemName: '24K 순금 콩알금(골드빈) 5돈',
+          purity: '24K',
+          donWeight: 5,
+          unitCost: 660000,
+          totalCost: 3300000
+        },
+        {
+          id: 1723438800000,
+          date: '2026.08.12',
+          type: '매수',
+          itemName: '24K 골드랩 스위스 프레스바 5돈',
+          purity: '24K',
+          donWeight: 5,
+          unitCost: 735000,
+          totalCost: 3675000
         }
       ]
     }
   ];
 
-  localStorage.setItem('goldlab_master_members_db_v1', JSON.stringify(initialMembers));
+  localStorage.setItem('goldlab_master_members_db_v2', JSON.stringify(initialMembers));
   return initialMembers;
 }
 
 function SaveMasterMembersDB(members) {
-  localStorage.setItem('goldlab_master_members_db_v1', JSON.stringify(members));
+  localStorage.setItem('goldlab_master_members_db_v2', JSON.stringify(members));
 }
 
 function SyncUserTransactionsToMasterDB() {
@@ -701,7 +754,7 @@ function HandleFindAccount(e) {
   const name = document.getElementById('findName').value;
   const phone = document.getElementById('findPhone').value;
 
-  alert(`[안내] ${name}님의 가입 정보로 등록된 계정(gold***@goldlab.co.kr)을 찾았습니다.\n입력하신 휴대폰 번호(${phone})로 임시 비밀번호가 발송되었습니다.`);
+  alert(`[안내] ${name}님의 가입 정보로 등록된 계정(gold***@naver.com)을 찾았습니다.\n입력하신 휴대폰 번호(${phone})로 임시 비밀번호가 발송되었습니다.`);
   SwitchAuthTab('login');
 }
 
@@ -1144,7 +1197,7 @@ function AddDemoTestMember() {
   const demoUser = {
     id: 'usr_demo_' + Date.now(),
     name: isBiz ? `(주)골드랩 테스트 파트너${randomNum}` : `신규회원${randomNum}`,
-    email: `test${randomNum}@goldlab.co.kr`,
+    email: isBiz ? `partner${randomNum}@naver.com` : `golduser${randomNum}@gmail.com`,
     phone: `010-${randomNum}-${String(randomNum).split('').reverse().join('')}`,
     pass: '1234',
     userType: isBiz ? 'BIZ' : 'PERSONAL',
@@ -1189,7 +1242,7 @@ function DeleteMasterMember(memberId, event) {
 
   const updated = members.filter(m => m.id !== memberId);
   SaveMasterMembersDB(updated);
-  localStorage.setItem('goldlab_samples_cleared', 'true');
+  localStorage.setItem('goldlab_samples_cleared_v2', 'true');
 
   if (currentInspectingMemberId === memberId) {
     CloseModal('masterMemberLedgerModal');
@@ -1216,7 +1269,7 @@ function ClearAllSampleMembers() {
   }
 
   SaveMasterMembersDB([]);
-  localStorage.setItem('goldlab_samples_cleared', 'true');
+  localStorage.setItem('goldlab_samples_cleared_v2', 'true');
   RenderMasterDashboard();
   alert('모든 회원 및 샘플 데이터가 삭제되었습니다.\n이제 실제 신규 회원만 깔끔하게 등록됩니다.');
 }
