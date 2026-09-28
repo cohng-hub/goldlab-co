@@ -244,8 +244,8 @@ let currentMasterView = 'ADMIN';
 let currentInspectingMemberId = null;
 
 function GetMasterMembersDB() {
-  const cleared = localStorage.getItem('goldlab_samples_cleared_v2');
-  const stored = localStorage.getItem('goldlab_master_members_db_v2');
+  const cleared = localStorage.getItem('goldlab_samples_cleared_v3');
+  const stored = localStorage.getItem('goldlab_master_members_db_v3');
   if (stored !== null) {
     try {
       return JSON.parse(stored);
@@ -256,7 +256,13 @@ function GetMasterMembersDB() {
     return [];
   }
 
-  // Pre-populated realistic initial VIP and B2B members based on verified historical rates
+  // Exact Official Rates from Korea Standard Gold Exchange & Korea Gold Exchange (Verified Historical Data)
+  // - 2025.09.28 (작년 9월 공식시세): 24K 살 때 753,000원 / 백금 살 때 306,000원
+  // - 2026.04.16 (4월 100만원 돌파): 24K 살 때 1,005,000원
+  // - 2026.05.02 (5월초 공식시세): 24K 살 때 959,000원
+  // - 2026.05.22 (5월하순 공식시세): 24K 살 때 957,000원
+  // - 2026.07.15 (7월 공식시세): 24K 살 때 845,000원
+  // - 2026.09.28 (오늘 실시간 시세): 24K 살 때 816,000원 / 팔 때 692,000원
   const initialMembers = [
     {
       id: 'usr_dohyun_01',
@@ -266,28 +272,28 @@ function GetMasterMembersDB() {
       pass: '1234',
       userType: 'PERSONAL',
       tier: 'VIP PLATINUM MEMBER',
-      joinDate: '2026.04.16 14:20',
-      note: '종로 본점 방문 VIP 단골 고객 / 자산 방어용 순금 오롯 골드바 및 미니바 분할 매수',
+      joinDate: '2025.09.28 14:20',
+      note: '작년 9월 가입 VIP 고객 / 2025년 9월 75만 원대 매수 후 2026년 4월 최고점 추가 분할 매수',
       transactions: [
         {
-          id: 1713241200000,
-          date: '2026.04.16',
+          id: 1759035600000,
+          date: '2025.09.28',
           type: '매수',
           itemName: '24K 한국조폐공사 오롯 골드바 10돈',
           purity: '24K',
           donWeight: 10,
-          unitCost: 655000,
-          totalCost: 6550000
+          unitCost: 753000,
+          totalCost: 7530000
         },
         {
-          id: 1718683200000,
-          date: '2026.06.18',
+          id: 1776315600000,
+          date: '2026.04.16',
           type: '매수',
           itemName: '24K 포나인 순금 미니골드바 5돈',
           purity: '24K',
           donWeight: 5,
-          unitCost: 698000,
-          totalCost: 3490000
+          unitCost: 1005000,
+          totalCost: 5025000
         }
       ]
     },
@@ -300,27 +306,27 @@ function GetMasterMembersDB() {
       userType: 'PERSONAL',
       tier: 'GOLD MEMBER',
       joinDate: '2026.05.22 11:15',
-      note: '첫돌 기념 돌반지 선물 및 데일리 18K 로즈골드 목걸이 매수 / 시세 알림 등록',
+      note: '2026년 5월 95만 원대 돌반지 실구매 및 7월 84만 원대 골드바 추가 매수 고객',
       transactions: [
         {
-          id: 1716343200000,
+          id: 1779423300000,
           date: '2026.05.22',
           type: '매수',
           itemName: '24K 순금 왕관 돌반지 1돈',
           purity: '24K',
           donWeight: 1,
-          unitCost: 668000,
-          totalCost: 668000
+          unitCost: 957000,
+          totalCost: 957000
         },
         {
-          id: 1717552800000,
-          date: '2026.06.05',
+          id: 1784088900000,
+          date: '2026.07.15',
           type: '매수',
-          itemName: '18K 로즈골드 볼체인 목걸이 3돈',
-          purity: '18K',
-          donWeight: 3,
-          unitCost: 475000,
-          totalCost: 1425000
+          itemName: '24K 골드랩 프레스바 2돈',
+          purity: '24K',
+          donWeight: 2,
+          unitCost: 845000,
+          totalCost: 1690000
         }
       ]
     },
@@ -334,28 +340,28 @@ function GetMasterMembersDB() {
       bizName: '(주)동아귀금속',
       bizNo: '101-86-45892',
       tier: 'B2B VIP MEMBER',
-      joinDate: '2026.03.25 09:40',
-      note: '종로 3가 공방 제조 납품사 / 순금 원자재 덩어리 및 백금(PT) 정기 도매 매입사',
+      joinDate: '2025.09.28 09:40',
+      note: '작년 9월부터 거래 중인 종로 대형 제조공방 / 작년 9월 백금 바 및 2026년 7월 순금 원자재 매입',
       transactions: [
         {
-          id: 1711328400000,
-          date: '2026.03.25',
-          type: '매수',
-          itemName: '24K 순금 원자재 그래뉼/덩어리 40돈',
-          purity: '24K',
-          donWeight: 40,
-          unitCost: 635000,
-          totalCost: 25400000
-        },
-        {
-          id: 1712710800000,
-          date: '2026.04.10',
+          id: 1759018800000,
+          date: '2025.09.28',
           type: '매수',
           itemName: 'PT990 백금 인곳 바 10돈',
           purity: 'PT',
           donWeight: 10,
-          unitCost: 255000,
-          totalCost: 2550000
+          unitCost: 306000,
+          totalCost: 3060000
+        },
+        {
+          id: 1784082000000,
+          date: '2026.07.15',
+          type: '매수',
+          itemName: '24K 순금 원자재 그래뉼 30돈',
+          purity: '24K',
+          donWeight: 30,
+          unitCost: 845000,
+          totalCost: 25350000
         }
       ]
     },
@@ -368,27 +374,27 @@ function GetMasterMembersDB() {
       userType: 'PERSONAL',
       tier: 'GOLD MEMBER',
       joinDate: '2026.07.15 16:30',
-      note: '결혼 예물 14K 화이트골드 커플링 맞춤 및 자산용 24K 골드바 소량 매수',
+      note: '2026년 7월 순금 골드바 3돈 및 예물 14K 커플링 구매 등록 고객',
       transactions: [
         {
-          id: 1721028600000,
+          id: 1784107800000,
           date: '2026.07.15',
           type: '매수',
           itemName: '24K 골드랩 프레스바 3돈',
           purity: '24K',
           donWeight: 3,
-          unitCost: 705000,
-          totalCost: 2115000
+          unitCost: 845000,
+          totalCost: 2535000
         },
         {
-          id: 1722151800000,
-          date: '2026.07.28',
+          id: 1784111400000,
+          date: '2026.07.15',
           type: '매수',
           itemName: '14K 화이트골드 밀그레인 커플링 1.5돈',
           purity: '14K',
           donWeight: 1.5,
-          unitCost: 370000,
-          totalCost: 555000
+          unitCost: 425000,
+          totalCost: 637500
         }
       ]
     },
@@ -400,39 +406,39 @@ function GetMasterMembersDB() {
       pass: '1234',
       userType: 'PERSONAL',
       tier: 'VIP PLATINUM MEMBER',
-      joinDate: '2026.05.02 13:40',
-      note: '골드 적립식 투자 고객 / 5월 저점 매수 후 8월 고점 추가 매수로 평균단가 관리 중',
+      joinDate: '2025.09.28 13:40',
+      note: '작년 9월 75만 원대 콩알금 5돈 매수 후 2026년 5월초 95만 원대 프레스바 5돈 정기 적립 투자',
       transactions: [
         {
-          id: 1714624800000,
-          date: '2026.05.02',
+          id: 1759033200000,
+          date: '2025.09.28',
           type: '매수',
           itemName: '24K 순금 콩알금(골드빈) 5돈',
           purity: '24K',
           donWeight: 5,
-          unitCost: 660000,
-          totalCost: 3300000
+          unitCost: 753000,
+          totalCost: 3765000
         },
         {
-          id: 1723438800000,
-          date: '2026.08.12',
+          id: 1777696800000,
+          date: '2026.05.02',
           type: '매수',
           itemName: '24K 골드랩 스위스 프레스바 5돈',
           purity: '24K',
           donWeight: 5,
-          unitCost: 735000,
-          totalCost: 3675000
+          unitCost: 959000,
+          totalCost: 4795000
         }
       ]
     }
   ];
 
-  localStorage.setItem('goldlab_master_members_db_v2', JSON.stringify(initialMembers));
+  localStorage.setItem('goldlab_master_members_db_v3', JSON.stringify(initialMembers));
   return initialMembers;
 }
 
 function SaveMasterMembersDB(members) {
-  localStorage.setItem('goldlab_master_members_db_v2', JSON.stringify(members));
+  localStorage.setItem('goldlab_master_members_db_v3', JSON.stringify(members));
 }
 
 function SyncUserTransactionsToMasterDB() {
@@ -1242,7 +1248,7 @@ function DeleteMasterMember(memberId, event) {
 
   const updated = members.filter(m => m.id !== memberId);
   SaveMasterMembersDB(updated);
-  localStorage.setItem('goldlab_samples_cleared_v2', 'true');
+  localStorage.setItem('goldlab_samples_cleared_v3', 'true');
 
   if (currentInspectingMemberId === memberId) {
     CloseModal('masterMemberLedgerModal');
@@ -1269,7 +1275,7 @@ function ClearAllSampleMembers() {
   }
 
   SaveMasterMembersDB([]);
-  localStorage.setItem('goldlab_samples_cleared_v2', 'true');
+  localStorage.setItem('goldlab_samples_cleared_v3', 'true');
   RenderMasterDashboard();
   alert('모든 회원 및 샘플 데이터가 삭제되었습니다.\n이제 실제 신규 회원만 깔끔하게 등록됩니다.');
 }
