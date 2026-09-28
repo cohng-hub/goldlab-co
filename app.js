@@ -244,8 +244,8 @@ let currentMasterView = 'ADMIN';
 let currentInspectingMemberId = null;
 
 function GetMasterMembersDB() {
-  const cleared = localStorage.getItem('goldlab_samples_cleared_v3');
-  const stored = localStorage.getItem('goldlab_master_members_db_v3');
+  const cleared = localStorage.getItem('goldlab_samples_cleared_v4');
+  const stored = localStorage.getItem('goldlab_master_members_db_v4');
   if (stored !== null) {
     try {
       return JSON.parse(stored);
@@ -433,12 +433,12 @@ function GetMasterMembersDB() {
     }
   ];
 
-  localStorage.setItem('goldlab_master_members_db_v3', JSON.stringify(initialMembers));
+  localStorage.setItem('goldlab_master_members_db_v4', JSON.stringify(initialMembers));
   return initialMembers;
 }
 
 function SaveMasterMembersDB(members) {
-  localStorage.setItem('goldlab_master_members_db_v3', JSON.stringify(members));
+  localStorage.setItem('goldlab_master_members_db_v4', JSON.stringify(members));
 }
 
 function SyncUserTransactionsToMasterDB() {
@@ -824,11 +824,12 @@ function CalculateMemberAssetSummary(member) {
   let totalEvalSum = 0;
 
   txList.forEach(tx => {
-    let rate = currentRates["24K_sell"] || 470000;
-    if (tx.purity === '18K') rate = currentRates["18K_sell"] || 345000;
-    else if (tx.purity === '14K') rate = currentRates["14K_sell"] || 268000;
-    else if (tx.purity === 'PT') rate = currentRates["PT_sell"] || 185000;
-    else if (tx.purity === 'AG') rate = currentRates["AG_sell"] || 5400;
+    // Fair retail comparison: use live BUY rates for 매수 transactions
+    let rate = currentRates["24K_buy"] || 808000;
+    if (tx.purity === '18K') rate = Math.round((currentRates["24K_buy"] || 808000) * 0.75 * 0.98);
+    else if (tx.purity === '14K') rate = Math.round((currentRates["24K_buy"] || 808000) * 0.585 * 0.98);
+    else if (tx.purity === 'PT') rate = currentRates["PT_buy"] || 329000;
+    else if (tx.purity === 'AG') rate = currentRates["AG_buy"] || 11370;
 
     const evalAmt = rate * tx.donWeight;
 
@@ -1088,17 +1089,27 @@ function OpenInspectMemberModal(memberId) {
       `;
     } else {
       tbody.innerHTML = txList.map(tx => {
-        let rate = currentRates["24K_sell"] || 470000;
-        if (tx.purity === '18K') rate = currentRates["18K_sell"] || 345000;
-        else if (tx.purity === '14K') rate = currentRates["14K_sell"] || 268000;
-        else if (tx.purity === 'PT') rate = currentRates["PT_sell"] || 185000;
-        else if (tx.purity === 'AG') rate = currentRates["AG_sell"] || 5400;
+        let rate = currentRates["24K_buy"] || 808000;
+        let sellRate = currentRates["24K_sell"] || 688000;
+        if (tx.purity === '18K') {
+          rate = Math.round((currentRates["24K_buy"] || 808000) * 0.75 * 0.98);
+          sellRate = currentRates["18K_sell"] || 505700;
+        } else if (tx.purity === '14K') {
+          rate = Math.round((currentRates["24K_buy"] || 808000) * 0.585 * 0.98);
+          sellRate = currentRates["14K_sell"] || 392200;
+        } else if (tx.purity === 'PT') {
+          rate = currentRates["PT_buy"] || 329000;
+          sellRate = currentRates["PT_sell"] || 267000;
+        } else if (tx.purity === 'AG') {
+          rate = currentRates["AG_buy"] || 11370;
+          sellRate = currentRates["AG_sell"] || 9470;
+        }
 
         const evalAmt = rate * tx.donWeight;
         const diff = evalAmt - tx.totalCost;
         const ratePct = tx.totalCost > 0 ? ((diff / tx.totalCost) * 100).toFixed(2) : '0.00';
         const isPlus = diff >= 0;
-        const sparkline = GenerateTxSvgSparkline(tx, rate);
+        const sparkline = GenerateTxSvgSparkline(tx, rate, sellRate);
 
         return `
           <tr>
@@ -1248,7 +1259,7 @@ function DeleteMasterMember(memberId, event) {
 
   const updated = members.filter(m => m.id !== memberId);
   SaveMasterMembersDB(updated);
-  localStorage.setItem('goldlab_samples_cleared_v3', 'true');
+  localStorage.setItem('goldlab_samples_cleared_v4', 'true');
 
   if (currentInspectingMemberId === memberId) {
     CloseModal('masterMemberLedgerModal');
@@ -1275,7 +1286,7 @@ function ClearAllSampleMembers() {
   }
 
   SaveMasterMembersDB([]);
-  localStorage.setItem('goldlab_samples_cleared_v3', 'true');
+  localStorage.setItem('goldlab_samples_cleared_v4', 'true');
   RenderMasterDashboard();
   alert('모든 회원 및 샘플 데이터가 삭제되었습니다.\n이제 실제 신규 회원만 깔끔하게 등록됩니다.');
 }
@@ -2023,7 +2034,7 @@ function QuickInquiry(prodName) {
 // 4. MyPage Member Asset & Daily PnL Engine (mypage.html 1줄 보장 및 삭제)
 // --------------------------------------------------------------------------
 function LoadMyTransactions() {
-  const stored = localStorage.getItem('goldlab_my_transactions_v5');
+  const stored = localStorage.getItem('goldlab_my_transactions_v6');
   if (stored) {
     myTransactions = JSON.parse(stored);
   } else {
@@ -2033,7 +2044,7 @@ function LoadMyTransactions() {
 }
 
 function SaveMyTransactions() {
-  localStorage.setItem('goldlab_my_transactions_v5', JSON.stringify(myTransactions));
+  localStorage.setItem('goldlab_my_transactions_v6', JSON.stringify(myTransactions));
   SyncUserTransactionsToMasterDB();
 }
 
@@ -2149,33 +2160,31 @@ function RenderMyPageLedger() {
     return (tx.type || '매수') === '매도';
   });
 
-  // Calculate Overall Totals from ALL transactions
-  myTransactions.forEach(tx => {
-    let currentRateForPurity = currentRates["24K_sell"];
-    if (tx.purity === '18K') currentRateForPurity = currentRates["18K_sell"];
-    else if (tx.purity === '14K') currentRateForPurity = currentRates["14K_sell"];
-    else if (tx.purity === 'PT') currentRateForPurity = currentRates["PT_sell"];
-    else if (tx.purity === 'AG') currentRateForPurity = currentRates["AG_sell"];
-
-    const evalAmount = Math.round(tx.donWeight * currentRateForPurity);
-    totalDonWeight += parseFloat(tx.donWeight);
-    totalCostSum += parseInt(tx.totalCost);
-    totalEvalSum += evalAmount;
-  });
-
   if (filteredTxList.length === 0) {
     const emptyMsg = currentLedgerTab === 'BUY' ? '등록된 매수 내역이 없습니다.' : '등록된 매도 내역이 없습니다.';
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:3rem; color:var(--text-muted); white-space:nowrap;">${emptyMsg}<br><button class="btn btn-gold btn-sm" style="margin-top:1rem;" onclick="OpenAddTransactionModal()"><i class="fa-solid fa-plus"></i> 신규 내역 등록하기</button></td></tr>`;
   } else {
     tbody.innerHTML = filteredTxList.map(tx => {
-      let currentRateForPurity = currentRates["24K_sell"];
-      if (tx.purity === '18K') currentRateForPurity = currentRates["18K_sell"];
-      else if (tx.purity === '14K') currentRateForPurity = currentRates["14K_sell"];
-      else if (tx.purity === 'PT') currentRateForPurity = currentRates["PT_sell"];
-      else if (tx.purity === 'AG') currentRateForPurity = currentRates["AG_sell"];
+      // For BUY, compare with current BUY rate (시장 살 때 시세 기준 정확한 1:1 비교)
+      let currentRateForPurity = currentRates["24K_buy"] || 808000;
+      let currentSellRate = currentRates["24K_sell"] || 688000;
+
+      if (tx.purity === '18K') {
+        currentRateForPurity = Math.round((currentRates["24K_buy"] || 808000) * 0.75 * 0.98);
+        currentSellRate = currentRates["18K_sell"] || 505700;
+      } else if (tx.purity === '14K') {
+        currentRateForPurity = Math.round((currentRates["24K_buy"] || 808000) * 0.585 * 0.98);
+        currentSellRate = currentRates["14K_sell"] || 392200;
+      } else if (tx.purity === 'PT') {
+        currentRateForPurity = currentRates["PT_buy"] || 329000;
+        currentSellRate = currentRates["PT_sell"] || 267000;
+      } else if (tx.purity === 'AG') {
+        currentRateForPurity = currentRates["AG_buy"] || 11370;
+        currentSellRate = currentRates["AG_sell"] || 9470;
+      }
 
       const exactGrams = (tx.donWeight * 3.75).toFixed(2);
-      const svgGraphHtml = GenerateTxSvgSparkline(tx, currentRateForPurity);
+      const svgGraphHtml = GenerateTxSvgSparkline(tx, currentRateForPurity, currentSellRate);
 
       return `
         <tr>
@@ -2241,7 +2250,7 @@ function RenderMyPageLedger() {
   }
 }
 
-function GenerateTxSvgSparkline(tx, currentRateForPurity) {
+function GenerateTxSvgSparkline(tx, currentRateForPurity, currentSellRate) {
   const startPrice = tx.unitCost;
   const endPrice = currentRateForPurity;
   const diff = (endPrice * tx.donWeight) - tx.totalCost;
@@ -2295,16 +2304,17 @@ function GenerateTxSvgSparkline(tx, currentRateForPurity) {
   const now = new Date();
   const todayStr = `${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')}`;
   const profitRate = tx.totalCost > 0 ? ((diff / tx.totalCost) * 100).toFixed(2) : '0.00';
+  const cashoutVal = (currentSellRate || currentRates["24K_sell"] || 688000) * tx.donWeight;
 
   return `
     <div style="background:rgba(9,11,16,0.95); border:1px solid var(--border-dark); border-radius:14px; padding:0.85rem 1.1rem; min-width:360px;">
       <!-- Table Header & Stats -->
-      <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center; margin-bottom:0.6rem;">
+      <table style="width:100%; border-collapse:collapse; font-size:0.85rem; text-align:center; margin-bottom:0.5rem;">
         <thead>
           <tr style="color:var(--text-muted); border-bottom:1px solid rgba(255,255,255,0.08);">
             <th style="padding-bottom:0.35rem; font-weight:600;">등록 당시 단가</th>
-            <th style="padding-bottom:0.35rem; font-weight:600;">현재 실시간 시세</th>
-            <th style="padding-bottom:0.35rem; font-weight:600;">평가 손익</th>
+            <th style="padding-bottom:0.35rem; font-weight:600;">현재 실시간 시세 (살 때)</th>
+            <th style="padding-bottom:0.35rem; font-weight:600;">시세 평가 손익</th>
           </tr>
         </thead>
         <tbody>
@@ -2340,6 +2350,12 @@ function GenerateTxSvgSparkline(tx, currentRateForPurity) {
           <span style="color:var(--text-light); font-weight:700;">시작가: ${formatWon(startPrice)}원</span>
           <span style="color:${lineColor}; font-weight:800;">현재가: ${formatWon(endPrice)}원</span>
         </div>
+      </div>
+
+      <!-- Real-Time Cashout Liquidation Notice -->
+      <div style="margin-top:0.5rem; padding-top:0.4rem; border-top:1px dashed rgba(255,255,255,0.08); display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:var(--text-muted);">
+        <span><i class="fa-solid fa-hand-holding-dollar text-gold"></i> 오늘 즉시 현금 처분(팔 때) 시:</span>
+        <span style="color:var(--text-white); font-weight:800; font-family:var(--font-num);">${formatWon(cashoutVal)} 원 <span style="font-size:0.72rem; color:var(--text-muted);">(단가 ${formatWon(currentSellRate || 688000)}원)</span></span>
       </div>
     </div>
   `;
