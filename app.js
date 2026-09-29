@@ -5,30 +5,30 @@
 
 // Official Live Rates from Korea Gold Exchange (koreagoldx.co.kr 100% Exact Official Rates)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 808000,
-  "24K_sell": 684000,
-  "18K_sell": 502800,
-  "14K_sell": 389900,
-  "PT_buy": 329000,
-  "PT_sell": 267000,
-  "AG_buy": 11370,
-  "AG_sell": 9470
+  "24K_buy": 792000,
+  "24K_sell": 680000,
+  "18K_sell": 499800,
+  "14K_sell": 387600,
+  "PT_buy": 327000,
+  "PT_sell": 265000,
+  "AG_buy": 11160,
+  "AG_sell": 9290
 };
 
 let REALTIME_RATE_CHANGES = {
   "24K_buy_diff": -16000,
-  "24K_buy_per": -1.98,
-  "24K_sell_diff": -10000,
-  "24K_sell_per": -1.46,
-  "18K_sell_diff": -7300,
-  "18K_sell_per": -1.45,
-  "14K_sell_diff": -5700,
-  "14K_sell_per": -1.46,
-  "PT_sell_diff": -7000,
-  "PT_sell_per": -2.62,
-  "AG_sell_diff": -320,
-  "AG_sell_per": -3.38,
-  "date": "2026.09.28"
+  "24K_buy_per": -2.02,
+  "24K_sell_diff": -4000,
+  "24K_sell_per": -0.59,
+  "18K_sell_diff": -3000,
+  "18K_sell_per": -0.6,
+  "14K_sell_diff": -2300,
+  "14K_sell_per": -0.59,
+  "PT_sell_diff": -2000,
+  "PT_sell_per": -0.75,
+  "AG_sell_diff": -180,
+  "AG_sell_per": -1.94,
+  "date": "2026.09.29"
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
