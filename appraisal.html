@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>귀금속 정밀 감정대행 서비스 | GoldLab & Co.</title>
+  <meta name="description" content="종로 첨단 비파괴 XRF 성분분석 및 초정밀 비중 측정을 통한 투명한 귀금속 감정대행 서비스. 방문 및 안심 택배 접수 가능.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=41">
+</head>
+<body>
+
+  <!-- STICKY LUXURY HEADER -->
+  <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark); box-shadow:0 10px 30px rgba(0,0,0,0.8);">
+    <nav class="navbar" style="padding:0.9rem 0;">
+      <div class="container nav-inner">
+        <a href="index.html" class="brand-logo" style="text-decoration:none;">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.65rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </a>
+
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
+          <li><a href="products.html" class="nav-link"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
+          <li><a href="appraisal.html" class="nav-link active"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
+          <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
+          <li><a href="reservation.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문예약</a></li>
+          <li><a href="support.html" class="nav-link"><i class="fa-solid fa-headset"></i> 고객센터</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지</a></li>
+          <li><a href="wholesale.html" class="nav-link" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
+        </ul>
+
+        <div style="display:flex; align-items:center; gap:0.9rem;">
+          <div id="authTopSlot"></div>
+          <a href="reservation.html" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
+          <button class="mobile-toggle-btn" onclick="ToggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
+
+    <!-- TOP HERO BANNER -->
+    <div style="text-align:center; max-width:860px; margin:0 auto 3rem auto;">
+      <div class="section-badge" style="margin-bottom:0.8rem;"><i class="fa-solid fa-microscope text-gold"></i> SCIENTIFIC PRECISION APPRAISAL</div>
+      <h1 style="font-size:2.4rem; font-weight:900; line-height:1.3; margin-bottom:1rem;">
+        훼손 없는 비파괴 과학 감정, <br><span class="gradient-text">GoldLab 안심 감정대행 서비스</span>
+      </h1>
+      <p style="color:var(--text-muted); font-size:1.05rem; line-height:1.7;">
+        최첨단 형광 X선(XRF) 분광 분석기와 0.001g 단위 정밀 비중 측정기를 통해 귀금속의 정확한 순도와 실측 중량을 검증해 드립니다.
+        방문 또는 전국 안심 택배로 편리하게 접수하실 수 있습니다.
+      </p>
+    </div>
+
+    <!-- DRAFT PRICING NOTICE ALERT -->
+    <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-gold-bright); border-radius:18px; padding:1.2rem 1.6rem; margin-bottom:3rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+      <div style="display:flex; align-items:center; gap:1rem;">
+        <i class="fa-solid fa-circle-exclamation text-gold" style="font-size:1.8rem;"></i>
+        <div>
+          <strong style="color:var(--gold-light); font-size:1.05rem;">감정대행 기본 수수료 안내 (운영 검토안)</strong>
+          <p style="color:var(--text-muted); font-size:0.92rem; margin-top:0.2rem;">
+            방문 기본형 <strong>29,000원</strong> / 택배 기본형 <strong>39,000원</strong> (왕복 배송비 별도 / 정밀 파괴검사 또는 특수보석 감정 시 별도 견적).
+            본 요금은 서비스 개편 검토안으로, 접수 후 확정 견적이 안내됩니다.
+          </p>
+        </div>
+      </div>
+      <a href="#applySection" class="btn btn-gold btn-sm"><i class="fa-solid fa-pen-to-square"></i> 즉시 감정 접수하기</a>
+    </div>
+
+    <!-- SERVICE PROCESS & LIMITATIONS GRID -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.8rem; margin-bottom:3.5rem;">
+      
+      <!-- 1. 접수 가능 품목 -->
+      <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+        <div style="width:48px; height:48px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
+          <i class="fa-solid fa-boxes-stacked text-gold" style="font-size:1.4rem;"></i>
+        </div>
+        <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin-bottom:0.8rem;">접수 가능 품목</h3>
+        <ul style="color:var(--text-muted); font-size:0.95rem; line-height:1.8; padding-left:1.2rem;">
+          <li>24K 순금 골드바 (프레스바, 주물 덩어리, 골드빈)</li>
+          <li>18K / 14K 고금 주얼리 (반지, 목걸이, 팔찌, 귀걸이)</li>
+          <li>백금(Platinum / PT990, PT950, PT900) 바 및 주얼리</li>
+          <li>실버(Silver / AG999, AG925) 원자재 및 은수저, 기념주화</li>
+          <li>치금(치과용 합금골드) 및 산업용 귀금속 원자재</li>
+        </ul>
+      </div>
+
+      <!-- 2. 검사 방법 및 확인 범위 -->
+      <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+        <div style="width:48px; height:48px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
+          <i class="fa-solid fa-magnifying-glass-chart text-gold" style="font-size:1.4rem;"></i>
+        </div>
+        <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin-bottom:0.8rem;">검사 방법과 확인 범위</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:0.8rem;">
+          <strong>[비파괴 XRF 성분분석]</strong> 제품 표면에 손상을 주지 않고 금·은·백금 및 합금 원소의 함량을 정밀 측정합니다.
+        </p>
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7;">
+          <strong>[초정밀 비중 시험]</strong> 아르키메데스 원리를 적용하여 제품의 체적과 밀도를 측정함으로써 순도 오차를 교차 검증합니다.
+        </p>
+      </div>
+
+      <!-- 3. 검사 한계 및 보증서와의 차이 -->
+      <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+        <div style="width:48px; height:48px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
+          <i class="fa-solid fa-shield-halved text-gold" style="font-size:1.4rem;"></i>
+        </div>
+        <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin-bottom:0.8rem;">검사 한계 및 유의사항</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:0.6rem;">
+          ※ <strong>보증서 재발급 불가:</strong> 본 확인서는 기존 판매점의 보증서나 공인기관 문서가 아니며, 과학 장비로 측정한 시험 결과서입니다.
+        </p>
+        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7;">
+          ※ <strong>비파괴 한계:</strong> 두꺼운 도금층 내부의 심재나 속이 빈(Hollow) 제품의 코어 이물질은 비파괴 방식상 완벽한 내부 측정이 어려울 수 있습니다.
+        </p>
+      </div>
+    </div>
+
+    <!-- 10-STEP PROGRESSION PIPELINE EXPLANATION -->
+    <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:2.2rem; margin-bottom:3.5rem;">
+      <h3 style="font-size:1.35rem; color:var(--text-white); font-weight:800; margin-bottom:1.5rem; text-align:center;">
+        <i class="fa-solid fa-timeline text-gold"></i> 투명한 10단계 감정 프로세스
+      </h3>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:1rem; text-align:center;">
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">01. 신청 완료</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">접수번호 발급</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">02. 발송 안내</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">안심 패키징 가이드</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">03. 제품 도착</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">입고 사진 및 개봉</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">04. 검사 진행</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">XRF 및 비중 실측</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">05. 추가동의대기</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">특수검사 필요시</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">06. 검사 완료</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">확인서 작성</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">07. 반환 준비</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">세척/패킹/보험가입</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">08. 반환 발송</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">운송장 등록</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:var(--gold-light); font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">09. 최종 완료</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">수령 및 QR확인</div>
+        </div>
+        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
+          <div style="color:#ef4444; font-weight:900; font-size:1.1rem; margin-bottom:0.3rem;">10. 취소</div>
+          <div style="color:var(--text-muted); font-size:0.82rem;">사전 취소 및 반송</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APPLICATION FORM SECTION -->
+    <div id="applySection" style="max-width:840px; margin:0 auto; background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:2.5rem; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
+      
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span class="section-badge" style="margin-bottom:0.6rem;"><i class="fa-solid fa-file-pen text-gold"></i> ONLINE APPLICATION</span>
+        <h2 style="font-size:1.8rem; font-weight:900; color:var(--text-white); margin:0;">귀금속 정밀 감정대행 신청서</h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">신청서를 접수하시면 고유 접수번호가 즉시 발급됩니다.</p>
+      </div>
+
+      <form id="appraisalForm" onsubmit="SubmitAppraisal(event)">
+        
+        <!-- 접수 방식 선택 -->
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label class="form-label" style="font-weight:800; font-size:1rem; color:var(--gold-light);">1. 접수 방식 선택 *</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+            <label style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; cursor:pointer; display:flex; align-items:center; gap:0.8rem;">
+              <input type="radio" name="appraisalMethod" value="VISIT" checked onchange="ToggleCourierFields()" style="accent-color:var(--gold-primary);">
+              <div>
+                <strong style="color:var(--text-white); display:block; font-size:1.05rem;">🏢 종로 본점 방문 접수</strong>
+                <span style="font-size:0.82rem; color:var(--text-muted);">직접 방문하여 당일 정밀 입회 감정 (소요시간 30~60분)</span>
+              </div>
+            </label>
+            <label style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; cursor:pointer; display:flex; align-items:center; gap:0.8rem;">
+              <input type="radio" name="appraisalMethod" value="COURIER" onchange="ToggleCourierFields()" style="accent-color:var(--gold-primary);">
+              <div>
+                <strong style="color:var(--text-white); display:block; font-size:1.05rem;">📦 전국 안심 택배 접수</strong>
+                <span style="font-size:0.82rem; color:var(--text-muted);">우체국 안심보험 택배 발송 (수령 후 1~2영업일 이내 결과 통보)</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 신청자 정보 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem;">
+          <div class="form-group">
+            <label class="form-label">신청자 성함 *</label>
+            <input type="text" class="form-control" id="apApplicantName" placeholder="예: 홍길동" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">연락처 (휴대폰 번호) *</label>
+            <input type="tel" class="form-control" id="apApplicantPhone" placeholder="예: 010-1234-5678" required>
+          </div>
+        </div>
+
+        <!-- 반환 배송지 (택배 선택 시에만 노출) -->
+        <div id="courierAddressGroup" style="display:none; background:rgba(224,184,72,0.05); border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.5rem;">
+          <label class="form-label text-gold"><i class="fa-solid fa-truck"></i> 감정 완료 후 반환받으실 배송지 주소 *</label>
+          <input type="text" class="form-control" id="apReturnAddress" placeholder="도로명 주소 및 상세 주소(동/호수)를 정확히 입력하세요">
+          <small style="color:var(--text-muted); font-size:0.82rem; display:block; margin-top:0.4rem;">
+            ※ 고가 귀금속 반환 배송은 우체국 안심소포 보험 취급으로 발송되며 반환 배송비가 별도 청구됩니다.
+          </small>
+        </div>
+
+        <!-- 품목 및 예상 사양 -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem;">
+          <div class="form-group">
+            <label class="form-label">제품 종류 *</label>
+            <select class="form-control" id="apItemType" required>
+              <option value="골드바">24K 골드바 (인곳/프레스바/골드빈)</option>
+              <option value="팔찌">18K / 14K / 24K 팔찌</option>
+              <option value="반지">18K / 14K / 24K 반지</option>
+              <option value="목걸이">18K / 14K / 24K 목걸이</option>
+              <option value="백금">백금(Platinum) 제품</option>
+              <option value="실버">실버(Silver) 제품</option>
+              <option value="치금">치과용 치금(합금)</option>
+              <option value="기타">기타 귀금속 및 원자재</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">의뢰 수량 *</label>
+            <input type="number" class="form-control" id="apQuantity" value="1" min="1" max="100" required>
+          </div>
+        </div>
+
+        <!-- 예상 순도 및 중량 (모름 체크 가능) -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem;">
+          <div class="form-group">
+            <label class="form-label">예상 순도</label>
+            <div style="display:flex; gap:0.5rem;">
+              <select class="form-control" id="apExpectedPurity">
+                <option value="24K (99.99%)">24K (99.99%)</option>
+                <option value="18K (75.0%)">18K (75.0%)</option>
+                <option value="14K (58.5%)">14K (58.5%)</option>
+                <option value="PT990/950">백금 PT990 / PT950</option>
+                <option value="AG999/925">은 AG999 / AG925</option>
+                <option value="모름">순도 잘 모름 (분석 의뢰)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">예상 중량</label>
+            <input type="text" class="form-control" id="apExpectedWeight" placeholder="예: 5돈 / 18.75g (모를 경우 비워두세요)">
+          </div>
+        </div>
+
+        <!-- 제품 사진 첨부 -->
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label class="form-label">제품 사진 첨부 (선택 사항 / 최대 10MB)</label>
+          <input type="file" id="apPhotoFile" accept="image/jpeg,image/png,image/webp" class="form-control" onchange="PreviewAppraisalPhoto(this)">
+          <div id="photoPreviewBox" style="display:none; margin-top:0.8rem; text-align:center;">
+            <img id="photoPreviewImg" src="" alt="미리보기" style="max-height:160px; border-radius:10px; border:1px solid var(--border-gold-bright);">
+          </div>
+        </div>
+
+        <!-- 요청사항 -->
+        <div class="form-group" style="margin-bottom:1.5rem;">
+          <label class="form-label">고객 요청사항 / 특이사항</label>
+          <textarea class="form-control" id="apRequests" rows="3" placeholder="각인 보존 요청, 특정 부위 검사 요청 등 참고 사항을 적어주세요"></textarea>
+        </div>
+
+        <!-- 무료 기본 광택 신청 여부 및 주의사항 동의 -->
+        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.5rem;">
+          <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer;">
+            <input type="checkbox" id="apFreePolish" style="accent-color:var(--gold-primary); margin-top:0.25rem;">
+            <div>
+              <strong style="color:var(--gold-light);">[선택] 무상 기본 세척 및 표면 광택 신청</strong>
+              <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.2rem; line-height:1.6;">
+                초음파 세척 및 주얼리 표면 미세 스크래치 제거 광택을 무상 제공합니다.
+                (※ 미세 연마 과정으로 인해 <strong>0.01g 미만의 표면 중량 감소</strong>가 발생할 수 있음을 사전 인지하고 동의합니다.)
+              </p>
+            </div>
+          </label>
+        </div>
+
+        <!-- 필수 약관 및 동의 체크 -->
+        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:2rem; font-size:0.88rem; color:var(--text-light); line-height:1.7;">
+          <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; margin-bottom:0.6rem;">
+            <input type="checkbox" id="apAgreeInspection" required style="accent-color:var(--gold-primary);">
+            <span>[필수] 비파괴 XRF 성분분석 시험의 범위와 기술적 한계 및 보증서 재발급 불가 정책을 확인하였으며 이에 동의합니다.</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; margin-bottom:0.6rem;">
+            <input type="checkbox" id="apAgreeDelivery" required style="accent-color:var(--gold-primary);">
+            <span>[필수] 택배 운송 규정 및 분실·파손 보상 한도(안심택배 규정 준수)를 확인하고 동의합니다.</span>
+          </label>
+          <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer;">
+            <input type="checkbox" id="apAgreePrivacy" required style="accent-color:var(--gold-primary);">
+            <span>[필수] 감정 접수 및 본인 확인을 위한 개인정보 수집 및 이용에 동의합니다.</span>
+          </label>
+        </div>
+
+        <!-- 제출 버튼 -->
+        <button type="submit" id="btnSubmitAppraisal" class="btn btn-gold" style="width:100%; padding:1.1rem; font-size:1.15rem; font-weight:900;">
+          <i class="fa-solid fa-paper-plane"></i> 감정대행 신청서 접수하기
+        </button>
+      </form>
+
+      <!-- 신청 완료 알림 카드 (신청 성공 후 표시) -->
+      <div id="apResultCard" style="display:none; text-align:center; padding:2rem 0;">
+        <i class="fa-solid fa-circle-check text-gold" style="font-size:3.5rem; margin-bottom:1rem;"></i>
+        <h3 style="color:var(--text-white); font-size:1.6rem; margin-bottom:0.5rem;">감정대행 접수가 정상 완료되었습니다</h3>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">
+          발급된 고유 접수번호로 마이페이지에서 10단계 진행 상황을 실시간 조회하실 수 있습니다.
+        </p>
+
+        <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:16px; padding:1.5rem; max-width:540px; margin:0 auto 2rem auto; text-align:left; line-height:1.8;">
+          <p>• <strong>접수번호:</strong> <span id="resApNo" class="text-gold" style="font-weight:900; font-size:1.1rem;">GL-AP-20261008-0001</span></p>
+          <p>• <strong>접수방식:</strong> <span id="resApMethod">종로 본점 방문 접수</span></p>
+          <p>• <strong>의뢰품목:</strong> <span id="resApItem">24K 골드바 (1개)</span></p>
+          <p>• <strong>진행상태:</strong> <span class="badge-status badge-status-applied">신청 완료</span></p>
+          <p id="resApShippingNote" style="margin-top:0.8rem; font-size:0.88rem; color:var(--gold-light); background:rgba(224,184,72,0.1); padding:0.6rem 0.8rem; border-radius:8px;">
+            ※ 본점 방문 시 예약된 시간에 맞춰 의뢰 제품을 지참해 주시기 바랍니다.
+          </p>
+        </div>
+
+        <div style="display:flex; gap:1rem; justify-content:center;">
+          <a href="mypage.html" class="btn btn-gold"><i class="fa-solid fa-wallet"></i> 마이페이지에서 진행상태 보기</a>
+          <button type="button" onclick="ResetAppraisalForm()" class="btn btn-outline-gold"><i class="fa-solid fa-plus"></i> 추가 접수하기</button>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- LUXURY FOOTER -->
+  <footer class="footer" style="background:#06070a; border-top:1px solid var(--border-dark); padding:3.5rem 0 2rem 0;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:2rem; margin-bottom:2.5rem;">
+        <div>
+          <div class="brand-logo" style="margin-bottom:1rem;">
+            <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+            <span style="font-size:1.5rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.92rem; max-width:420px; line-height:1.7;">
+            GoldLab & Co.는 첨단 비파괴 검사 시스템과 종로 전문 세공 공방 네트워크를 통해 고객의 귀금속 자산 가치를 가장 안전하고 투명하게 증명합니다.
+          </p>
+        </div>
+        <div>
+          <h4 style="color:var(--text-white); font-size:1.05rem; margin-bottom:1rem;">고객지원센터</h4>
+          <p style="color:var(--text-light); font-size:0.92rem;"><i class="fa-solid fa-phone text-gold"></i> <a href="tel:010-4017-4988" style="color:var(--text-light); text-decoration:none;">010-4017-4988</a></p>
+          <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.3rem;">평일 11:00 ~ 18:00 (주말/공휴일 휴무)</p>
+        </div>
+      </div>
+      <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.5rem; font-size:0.85rem; color:var(--text-muted); line-height:1.8;">
+        <div style="display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:0.8rem;">
+          <a href="support.html#terms" style="color:var(--text-light); text-decoration:none;">이용약관</a> |
+          <a href="support.html#privacy" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">개인정보처리방침</a> |
+          <a href="support.html#appraisal-terms" style="color:var(--text-light); text-decoration:none;">감정대행이용조건</a> |
+          <a href="verify.html" style="color:var(--gold-light); text-decoration:none;"><i class="fa-solid fa-qrcode"></i> 확인서 진위확인</a>
+        </div>
+        <p>상호명: GoldLab & Co. | 대표자: 황미숙 | 사업자등록번호: 185-07-02856 | 통신판매업신고: 제 20205-서울은평-1081 호 (원본 신고증 번호 확인 예정 항목)</p>
+        <p>소재지: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 개인정보보호책임자: 황미숙</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUTH MODAL -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; position:absolute; top:1.4rem; left:1.6rem; right:1.6rem; z-index:2;">
+        <button type="button" id="authHeaderBackBtn" onclick="SwitchAuthTab('login')" style="display:none; background:none; border:none; color:var(--gold-light); font-size:0.95rem; font-weight:700; cursor:pointer;">
+          <i class="fa-solid fa-arrow-left"></i> 뒤로가기
+        </button>
+        <div style="flex:1;"></div>
+        <button class="modal-close" onclick="CloseModal('authModal')">&times;</button>
+      </div>
+      <div class="auth-modal-header" style="margin-top:1rem; text-align:center;">
+        <div class="brand-logo" style="justify-content:center; margin-bottom:0.6rem;">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.5rem;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </div>
+        <p style="font-size:0.92rem; color:var(--text-muted);" id="authModalSubTitle">VIP 회원 전용 자산 관리 서비스</p>
+      </div>
+      <div id="authViewLogin">
+        <form onsubmit="HandleUserLogin(event)">
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일 주소)</label>
+            <input type="email" class="form-control" id="loginEmail" placeholder="example@goldlab.co.kr" required>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="loginPass" placeholder="••••••••" required>
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem;"><i class="fa-solid fa-right-to-bracket"></i> 로그인 하기</button>
+        </form>
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.95rem; color:var(--text-muted);">
+          <span>계정이 없으신가요?</span>
+          <button type="button" onclick="SwitchAuthTab('signup')" style="background:none; border:none; color:var(--gold-light); font-weight:800; cursor:pointer; text-decoration:underline;">간편 회원가입</button>
+        </div>
+      </div>
+      <div id="authViewSignup" style="display:none;">
+        <form onsubmit="HandleUserSignup(event)">
+          <div class="form-group">
+            <label class="form-label">성함 / 대표자명</label>
+            <input type="text" class="form-control" id="signupName" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일)</label>
+            <input type="email" class="form-control" id="signupEmail" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="signupPass" required>
+          </div>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <label class="form-label">휴대폰 번호</label>
+            <input type="tel" class="form-control" id="signupPhone" required>
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem;"><i class="fa-solid fa-user-plus"></i> 회원가입 완료</button>
+        </form>
+      </div>
+      <div id="authViewFind" style="display:none;">
+        <form onsubmit="HandleFindAccount(event)">
+          <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:1rem;">가입된 이메일 주소를 입력하시면 비밀번호 재설정 일회용 링크를 생성합니다.</p>
+          <div class="form-group" style="margin-bottom:1.5rem;">
+            <input type="email" class="form-control" id="findEmail" placeholder="가입 이메일 주소" required>
+          </div>
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem;">재설정 링크 발송</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=202610080816"></script>
+  <script>
+    function ToggleCourierFields() {
+      const isCourier = document.querySelector('input[name="appraisalMethod"]:checked')?.value === 'COURIER';
+      const addressBox = document.getElementById('courierAddressGroup');
+      const addressInput = document.getElementById('apReturnAddress');
+      if (addressBox) addressBox.style.display = isCourier ? 'block' : 'none';
+      if (addressInput) addressInput.required = isCourier;
+    }
+
+    let photoBase64 = null;
+    function PreviewAppraisalPhoto(input) {
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (file.size > 10 * 1024 * 1024) {
+          alert('사진 파일 용량은 최대 10MB까지 가능합니다.');
+          input.value = '';
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          photoBase64 = e.target.result;
+          document.getElementById('photoPreviewImg').src = photoBase64;
+          document.getElementById('photoPreviewBox').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    async function SubmitAppraisal(e) {
+      e.preventDefault();
+      const method = document.querySelector('input[name="appraisalMethod"]:checked')?.value || 'VISIT';
+      const applicantName = document.getElementById('apApplicantName').value.trim();
+      const applicantPhone = document.getElementById('apApplicantPhone').value.trim();
+      const returnAddress = document.getElementById('apReturnAddress')?.value.trim() || '';
+      const itemType = document.getElementById('apItemType').value;
+      const quantity = parseInt(document.getElementById('apQuantity').value, 10) || 1;
+      const expectedPurity = document.getElementById('apExpectedPurity').value;
+      const expectedWeight = document.getElementById('apExpectedWeight').value.trim();
+      const requests = document.getElementById('apRequests').value.trim();
+      const freePolish = document.getElementById('apFreePolish').checked;
+
+      if (method === 'COURIER' && !returnAddress) {
+        alert('택배 반환 배송지를 입력해주세요.');
+        return;
+      }
+
+      const submitBtn = document.getElementById('btnSubmitAppraisal');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = '신청서 접수 및 번호 발급 중...'; }
+
+      try {
+        const res = await ApiRequest('/api/appraisals/apply', 'POST', {
+          method,
+          applicantName,
+          applicantPhone,
+          returnAddress,
+          itemType,
+          quantity,
+          expectedPurity,
+          expectedWeight,
+          requests,
+          freePolish,
+          photoData: photoBase64
+        });
+
+        // Show result card
+        document.getElementById('appraisalForm').style.display = 'none';
+        document.getElementById('apResultCard').style.display = 'block';
+
+        document.getElementById('resApNo').innerText = res.appraisal.receiptNo;
+        document.getElementById('resApMethod').innerText = method === 'VISIT' ? '종로 본점 방문 접수' : '전국 안심 택배 접수';
+        document.getElementById('resApItem').innerText = `${itemType} (${quantity}개)`;
+        
+        const noteEl = document.getElementById('resApShippingNote');
+        if (noteEl) {
+          noteEl.innerHTML = method === 'VISIT'
+            ? '※ 종로 본점 방문 시 접수번호를 제시해 주시면 우선 입회 감정이 진행됩니다.'
+            : '※ 택배 발송 주소: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 GoldLab 정밀분석실 (접수번호 동봉 요망)';
+        }
+
+      } catch (err) {
+        alert('[접수 실패] ' + err.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> 감정대행 신청서 접수하기';
+        }
+      }
+    }
+
+    function ResetAppraisalForm() {
+      document.getElementById('appraisalForm').reset();
+      document.getElementById('appraisalForm').style.display = 'block';
+      document.getElementById('apResultCard').style.display = 'none';
+      document.getElementById('photoPreviewBox').style.display = 'none';
+      photoBase64 = null;
+      ToggleCourierFields();
+    }
+  </script>
+</body>
+</html>

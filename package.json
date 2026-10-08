@@ -1,0 +1,26 @@
+{
+  "name": "goldlab-platform",
+  "version": "2.0.0",
+  "description": "GoldLab&co Official Web Platform & Core Services Engine",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test scripts/verify-production.js",
+    "sync:rates": "node scripts/sync-kge-rates.js"
+  },
+  "keywords": [
+    "gold",
+    "goldlab",
+    "bullion",
+    "appraisal",
+    "reservation",
+    "jewelry"
+  ],
+  "author": "GoldLab&co",
+  "license": "UNLICENSED",
+  "private": true,
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

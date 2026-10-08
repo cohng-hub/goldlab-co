@@ -3,3 +3,9 @@ node_modules/
 scratch_test.json
 .DS_Store
 .vscode/
+.env
+.env.local
+~$*.xlsx
+scratch/
+data/backups/
+uploads/temp/

@@ -27,10 +27,13 @@
 
         <!-- Main Navigation Links -->
         <ul class="nav-menu" id="navMenu">
-          <li><a href="#hero-split" class="nav-link active"><i class="fa-solid fa-chart-line"></i> 실시간 시세 그래프</a></li>
-          <li><a href="#products" class="nav-link"><i class="fa-solid fa-cube"></i> 골드바 라인업</a></li>
-          <li><a href="#booking" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a></li>
-          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a></li>
+          <li><a href="index.html#hero-split" class="nav-link active"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
+          <li><a href="products.html" class="nav-link"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
+          <li><a href="appraisal.html" class="nav-link"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
+          <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
+          <li><a href="reservation.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문예약</a></li>
+          <li><a href="support.html" class="nav-link"><i class="fa-solid fa-headset"></i> 고객센터</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지</a></li>
           <li><a href="wholesale.html" class="nav-link" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
         </ul>
 
@@ -39,7 +42,7 @@
           <div id="authTopSlot">
             <!-- JS Injected User Status -->
           </div>
-          <a href="#booking" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
+          <a href="reservation.html" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
           <button class="mobile-toggle-btn" onclick="ToggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
         </div>
       </div>
@@ -56,7 +59,7 @@
           투명한 감정과 최적 시세, <span class="gradient-text">GoldLab & Co.</span>
         </h1>
         <p class="hero-desc" style="font-size:1.02rem!important; line-height:1.6!important; word-break:keep-all!important; color:var(--text-muted);">
-          한국표준금시세 기준 실시간 연동 · 홀마크 999.9% 순금 보증 · 당일 현금 100% 입금 보장.
+          한국금거래소 당일 공식 고시 시세 연동 · 순도 99.99% 포나인 규격 준수 · 정밀 비파괴 감정 및 투명한 매입 절차.
           회원 전용 금 자산 실시간 평가 손익(PnL) 관리 솔루션 제공.
         </p>
       </div>
@@ -86,7 +89,7 @@
                   <div style="font-weight:800; color:var(--text-white); font-size:1.05rem;">
                     <span style="background:var(--gold-gradient); color:#000; font-size:0.75rem; padding:0.15rem 0.45rem; border-radius:4px; font-weight:900; margin-right:0.4rem;">24K</span> 순금 (3.75g 1돈)
                   </div>
-                  <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">홀마크 999.9% 포장형/덩어리</div>
+                  <div style="font-size:0.82rem; color:var(--text-muted); margin-top:0.2rem;">순도 99.99% (999.9‰) 포장형/인곳</div>
                 </div>
                 <div style="text-align:right; font-family:var(--font-num);">
                   <div style="font-size:0.88rem; color:var(--text-light);">살 때: <strong style="color:var(--gold-light); font-size:1.05rem; font-weight:800;" id="heroBuy24k">914,000원</strong></div>
@@ -422,16 +425,23 @@
       <div class="footer-bottom" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.8rem; margin-top:2rem; font-size:0.88rem; color:var(--text-muted); line-height:1.8;">
         <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; font-weight:600; color:var(--text-light);">
           <div style="display:flex; gap:1.4rem; flex-wrap:wrap;">
-            <a href="#" onclick="alert('서비스 이용약관 준비중입니다.'); return false;" style="color:var(--text-light); text-decoration:none;">이용약관</a>
+            <a href="support.html#terms" style="color:var(--text-light); text-decoration:none;">이용약관</a>
             <span style="color:rgba(255,255,255,0.2);">|</span>
-            <a href="#" onclick="alert('개인정보 처리방침 안내입니다.'); return false;" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">개인정보 처리방침</a>
+            <a href="support.html#privacy" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">개인정보처리방침</a>
             <span style="color:rgba(255,255,255,0.2);">|</span>
-            <a href="#" onclick="alert('사업자등록정보 및 법인 정보 확인용 링크입니다.'); return false;" style="color:var(--text-light); text-decoration:none;">사업자정보확인</a>
+            <a href="support.html#appraisal-terms" style="color:var(--text-light); text-decoration:none;">감정대행 이용조건</a>
+            <span style="color:rgba(255,255,255,0.2);">|</span>
+            <a href="support.html#bizinfo" style="color:var(--text-light); text-decoration:none;">사업자정보확인</a>
+            <span style="color:rgba(255,255,255,0.2);">|</span>
+            <a href="verify.html" style="color:var(--gold-light); text-decoration:none;"><i class="fa-solid fa-qrcode"></i> 확인서 진위조회</a>
           </div>
-          <div><i class="fa-solid fa-certificate text-gold"></i> 귀금속 분석 감정원 홀마크 공식 인증업체</div>
+          <div><i class="fa-solid fa-scale-balanced text-gold"></i> 종로 귀금속 전문 정밀 시험 감정 및 실거래 연동 플랫폼</div>
         </div>
         <p style="margin-bottom:0.3rem;">
-          상호명: GoldLab & Co. (골드랩앤코) | 대표자: 황미숙 | 사업자등록번호: 185-07-02856 | 통신판매업신고: 제 20205-서울은평-1081 호
+          상호명: GoldLab & Co. (골드랩앤코) | 대표자: 황미숙 | 사업자등록번호: 185-07-02856 | 통신판매업신고: 제 20205-서울은평-1081 호 (원본 신고증 번호 확인 예정 항목)
+        </p>
+        <p style="margin-bottom:0.3rem; color:var(--text-muted); font-size:0.82rem;">
+          ※ 고시 시세 출처: 한국금거래소(koreagoldx.co.kr) 당일 공식 고시 기준 · 단위: 3.75g (1돈) · 살 때 VAT 10% 포함 / 팔 때 고금 매입단가 적용(부가가치세 미부과 대상) · GoldLab 실거래 가격은 제휴 공방 및 골드랩 자체 공급단가가 별도 적용됩니다.
         </p>
         <p style="margin-bottom:0.3rem;">
           소재지: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 개인정보보호책임자: 황미숙 (skycraft102@naver.com)
@@ -443,8 +453,8 @@
 
   <!-- FLOATING ACTION BUTTONS -->
   <div class="floating-widgets">
-    <div class="float-btn float-kakao" onclick="alert('카카오톡 상담하기 연동중입니다 (GoldLab 챗봇)');" title="카카오톡 1:1 상담"><i class="fa-comment fa-solid"></i></div>
-    <div class="float-btn float-call" onclick="alert('대표번호 010-4017-4988로 전화 연결합니다.');" title="전화 상담"><i class="fa-phone fa-solid"></i></div>
+    <a href="https://pf.kakao.com" target="_blank" rel="noopener noreferrer" class="float-btn float-kakao" title="카카오톡 1:1 상담"><i class="fa-comment fa-solid"></i></a>
+    <a href="tel:010-4017-4988" class="float-btn float-call" title="전화 상담 (010-4017-4988)"><i class="fa-phone fa-solid"></i></a>
   </div>
 
   <!-- PRODUCT WEIGHT SELECTION MODAL (예상 시세 박스 제거) -->

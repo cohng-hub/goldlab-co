@@ -25,10 +25,13 @@
 
         <!-- Main Navigation Links -->
         <ul class="nav-menu" id="navMenu">
-          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 실시간 시세 그래프</a></li>
-          <li><a href="index.html#products" class="nav-link"><i class="fa-solid fa-cube"></i> 골드바 라인업</a></li>
-          <li><a href="index.html#booking" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문 예약</a></li>
-          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지 자산관리</a></li>
+          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
+          <li><a href="products.html" class="nav-link"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
+          <li><a href="appraisal.html" class="nav-link"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
+          <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
+          <li><a href="reservation.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문예약</a></li>
+          <li><a href="support.html" class="nav-link"><i class="fa-solid fa-headset"></i> 고객센터</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지</a></li>
           <li><a href="wholesale.html" class="nav-link active" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
         </ul>
 
@@ -71,6 +74,25 @@
           <i class="fa-solid fa-file-signature"></i> 30초 사업자 회원가입
         </button>
       </div>
+    </div>
+
+    <!-- 1-1. B2B 심사 대기 중 카드 -->
+    <div id="b2bPendingNoticeCard" style="display:none; background:linear-gradient(135deg, #151824 0%, #0b0c10 100%); border:2px solid #e0b848; border-radius:24px; padding:3.5rem 2.5rem; text-align:center; box-shadow:0 20px 50px rgba(0,0,0,0.7); max-width:860px; margin:2rem auto;">
+      <div style="width:80px; height:80px; background:rgba(224,184,72,0.15); border:1px solid #e0b848; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem auto;">
+        <i class="fa-solid fa-hourglass-half text-gold" style="font-size:2.8rem;"></i>
+      </div>
+      <span class="section-badge" style="margin-bottom:1rem; font-size:0.9rem;"><i class="fa-solid fa-clock"></i> B2B APPROVAL PENDING</span>
+      <h2 style="color:var(--text-white); font-size:2rem; font-weight:900; margin-bottom:1rem;">
+        사업자등록증 심사가 진행 중입니다
+      </h2>
+      <p style="color:var(--text-muted); font-size:1.05rem; line-height:1.75; max-width:620px; margin:0 auto 2rem auto;">
+        회원님의 B2B 사업자 가입 정보가 정상 접수되었습니다.<br>
+        귀금속 도매 특가 단가 및 대량 발주 기능은 관리자의 사업자등록증 확인 및 승인 후 즉시 활성화됩니다.<br>
+        (신속한 승인을 원하실 경우 고객센터 010-4017-4988로 사업자등록증 사본을 보내주세요)
+      </p>
+      <a href="tel:010-4017-4988" class="btn btn-gold" style="padding:0.9rem 2rem; font-weight:900;">
+        <i class="fa-solid fa-phone"></i> 고객센터 빠른 승인 요청 (010-4017-4988)
+      </a>
     </div>
 
     <!-- 2. 사업자 계정(BIZ) 로그인 시에만 노출되는 B2B 도매센터 콘텐츠 -->
@@ -228,13 +250,13 @@
       <div class="footer-bottom" style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.8rem; margin-top:2rem; font-size:0.88rem; color:var(--text-muted); line-height:1.8;">
         <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:1.2rem; font-weight:600; color:var(--text-light);">
           <div style="display:flex; gap:1.4rem; flex-wrap:wrap;">
-            <a href="#" onclick="alert('서비스 이용약관 준비중입니다.'); return false;" style="color:var(--text-light); text-decoration:none;">이용약관</a>
+            <a href="support.html#terms" style="color:var(--text-light); text-decoration:none;">이용약관</a>
             <span style="color:rgba(255,255,255,0.2);">|</span>
-            <a href="#" onclick="alert('개인정보 처리방침 안내입니다.'); return false;" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">개인정보 처리방침</a>
+            <a href="support.html#privacy" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">개인정보처리방침</a>
             <span style="color:rgba(255,255,255,0.2);">|</span>
-            <a href="#" onclick="alert('사업자등록정보 및 법인 정보 확인용 링크입니다.'); return false;" style="color:var(--text-light); text-decoration:none;">사업자정보확인</a>
+            <a href="support.html#bizinfo" style="color:var(--text-light); text-decoration:none;">사업자정보확인</a>
           </div>
-          <div><i class="fa-solid fa-certificate text-gold"></i> 귀금속 분석 감정원 홀마크 공식 인증업체</div>
+          <div><i class="fa-solid fa-scale-balanced text-gold"></i> 종로 귀금속 B2B 전문 도매 거래 센터</div>
         </div>
         <p style="margin-bottom:0.3rem;">
           상호명: GoldLab & Co. (골드랩앤코) | 대표자: 황미숙 | 사업자등록번호: 185-07-02856 | 통신판매업신고: 제 20205-서울은평-1081 호

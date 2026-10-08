@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>18K 주얼리 팔찌 · 24K 순금 골드바 컬렉션 | GoldLab & Co.</title>
+  <meta name="description" content="종로 장인 직영 18K 체인 팔찌 및 24K 포나인 순금 골드바. 실시간 시세 연동 정직한 공임 책정 및 VIP 회원 혜택">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=41">
+</head>
+<body>
+
+  <!-- STICKY LUXURY HEADER -->
+  <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark);">
+    <nav class="navbar" style="padding:0.9rem 0;">
+      <div class="container nav-inner">
+        <a href="index.html" class="brand-logo" style="text-decoration:none;">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.65rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
+          <li><a href="products.html" class="nav-link active"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
+          <li><a href="appraisal.html" class="nav-link"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
+          <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
+          <li><a href="reservation.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문예약</a></li>
+          <li><a href="support.html" class="nav-link"><i class="fa-solid fa-headset"></i> 고객센터</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지</a></li>
+          <li><a href="wholesale.html" class="nav-link" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
+        </ul>
+        <div style="display:flex; align-items:center; gap:0.9rem;">
+          <div id="authTopSlot"></div>
+          <a href="reservation.html" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
+          <button class="mobile-toggle-btn" onclick="ToggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
+    
+    <div style="text-align:center; max-width:820px; margin:0 auto 3rem auto;">
+      <div class="section-badge" style="margin-bottom:0.8rem;"><i class="fa-solid fa-gem text-gold"></i> CRAFTSMANSHIP & BULLION</div>
+      <h1 style="font-size:2.4rem; font-weight:900; line-height:1.3; margin-bottom:0.8rem;">
+        18K 주얼리 팔찌 & <span class="gradient-text">24K 순금 골드바 컬렉션</span>
+      </h1>
+      <p style="color:var(--text-muted); font-size:1.05rem; line-height:1.7;">
+        종로 직영 세공 공방의 정밀한 세공 기술과 99.99% 포나인 순금 규격.
+        투명한 실시간 시세 연동과 중간 유통 거품을 뺀 합리적인 공임으로 선보입니다.
+      </p>
+    </div>
+
+    <!-- PRODUCT CATALOG GRID -->
+    <div id="productCatalogGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:2rem; margin-bottom:4rem;">
+      <div style="text-align:center; padding:3rem; color:var(--gold-light); grid-column:1/-1;">
+        <i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+        <p style="margin-top:1rem;">상품 목록 및 실시간 시세를 불러오는 중입니다...</p>
+      </div>
+    </div>
+
+    <!-- JEWELRY & BULLION PURCHASE POLICY CARD -->
+    <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem; line-height:1.8; font-size:0.92rem; color:var(--text-muted);">
+      <h3 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin-bottom:1rem;">
+        <i class="fa-solid fa-circle-info text-gold"></i> 주문 및 배송/환불 운영 안내
+      </h3>
+      <ul style="padding-left:1.2rem;">
+        <li><strong>시세 연동 가격:</strong> 본 웹사이트의 모든 금 상품은 당일 한국금거래소 공식 고시 시세를 기준으로 실시간 재계산되며, 서버 주문 시점의 유효 시세로 확정됩니다.</li>
+        <li><strong>주문제작 안내:</strong> 18K 주얼리 및 일부 규격 골드바는 고객 맞춤 주문제작(Handmade) 상품으로, 제작 착수 후 단순 변심에 의한 주문 취소 및 환불이 제한될 수 있습니다 (제작 기간 약 3~5영업일 소요).</li>
+        <li><strong>안심 배송:</strong> 모든 귀금속 배송은 100% 분실보험이 적용된 우체국 안심택배로 발송되며, 종로 본점 방문 수령도 선택 가능합니다.</li>
+        <li><strong>결제 방식 안내:</strong> 현재 귀금속 취급 전용 전자결제(PG) 연동 준비 중으로, 온라인 주문서 접수 후 종로 본점 방문 결제 또는 안심 가상계좌 입금 상담으로 안전하게 진행됩니다.</li>
+      </ul>
+    </div>
+
+  </main>
+
+  <!-- PRODUCT DETAIL & ORDER MODAL -->
+  <div class="modal-overlay" id="orderModal">
+    <div class="modal-box" style="max-width:680px;">
+      <button class="modal-close" onclick="CloseModal('orderModal')">&times;</button>
+      
+      <div style="margin-bottom:1.5rem;">
+        <span class="section-badge" style="margin-bottom:0.4rem;" id="modalProdCategory">골드바</span>
+        <h2 style="color:var(--text-white); font-size:1.6rem; font-weight:900; margin:0;" id="modalProdName">상품명</h2>
+        <div style="color:var(--text-muted); font-size:0.85rem; margin-top:0.3rem;">
+          제품번호: <span id="modalProdId" class="text-gold" style="font-weight:700;">GL-P01</span> | 
+          소재: <span id="modalProdPurity" style="color:var(--text-light);">24K 순금 (99.99%)</span>
+        </div>
+      </div>
+
+      <form id="orderForm" onsubmit="SubmitProductOrder(event)">
+        <input type="hidden" id="orderProdId" value="">
+
+        <!-- Option Selection -->
+        <div class="form-group" style="margin-bottom:1.2rem;">
+          <label class="form-label" style="font-weight:800; color:var(--gold-light);">규격 및 옵션 선택 *</label>
+          <select class="form-control" id="orderOptionSelect" onchange="UpdateOrderPriceSummary()" required>
+            <!-- Options dynamically added -->
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.2rem;">
+          <label class="form-label">주문 수량 *</label>
+          <input type="number" id="orderQuantity" class="form-control" value="1" min="1" max="10" onchange="UpdateOrderPriceSummary()" required>
+        </div>
+
+        <!-- Recipient Details -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1.2rem;">
+          <div class="form-group">
+            <label class="form-label">받는 분 성함 *</label>
+            <input type="text" id="orderRecipientName" class="form-control" required placeholder="예: 홍길동">
+          </div>
+          <div class="form-group">
+            <label class="form-label">연락처 *</label>
+            <input type="tel" id="orderRecipientPhone" class="form-control" required placeholder="010-1234-5678">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.2rem;">
+          <label class="form-label">배송 방법 *</label>
+          <select class="form-control" id="orderDeliveryMethod">
+            <option value="COURIER">우체국 안심택배 (보험 가입 안전 배송 / 배송비 무료)</option>
+            <option value="VISIT">종로 본점 직접 방문 수령 (신분증 지참)</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.2rem;" id="orderShippingAddressGroup">
+          <label class="form-label">배송지 주소 *</label>
+          <input type="text" id="orderShippingAddress" class="form-control" placeholder="도로명 주소 및 상세 주소" required>
+        </div>
+
+        <!-- GC Discount Points Input -->
+        <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-dark); border-radius:12px; padding:1rem; margin-bottom:1.5rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+            <label class="form-label" style="margin:0; color:var(--gold-light); font-weight:800;">
+              <i class="fa-solid fa-coins"></i> GC 멤버십 할인 포인트 사용
+            </label>
+            <span style="font-size:0.85rem; color:var(--text-muted);">
+              보유 잔액: <strong id="myGcBalanceDisplay" style="color:var(--gold-light);">0 GC</strong>
+            </span>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <input type="number" id="orderGcUsed" class="form-control" value="0" min="0" onchange="UpdateOrderPriceSummary()" style="flex:1;">
+            <button type="button" onclick="UseMaxGc()" class="btn btn-outline-gold btn-sm" style="white-space:nowrap;">전액 사용</button>
+          </div>
+          <span style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:0.3rem;">(1 GC = 1원 즉시 할인 · 최대 상품가의 10%까지 사용 가능)</span>
+        </div>
+
+        <!-- Price Summary Box -->
+        <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:14px; padding:1.2rem; margin-bottom:1.8rem; line-height:1.9;">
+          <div style="display:flex; justify-content:space-between; font-size:0.92rem; color:var(--text-muted);">
+            <span>상품 기본 단가</span>
+            <span id="summaryUnitPrice" style="color:var(--text-light); font-family:var(--font-num);">0 원</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.92rem; color:var(--text-muted);">
+            <span>옵션 추가금 및 수량</span>
+            <span id="summaryOptionPrice" style="color:var(--text-light); font-family:var(--font-num);">+0 원 (1개)</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.92rem; color:#10b981;">
+            <span>GC 포인트 할인</span>
+            <span id="summaryGcDiscount" style="font-family:var(--font-num);">-0 원</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.6rem; margin-top:0.6rem; font-size:1.15rem; font-weight:900;">
+            <span style="color:var(--text-white);">최종 결제 예정 금액</span>
+            <span id="summaryFinalPrice" class="text-gold" style="font-family:var(--font-num); font-size:1.3rem;">0 원</span>
+          </div>
+        </div>
+
+        <button type="submit" id="btnSubmitOrder" class="btn btn-gold" style="width:100%; padding:1.1rem; font-size:1.1rem; font-weight:900;">
+          <i class="fa-solid fa-credit-card"></i> 주문 접수 및 결제 안내 요청
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer" style="background:#06070a; border-top:1px solid var(--border-dark); padding:2rem 0; text-align:center; font-size:0.85rem; color:var(--text-muted);">
+    <p>© 2026 GoldLab & Co. All Rights Reserved. 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 대표전화 010-4017-4988</p>
+  </footer>
+
+  <script src="app.js?v=202610080816"></script>
+  <script>
+    let activeProducts = [];
+    let currentModalProduct = null;
+    let userGcBalance = 0;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await LoadCatalog();
+      await CheckUserGc();
+    });
+
+    async function CheckUserGc() {
+      if (authToken) {
+        try {
+          const res = await ApiRequest('/api/membership/me');
+          if (res.success) {
+            userGcBalance = res.gcBalance || 0;
+            const el = document.getElementById('myGcBalanceDisplay');
+            if (el) el.innerText = userGcBalance.toLocaleString('ko-KR') + ' GC';
+          }
+        } catch (e) {}
+      }
+    }
+
+    async function LoadCatalog() {
+      const container = document.getElementById('productCatalogGrid');
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        if (data.success && data.products) {
+          activeProducts = data.products;
+          RenderCatalog(activeProducts);
+        } else {
+          container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">상품을 불러올 수 없습니다.</p>';
+        }
+      } catch (err) {
+        container.innerHTML = '<p style="color:var(--text-muted); text-align:center;">상품 로드 중 통신 오류가 발생했습니다.</p>';
+      }
+    }
+
+    function RenderCatalog(products) {
+      const container = document.getElementById('productCatalogGrid');
+      if (!products || products.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted); text-align:center; grid-column:1/-1;">등록된 상품이 없습니다.</p>';
+        return;
+      }
+
+      container.innerHTML = products.map(p => {
+        const primaryOption = p.options && p.options[0] ? p.options[0] : { name: '기본', priceDelta: 0 };
+        const displayPrice = p.basePrice + primaryOption.priceDelta;
+
+        return `
+          <div class="product-card" style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:1.8rem; display:flex; flex-direction:column; justify-content:space-between; transition:all 0.3s ease;">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+                <span class="section-badge" style="font-size:0.75rem; padding:0.2rem 0.6rem;">${p.category}</span>
+                <span style="font-size:0.8rem; color:${p.inStock ? '#10b981' : 'var(--gold-light)'}; font-weight:700;">
+                  <i class="fa-solid fa-circle" style="font-size:0.55rem;"></i> ${p.inStock ? '당일 출고 가능' : '주문제작 (3~5일)'}
+                </span>
+              </div>
+
+              <div style="height:170px; background:#090b10; border-radius:14px; display:flex; align-items:center; justify-content:center; margin-bottom:1.4rem; border:1px solid rgba(255,255,255,0.05); position:relative;">
+                <i class="fa-solid ${p.category === '주얼리' ? 'fa-gem' : 'fa-cubes'}" style="font-size:3.5rem; color:var(--gold-light); opacity:0.85;"></i>
+                <span style="position:absolute; bottom:0.8rem; right:0.8rem; background:rgba(0,0,0,0.6); padding:0.2rem 0.5rem; border-radius:6px; font-size:0.75rem; color:var(--gold-light); font-weight:700;">${p.purity}</span>
+              </div>
+
+              <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin-bottom:0.4rem;">${p.name}</h3>
+              <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; margin-bottom:1.2rem;">${p.description}</p>
+              
+              <div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.6;">
+                <div>• 규격/오차: ${p.specWeight || p.weightRange || '정밀 실측'} (오차범위 ±0.01g)</div>
+                <div>• 소재: ${p.purity} (${p.category})</div>
+              </div>
+            </div>
+
+            <div>
+              <div style="border-top:1px solid rgba(255,255,255,0.06); padding-top:1rem; margin-bottom:1rem; display:flex; justify-content:space-between; align-items:baseline;">
+                <span style="color:var(--text-muted); font-size:0.85rem;">시세 연동 판매가</span>
+                <strong style="color:var(--gold-light); font-size:1.3rem; font-family:var(--font-num); font-weight:900;">
+                  ${displayPrice.toLocaleString('ko-KR')}원~
+                </strong>
+              </div>
+
+              <button type="button" class="btn btn-gold" style="width:100%; padding:0.85rem; font-weight:800;" onclick="OpenOrderModal('${p.id}')">
+                <i class="fa-solid fa-cart-shopping"></i> 옵션 선택 및 주문
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function OpenOrderModal(productId) {
+      if (!currentUser) {
+        alert('상품 주문 및 회원 할인 혜택을 받으시려면 먼저 로그인해 주세요.');
+        OpenAuthModal('login');
+        return;
+      }
+
+      const prod = activeProducts.find(p => p.id === productId);
+      if (!prod) return;
+      currentModalProduct = prod;
+
+      document.getElementById('modalProdCategory').innerText = prod.category;
+      document.getElementById('modalProdName').innerText = prod.name;
+      document.getElementById('modalProdId').innerText = prod.id;
+      document.getElementById('modalProdPurity').innerText = prod.purity;
+      document.getElementById('orderProdId').value = prod.id;
+
+      // Populate options
+      const optSelect = document.getElementById('orderOptionSelect');
+      optSelect.innerHTML = (prod.options || []).map((o, idx) => {
+        const delta = o.priceDelta >= 0 ? `(+${o.priceDelta.toLocaleString('ko-KR')}원)` : `(${o.priceDelta.toLocaleString('ko-KR')}원)`;
+        return `<option value="${idx}">${o.name} ${o.priceDelta ? delta : ''}</option>`;
+      }).join('');
+
+      // Auto-fill applicant details if present
+      if (currentUser) {
+        document.getElementById('orderRecipientName').value = currentUser.name || '';
+        document.getElementById('orderRecipientPhone').value = currentUser.phone || '';
+      }
+
+      UpdateOrderPriceSummary();
+      document.getElementById('orderModal').classList.add('active');
+    }
+
+    function UpdateOrderPriceSummary() {
+      if (!currentModalProduct) return;
+
+      const optIdx = parseInt(document.getElementById('orderOptionSelect')?.value, 10) || 0;
+      const option = currentModalProduct.options ? currentModalProduct.options[optIdx] : { priceDelta: 0 };
+      const qty = parseInt(document.getElementById('orderQuantity')?.value, 10) || 1;
+      let gcUsed = parseInt(document.getElementById('orderGcUsed')?.value, 10) || 0;
+
+      const basePrice = currentModalProduct.basePrice || 0;
+      const unitPriceWithOption = basePrice + (option ? option.priceDelta : 0);
+      const subtotal = unitPriceWithOption * qty;
+
+      // Max GC is limited to user balance and 10% of subtotal
+      const maxAllowedGc = Math.min(userGcBalance, Math.floor(subtotal * 0.1));
+      if (gcUsed > maxAllowedGc) {
+        gcUsed = maxAllowedGc;
+        document.getElementById('orderGcUsed').value = gcUsed;
+      }
+      if (gcUsed < 0) {
+        gcUsed = 0;
+        document.getElementById('orderGcUsed').value = 0;
+      }
+
+      const finalPrice = Math.max(0, subtotal - gcUsed);
+
+      document.getElementById('summaryUnitPrice').innerText = basePrice.toLocaleString('ko-KR') + ' 원';
+      document.getElementById('summaryOptionPrice').innerText = (option ? option.name : '') + ` (${qty}개)`;
+      document.getElementById('summaryGcDiscount').innerText = `-${gcUsed.toLocaleString('ko-KR')} 원`;
+      document.getElementById('summaryFinalPrice').innerText = finalPrice.toLocaleString('ko-KR') + ' 원';
+    }
+
+    function UseMaxGc() {
+      if (!currentModalProduct) return;
+      const optIdx = parseInt(document.getElementById('orderOptionSelect')?.value, 10) || 0;
+      const option = currentModalProduct.options ? currentModalProduct.options[optIdx] : { priceDelta: 0 };
+      const qty = parseInt(document.getElementById('orderQuantity')?.value, 10) || 1;
+      const subtotal = (currentModalProduct.basePrice + (option ? option.priceDelta : 0)) * qty;
+      const maxAllowedGc = Math.min(userGcBalance, Math.floor(subtotal * 0.1));
+
+      document.getElementById('orderGcUsed').value = maxAllowedGc;
+      UpdateOrderPriceSummary();
+    }
+
+    async function SubmitProductOrder(e) {
+      e.preventDefault();
+      if (!currentModalProduct) return;
+
+      const productId = document.getElementById('orderProdId').value;
+      const optIdx = parseInt(document.getElementById('orderOptionSelect')?.value, 10) || 0;
+      const option = currentModalProduct.options ? currentModalProduct.options[optIdx] : null;
+      const quantity = parseInt(document.getElementById('orderQuantity')?.value, 10) || 1;
+      const recipientName = document.getElementById('orderRecipientName').value.trim();
+      const recipientPhone = document.getElementById('orderRecipientPhone').value.trim();
+      const deliveryMethod = document.getElementById('orderDeliveryMethod').value;
+      const shippingAddress = document.getElementById('orderShippingAddress').value.trim();
+      const gcUsed = parseInt(document.getElementById('orderGcUsed')?.value, 10) || 0;
+
+      const submitBtn = document.getElementById('btnSubmitOrder');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.innerText = '서버 가격 검증 및 주문 접수 중...'; }
+
+      try {
+        const res = await ApiRequest('/api/orders/create', 'POST', {
+          productId,
+          optionName: option ? option.name : '기본',
+          quantity,
+          recipientName,
+          recipientPhone,
+          deliveryMethod,
+          shippingAddress,
+          gcUsed
+        });
+
+        alert(`[주문 접수 완료]\n고유 주문번호: ${res.order.orderNo}\n결제 예정 금액: ${res.order.finalAmount.toLocaleString('ko-KR')}원\n\n귀금속 안전 결제를 위해 결제 전담 상담원이 즉시 연락드립니다.`);
+        CloseModal('orderModal');
+        window.location.href = 'mypage.html';
+      } catch (err) {
+        alert('[주문 실패] ' + err.message);
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-credit-card"></i> 주문 접수 및 결제 안내 요청';
+        }
+      }
+    }
+  </script>
+</body>
+</html>

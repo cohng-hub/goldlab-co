@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고객센터 및 정책 센터 | GoldLab & Co.</title>
+  <meta name="description" content="GoldLab & Co. 공식 이용약관, 개인정보처리방침, 감정대행 이용조건, 배송 및 환불 정책, 자주 묻는 질문(FAQ), 1:1 온라인 문의">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=41">
+  <style>
+    .policy-nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      background: #090b10;
+      border: 1px solid var(--border-dark);
+      padding: 0.4rem;
+      border-radius: 14px;
+      margin-bottom: 2rem;
+    }
+    .policy-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.65rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .policy-tab-btn.active {
+      background: var(--gold-gradient);
+      color: #000;
+      font-weight: 900;
+    }
+    .policy-content-card {
+      background: #12141d;
+      border: 1px solid var(--border-gold-bright);
+      border-radius: 22px;
+      padding: 2.5rem;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      line-height: 1.85;
+      font-size: 0.95rem;
+      color: var(--text-light);
+    }
+    .faq-item {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 1.2rem 0;
+    }
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 800;
+      color: var(--text-white);
+      font-size: 1.05rem;
+      cursor: pointer;
+    }
+    .faq-answer {
+      display: none;
+      margin-top: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STICKY LUXURY HEADER -->
+  <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark);">
+    <nav class="navbar" style="padding:0.9rem 0;">
+      <div class="container nav-inner">
+        <a href="index.html" class="brand-logo" style="text-decoration:none;">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.65rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
+          <li><a href="products.html" class="nav-link"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
+          <li><a href="appraisal.html" class="nav-link"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
+          <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
+          <li><a href="reservation.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문예약</a></li>
+          <li><a href="support.html" class="nav-link active"><i class="fa-solid fa-headset"></i> 고객센터</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지</a></li>
+          <li><a href="wholesale.html" class="nav-link" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
+        </ul>
+        <div style="display:flex; align-items:center; gap:0.9rem;">
+          <div id="authTopSlot"></div>
+          <a href="reservation.html" class="btn btn-gold btn-sm"><i class="fa-solid fa-clock"></i> 빠른 방문예약</a>
+          <button class="mobile-toggle-btn" onclick="ToggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
+    
+    <div style="text-align:center; max-width:820px; margin:0 auto 2.5rem auto;">
+      <div class="section-badge" style="margin-bottom:0.8rem;"><i class="fa-solid fa-headset text-gold"></i> CUSTOMER SUPPORT & POLICIES</div>
+      <h1 style="font-size:2.4rem; font-weight:900; line-height:1.3; margin-bottom:0.8rem;">
+        고객센터 및 <span class="gradient-text">운영 정책 센터</span>
+      </h1>
+      <p style="color:var(--text-muted); font-size:1.02rem;">
+        이용약관, 개인정보처리방침, 감정대행 이용조건 및 1:1 온라인 문의 창구입니다.
+      </p>
+    </div>
+
+    <!-- POLICY TABS -->
+    <div class="policy-nav-tabs">
+      <button class="policy-tab-btn active" onclick="SwitchPolicyTab('faq')"><i class="fa-solid fa-circle-question"></i> 자주 묻는 질문(FAQ)</button>
+      <button class="policy-tab-btn" onclick="SwitchPolicyTab('inquiry')"><i class="fa-solid fa-paper-plane"></i> 1:1 온라인 문의</button>
+      <button class="policy-tab-btn" onclick="SwitchPolicyTab('terms')"><i class="fa-solid fa-scale-balanced"></i> 서비스 이용약관</button>
+      <button class="policy-tab-btn" onclick="SwitchPolicyTab('privacy')"><i class="fa-solid fa-shield-halved"></i> 개인정보처리방침</button>
+      <button class="policy-tab-btn" onclick="SwitchPolicyTab('appraisal')"><i class="fa-solid fa-microscope"></i> 감정대행 이용조건</button>
+      <button class="policy-tab-btn" onclick="SwitchPolicyTab('refund')"><i class="fa-solid fa-box"></i> 배송 및 반품/환불</button>
+      <button class="policy-tab-btn" onclick="SwitchPolicyTab('bizinfo')"><i class="fa-solid fa-building"></i> 사업자 정보 확인</button>
+    </div>
+
+    <!-- TAB 1: FAQ -->
+    <div id="policyTabFaq" class="policy-content-card">
+      <h2 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin-bottom:1.5rem;">
+        <i class="fa-solid fa-circle-question text-gold"></i> 자주 묻는 질문 (FAQ)
+      </h2>
+
+      <div class="faq-item active">
+        <div class="faq-question" onclick="ToggleFaq(this)">
+          <span>Q. GoldLab의 실시간 시세는 어떤 기준으로 결정되나요?</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          GoldLab & Co.는 한국금거래소(koreagoldx.co.kr)의 당일 공식 고시 시세를 100% 정직하게 연동하여 1돈(3.75g) 단위로 투명하게 공개합니다. 살 때 시세에는 부가가치세(VAT 10%)가 포함되어 있으며, 고금 매입 시세는 부가가치세 미부과 대상으로 종로 전문 매입 우대단가가 적용됩니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="ToggleFaq(this)">
+          <span>Q. 감정대행 결과서는 국가공인 감정원 보증서와 같은 것인가요?</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          아닙니다. GoldLab의 '검사 결과 확인서'는 첨단 비파괴 형광 X선(XRF) 분광 분석기와 초정밀 전자비중계로 측정한 과학적 시험 성적서입니다. 특정 판매점의 품질보증서나 국가공인기관의 문서가 아니므로 혼동이 없으시길 바랍니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="ToggleFaq(this)">
+          <span>Q. 택배로 감정 또는 구매 제품을 발송할 때 분실 위험은 없나요?</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          골드랩앤코의 모든 왕복 택배는 100% 분실보험에 가입된 '우체국 안심소포' 규정으로 취급됩니다. 만일의 운송 사고 시 우체국 안심소포 규정에 따라 실손 보상 절차가 진행됩니다.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-question" onclick="ToggleFaq(this)">
+          <span>Q. GC 멤버십 포인트는 현금으로 출금할 수 있나요?</span>
+          <i class="fa-solid fa-chevron-down"></i>
+        </div>
+        <div class="faq-answer">
+          GC(Gold Credit)는 자사 서비스 이용 시 1 GC = 1원의 할인을 제공하는 무상 보너스 포인트입니다. 유상 충전, 예치금, 현금 환급, 타인 양도는 일체 불가합니다.
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 1:1 INQUIRY -->
+    <div id="policyTabInquiry" class="policy-content-card" style="display:none;">
+      <h2 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin-bottom:1rem;">
+        <i class="fa-solid fa-paper-plane text-gold"></i> 1:1 온라인 고객 상담 문의
+      </h2>
+      <p style="color:var(--text-muted); font-size:0.92rem; margin-bottom:2rem;">
+        궁금하신 점이나 주문/감정 관련 문의사항을 남겨주시면 담당자가 신속히 답변해 드립니다.
+      </p>
+
+      <form id="inquiryForm" onsubmit="SubmitInquiry(event)">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem;">
+          <div class="form-group">
+            <label class="form-label">문의자 성함 *</label>
+            <input type="text" id="inqName" class="form-control" required placeholder="성함 입력">
+          </div>
+          <div class="form-group">
+            <label class="form-label">연락처 *</label>
+            <input type="tel" id="inqPhone" class="form-control" required placeholder="010-1234-5678">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.2rem;">
+          <label class="form-label">문의 유형 *</label>
+          <select id="inqCategory" class="form-control" required>
+            <option value="시세 및 매입 상담">실시간 시세 및 고금 매입 상담</option>
+            <option value="감정대행 문의">정밀 감정대행 접수 및 진행 문의</option>
+            <option value="주문 및 결제 문의">18K 주얼리/골드바 주문 및 결제 문의</option>
+            <option value="B2B 도매 제휴">B2B 사업자 도매 및 원자재 발주</option>
+            <option value="기타 문의">기타 서비스 문의</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:1.8rem;">
+          <label class="form-label">문의 내용 *</label>
+          <textarea id="inqMessage" class="form-control" rows="5" required placeholder="상세한 문의 내용을 남겨주세요"></textarea>
+        </div>
+
+        <button type="submit" id="btnSubmitInquiry" class="btn btn-gold" style="width:100%; padding:1rem; font-size:1.05rem; font-weight:800;">
+          <i class="fa-solid fa-envelope"></i> 1:1 상담 문의 접수하기
+        </button>
+      </form>
+    </div>
+
+    <!-- TAB 3: TERMS -->
+    <div id="policyTabTerms" class="policy-content-card" style="display:none;">
+      <div style="background:rgba(224,184,72,0.1); border:1px solid var(--border-gold-bright); border-radius:12px; padding:0.8rem 1.2rem; margin-bottom:1.5rem; font-size:0.88rem; color:var(--gold-light);">
+        <i class="fa-solid fa-circle-info"></i> <strong>운영자 확인 항목:</strong> 본 약관은 전자상거래 표준약관 및 귀금속 거래 관행을 반영한 운영 초안(Draft v2.0)이며, 최종 법률 검토 및 사업자 확정 공시 대상입니다.
+      </div>
+      <h2 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin-bottom:1rem;">GoldLab & Co. 서비스 이용약관</h2>
+      <p><strong>제1조 (목적)</strong> 본 약관은 GoldLab & Co.(이하 "회사")가 운영하는 웹사이트 및 종로 본점에서 제공하는 귀금속 거래, 정밀 감정대행 및 회원제 자산관리 서비스의 이용조건 및 절차를 규정함을 목적으로 합니다.</p>
+      <p><strong>제2조 (시세 및 거래 확정)</strong> 회사가 고시하는 시세는 한국금거래소 등의 공인 고시를 기초로 하며, 국제 원자재 가격 변동에 따라 실시간 갱신됩니다. 상품 주문 및 매입 계약은 거래 체결 시점의 서버 유효 시세로 확정됩니다.</p>
+      <p><strong>제3조 (회원의 의무 및 부정이용 방지)</strong> 회원은 허위 정보를 등록하거나 타인의 계정을 도용하여서는 안 되며, 서비스 내 비정상적 트랜잭션 시도 시 관련 계정 및 포인트는 즉시 동결 처리될 수 있습니다.</p>
+    </div>
+
+    <!-- TAB 4: PRIVACY -->
+    <div id="policyTabPrivacy" class="policy-content-card" style="display:none;">
+      <div style="background:rgba(224,184,72,0.1); border:1px solid var(--border-gold-bright); border-radius:12px; padding:0.8rem 1.2rem; margin-bottom:1.5rem; font-size:0.88rem; color:var(--gold-light);">
+        <i class="fa-solid fa-circle-info"></i> <strong>개인정보보호법 준수 안내:</strong> 고객 개인식별정보(성함, 연락처, 배송지 주소)는 암호화 보관되며 제3자에게 임의 제공되지 않습니다.
+      </div>
+      <h2 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin-bottom:1rem;">개인정보 처리방침</h2>
+      <p><strong>1. 수집하는 개인정보 항목</strong></p>
+      <ul style="padding-left:1.2rem;">
+        <li>회원가입 및 주문: 성함, 이메일(아이디), 비밀번호(단방향 암호화), 휴대폰 번호, 배송지 주소, (B2B 가입 시 상호명 및 사업자등록번호)</li>
+        <li>방문예약 및 감정 접수: 성함, 휴대폰 번호, 제품 사진, 반환 주소</li>
+      </ul>
+      <p><strong>2. 개인정보의 보유 및 이용기간</strong></p>
+      <p>전자상거래 등에서의 소비자보호에 관한 법률 등 관계 법령에 의거하여 계약 및 청약철회 등에 관한 기록은 5년간 보관 후 안전하게 파기합니다.</p>
+      <p><strong>3. 개인정보보호책임자:</strong> 황미숙 (연락처: 010-4017-4988 / 이메일: skycraft102@naver.com)</p>
+    </div>
+
+    <!-- TAB 5: APPRAISAL TERMS -->
+    <div id="policyTabAppraisal" class="policy-content-card" style="display:none;">
+      <h2 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin-bottom:1rem;">감정대행 서비스 이용조건 및 한계 고지</h2>
+      <p>1. <strong>비파괴 분석의 범위:</strong> 회사의 정밀 감정대행은 비파괴 형광 X선(XRF) 분광 분석 장비와 정밀 비중계를 사용합니다.</p>
+      <p>2. <strong>기술적 한계:</strong> 비파괴 XRF 측정은 표면 투과 깊이(수 ㎛)의 성분을 분석하므로, 도금층이 매우 두껍거나 속이 빈 구조 내부에 타 금속 심재가 충전된 경우 분해 파괴검사를 거치지 않고서는 완벽한 내부 검증에 한계가 있을 수 있습니다.</p>
+      <p>3. <strong>무상 광택 관련 사전 동의:</strong> 무상 세척 및 표면 스크래치 광택 작업 시 표면 미세 연마로 인해 0.01g 미만의 미세 중량 감소가 발생할 수 있습니다.</p>
+    </div>
+
+    <!-- TAB 6: REFUND -->
+    <div id="policyTabRefund" class="policy-content-card" style="display:none;">
+      <h2 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin-bottom:1rem;">배송 및 교환·반품·환불 정책</h2>
+      <p>1. <strong>배송 안내:</strong> 모든 주문 상품 및 감정 반환품은 우체국 안심택배(보험 취급)로 안전하게 포장 발송됩니다.</p>
+      <p>2. <strong>청약철회(환불) 제한 규정:</strong></p>
+      <ul style="padding-left:1.2rem;">
+        <li>금 시세 변동 품목: 전자상거래법 제17조 제2항 제5호에 의거, 시세 변동에 따라 가격이 실시간 재산정되는 골드바 및 순금 원자재는 단순 변심에 의한 청약철회가 제한됩니다.</li>
+        <li>주문제작 상품: 고객의 주문에 따라 개별 맞춤 제작되는 18K 주얼리(사이즈/각인 등)는 제작 착수 후 취소 및 교환이 불가합니다.</li>
+      </ul>
+      <p>3. <strong>제품 불량 및 파손:</strong> 수령 시 제품에 명백한 제조 결함이나 배송 중 파손이 발생한 경우 수령 후 48시간 이내 고객센터로 접수 시 100% 무상 교환 또는 전액 환불 처리됩니다.</p>
+    </div>
+
+    <!-- TAB 7: BIZINFO -->
+    <div id="policyTabBizinfo" class="policy-content-card" style="display:none;">
+      <h2 style="color:var(--text-white); font-size:1.5rem; font-weight:800; margin-bottom:1.5rem;">사업자 정보 및 공시 확인</h2>
+      <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.5rem; line-height:2;">
+        <p>• <strong>상호명:</strong> GoldLab & Co. (골드랩앤코)</p>
+        <p>• <strong>대표자:</strong> 황미숙</p>
+        <p>• <strong>사업자등록번호:</strong> 185-07-02856</p>
+        <p>• <strong>통신판매업신고번호:</strong> 제 20205-서울은평-1081 호 (원본 신고증 번호 확인 예정 항목)</p>
+        <p>• <strong>사업장 소재지:</strong> 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호</p>
+        <p>• <strong>대표 전화:</strong> <a href="tel:010-4017-4988" style="color:var(--gold-light);">010-4017-4988</a></p>
+        <p>• <strong>개인정보보호책임자:</strong> 황미숙 (skycraft102@naver.com)</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer" style="background:#06070a; border-top:1px solid var(--border-dark); padding:2rem 0; text-align:center; font-size:0.85rem; color:var(--text-muted);">
+    <p>© 2026 GoldLab & Co. All Rights Reserved. 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 대표전화 010-4017-4988</p>
+  </footer>
+
+  <script src="app.js?v=202610080816"></script>
+  <script>
+    function SwitchPolicyTab(tabKey) {
+      const tabs = ['faq', 'inquiry', 'terms', 'privacy', 'appraisal', 'refund', 'bizinfo'];
+      tabs.forEach(k => {
+        const el = document.getElementById('policyTab' + k.charAt(0).toUpperCase() + k.slice(1));
+        if (el) el.style.display = (k === tabKey) ? 'block' : 'none';
+      });
+
+      const btns = document.querySelectorAll('.policy-tab-btn');
+      btns.forEach((btn, idx) => {
+        if (tabs[idx] === tabKey) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    function ToggleFaq(el) {
+      el.parentElement.classList.toggle('active');
+    }
+
+    async function SubmitInquiry(e) {
+      e.preventDefault();
+      const name = document.getElementById('inqName').value.trim();
+      const phone = document.getElementById('inqPhone').value.trim();
+      const category = document.getElementById('inqCategory').value;
+      const message = document.getElementById('inqMessage').value.trim();
+
+      const btn = document.getElementById('btnSubmitInquiry');
+      if (btn) { btn.disabled = true; btn.innerText = '문의 접수 중...'; }
+
+      try {
+        const res = await ApiRequest('/api/support/inquiries', 'POST', {
+          name,
+          phone,
+          category,
+          message
+        });
+
+        alert(`[문의 접수 완료]\n문의번호: ${res.inquiry.inquiryNo}\n고객님의 문의가 정상 등록되었습니다. 담당자 확인 후 신속히 연락드리겠습니다.`);
+        document.getElementById('inquiryForm').reset();
+        if (currentUser) {
+          window.location.href = 'mypage.html';
+        }
+      } catch (err) {
+        alert('[문의 접수 실패] ' + err.message);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa-solid fa-envelope"></i> 1:1 상담 문의 접수하기';
+        }
+      }
+    }
+
+    // Auto-switch tab based on hash
+    document.addEventListener('DOMContentLoaded', () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && ['faq', 'inquiry', 'terms', 'privacy', 'appraisal', 'refund', 'bizinfo'].includes(hash)) {
+        SwitchPolicyTab(hash);
+      }
+    });
+  </script>
+</body>
+</html>

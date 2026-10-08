@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>검사 결과 확인서 진위 확인 시스템 | GoldLab & Co.</title>
+  <meta name="description" content="GoldLab & Co. 귀금속 정밀 시험 결과 확인서의 온라인 진위 검증 시스템.">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=41">
+  <style>
+    .verify-box {
+      max-width: 680px;
+      margin: 3rem auto;
+      background: #12141d;
+      border: 1px solid var(--border-gold-bright);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STICKY LUXURY HEADER -->
+  <header class="sticky-header-wrapper" style="position:sticky; top:0; z-index:1000; background:rgba(8,9,13,0.96); backdrop-filter:blur(16px); border-bottom:1px solid var(--border-dark);">
+    <nav class="navbar" style="padding:0.9rem 0;">
+      <div class="container nav-inner">
+        <a href="index.html" class="brand-logo" style="text-decoration:none;">
+          <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.65rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </a>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="index.html#hero-split" class="nav-link"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
+          <li><a href="products.html" class="nav-link"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
+          <li><a href="appraisal.html" class="nav-link"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
+          <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
+          <li><a href="reservation.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문예약</a></li>
+          <li><a href="support.html" class="nav-link"><i class="fa-solid fa-headset"></i> 고객센터</a></li>
+          <li><a href="mypage.html" class="nav-link" onclick="OpenMyPageOrLogin(event)"><i class="fa-solid fa-wallet"></i> 마이페이지</a></li>
+        </ul>
+        <div style="display:flex; align-items:center; gap:0.9rem;">
+          <div id="authTopSlot"></div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container" style="padding-top:2.5rem; padding-bottom:5rem;">
+
+    <div class="verify-box">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <div class="section-badge" style="margin-bottom:0.6rem;"><i class="fa-solid fa-qrcode text-gold"></i> CERTIFICATE VERIFICATION</div>
+        <h1 style="font-size:1.9rem; font-weight:900; color:var(--text-white); margin:0;">검사 결과 확인서 진위 조회</h1>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.5rem;">
+          GoldLab & Co.에서 발행한 귀금속 정밀 시험 결과 확인서의 QR코드 또는 확인서 코드를 검증합니다.
+        </p>
+      </div>
+
+      <!-- SEARCH INPUT FORM -->
+      <form id="verifyForm" onsubmit="HandleVerifySubmit(event)" style="margin-bottom:2.2rem;">
+        <div style="display:flex; gap:0.6rem;">
+          <input type="text" id="verifyTokenInput" class="form-control" placeholder="확인서 인증 토큰 또는 문서번호 입력 (예: CERT-...)" required style="flex:1;">
+          <button type="submit" class="btn btn-gold" style="white-space:nowrap; padding:0 1.5rem; font-weight:800;">
+            <i class="fa-solid fa-magnifying-glass"></i> 진위 확인
+          </button>
+        </div>
+      </form>
+
+      <!-- VERIFICATION RESULT CONTAINER -->
+      <div id="verifyResult" style="display:none;"></div>
+
+      <!-- PRIVACY PROTECTION & DISCLAIMER -->
+      <div style="background:rgba(9,11,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; font-size:0.85rem; color:var(--text-muted); line-height:1.7; margin-top:2rem;">
+        <p style="color:var(--gold-light); font-weight:700; margin-bottom:0.3rem;"><i class="fa-solid fa-lock"></i> 개인정보 보호 안내</p>
+        <p>• 본 공개 진위확인 시스템은 개인정보보호법에 의거하여 의뢰 고객의 성함, 연락처, 주소 등의 개인식별정보를 일체 표시하지 않습니다.</p>
+        <p>• 본 확인서는 비파괴 분광 분석 장비에 의한 과학적 시험 성적서이며, 특정 판매점의 품질보증서나 국가공인기관의 문서가 아닙니다.</p>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="footer" style="background:#06070a; border-top:1px solid var(--border-dark); padding:2rem 0; text-align:center; font-size:0.85rem; color:var(--text-muted);">
+    <p>© 2026 GoldLab & Co. All Rights Reserved. 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호</p>
+  </footer>
+
+  <script src="app.js?v=202610080816"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token') || urlParams.get('doc');
+      if (token) {
+        document.getElementById('verifyTokenInput').value = token;
+        FetchVerification(token);
+      }
+    });
+
+    function HandleVerifySubmit(e) {
+      e.preventDefault();
+      const token = document.getElementById('verifyTokenInput').value.trim();
+      if (!token) return;
+      FetchVerification(token);
+    }
+
+    async function FetchVerification(token) {
+      const resultDiv = document.getElementById('verifyResult');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--gold-light);"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p style="margin-top:0.8rem;">확인서 진위를 검증하는 중입니다...</p></div>';
+
+      try {
+        const res = await fetch('/api/certificates/verify/' + encodeURIComponent(token));
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          resultDiv.innerHTML = `
+            <div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:16px; padding:2rem; text-align:center;">
+              <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:2.8rem; margin-bottom:0.8rem;"></i>
+              <h3 style="color:#ef4444; font-size:1.3rem; font-weight:800; margin-bottom:0.4rem;">유효하지 않은 확인서입니다</h3>
+              <p style="color:var(--text-muted); font-size:0.92rem;">입력하신 토큰 또는 문서번호와 일치하는 정식 발급 기록이 존재하지 않습니다.</p>
+            </div>
+          `;
+          return;
+        }
+
+        const cert = data.certificate;
+        resultDiv.innerHTML = `
+          <div style="background:rgba(16,185,129,0.08); border:1px solid #10b981; border-radius:18px; padding:2rem;">
+            <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1.5rem; justify-content:center;">
+              <i class="fa-solid fa-circle-check" style="color:#10b981; font-size:2.2rem;"></i>
+              <div>
+                <h3 style="color:#10b981; font-size:1.3rem; font-weight:900; margin:0;">정식 등록 확인서 (VALID)</h3>
+                <span style="color:var(--text-muted); font-size:0.82rem;">GoldLab & Co. 공식 정밀 시험 결과가 유효하게 확인되었습니다.</span>
+              </div>
+            </div>
+
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.4rem; line-height:1.9; font-size:0.95rem;">
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.4rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">문서번호</span>
+                <strong style="color:var(--gold-light); font-family:var(--font-num);">${cert.documentNo}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.4rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">검사일시</span>
+                <span style="color:var(--text-white); font-family:var(--font-num);">${cert.inspectionDate}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.4rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">검사 대상 품목</span>
+                <span style="color:var(--text-white);">${cert.itemType}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.4rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">실측 중량</span>
+                <strong style="color:var(--gold-light); font-family:var(--font-num); font-size:1.05rem;">${cert.measuredWeight}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.4rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">정밀 검사 결과 (순도)</span>
+                <strong style="color:#10b981; font-weight:800;">${cert.measuredPurity}</strong>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.4rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">검사 방법</span>
+                <span style="color:var(--text-white);">${cert.inspectionMethod}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:0.4rem; margin-bottom:0.4rem;">
+                <span style="color:var(--text-muted);">검사 기관</span>
+                <span style="color:var(--text-white);">${cert.laboratory}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between;">
+                <span style="color:var(--text-muted);">발행자</span>
+                <span style="color:var(--text-white);">${cert.issuer}</span>
+              </div>
+            </div>
+
+            <p style="color:var(--text-muted); font-size:0.8rem; margin-top:1rem; text-align:center;">
+              ※ 상세 확인서 전문 및 원본 인쇄(PDF)는 의뢰인 본인 계정의 마이페이지에서만 열람 가능합니다.
+            </p>
+          </div>
+        `;
+
+      } catch (err) {
+        resultDiv.innerHTML = `
+          <div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:16px; padding:2rem; text-align:center;">
+            <p style="color:#ef4444;">진위 확인 조회 중 오류가 발생했습니다: ${err.message}</p>
+          </div>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>

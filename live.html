@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>골드랩 라이브 커머스 | GoldLab & Co.</title>
+  <meta name="description" content="GoldLab & Co. 실시간 방송 특가 주얼리 및 골드바 라이브 쇼핑 모바일 전용관">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=41">
+  <style>
+    .live-hero-card {
+      background: #12141d;
+      border: 1px solid var(--border-gold-bright);
+      border-radius: 24px;
+      padding: 1.8rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.7);
+      position: relative;
+      overflow: hidden;
+    }
+    .live-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #ef4444;
+      color: #fff;
+      font-weight: 900;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 30px;
+      animation: pulse 1.8s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.04); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- MOBILE-FIRST CLEAN HEADER -->
+  <header style="background:rgba(8,9,13,0.98); border-bottom:1px solid var(--border-dark); padding:0.9rem 1.2rem; position:sticky; top:0; z-index:100; backdrop-filter:blur(15px);">
+    <div style="max-width:540px; margin:0 auto; display:flex; justify-content:space-between; align-items:center;">
+      <a href="index.html" class="brand-logo" style="text-decoration:none;">
+        <div class="brand-icon"><i class="fa-solid fa-gem"></i></div>
+        <span style="font-size:1.45rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
+      </a>
+      <div style="display:flex; align-items:center; gap:0.6rem;">
+        <span class="live-indicator"><i class="fa-solid fa-tower-broadcast"></i> LIVE ON</span>
+        <a href="mypage.html" style="color:var(--gold-light); font-size:1.1rem; padding:0.3rem;"><i class="fa-solid fa-user"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main style="max-width:540px; margin:0 auto; padding:1.2rem;">
+    
+    <!-- SEARCH BY PRODUCT CODE -->
+    <div style="margin-bottom:1.5rem;">
+      <div style="position:relative;">
+        <input type="text" id="liveSearchInput" class="form-control" placeholder="방송 중 안내된 제품번호 검색 (예: GL-P01)" onkeyup="FilterLiveProducts()" style="padding-left:2.8rem; border-radius:30px; background:#090b10;">
+        <i class="fa-solid fa-magnifying-glass" style="position:absolute; left:1.1rem; top:50%; transform:translateY(-50%); color:var(--gold-light);"></i>
+      </div>
+    </div>
+
+    <!-- CURRENT FEATURED LIVE PRODUCT -->
+    <div class="live-hero-card" id="featuredLiveCard">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+        <span style="background:rgba(224,184,72,0.15); color:var(--gold-light); font-weight:800; font-size:0.8rem; padding:0.2rem 0.6rem; border-radius:8px;">
+          <i class="fa-solid fa-fire text-gold"></i> 현재 방송 소개 상품
+        </span>
+        <span style="color:#10b981; font-weight:800; font-size:0.85rem;" id="featuredStockBadge">실시간 주문 가능</span>
+      </div>
+
+      <div style="height:200px; background:#090b10; border-radius:18px; display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem; border:1px solid rgba(255,255,255,0.06);">
+        <i class="fa-solid fa-gem" style="font-size:4.5rem; color:var(--gold-light);"></i>
+      </div>
+
+      <div style="margin-bottom:1.2rem;">
+        <div style="color:var(--text-muted); font-size:0.82rem;">제품번호: <strong class="text-gold" id="featuredProdId">GL-P02</strong></div>
+        <h2 style="color:var(--text-white); font-size:1.45rem; font-weight:900; margin:0.3rem 0;" id="featuredProdName">18K 클래식 체인 팔찌</h2>
+        <p style="color:var(--text-muted); font-size:0.9rem;" id="featuredProdDesc">종로 장인 수작업 핸드메이드 체인 · 남녀 공용 클래식 럭셔리 라인</p>
+      </div>
+
+      <div style="background:#090b10; border-radius:14px; padding:1rem; margin-bottom:1.2rem; display:flex; justify-content:space-between; align-items:baseline;">
+        <span style="color:var(--text-muted); font-size:0.88rem;">방송 특가 (시세 연동)</span>
+        <strong style="color:var(--gold-light); font-size:1.4rem; font-family:var(--font-num); font-weight:900;" id="featuredProdPrice">2,150,000원~</strong>
+      </div>
+
+      <div style="display:flex; gap:0.6rem;">
+        <a href="products.html" class="btn btn-gold" style="flex:2; padding:0.9rem; text-align:center; font-weight:900; font-size:1.02rem;">
+          <i class="fa-solid fa-bolt"></i> 바로 주문하기
+        </a>
+        <a href="https://pf.kakao.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold" style="flex:1; padding:0.9rem; text-align:center; font-weight:800; font-size:0.9rem;">
+          <i class="fa-solid fa-comment"></i> 상담톡
+        </a>
+      </div>
+    </div>
+
+    <!-- QUICK ACTION TILES -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.9rem; margin-bottom:2rem;">
+      <a href="appraisal.html" style="background:#12141d; border:1px solid var(--border-dark); border-radius:16px; padding:1.2rem; text-decoration:none; display:flex; align-items:center; gap:0.8rem;">
+        <div style="width:40px; height:40px; border-radius:10px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center;">
+          <i class="fa-solid fa-microscope text-gold"></i>
+        </div>
+        <div>
+          <strong style="color:var(--text-white); font-size:0.95rem; display:block;">감정대행 접수</strong>
+          <span style="color:var(--text-muted); font-size:0.78rem;">방문 / 택배 안심 검사</span>
+        </div>
+      </a>
+
+      <a href="mypage.html" style="background:#12141d; border:1px solid var(--border-dark); border-radius:16px; padding:1.2rem; text-decoration:none; display:flex; align-items:center; gap:0.8rem;">
+        <div style="width:40px; height:40px; border-radius:10px; background:rgba(16,185,129,0.12); display:flex; align-items:center; justify-content:center;">
+          <i class="fa-solid fa-clock-rotate-left" style="color:#10b981;"></i>
+        </div>
+        <div>
+          <strong style="color:var(--text-white); font-size:0.95rem; display:block;">내 주문·신청 조회</strong>
+          <span style="color:var(--text-muted); font-size:0.78rem;">진행상황 실시간 확인</span>
+        </div>
+      </a>
+    </div>
+
+    <!-- LIVE BROADCAST PRODUCTS LIST -->
+    <div>
+      <h3 style="color:var(--text-white); font-size:1.15rem; font-weight:800; margin-bottom:1rem;">
+        <i class="fa-solid fa-cubes text-gold"></i> 방송 라인업 전체보기
+      </h3>
+      <div id="liveProductList" style="display:flex; flex-direction:column; gap:0.9rem;">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <footer style="background:#06070a; border-top:1px solid var(--border-dark); padding:2rem 1.2rem; text-align:center; font-size:0.82rem; color:var(--text-muted); max-width:540px; margin:0 auto;">
+    <p>GoldLab & Co. 종로 본점 010-4017-4988</p>
+    <p style="margin-top:0.3rem;">시세 연동 방송 특가 · 순도 99.99% 보증 · 안전 에스크로 상담</p>
+  </footer>
+
+  <script src="app.js?v=202610080816"></script>
+  <script>
+    let liveProducts = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/products');
+        const data = await res.json();
+        if (data.success && data.products) {
+          liveProducts = data.products;
+          RenderLiveList(liveProducts);
+        }
+      } catch (e) {}
+    });
+
+    function RenderLiveList(products) {
+      const container = document.getElementById('liveProductList');
+      if (!container) return;
+
+      container.innerHTML = products.map(p => {
+        return `
+          <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:16px; padding:1.1rem; display:flex; justify-content:space-between; align-items:center;">
+            <div style="flex:1;">
+              <span style="font-size:0.75rem; color:var(--gold-light); font-weight:800;">[${p.id}] ${p.category}</span>
+              <h4 style="color:var(--text-white); font-size:1.05rem; font-weight:800; margin:0.2rem 0;">${p.name}</h4>
+              <span style="color:var(--gold-light); font-weight:800; font-family:var(--font-num); font-size:1.1rem;">${p.basePrice.toLocaleString('ko-KR')}원</span>
+            </div>
+            <a href="products.html" class="btn btn-outline-gold btn-sm" style="white-space:nowrap; padding:0.5rem 0.9rem;">
+              주문하기
+            </a>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function FilterLiveProducts() {
+      const query = (document.getElementById('liveSearchInput')?.value || '').trim().toLowerCase();
+      if (!query) {
+        RenderLiveList(liveProducts);
+        return;
+      }
+      const filtered = liveProducts.filter(p => 
+        p.id.toLowerCase().includes(query) || 
+        p.name.toLowerCase().includes(query)
+      );
+      RenderLiveList(filtered);
+    }
+  </script>
+</body>
+</html>
