@@ -1,13 +1,13 @@
 {
   "version": "2.0.0",
-  "createdAt": "2026-10-08T12:17:44.089Z",
-  "updatedAt": "2026-10-08T12:17:44.092Z",
+  "createdAt": "2026-10-08T12:26:04.017Z",
+  "updatedAt": "2026-10-08T12:27:04.860Z",
   "users": [
     {
-      "id": "usr_admin_001",
-      "email": "admin@goldlabnco.com",
-      "passwordHash": "71cbd154c82485a472dae5b05e27cb28:a7c7bd7e3d92dbc29333043e5304546215881885ca8b1ae2e850a225b6e22ddc2cb4c3ecb8dedfe8cc7305a8d9d88f46df2d471a4fee6fe01faf3af6658dc397",
-      "name": "황미숙 대표 (관리자)",
+      "id": "usr_master_001",
+      "email": "goldlabnco@naver.com",
+      "passwordHash": "231a3605ada0aa1eb66e2cbec24e1085:ce0281104bd36d0a6df90256e137047a2b4179c27558c30c25066d43de936688d9d4fc6e5c626334624071a89b4b22cf04062230cd2a5d998db97fc8ea320259",
+      "name": "황미숙 대표 (최고관리자)",
       "phone": "010-4017-4988",
       "userType": "MASTER",
       "role": "MASTER_ADMIN",
@@ -15,15 +15,405 @@
       "twoFactorEnabled": false,
       "twoFactorSecret": null,
       "status": "ACTIVE",
-      "createdAt": "2026-10-08T12:17:44.138Z",
-      "updatedAt": "2026-10-08T12:17:44.138Z"
+      "createdAt": "2026-10-08T12:26:04.065Z",
+      "updatedAt": "2026-10-08T12:26:04.065Z"
+    },
+    {
+      "id": "usr_admin_001",
+      "email": "admin@goldlabnco.com",
+      "passwordHash": "2b984706ae3043885309bfdf1bbf7828:d7a8a3ffb1e352611dcd8a7f52f05d9172334db061a9ac93c1e3b3aaa3f5af8ed5212b2c64b6900cc9aee52ed6469ffd1a44aac8f9995121e170ef676eda7f11",
+      "name": "골드랩 시스템 관리자",
+      "phone": "010-4017-4988",
+      "userType": "MASTER",
+      "role": "MASTER_ADMIN",
+      "tier": "👑 MASTER ADMIN",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "createdAt": "2026-10-08T12:26:04.109Z",
+      "updatedAt": "2026-10-08T12:26:04.109Z"
+    },
+    {
+      "id": "usr_eprltls",
+      "email": "eprltls@gmail.com",
+      "passwordHash": "cf0674d6a941c4ed345dd9c355ac1545:01827952f3992f2451af62df72973daf8cddaca4a2ea0eb1c0b53c8bc976ef9e78fbee96166af7b11b30077a5e5b182f9d114857a178cc2a76845ffd0408268a",
+      "name": "일반 회원",
+      "phone": "010-0000-0000",
+      "userType": "PERSONAL",
+      "role": "USER",
+      "tier": "STANDARD MEMBER",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "createdAt": "2026-10-08T12:26:04.152Z",
+      "updatedAt": "2026-10-08T12:26:04.152Z"
+    },
+    {
+      "id": "usr_1791462369329_7a2c28",
+      "name": "고객A",
+      "email": "custa_1791462369326@test.com",
+      "phone": "010-1111-2222",
+      "passwordHash": "a3e47ff4224a131f6f4511019cd4fde1:ff3c55cd535dce4c887b5002445abf3fa8c146730b58f1696c11cc450238f29e5a4769d8401079b1416bf4cdba391d18231179cd6fb0bb1dfa06bf48335fb8aa",
+      "userType": "PERSONAL",
+      "role": "USER",
+      "bizName": "",
+      "bizNo": "",
+      "tier": "STANDARD MEMBER",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "termsAgreedAt": "2026-10-08T12:26:09.384Z",
+      "marketingConsent": false,
+      "createdAt": "2026-10-08T12:26:09.384Z",
+      "updatedAt": "2026-10-08T12:26:09.384Z"
+    },
+    {
+      "id": "usr_1791462369389_e0867d",
+      "name": "고객B",
+      "email": "custb_1791462369389@test.com",
+      "phone": "010-3333-4444",
+      "passwordHash": "0cfdede18f5816b934f73e0f32cc0c26:47c6436a443bfd5b4cbfc7e0c6191bb060b2d98bf25abf530b334fe635ca88cf9b750fac81673aa103066ea54a77c8ac7ef88e3d1cda54c1f0bee3a230005c65",
+      "userType": "PERSONAL",
+      "role": "USER",
+      "bizName": "",
+      "bizNo": "",
+      "tier": "STANDARD MEMBER",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "termsAgreedAt": "2026-10-08T12:26:09.439Z",
+      "marketingConsent": false,
+      "createdAt": "2026-10-08T12:26:09.439Z",
+      "updatedAt": "2026-10-08T12:26:09.439Z"
+    },
+    {
+      "id": "usr_1791462369518_a91124",
+      "name": "미승인도매상",
+      "email": "pending_1791462369518@biz.com",
+      "phone": "",
+      "passwordHash": "68c3a300db8bbdabfb53760d2ec9bfe5:a5f40b04e987c78644c0fbfbb1c318d4f3828ebc152926db6e929245805e673e249f3a946c6e96ad2a87aca1b1b1fe0d39a226e2224d33148bf9cd380170f111",
+      "userType": "BIZ",
+      "role": "B2B_PENDING",
+      "bizName": "종로골드상사",
+      "bizNo": "101-86-99999",
+      "tier": "B2B PARTNER (대기)",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "termsAgreedAt": "2026-10-08T12:26:09.571Z",
+      "marketingConsent": false,
+      "createdAt": "2026-10-08T12:26:09.571Z",
+      "updatedAt": "2026-10-08T12:26:09.571Z"
+    },
+    {
+      "id": "usr_1791462424513_47230d",
+      "name": "고객A",
+      "email": "custa_1791462424510@test.com",
+      "phone": "010-1111-2222",
+      "passwordHash": "7949226222b135f2bcd83029aacb6f4d:3c8b0edc147882b8b503ab34a1fea76e105abde1142ff4159ac14e65398e4936256c66afd6903f17901d4397085fdc521d8edab0968922e9278c6ae0679253bc",
+      "userType": "PERSONAL",
+      "role": "USER",
+      "bizName": "",
+      "bizNo": "",
+      "tier": "STANDARD MEMBER",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "termsAgreedAt": "2026-10-08T12:27:04.571Z",
+      "marketingConsent": false,
+      "createdAt": "2026-10-08T12:27:04.571Z",
+      "updatedAt": "2026-10-08T12:27:04.571Z"
+    },
+    {
+      "id": "usr_1791462424575_9f5fad",
+      "name": "고객B",
+      "email": "custb_1791462424574@test.com",
+      "phone": "010-3333-4444",
+      "passwordHash": "142dff66eb0ac01926d82f4957511dbc:2c5f2e472e6e951e7c2d1e2a48d42e6f2021cf658be0203d80cf70c825957e1145bf6c57abffe2d67ba62b571416e0fec6d5c6002bb7e4643180dc4a70f41f82",
+      "userType": "PERSONAL",
+      "role": "USER",
+      "bizName": "",
+      "bizNo": "",
+      "tier": "STANDARD MEMBER",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "termsAgreedAt": "2026-10-08T12:27:04.625Z",
+      "marketingConsent": false,
+      "createdAt": "2026-10-08T12:27:04.625Z",
+      "updatedAt": "2026-10-08T12:27:04.625Z"
+    },
+    {
+      "id": "usr_1791462424711_56ef3b",
+      "name": "미승인도매상",
+      "email": "pending_1791462424711@biz.com",
+      "phone": "",
+      "passwordHash": "17c8f9ce2824a62c4764d1de6159e3fa:52d8ff333431d5ea38608ee6f5a7f296d310015b4443db724c738e2c1de778812f3c8232911dd2da4ca4ec4288512b38b85397b9c6de69db30ca9e993e744f03",
+      "userType": "BIZ",
+      "role": "B2B_PENDING",
+      "bizName": "종로골드상사",
+      "bizNo": "101-86-99999",
+      "tier": "B2B PARTNER (대기)",
+      "twoFactorEnabled": false,
+      "twoFactorSecret": null,
+      "status": "ACTIVE",
+      "termsAgreedAt": "2026-10-08T12:27:04.783Z",
+      "marketingConsent": false,
+      "createdAt": "2026-10-08T12:27:04.783Z",
+      "updatedAt": "2026-10-08T12:27:04.783Z"
     }
   ],
-  "sessions": [],
+  "sessions": [
+    {
+      "id": "sess_1791462369384",
+      "userId": "usr_1791462369329_7a2c28",
+      "hashedToken": "74a8e555d41c08e9d87126e76ad83cc37b7b2d5740e8d7f0be55c4c641cf2287",
+      "expiresAt": "2026-10-15T12:26:09.385Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:26:09.385Z"
+    },
+    {
+      "id": "sess_1791462369439",
+      "userId": "usr_1791462369389_e0867d",
+      "hashedToken": "80a0581d2bf84224e2652691ed55dd52186cd6df2e447dfd6c726121d7905ba4",
+      "expiresAt": "2026-10-15T12:26:09.439Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:26:09.439Z"
+    },
+    {
+      "id": "sess_1791462369490",
+      "userId": "usr_admin_001",
+      "hashedToken": "d35fc911db403b61abcadf3dba4bfb21d2ad9bdf1a0c6274c9f91cdf45509ca6",
+      "expiresAt": "2026-10-15T12:26:09.490Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:26:09.490Z"
+    },
+    {
+      "id": "sess_1791462369572",
+      "userId": "usr_1791462369518_a91124",
+      "hashedToken": "a89f1a6e0c56b163faa935f3bdec5bab99b6ac52b5543aecbdce3cd77fc5a6fe",
+      "expiresAt": "2026-10-15T12:26:09.572Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:26:09.572Z"
+    },
+    {
+      "id": "sess_1791462424571",
+      "userId": "usr_1791462424513_47230d",
+      "hashedToken": "016584e1dac26b638c13abaafc1c17f09952b55fad66b78b1c20190ecea66f87",
+      "expiresAt": "2026-10-15T12:27:04.571Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:27:04.571Z"
+    },
+    {
+      "id": "sess_1791462424625",
+      "userId": "usr_1791462424575_9f5fad",
+      "hashedToken": "21ba567515b4d1f332325f89d3189bdb62bc3972594d39e183f7447122056fdb",
+      "expiresAt": "2026-10-15T12:27:04.625Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:27:04.625Z"
+    },
+    {
+      "id": "sess_1791462424679",
+      "userId": "usr_admin_001",
+      "hashedToken": "45aba70f456e4424fdfe9176c8cec0a9ae1b0c0330a4c1ba3fefcd7ce96d42ba",
+      "expiresAt": "2026-10-15T12:27:04.679Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:27:04.679Z"
+    },
+    {
+      "id": "sess_1791462424783",
+      "userId": "usr_1791462424711_56ef3b",
+      "hashedToken": "61bf852638dece167f011a13d287c749dc1587f8386e5de5308e733957700474",
+      "expiresAt": "2026-10-15T12:27:04.783Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-08T12:27:04.783Z"
+    }
+  ],
   "password_resets": [],
-  "appraisals": [],
-  "certificates": [],
-  "reservations": [],
+  "appraisals": [
+    {
+      "id": "GL-AP-20261008-0002",
+      "receiptNo": "GL-AP-20261008-0002",
+      "idempotencyKey": null,
+      "userId": "usr_1791462424513_47230d",
+      "type": "VISIT",
+      "applicantName": "고객A",
+      "applicantPhone": "010-1111-2222",
+      "returnAddress": null,
+      "itemType": "골드바",
+      "quantity": 1,
+      "estimatedPurity": "모름 / 정밀 판정 희망",
+      "estimatedWeight": "미측정",
+      "photos": [],
+      "requests": "",
+      "freePolishConsent": false,
+      "termsAgreed": true,
+      "extraQuoteConsent": false,
+      "status": "INSPECTED",
+      "actualWeight": null,
+      "arrivedPhotos": [],
+      "labName": "골드랩 정밀감정센터 (종로공인제련소 협력)",
+      "costBase": 29000,
+      "costExtra": 0,
+      "extraQuoteApproved": false,
+      "history": [
+        {
+          "status": "APPLIED",
+          "note": "온라인 감정대행 접수 완료",
+          "timestamp": "2026-10-08T12:27:04.696Z"
+        },
+        {
+          "status": "INSPECTED",
+          "note": "정밀 검사 결과 확인서 발급 완료 (GL-CERT-20261008-0002)",
+          "timestamp": "2026-10-08T12:27:04.814Z",
+          "changedBy": "골드랩 시스템 관리자"
+        }
+      ],
+      "createdAt": "2026-10-08T12:27:04.696Z",
+      "updatedAt": "2026-10-08T12:27:04.696Z"
+    },
+    {
+      "id": "GL-AP-20261008-0001",
+      "receiptNo": "GL-AP-20261008-0001",
+      "idempotencyKey": null,
+      "userId": "usr_1791462369329_7a2c28",
+      "type": "VISIT",
+      "applicantName": "고객A",
+      "applicantPhone": "010-1111-2222",
+      "returnAddress": null,
+      "itemType": "골드바",
+      "quantity": 1,
+      "estimatedPurity": "모름 / 정밀 판정 희망",
+      "estimatedWeight": "미측정",
+      "photos": [],
+      "requests": "",
+      "freePolishConsent": false,
+      "termsAgreed": true,
+      "extraQuoteConsent": false,
+      "status": "INSPECTED",
+      "actualWeight": null,
+      "arrivedPhotos": [],
+      "labName": "골드랩 정밀감정센터 (종로공인제련소 협력)",
+      "costBase": 29000,
+      "costExtra": 0,
+      "extraQuoteApproved": false,
+      "history": [
+        {
+          "status": "APPLIED",
+          "note": "온라인 감정대행 접수 완료",
+          "timestamp": "2026-10-08T12:26:09.509Z"
+        },
+        {
+          "status": "INSPECTED",
+          "note": "정밀 검사 결과 확인서 발급 완료 (GL-CERT-20261008-0001)",
+          "timestamp": "2026-10-08T12:26:09.595Z",
+          "changedBy": "골드랩 시스템 관리자"
+        }
+      ],
+      "createdAt": "2026-10-08T12:26:09.509Z",
+      "updatedAt": "2026-10-08T12:26:09.509Z"
+    }
+  ],
+  "certificates": [
+    {
+      "id": "CERT-1791462369595",
+      "docNumber": "GL-CERT-20261008-0001",
+      "documentNo": "GL-CERT-20261008-0001",
+      "appraisalId": "GL-AP-20261008-0001",
+      "verifyToken": "307d3b7e1d1d31294c4d334b1051e10b",
+      "verificationToken": "307d3b7e1d1d31294c4d334b1051e10b",
+      "issueDate": "2026-10-08",
+      "inspectDate": "2026-10-08",
+      "itemType": "골드바",
+      "measuredWeight": "37.502g (10돈)",
+      "purityResult": "순도 99.99% (Au 999.9)",
+      "inspectionMethod": "XRF 분광 분석",
+      "inspectionLab": "골드랩 정밀분석센터",
+      "issuerName": "황미숙 대표감정사 (골드랩&co)",
+      "status": "VALID",
+      "createdAt": "2026-10-08T12:26:09.595Z"
+    },
+    {
+      "id": "CERT-1791462424814",
+      "docNumber": "GL-CERT-20261008-0002",
+      "documentNo": "GL-CERT-20261008-0002",
+      "appraisalId": "GL-AP-20261008-0002",
+      "verifyToken": "7c72a9ad985d5949c8afa3b0a6dbe45d",
+      "verificationToken": "7c72a9ad985d5949c8afa3b0a6dbe45d",
+      "issueDate": "2026-10-08",
+      "inspectDate": "2026-10-08",
+      "itemType": "골드바",
+      "measuredWeight": "37.502g (10돈)",
+      "purityResult": "순도 99.99% (Au 999.9)",
+      "inspectionMethod": "XRF 분광 분석",
+      "inspectionLab": "골드랩 정밀분석센터",
+      "issuerName": "황미숙 대표감정사 (골드랩&co)",
+      "status": "VALID",
+      "createdAt": "2026-10-08T12:27:04.814Z"
+    }
+  ],
+  "reservations": [
+    {
+      "id": "GL-RS-20261214-0004",
+      "userId": null,
+      "name": "예약자2",
+      "phone": "010-1111-0002",
+      "date": "2026-12-14",
+      "timeSlot": "14:00",
+      "time": "14:00",
+      "purpose": "골드바 구매",
+      "category": "골드바 구매",
+      "reservationNo": "GL-RS-20261214-0004",
+      "status": "CONFIRMED",
+      "notificationStatus": "PENDING_DISPATCH",
+      "createdAt": "2026-10-08T12:27:04.805Z"
+    },
+    {
+      "id": "GL-RS-20261214-0003",
+      "userId": null,
+      "name": "예약자1",
+      "phone": "010-1111-0001",
+      "date": "2026-12-14",
+      "timeSlot": "14:00",
+      "time": "14:00",
+      "purpose": "골드바 구매",
+      "category": "골드바 구매",
+      "reservationNo": "GL-RS-20261214-0003",
+      "status": "CONFIRMED",
+      "notificationStatus": "PENDING_DISPATCH",
+      "createdAt": "2026-10-08T12:27:04.792Z"
+    },
+    {
+      "id": "GL-RS-20261219-0002",
+      "userId": null,
+      "name": "예약자2",
+      "phone": "010-1111-0002",
+      "date": "2026-12-19",
+      "timeSlot": "14:00",
+      "time": "14:00",
+      "purpose": "골드바 구매",
+      "category": "골드바 구매",
+      "reservationNo": "GL-RS-20261219-0002",
+      "status": "CONFIRMED",
+      "notificationStatus": "PENDING_DISPATCH",
+      "createdAt": "2026-10-08T12:26:09.587Z"
+    },
+    {
+      "id": "GL-RS-20261219-0001",
+      "userId": null,
+      "name": "예약자1",
+      "phone": "010-1111-0001",
+      "date": "2026-12-19",
+      "timeSlot": "14:00",
+      "time": "14:00",
+      "purpose": "골드바 구매",
+      "category": "골드바 구매",
+      "reservationNo": "GL-RS-20261219-0001",
+      "status": "CONFIRMED",
+      "notificationStatus": "PENDING_DISPATCH",
+      "createdAt": "2026-10-08T12:26:09.584Z"
+    }
+  ],
   "products": [
     {
       "id": "GL-PROD-001",
@@ -55,7 +445,7 @@
       "dimensions": "가로 11mm × 세로 18mm",
       "price": 715000,
       "priceValidUntil": "당일 영업 마감 시까지",
-      "stock": 30,
+      "stock": 26,
       "isCustomOrder": false,
       "dispatchLeadDays": 1,
       "photos": [
@@ -86,10 +476,175 @@
       "status": "ACTIVE"
     }
   ],
-  "orders": [],
-  "gv_gc_ledgers": [],
+  "orders": [
+    {
+      "id": "GL-ORD-20261008-0002",
+      "orderNo": "GL-ORD-20261008-0002",
+      "idempotencyKey": null,
+      "userId": "usr_1791462424513_47230d",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 2000,
+      "gcUsed": 2000,
+      "finalPayAmount": 713000,
+      "finalAmount": 713000,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-08T12:27:04.860Z"
+    },
+    {
+      "id": "GL-ORD-20261008-0001",
+      "orderNo": "GL-ORD-20261008-0001",
+      "idempotencyKey": null,
+      "userId": "usr_1791462369329_7a2c28",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 2000,
+      "gcUsed": 2000,
+      "finalPayAmount": 713000,
+      "finalAmount": 713000,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-08T12:26:09.634Z"
+    }
+  ],
+  "gv_gc_ledgers": [
+    {
+      "id": "LEDGER-GC-WELCOME-1791462369384-b839fa",
+      "userId": "usr_1791462369329_7a2c28",
+      "type": "GC_EARN",
+      "amount": 5000,
+      "referenceId": "WELCOME-BONUS",
+      "note": "신규 회원가입 축하 5,000 GC 적립",
+      "createdAt": "2026-10-08T12:26:09.384Z"
+    },
+    {
+      "id": "LEDGER-GC-WELCOME-1791462369439-770840",
+      "userId": "usr_1791462369389_e0867d",
+      "type": "GC_EARN",
+      "amount": 5000,
+      "referenceId": "WELCOME-BONUS",
+      "note": "신규 회원가입 축하 5,000 GC 적립",
+      "createdAt": "2026-10-08T12:26:09.439Z"
+    },
+    {
+      "id": "LEDGER-GC-WELCOME-1791462369571-cd085e",
+      "userId": "usr_1791462369518_a91124",
+      "type": "GC_EARN",
+      "amount": 5000,
+      "referenceId": "WELCOME-BONUS",
+      "note": "신규 회원가입 축하 5,000 GC 적립",
+      "createdAt": "2026-10-08T12:26:09.572Z"
+    },
+    {
+      "id": "LEDGER-GC-USE-1791462369634",
+      "userId": "usr_1791462369329_7a2c28",
+      "type": "GC_USE",
+      "amount": 2000,
+      "referenceId": "GL-ORD-20261008-0001",
+      "note": "주문(GL-ORD-20261008-0001) 결제 시 GC 할인 차감",
+      "createdAt": "2026-10-08T12:26:09.634Z"
+    },
+    {
+      "id": "LEDGER-GC-WELCOME-1791462424571-6dff56",
+      "userId": "usr_1791462424513_47230d",
+      "type": "GC_EARN",
+      "amount": 5000,
+      "referenceId": "WELCOME-BONUS",
+      "note": "신규 회원가입 축하 5,000 GC 적립",
+      "createdAt": "2026-10-08T12:27:04.571Z"
+    },
+    {
+      "id": "LEDGER-GC-WELCOME-1791462424625-fcf5fa",
+      "userId": "usr_1791462424575_9f5fad",
+      "type": "GC_EARN",
+      "amount": 5000,
+      "referenceId": "WELCOME-BONUS",
+      "note": "신규 회원가입 축하 5,000 GC 적립",
+      "createdAt": "2026-10-08T12:27:04.625Z"
+    },
+    {
+      "id": "LEDGER-GC-WELCOME-1791462424783-336ee8",
+      "userId": "usr_1791462424711_56ef3b",
+      "type": "GC_EARN",
+      "amount": 5000,
+      "referenceId": "WELCOME-BONUS",
+      "note": "신규 회원가입 축하 5,000 GC 적립",
+      "createdAt": "2026-10-08T12:27:04.783Z"
+    },
+    {
+      "id": "LEDGER-GC-USE-1791462424860",
+      "userId": "usr_1791462424513_47230d",
+      "type": "GC_USE",
+      "amount": 2000,
+      "referenceId": "GL-ORD-20261008-0002",
+      "note": "주문(GL-ORD-20261008-0002) 결제 시 GC 할인 차감",
+      "createdAt": "2026-10-08T12:27:04.860Z"
+    }
+  ],
   "inquiries": [],
-  "audit_logs": [],
+  "audit_logs": [
+    {
+      "id": "AUDIT-1791462424814-8befde76",
+      "adminId": "usr_admin_001",
+      "action": "ISSUE_CERTIFICATE",
+      "targetType": "CERTIFICATE",
+      "targetId": "GL-CERT-20261008-0002",
+      "ip": "::ffff:127.0.0.1",
+      "details": {
+        "appraisalId": "GL-AP-20261008-0002"
+      },
+      "timestamp": "2026-10-08T12:27:04.815Z"
+    },
+    {
+      "id": "AUDIT-1791462369595-1dd60c4d",
+      "adminId": "usr_admin_001",
+      "action": "ISSUE_CERTIFICATE",
+      "targetType": "CERTIFICATE",
+      "targetId": "GL-CERT-20261008-0001",
+      "ip": "::ffff:127.0.0.1",
+      "details": {
+        "appraisalId": "GL-AP-20261008-0001"
+      },
+      "timestamp": "2026-10-08T12:26:09.595Z"
+    }
+  ],
   "settings": {
     "siteName": "GoldLab&co",
     "appraisal": {

@@ -180,21 +180,53 @@ function loadDB() {
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@goldlabnco.com';
     const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'GoldLab2026!MasterSecure';
 
-    dbMemoryCache.users.push({
-      id: 'usr_admin_001',
-      email: adminEmail.toLowerCase().trim(),
-      passwordHash: hashPassword(adminPass),
-      name: '황미숙 대표 (관리자)',
-      phone: '010-4017-4988',
-      userType: 'MASTER',
-      role: 'MASTER_ADMIN',
-      tier: '👑 MASTER ADMIN',
-      twoFactorEnabled: process.env.ADMIN_2FA_ENABLED === 'true',
-      twoFactorSecret: process.env.ADMIN_2FA_SECRET || null,
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    });
+    dbMemoryCache.users.push(
+      {
+        id: 'usr_master_001',
+        email: 'goldlabnco@naver.com',
+        passwordHash: hashPassword(adminPass),
+        name: '황미숙 대표 (최고관리자)',
+        phone: '010-4017-4988',
+        userType: 'MASTER',
+        role: 'MASTER_ADMIN',
+        tier: '👑 MASTER ADMIN',
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        status: 'ACTIVE',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'usr_admin_001',
+        email: adminEmail.toLowerCase().trim(),
+        passwordHash: hashPassword(adminPass),
+        name: '골드랩 시스템 관리자',
+        phone: '010-4017-4988',
+        userType: 'MASTER',
+        role: 'MASTER_ADMIN',
+        tier: '👑 MASTER ADMIN',
+        twoFactorEnabled: process.env.ADMIN_2FA_ENABLED === 'true',
+        twoFactorSecret: process.env.ADMIN_2FA_SECRET || null,
+        status: 'ACTIVE',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      },
+      {
+        id: 'usr_eprltls',
+        email: 'eprltls@gmail.com',
+        passwordHash: hashPassword('GoldLab1234!'),
+        name: '일반 회원',
+        phone: '010-0000-0000',
+        userType: 'PERSONAL',
+        role: 'USER',
+        tier: 'STANDARD MEMBER',
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        status: 'ACTIVE',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    );
 
     persistDBToDisk(dbMemoryCache);
     backupDB();
@@ -204,6 +236,35 @@ function loadDB() {
   try {
     const raw = fs.readFileSync(DB_FILE, 'utf8');
     dbMemoryCache = JSON.parse(raw);
+
+    // Guarantee goldlabnco@naver.com is master admin and eprltls@gmail.com is regular user
+    const epr = dbMemoryCache.users.find(u => u.email && u.email.toLowerCase() === 'eprltls@gmail.com');
+    if (epr) {
+      epr.role = 'USER';
+      epr.userType = 'PERSONAL';
+      epr.tier = 'STANDARD MEMBER';
+    }
+    const master = dbMemoryCache.users.find(u => u.email && u.email.toLowerCase() === 'goldlabnco@naver.com');
+    if (!master) {
+      const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'GoldLab2026!MasterSecure';
+      dbMemoryCache.users.unshift({
+        id: 'usr_master_001',
+        email: 'goldlabnco@naver.com',
+        passwordHash: hashPassword(adminPass),
+        name: '황미숙 대표 (최고관리자)',
+        phone: '010-4017-4988',
+        userType: 'MASTER',
+        role: 'MASTER_ADMIN',
+        tier: '👑 MASTER ADMIN',
+        twoFactorEnabled: false,
+        twoFactorSecret: null,
+        status: 'ACTIVE',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      });
+      persistDBToDisk(dbMemoryCache);
+    }
+
     console.log(`[Database] Loaded persistent database (${dbMemoryCache.users.length} users, ${dbMemoryCache.appraisals.length} appraisals).`);
     return dbMemoryCache;
   } catch (err) {

@@ -243,74 +243,122 @@ let authToken = localStorage.getItem('goldlab_auth_token') || '';
 // ==========================================================================
 // In-Browser Serverless Hybrid Engine (Ensures 100% Zero-Error on GitHub Pages)
 // ==========================================================================
-const IN_BROWSER_DB_KEY = 'goldlab_live_db_v3';
+const IN_BROWSER_DB_KEY = 'goldlab_live_db_v4';
 
 function getInBrowserDB() {
+  let db = null;
   let dbStr = localStorage.getItem(IN_BROWSER_DB_KEY);
   if (dbStr) {
     try {
       const parsed = JSON.parse(dbStr);
-      if (parsed && parsed.users && Array.isArray(parsed.users)) return parsed;
+      if (parsed && parsed.users && Array.isArray(parsed.users)) db = parsed;
     } catch (e) {}
   }
-  const defaultDB = {
-    users: [
-      {
-        id: 'usr_master_eprltls',
-        name: '황미숙 대표 (운영자)',
-        email: 'eprltls@gmail.com',
-        role: 'MASTER_ADMIN',
-        userType: 'MASTER',
-        tier: '👑 MASTER ADMIN',
-        status: 'ACTIVE'
-      },
-      {
-        id: 'usr_master_001',
-        name: '황미숙 대표 (운영자)',
-        email: 'admin@goldlabnco.com',
-        role: 'MASTER_ADMIN',
-        userType: 'MASTER',
-        tier: '👑 MASTER ADMIN',
-        status: 'ACTIVE'
-      },
-      {
-        id: 'usr_dohyun_01',
-        name: '김도현',
-        email: 'dohyun.kim84@naver.com',
-        phone: '010-3842-7195',
-        role: 'USER',
-        userType: 'PERSONAL',
-        tier: 'VIP PLATINUM',
-        status: 'ACTIVE'
-      },
-      {
-        id: 'usr_jieun_02',
-        name: '이지은',
-        email: 'jieun.lee91@gmail.com',
-        phone: '010-7215-4683',
-        role: 'USER',
-        userType: 'PERSONAL',
-        tier: 'GOLD MEMBER',
-        status: 'ACTIVE'
-      }
-    ],
-    reservations: [],
-    appraisals: [],
-    certificates: [],
-    orders: [],
-    gv_gc_ledgers: [
-      { id: 'L1', userId: 'usr_master_eprltls', type: 'GV_ADD', amount: 50000000, note: 'VIP 누적 거래 실적' },
-      { id: 'L2', userId: 'usr_master_eprltls', type: 'GC_EARN', amount: 250000, note: 'VIP 실적 리워드 포인트' },
-      { id: 'L3', userId: 'usr_dohyun_01', type: 'GV_ADD', amount: 35000000, note: 'VIP 누적 실적' },
-      { id: 'L4', userId: 'usr_dohyun_01', type: 'GC_EARN', amount: 150000, note: 'VIP 리워드 포인트' }
-    ],
-    inquiries: [],
-    audit_logs: [
-      { id: 'AUD-01', action: 'SYSTEM_BOOT', adminId: 'usr_master_eprltls', ip: '127.0.0.1', timestamp: new Date().toISOString() }
-    ]
-  };
-  localStorage.setItem(IN_BROWSER_DB_KEY, JSON.stringify(defaultDB));
-  return defaultDB;
+  if (!db) {
+    db = {
+      users: [
+        {
+          id: 'usr_master_goldlabnco',
+          name: '황미숙 대표 (최고관리자)',
+          email: 'goldlabnco@naver.com',
+          role: 'MASTER_ADMIN',
+          userType: 'MASTER',
+          tier: '👑 MASTER ADMIN',
+          status: 'ACTIVE'
+        },
+        {
+          id: 'usr_master_001',
+          name: '골드랩 마스터 관리자',
+          email: 'admin@goldlabnco.com',
+          role: 'MASTER_ADMIN',
+          userType: 'MASTER',
+          tier: '👑 MASTER ADMIN',
+          status: 'ACTIVE'
+        },
+        {
+          id: 'usr_eprltls',
+          name: '일반 회원',
+          email: 'eprltls@gmail.com',
+          role: 'USER',
+          userType: 'PERSONAL',
+          tier: 'STANDARD MEMBER',
+          status: 'ACTIVE'
+        },
+        {
+          id: 'usr_dohyun_01',
+          name: '김도현',
+          email: 'dohyun.kim84@naver.com',
+          phone: '010-3842-7195',
+          role: 'USER',
+          userType: 'PERSONAL',
+          tier: 'VIP PLATINUM',
+          status: 'ACTIVE'
+        },
+        {
+          id: 'usr_jieun_02',
+          name: '이지은',
+          email: 'jieun.lee91@gmail.com',
+          phone: '010-7215-4683',
+          role: 'USER',
+          userType: 'PERSONAL',
+          tier: 'GOLD MEMBER',
+          status: 'ACTIVE'
+        }
+      ],
+      reservations: [],
+      appraisals: [],
+      certificates: [],
+      orders: [],
+      gv_gc_ledgers: [
+        { id: 'L1', userId: 'usr_master_goldlabnco', type: 'GV_ADD', amount: 50000000, note: 'VIP 누적 거래 실적' },
+        { id: 'L2', userId: 'usr_master_goldlabnco', type: 'GC_EARN', amount: 250000, note: 'VIP 실적 리워드 포인트' },
+        { id: 'L3', userId: 'usr_dohyun_01', type: 'GV_ADD', amount: 35000000, note: 'VIP 누적 실적' },
+        { id: 'L4', userId: 'usr_dohyun_01', type: 'GC_EARN', amount: 150000, note: 'VIP 리워드 포인트' }
+      ],
+      inquiries: [],
+      audit_logs: [
+        { id: 'AUD-01', action: 'SYSTEM_BOOT', adminId: 'usr_master_goldlabnco', ip: '127.0.0.1', timestamp: new Date().toISOString() }
+      ]
+    };
+  }
+
+  // Explicitly ensure roles are correctly maintained even across previous local caches
+  const epr = db.users.find(u => u.email && u.email.toLowerCase() === 'eprltls@gmail.com');
+  if (epr) {
+    epr.role = 'USER';
+    epr.userType = 'PERSONAL';
+    epr.tier = 'STANDARD MEMBER';
+  } else {
+    db.users.push({
+      id: 'usr_eprltls',
+      name: '일반 회원',
+      email: 'eprltls@gmail.com',
+      role: 'USER',
+      userType: 'PERSONAL',
+      tier: 'STANDARD MEMBER',
+      status: 'ACTIVE'
+    });
+  }
+
+  const master = db.users.find(u => u.email && u.email.toLowerCase() === 'goldlabnco@naver.com');
+  if (master) {
+    master.role = 'MASTER_ADMIN';
+    master.userType = 'MASTER';
+    master.tier = '👑 MASTER ADMIN';
+  } else {
+    db.users.unshift({
+      id: 'usr_master_goldlabnco',
+      name: '황미숙 대표 (최고관리자)',
+      email: 'goldlabnco@naver.com',
+      role: 'MASTER_ADMIN',
+      userType: 'MASTER',
+      tier: '👑 MASTER ADMIN',
+      status: 'ACTIVE'
+    });
+  }
+
+  localStorage.setItem(IN_BROWSER_DB_KEY, JSON.stringify(db));
+  return db;
 }
 
 function saveInBrowserDB(db) {
@@ -328,14 +376,14 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
   // 1. Auth: Login
   if (path === '/api/auth/login' && method === 'POST') {
     const cleanEmail = (body?.email || '').trim().toLowerCase();
-    const isMaster = cleanEmail === 'eprltls@gmail.com' || cleanEmail === 'admin@goldlabnco.com' || cleanEmail === 'hwang@goldlabnco.com';
+    const isMaster = cleanEmail === 'goldlabnco@naver.com' || cleanEmail === 'admin@goldlabnco.com' || cleanEmail === 'hwang@goldlabnco.com';
 
     let user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
     if (isMaster) {
       if (!user) {
         user = {
           id: 'usr_master_' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_'),
-          name: '황미숙 대표 (운영자)',
+          name: '황미숙 대표 (최고관리자)',
           email: cleanEmail,
           role: 'MASTER_ADMIN',
           userType: 'MASTER',
@@ -344,27 +392,39 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
         };
         db.users.push(user);
         saveInBrowserDB(db);
+      } else {
+        user.role = 'MASTER_ADMIN';
+        user.userType = 'MASTER';
+        user.tier = '👑 MASTER ADMIN';
+        saveInBrowserDB(db);
       }
-    } else if (!user) {
-      // Create user smoothly
-      user = {
-        id: 'usr_' + Date.now(),
-        name: cleanEmail.split('@')[0],
-        email: cleanEmail,
-        role: 'USER',
-        userType: 'PERSONAL',
-        tier: 'STANDARD MEMBER',
-        status: 'ACTIVE'
-      };
-      db.users.push(user);
-      db.gv_gc_ledgers.push({
-        id: 'LEDGER-WELCOME-' + Date.now(),
-        userId: user.id,
-        type: 'GC_EARN',
-        amount: 5000,
-        note: '신규 회원가입 축하 5,000 GC 적립'
-      });
-      saveInBrowserDB(db);
+    } else {
+      if (!user) {
+        // Create user smoothly
+        user = {
+          id: 'usr_' + Date.now(),
+          name: cleanEmail.split('@')[0],
+          email: cleanEmail,
+          role: 'USER',
+          userType: 'PERSONAL',
+          tier: 'STANDARD MEMBER',
+          status: 'ACTIVE'
+        };
+        db.users.push(user);
+        db.gv_gc_ledgers.push({
+          id: 'LEDGER-WELCOME-' + Date.now(),
+          userId: user.id,
+          type: 'GC_EARN',
+          amount: 5000,
+          note: '신규 회원가입 축하 5,000 GC 적립'
+        });
+        saveInBrowserDB(db);
+      } else if (cleanEmail === 'eprltls@gmail.com') {
+        user.role = 'USER';
+        user.userType = 'PERSONAL';
+        user.tier = 'STANDARD MEMBER';
+        saveInBrowserDB(db);
+      }
     }
 
     const genToken = 'tok_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
@@ -412,8 +472,31 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     if (raw) {
       try {
         const u = JSON.parse(raw);
-        const fresh = db.users.find(x => x.id === u.id || x.email === u.email);
-        return { success: true, user: fresh || u };
+        let fresh = db.users.find(x => x.id === u.id || (x.email && u.email && x.email.toLowerCase() === u.email.toLowerCase()));
+        if (fresh) {
+          if (fresh.email && fresh.email.toLowerCase() === 'eprltls@gmail.com') {
+            fresh.role = 'USER';
+            fresh.userType = 'PERSONAL';
+            fresh.tier = 'STANDARD MEMBER';
+          } else if (fresh.email && fresh.email.toLowerCase() === 'goldlabnco@naver.com') {
+            fresh.role = 'MASTER_ADMIN';
+            fresh.userType = 'MASTER';
+            fresh.tier = '👑 MASTER ADMIN';
+          }
+          localStorage.setItem('goldlab_active_user', JSON.stringify(fresh));
+          return { success: true, user: fresh };
+        }
+        if (u.email && u.email.toLowerCase() === 'eprltls@gmail.com') {
+          u.role = 'USER';
+          u.userType = 'PERSONAL';
+          u.tier = 'STANDARD MEMBER';
+        } else if (u.email && u.email.toLowerCase() === 'goldlabnco@naver.com') {
+          u.role = 'MASTER_ADMIN';
+          u.userType = 'MASTER';
+          u.tier = '👑 MASTER ADMIN';
+        }
+        localStorage.setItem('goldlab_active_user', JSON.stringify(u));
+        return { success: true, user: u };
       } catch (e) {}
     }
     return { success: false, error: '세션 없음' };
@@ -593,7 +676,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
 
   // 15. Membership: Summary
   if (path === '/api/membership/me' || path === '/api/membership/my-summary') {
-    const uid = currentUser ? currentUser.id : 'usr_master_eprltls';
+    const uid = currentUser ? currentUser.id : '';
     const userLedgers = db.gv_gc_ledgers.filter(l => l.userId === uid);
     let gvTotal = 0;
     let gcBalance = 0;
@@ -772,6 +855,29 @@ let currentInspectingMemberId = null;
 // Clean server auth state loader
 async function LoadAuthState() {
   authToken = localStorage.getItem('goldlab_auth_token') || '';
+
+  // Proactively sanitize cached active user in localStorage
+  const activeUserRaw = localStorage.getItem('goldlab_active_user');
+  if (activeUserRaw) {
+    try {
+      const activeObj = JSON.parse(activeUserRaw);
+      if (activeObj && activeObj.email) {
+        const em = activeObj.email.toLowerCase().trim();
+        if (em === 'eprltls@gmail.com') {
+          activeObj.role = 'USER';
+          activeObj.userType = 'PERSONAL';
+          activeObj.tier = 'STANDARD MEMBER';
+          localStorage.setItem('goldlab_active_user', JSON.stringify(activeObj));
+        } else if (em === 'goldlabnco@naver.com') {
+          activeObj.role = 'MASTER_ADMIN';
+          activeObj.userType = 'MASTER';
+          activeObj.tier = '👑 MASTER ADMIN';
+          localStorage.setItem('goldlab_active_user', JSON.stringify(activeObj));
+        }
+      }
+    } catch (e) {}
+  }
+
   if (!authToken) {
     currentUser = null;
     UpdateAuthUI();
@@ -781,6 +887,18 @@ async function LoadAuthState() {
     const res = await ApiRequest('/api/auth/me');
     if (res.success && res.user) {
       currentUser = res.user;
+      if (currentUser && currentUser.email) {
+        const em = currentUser.email.toLowerCase().trim();
+        if (em === 'eprltls@gmail.com') {
+          currentUser.role = 'USER';
+          currentUser.userType = 'PERSONAL';
+          currentUser.tier = 'STANDARD MEMBER';
+        } else if (em === 'goldlabnco@naver.com') {
+          currentUser.role = 'MASTER_ADMIN';
+          currentUser.userType = 'MASTER';
+          currentUser.tier = '👑 MASTER ADMIN';
+        }
+      }
     } else {
       currentUser = null;
       authToken = '';
