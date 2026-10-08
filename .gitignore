@@ -6,6 +6,7 @@ scratch_test.json
 .env
 .env.local
 ~$*.xlsx
+*.xlsx
 scratch/
 data/backups/
 uploads/temp/
