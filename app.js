@@ -1319,7 +1319,7 @@ function RenderMetalSelectorCards() {
   let metals = [];
   if (currentMarketRegion === 'DOMESTIC') {
     metals = [
-      { key: '24K', title: '🇰🇷 순금 24K (999.9%)', buy: currentRates["24K_buy"], sell: currentRates["24K_sell"] },
+      { key: '24K', title: '🇰🇷 순금 24K (순도 99.99%)', buy: currentRates["24K_buy"], sell: currentRates["24K_sell"] },
       { key: '18K', title: '🇰🇷 18K 금 (75.0%)', buy: '제품시세적용', sell: currentRates["18K_sell"] },
       { key: '14K', title: '🇰🇷 14K 금 (58.5%)', buy: '제품시세적용', sell: currentRates["14K_sell"] },
       { key: 'PT', title: '🇰🇷 백금 (Platinum)', buy: currentRates["PT_buy"], sell: currentRates["PT_sell"] },
