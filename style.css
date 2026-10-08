@@ -163,60 +163,94 @@ button, input, select {
   box-shadow: 0 0 15px rgba(224, 184, 72, 0.4);
 }
 
+/* ==========================================================================
+   ELEGANT CENTERED LUXURY NAVBAR & BALANCED TOP BAR
+   ========================================================================== */
 .navbar {
-  padding: 1.1rem 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 0.85rem 0;
+  border-bottom: 1px solid rgba(224, 184, 72, 0.22);
+  background: rgba(8, 10, 15, 0.96);
+  backdrop-filter: blur(16px);
+  position: relative;
+  width: 100%;
 }
 
 .nav-inner {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1.5rem;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  max-width: 1440px;
+  margin: 0 auto;
+  gap: 1.2rem;
 }
 
 .brand-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
   font-family: var(--font-serif);
-  font-size: 1.8rem;
-  font-weight: 900;
-  letter-spacing: 1.2px;
+  font-size: 1.55rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  color: var(--text-white);
 }
 
 .brand-icon {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   background: var(--gold-gradient);
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #0b0c10;
-  font-size: 1.35rem;
-  box-shadow: 0 0 22px rgba(224, 184, 72, 0.45);
+  font-size: 1.2rem;
+  box-shadow: 0 0 20px rgba(224, 184, 72, 0.45);
 }
 
+/* Visually Centered Navigation Links */
 .nav-menu {
-  display: flex;
-  align-items: center;
-  gap: 1.4rem;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1 !important;
+  margin: 0 1rem !important;
+  gap: 0.75rem !important;
+  list-style: none !important;
 }
 
 .nav-link, .nav-menu a {
-  font-size: 1.05rem !important;
+  font-size: 0.92rem !important;
   font-weight: 700 !important;
-  color: var(--text-light);
+  color: #cbd5e1 !important;
   transition: all 0.2s ease;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
+  white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+  padding: 0.4rem 0.65rem !important;
+  border-radius: 8px !important;
+  text-decoration: none !important;
 }
 
 .nav-link:hover, .nav-link.active, .nav-menu a:hover, .nav-menu a.active {
   color: var(--gold-light) !important;
+  background: rgba(224, 184, 72, 0.12) !important;
+  box-shadow: 0 0 10px rgba(224, 184, 72, 0.2);
+}
+
+.nav-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  flex-shrink: 0;
+}
+
+/* Mobile Toggle Hamburger Button: Hidden on Desktop! */
+.mobile-toggle-btn {
+  display: none !important;
 }
 
 /* Buttons */
@@ -851,3 +885,142 @@ button, input, select {
 
 
 
+
+
+/* ==========================================================================
+   COMPREHENSIVE RESPONSIVE DESIGN & MOBILE OPTIMIZATION
+   ========================================================================== */
+@media (max-width: 1240px) {
+  .nav-menu {
+    gap: 0.5rem !important;
+    margin: 0 0.6rem !important;
+  }
+  .nav-link, .nav-menu a {
+    font-size: 0.86rem !important;
+    padding: 0.35rem 0.45rem !important;
+  }
+}
+
+@media (max-width: 1040px) {
+  /* Show Hamburger Button */
+  .mobile-toggle-btn {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: rgba(224, 184, 72, 0.14);
+    border: 1px solid var(--border-dark);
+    color: var(--gold-light);
+    font-size: 1.25rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .mobile-toggle-btn:hover {
+    background: rgba(224, 184, 72, 0.25);
+    color: #fff;
+  }
+
+  /* Slide-down Mobile Menu Drawer */
+  .nav-menu {
+    display: none !important;
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    background: rgba(10, 12, 18, 0.98) !important;
+    backdrop-filter: blur(24px) !important;
+    border-bottom: 2px solid var(--gold-primary) !important;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.95) !important;
+    flex-direction: column !important;
+    padding: 1.2rem 1.5rem !important;
+    gap: 0.6rem !important;
+    margin: 0 !important;
+    z-index: 2000 !important;
+  }
+
+  .nav-menu.mobile-active {
+    display: flex !important;
+    animation: navSlideDown 0.25s ease-out;
+  }
+
+  @keyframes navSlideDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .nav-menu li {
+    width: 100% !important;
+  }
+
+  .nav-menu a {
+    display: flex !important;
+    width: 100% !important;
+    padding: 0.85rem 1.2rem !important;
+    font-size: 1.05rem !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .nav-menu a:hover, .nav-menu a.active {
+    background: rgba(224, 184, 72, 0.16) !important;
+    border-color: rgba(224, 184, 72, 0.4) !important;
+    color: var(--gold-light) !important;
+  }
+
+  /* Hide quick booking button on tablet/mobile to preserve space */
+  .nav-actions a.btn-sm {
+    display: none !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1.2rem !important;
+  }
+
+  .brand-logo span {
+    font-size: 1.3rem !important;
+  }
+  .brand-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1rem !important;
+  }
+  #authTopSlot button, #authTopSlot a {
+    padding: 0.35rem 0.75rem !important;
+    font-size: 0.78rem !important;
+  }
+  
+  /* Hero Split Grid on Mobile */
+  #hero-split .container > div:last-child {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Products 2-Column Grid on Mobile */
+  #products div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Booking Grid on Mobile */
+  .booking-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+
+  /* Modal Mobile Responsiveness */
+  .modal-content, .auth-modal-box {
+    max-width: 95% !important;
+    padding: 1.5rem 1.2rem !important;
+    margin: 1rem auto !important;
+  }
+  
+  .hero-title {
+    font-size: 1.75rem !important;
+  }
+}

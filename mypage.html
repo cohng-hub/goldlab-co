@@ -98,7 +98,7 @@
           <li><a href="mypage.html" class="nav-link active"><i class="fa-solid fa-wallet"></i> 마이페이지</a></li>
           <li><a href="wholesale.html" class="nav-link" onclick="OpenWholesaleOrAlert(event)" style="color:var(--gold-light); font-weight:800;"><i class="fa-solid fa-building"></i> B2B 도매센터</a></li>
         </ul>
-        <div style="display:flex; align-items:center; gap:0.9rem;">
+        <div class="nav-actions">
           <div id="authTopSlot"></div>
           <button class="mobile-toggle-btn" onclick="ToggleMobileMenu()"><i class="fa-solid fa-bars"></i></button>
         </div>
@@ -1283,6 +1283,62 @@
         e.target.reset();
       } catch (err) {
         alert('조정 실패: ' + err.message);
+      }
+    }
+
+    async function LoadAdminData() {
+      await Promise.allSettled([
+        typeof LoadAdminAppraisals === 'function' ? LoadAdminAppraisals() : null,
+        typeof LoadAdminOrders === 'function' ? LoadAdminOrders() : null,
+        typeof LoadAdminUsers === 'function' ? LoadAdminUsers() : null,
+        typeof LoadAdminReservations === 'function' ? LoadAdminReservations() : null,
+        typeof LoadAdminInquiries === 'function' ? LoadAdminInquiries() : null,
+        typeof LoadAdminAudits === 'function' ? LoadAdminAudits() : null
+      ].filter(Boolean));
+    }
+
+    async function ExportMasterMembersCSV() {
+      if (!currentUser || (currentUser.role !== 'MASTER_ADMIN' && currentUser.role !== 'STAFF')) {
+        alert('최고 관리자 권한이 필요합니다.');
+        return;
+      }
+      try {
+        const res = await ApiRequest('/api/admin/users');
+        const users = res.users || [];
+        let csv = '\uFEFF가입일시,회원구분,이름/상호명,대표자,사업자번호,연락처,아이디(이메일),회원등급,상태\n';
+        users.forEach(u => {
+          const esc = (val) => {
+            let s = String(val || '').trim();
+            if (s.startsWith('=') || s.startsWith('+') || s.startsWith('-') || s.startsWith('@')) {
+              s = "'" + s;
+            }
+            return '"' + s.replace(/"/g, '""') + '"';
+          };
+          csv += [
+            esc(u.createdAt ? u.createdAt.substring(0, 10) : '2026-10-08'),
+            esc(u.userType === 'BIZ' ? 'B2B 도매 사업자' : '일반 고객 VIP'),
+            esc(u.bizName || u.name),
+            esc(u.name),
+            esc(u.bizNo || '-'),
+            esc(u.phone || '-'),
+            esc(u.email),
+            esc(u.tier || 'STANDARD'),
+            esc(u.status || 'ACTIVE')
+          ].join(',') + '\n';
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `골드랩앤코_운영회원장부_${new Date().toISOString().substring(0, 10).replace(/-/g, '')}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert('보안 수식 이스케이프 처리된 운영 회원 CSV 파일이 다운로드되었습니다.');
+      } catch (err) {
+        alert('[CSV 다운로드 실패] ' + err.message);
       }
     }
 

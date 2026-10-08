@@ -1,12 +1,12 @@
 {
   "version": "2.0.0",
-  "createdAt": "2026-10-08T12:03:20.462Z",
-  "updatedAt": "2026-10-08T12:03:20.464Z",
+  "createdAt": "2026-10-08T12:17:44.089Z",
+  "updatedAt": "2026-10-08T12:17:44.092Z",
   "users": [
     {
       "id": "usr_admin_001",
       "email": "admin@goldlabnco.com",
-      "passwordHash": "e1800e664945b7ef0ad0b6094fdc1025:cde563940a9dc65cac5738f2ad27ba16019feae8caa1997eaf0da565e842e788c75e60d729ddfbbc3f075ecfeaa2828b991942fd2f4efe58e72ea6725b50bcd3",
+      "passwordHash": "71cbd154c82485a472dae5b05e27cb28:a7c7bd7e3d92dbc29333043e5304546215881885ca8b1ae2e850a225b6e22ddc2cb4c3ecb8dedfe8cc7305a8d9d88f46df2d471a4fee6fe01faf3af6658dc397",
       "name": "황미숙 대표 (관리자)",
       "phone": "010-4017-4988",
       "userType": "MASTER",
@@ -15,8 +15,8 @@
       "twoFactorEnabled": false,
       "twoFactorSecret": null,
       "status": "ACTIVE",
-      "createdAt": "2026-10-08T12:03:20.521Z",
-      "updatedAt": "2026-10-08T12:03:20.521Z"
+      "createdAt": "2026-10-08T12:17:44.138Z",
+      "updatedAt": "2026-10-08T12:17:44.138Z"
     }
   ],
   "sessions": [],
