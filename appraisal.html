@@ -54,16 +54,22 @@
       </p>
     </div>
 
-    <!-- DRAFT PRICING NOTICE ALERT -->
-    <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-gold-bright); border-radius:18px; padding:1.2rem 1.6rem; margin-bottom:3rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
-      <div style="display:flex; align-items:center; gap:1rem;">
-        <i class="fa-solid fa-circle-exclamation text-gold" style="font-size:1.8rem;"></i>
+    <!-- CONFIRMED PRICING NOTICE ALERT -->
+    <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-gold-bright); border-radius:18px; padding:1.4rem 1.8rem; margin-bottom:3rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.2rem;">
+      <div style="display:flex; align-items:center; gap:1.2rem;">
+        <div style="width:50px; height:50px; border-radius:14px; background:rgba(224,184,72,0.15); display:flex; align-items:center; justify-content:center; border:1px solid rgba(224,184,72,0.3);">
+          <i class="fa-solid fa-microscope text-gold" style="font-size:1.6rem;"></i>
+        </div>
         <div>
-          <strong style="color:var(--gold-light); font-size:1.05rem;">감정대행 기본 수수료 안내</strong>
-          <p style="color:var(--text-muted); font-size:0.92rem; margin-top:0.2rem;">
-            방문 기본형 <strong>29,000원</strong> / 택배 기본형 <strong>39,000원</strong> (왕복 배송비 별도 / 정밀 파괴검사 또는 특수보석 감정 시 별도 견적).
-            의뢰 품목 및 특수 검사 여부에 따라 확정 견적이 안내됩니다.
+          <strong style="color:var(--gold-light); font-size:1.15rem; font-weight:900; display:block; margin-bottom:0.2rem;">
+            감정대행 기본요금 29,900원
+          </strong>
+          <p style="color:var(--text-light); font-size:0.95rem; margin:0; line-height:1.6;">
+            방문·택배 동일 요금 · 배송비 별도 · 정밀·특수 추가검사는 별도 견적
           </p>
+          <small style="color:var(--text-muted); font-size:0.83rem; display:block; margin-top:0.2rem;">
+            ※ 택배 이용 시 왕복 배송비는 고객 부담(별도 안내)이며, 추가 검사는 고객 사전 동의 없이 절대 진행하지 않습니다.
+          </small>
         </div>
       </div>
       <a href="#applySection" class="btn btn-gold btn-sm"><i class="fa-solid fa-pen-to-square"></i> 즉시 감정 접수하기</a>
@@ -309,6 +315,34 @@
           </label>
         </div>
 
+        <!-- 감정 수수료 및 금액 요약 -->
+        <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:16px; padding:1.4rem 1.6rem; margin-bottom:1.8rem;">
+          <div style="font-size:0.98rem; font-weight:800; color:var(--gold-light); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-receipt text-gold"></i> 감정대행 수수료 및 금액 요약
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.92rem; color:var(--text-light);">
+            <span>기본 감정 수수료 (비파괴 XRF 성분분석 및 정밀비중 측정)</span>
+            <strong style="color:#fff;">29,900원</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.92rem; color:var(--text-light);">
+            <span>배송비</span>
+            <span id="apSummaryShippingFee" style="color:var(--gold-light); font-weight:700;">현장 방문 (배송비 없음)</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.92rem; color:var(--text-light);">
+            <span>정밀·특수 추가검사</span>
+            <span style="color:var(--text-muted);">별도 견적 (고객 사전 동의 시에만 진행)</span>
+          </div>
+          <div style="margin-top:0.9rem; padding-top:0.9rem; border-top:1px dashed rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:800; color:#fff; font-size:1.02rem;">기본 요금 합계</span>
+            <span style="font-size:1.25rem; font-weight:900; color:var(--gold-light); font-family:var(--font-num);">
+              29,900원 <small style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">(배송비/추가검사 별도)</small>
+            </span>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.6rem; margin-bottom:0; line-height:1.5;">
+            ※ 방문·택배 접수 모두 동일한 기본요금(29,900원)이 적용되며, 택배 이용 시 왕복 배송비는 고객 부담(별도 안내)입니다.
+          </p>
+        </div>
+
         <!-- 제출 버튼 -->
         <button type="submit" id="btnSubmitAppraisal" class="btn btn-gold" style="width:100%; padding:1.1rem; font-size:1.15rem; font-weight:900;">
           <i class="fa-solid fa-paper-plane"></i> 감정대행 신청서 접수하기
@@ -320,7 +354,7 @@
         <i class="fa-solid fa-circle-check text-gold" style="font-size:3.5rem; margin-bottom:1rem;"></i>
         <h3 style="color:var(--text-white); font-size:1.6rem; margin-bottom:0.5rem;">감정대행 접수가 정상 완료되었습니다</h3>
         <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.5rem;">
-          발급된 고유 접수번호로 마이페이지에서 10단계 진행 상황을 실시간 조회하실 수 있습니다.
+          발급된 고유 접수번호로 마이페이지에서 9단계 진행 상황을 실시간 조회하실 수 있습니다.
         </p>
 
         <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:16px; padding:1.5rem; max-width:540px; margin:0 auto 2rem auto; text-align:left; line-height:1.8;">
@@ -450,12 +484,19 @@
       const addressInput = document.getElementById('apReturnAddress');
       const agreeGroup = document.getElementById('courierAgreeGroup');
       const agreeInput = document.getElementById('apAgreeDelivery');
+      const feeSummaryEl = document.getElementById('apSummaryShippingFee');
 
       if (addressBox) addressBox.style.display = isCourier ? 'block' : 'none';
       if (addressInput) addressInput.required = isCourier;
       if (agreeGroup) agreeGroup.style.display = isCourier ? 'block' : 'none';
       if (agreeInput) agreeInput.required = isCourier;
+
+      if (feeSummaryEl) {
+        feeSummaryEl.innerText = isCourier ? '별도 안내 (왕복 배송비 고객 부담)' : '현장 방문 (배송비 없음)';
+        feeSummaryEl.style.color = isCourier ? 'var(--gold-light)' : 'var(--text-light)';
+      }
     }
+    document.addEventListener('DOMContentLoaded', ToggleCourierFields);
 
     let photoBase64 = null;
     function PreviewAppraisalPhoto(input) {

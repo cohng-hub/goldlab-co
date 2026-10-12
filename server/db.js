@@ -90,25 +90,36 @@ function getDefaultDBSchema() {
     settings: {
       siteName: 'GoldLab&co',
       appraisal: {
-        visitPrice: 29000,
-        deliveryPrice: 39000,
-        returnShippingFee: 6000,
-        isPricePublished: false, // 운영자 검토안 상태 (확정 전 공개 제한)
-        priceReviewNotice: '위 감정대행 수수료는 검토 중인 초안으로 운영자 확정 후 공지됩니다.'
+        baseFee: 29900,
+        visitPrice: 29900,
+        deliveryPrice: 29900,
+        returnShippingFee: '별도 안내 (왕복 배송비 고객 부담)',
+        isPricePublished: true,
+        priceNotice: '감정대행 기본요금 29,900원\n방문·택배 동일 요금 · 배송비 별도\n정밀·특수 추가검사는 별도 견적'
       },
       membership: {
-        gcEarnRateGoldbarPercent: 0.1,  // 골드바 0.1% GC 적립
-        gcEarnRateJewelryPercent: 1.0,  // 주얼리 1.0% GC 적립
-        gcMaxUsePercent: 5.0,          // 1회 결제 시 최대 5%까지 GC 사용 가능
+        gcEarnRates: {
+          SILVER: 0.004,
+          GOLD: 0.007,
+          VIP_PLATINUM: 0.010
+        },
+        gcMaxUsePercent: 5.0, // 1회 결제 시 최대 5%까지 GC 사용 가능
+        policyEffectiveDate: '2026-10-12',
+        policyHistory: [
+          {
+            date: '2026-10-12',
+            description: '일반 고객 상품 구매 적립률 확정 (SILVER 0.4%, GOLD 0.7%, VIP 1.0%), 상품 결제 시 GC 사용 한도 최대 5% 유지'
+          }
+        ],
         gcValidityDays: 365,
         gcRuleDescription: '1 GC = 1원 할인 / 유상충전·예치금·현금화·양도 불가'
       },
       reservation: {
-        capacityPerSlot: 1, // 시간대별 1팀 정원
+        capacityPerSlot: 1,
         startHour: 10,
         endHour: 18,
         slotDurationMinutes: 30,
-        closedDays: [0] // 일요일 휴무
+        closedDays: [0, 6] // 토요일·일요일 주말 휴무
       },
       business: {
         companyName: '골드랩 (GoldLab&co)',

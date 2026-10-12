@@ -1,7 +1,7 @@
 {
   "version": "2.0.0",
   "createdAt": "2026-10-08T12:26:04.017Z",
-  "updatedAt": "2026-10-12T05:26:32.800Z",
+  "updatedAt": "2026-10-12T08:15:25.934Z",
   "users": [
     {
       "id": "usr_master_001",
@@ -145,6 +145,166 @@
       "expiresAt": "2026-10-19T05:26:32.752Z",
       "clientIP": "::ffff:127.0.0.1",
       "createdAt": "2026-10-12T05:26:32.752Z"
+    },
+    {
+      "id": "sess_1791791845084",
+      "userId": "usr_1791791845031_ba9ecb",
+      "hashedToken": "e72226e128a9c35f9866dc2c0440cb6efa2a779aad412b3da1520bf3775999ff",
+      "expiresAt": "2026-10-19T07:57:25.084Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T07:57:25.084Z"
+    },
+    {
+      "id": "sess_1791791845137",
+      "userId": "usr_1791791845094_69218f",
+      "hashedToken": "acb38de4e0bf02b1d177b97cad9523a1da44f21b089f8337b319adc3dcedd903",
+      "expiresAt": "2026-10-19T07:57:25.137Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T07:57:25.137Z"
+    },
+    {
+      "id": "sess_1791791845186",
+      "userId": "usr_admin_001",
+      "hashedToken": "b4beca3dd13292b1ab82d5708a55e21d934b57dc9b495908c723c8cd12e56a4d",
+      "expiresAt": "2026-10-19T07:57:25.186Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T07:57:25.186Z"
+    },
+    {
+      "id": "sess_1791791845254",
+      "userId": "usr_1791791845203_d80f53",
+      "hashedToken": "8161d63973a9dd5d2187d0a443600c754ae022e5b1ca9b6206549f6dfe4f2984",
+      "expiresAt": "2026-10-19T07:57:25.254Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T07:57:25.254Z"
+    },
+    {
+      "id": "sess_1791792827410",
+      "userId": "usr_1791792827354_43a889",
+      "hashedToken": "f8971480bd430a4ae4a2acecd81ac64cc9eb46cc5a759d403bcf51a72031c489",
+      "expiresAt": "2026-10-19T08:13:47.410Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:13:47.410Z"
+    },
+    {
+      "id": "sess_1791792827473",
+      "userId": "usr_1791792827419_f15cf0",
+      "hashedToken": "c46e88b6d73e65135288b8dc72ae8784327a3cce962c66b6f3a7815d0c8756de",
+      "expiresAt": "2026-10-19T08:13:47.473Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:13:47.473Z"
+    },
+    {
+      "id": "sess_1791792827553",
+      "userId": "usr_admin_001",
+      "hashedToken": "ad8b74affd214ac11585caa9db68e91f01a1e020ec08bc5706da79794cd3582e",
+      "expiresAt": "2026-10-19T08:13:47.553Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:13:47.553Z"
+    },
+    {
+      "id": "sess_1791792827659",
+      "userId": "usr_1791792827591_dc694c",
+      "hashedToken": "b83c205a707f911b040e593471789580f7c86c529ac7581cc2e35fe9cd4d2e5f",
+      "expiresAt": "2026-10-19T08:13:47.660Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:13:47.660Z"
+    },
+    {
+      "id": "sess_1791792866566",
+      "userId": "usr_1791792866515_b74c7f",
+      "hashedToken": "f1bcb4f7ac5e5fbc1db50b58a611d82de431568af76cafe73e5e9359142a22d9",
+      "expiresAt": "2026-10-19T08:14:26.566Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:14:26.566Z"
+    },
+    {
+      "id": "sess_1791792866620",
+      "userId": "usr_1791792866575_5beef0",
+      "hashedToken": "0f27835228048ae5b8e9e30bba36a9d7cab25fe1d6f3d0864ac82fe33d71f2a1",
+      "expiresAt": "2026-10-19T08:14:26.620Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:14:26.620Z"
+    },
+    {
+      "id": "sess_1791792866666",
+      "userId": "usr_admin_001",
+      "hashedToken": "297c024063266aa1a813300d50ce3c272628fd7a5aac9fe25633fc7083ee75be",
+      "expiresAt": "2026-10-19T08:14:26.666Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:14:26.666Z"
+    },
+    {
+      "id": "sess_1791792866729",
+      "userId": "usr_1791792866685_65d0f0",
+      "hashedToken": "c5cfb896275ca74449f21376cd97dddcdd907d9bd2d72c441045b21d518d7cf0",
+      "expiresAt": "2026-10-19T08:14:26.729Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:14:26.729Z"
+    },
+    {
+      "id": "sess_1791792911311",
+      "userId": "usr_1791792911263_775047",
+      "hashedToken": "737a1c475eef6788bfe72b6c76c8af5973e57d6e2d452afdc5c1aa8bb4cd56c5",
+      "expiresAt": "2026-10-19T08:15:11.312Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:11.312Z"
+    },
+    {
+      "id": "sess_1791792911362",
+      "userId": "usr_1791792911316_26bf40",
+      "hashedToken": "077a0408f2f26cf48db9defa116e3592ecbe63cfdf0e68d195bb593aa6b566ea",
+      "expiresAt": "2026-10-19T08:15:11.362Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:11.362Z"
+    },
+    {
+      "id": "sess_1791792911409",
+      "userId": "usr_admin_001",
+      "hashedToken": "f891c14c7db02c208b1d1f1fed3a36362befa3a67e4f02173a3042b608dcbd31",
+      "expiresAt": "2026-10-19T08:15:11.409Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:11.409Z"
+    },
+    {
+      "id": "sess_1791792911476",
+      "userId": "usr_1791792911433_6060ef",
+      "hashedToken": "b695284dc68e06c109802d027303e8c562f1d5264e9160378a2c1f3b56d58e72",
+      "expiresAt": "2026-10-19T08:15:11.476Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:11.476Z"
+    },
+    {
+      "id": "sess_1791792925661",
+      "userId": "usr_1791792925614_12f3c0",
+      "hashedToken": "768f779b9bc9bd7a7d7dc079e20c0015026875e55509361d8cd7756cc865e025",
+      "expiresAt": "2026-10-19T08:15:25.661Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:25.661Z"
+    },
+    {
+      "id": "sess_1791792925712",
+      "userId": "usr_1791792925665_b7bee3",
+      "hashedToken": "c50277ace9daf8e5d29f8cc7964d4e638522e82a9e6d2c075fc334c8895d5fde",
+      "expiresAt": "2026-10-19T08:15:25.712Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:25.712Z"
+    },
+    {
+      "id": "sess_1791792925762",
+      "userId": "usr_admin_001",
+      "hashedToken": "736074008eca37c51cbee1701baf3e75c14fe19feab934ced470d233f02f5327",
+      "expiresAt": "2026-10-19T08:15:25.762Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:25.762Z"
+    },
+    {
+      "id": "sess_1791792925829",
+      "userId": "usr_1791792925785_7395a0",
+      "hashedToken": "4e529ae9f166504a06614a6c53173f4f7395ca8f7237330a670b95bc0142e71a",
+      "expiresAt": "2026-10-19T08:15:25.829Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-12T08:15:25.829Z"
     }
   ],
   "password_resets": [],
@@ -203,6 +363,96 @@
       "issuerName": "황미숙 대표감정사 (골드랩&co)",
       "status": "VALID",
       "createdAt": "2026-10-12T05:26:32.767Z"
+    },
+    {
+      "id": "CERT-1791791845274",
+      "docNumber": "GL-CERT-20261012-0004",
+      "documentNo": "GL-CERT-20261012-0004",
+      "appraisalId": "GL-AP-20261012-0001",
+      "verifyToken": "e1f1ba53f5fbecfc92847179b430ba75",
+      "verificationToken": "e1f1ba53f5fbecfc92847179b430ba75",
+      "issueDate": "2026-10-12",
+      "inspectDate": "2026-10-12",
+      "itemType": "골드바",
+      "measuredWeight": "37.502g (10돈)",
+      "purityResult": "순도 99.99% (Au 999.9)",
+      "inspectionMethod": "XRF 분광 분석",
+      "inspectionLab": "골드랩 정밀분석센터",
+      "issuerName": "황미숙 대표감정사 (골드랩&co)",
+      "status": "VALID",
+      "createdAt": "2026-10-12T07:57:25.274Z"
+    },
+    {
+      "id": "CERT-1791792827678",
+      "docNumber": "GL-CERT-20261012-0005",
+      "documentNo": "GL-CERT-20261012-0005",
+      "appraisalId": "GL-AP-20261012-0001",
+      "verifyToken": "7ad645db1794d656a152523f805074ef",
+      "verificationToken": "7ad645db1794d656a152523f805074ef",
+      "issueDate": "2026-10-12",
+      "inspectDate": "2026-10-12",
+      "itemType": "골드바",
+      "measuredWeight": "37.502g (10돈)",
+      "purityResult": "순도 99.99% (Au 999.9)",
+      "inspectionMethod": "XRF 분광 분석",
+      "inspectionLab": "골드랩 정밀분석센터",
+      "issuerName": "황미숙 대표감정사 (골드랩&co)",
+      "status": "VALID",
+      "createdAt": "2026-10-12T08:13:47.678Z"
+    },
+    {
+      "id": "CERT-1791792866745",
+      "docNumber": "GL-CERT-20261012-0006",
+      "documentNo": "GL-CERT-20261012-0006",
+      "appraisalId": "GL-AP-20261012-0001",
+      "verifyToken": "75d67bd9da028999852c6343e087ed38",
+      "verificationToken": "75d67bd9da028999852c6343e087ed38",
+      "issueDate": "2026-10-12",
+      "inspectDate": "2026-10-12",
+      "itemType": "골드바",
+      "measuredWeight": "37.502g (10돈)",
+      "purityResult": "순도 99.99% (Au 999.9)",
+      "inspectionMethod": "XRF 분광 분석",
+      "inspectionLab": "골드랩 정밀분석센터",
+      "issuerName": "황미숙 대표감정사 (골드랩&co)",
+      "status": "VALID",
+      "createdAt": "2026-10-12T08:14:26.745Z"
+    },
+    {
+      "id": "CERT-1791792911495",
+      "docNumber": "GL-CERT-20261012-0007",
+      "documentNo": "GL-CERT-20261012-0007",
+      "appraisalId": "GL-AP-20261012-0001",
+      "verifyToken": "e17ea74a31675baf83ec52ef22cf08e1",
+      "verificationToken": "e17ea74a31675baf83ec52ef22cf08e1",
+      "issueDate": "2026-10-12",
+      "inspectDate": "2026-10-12",
+      "itemType": "골드바",
+      "measuredWeight": "37.502g (10돈)",
+      "purityResult": "순도 99.99% (Au 999.9)",
+      "inspectionMethod": "XRF 분광 분석",
+      "inspectionLab": "골드랩 정밀분석센터",
+      "issuerName": "황미숙 대표감정사 (골드랩&co)",
+      "status": "VALID",
+      "createdAt": "2026-10-12T08:15:11.495Z"
+    },
+    {
+      "id": "CERT-1791792925845",
+      "docNumber": "GL-CERT-20261012-0008",
+      "documentNo": "GL-CERT-20261012-0008",
+      "appraisalId": "GL-AP-20261012-0001",
+      "verifyToken": "88f4cebd680cc9e1e7722a76c6701af9",
+      "verificationToken": "88f4cebd680cc9e1e7722a76c6701af9",
+      "issueDate": "2026-10-12",
+      "inspectDate": "2026-10-12",
+      "itemType": "골드바",
+      "measuredWeight": "37.502g (10돈)",
+      "purityResult": "순도 99.99% (Au 999.9)",
+      "inspectionMethod": "XRF 분광 분석",
+      "inspectionLab": "골드랩 정밀분석센터",
+      "issuerName": "황미숙 대표감정사 (골드랩&co)",
+      "status": "VALID",
+      "createdAt": "2026-10-12T08:15:25.845Z"
     }
   ],
   "reservations": [],
@@ -237,7 +487,7 @@
       "dimensions": "가로 11mm × 세로 18mm",
       "price": 715000,
       "priceValidUntil": "당일 영업 마감 시까지",
-      "stock": 24,
+      "stock": 6,
       "isCustomOrder": false,
       "dispatchLeadDays": 1,
       "photos": [
@@ -269,6 +519,349 @@
     }
   ],
   "orders": [
+    {
+      "id": "GL-ORD-20261012-0012",
+      "orderNo": "GL-ORD-20261012-0012",
+      "idempotencyKey": null,
+      "userId": "usr_1791792925614_12f3c0",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 0,
+      "gcUsed": 0,
+      "finalPayAmount": 715000,
+      "finalAmount": 715000,
+      "orderTier": "SILVER",
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2860,
+      "gcAccrued": false,
+      "paymentStatus": "COMPLETED",
+      "orderStatus": "CANCELLED",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": "1234567890",
+      "courier": null,
+      "createdAt": "2026-10-12T08:15:25.916Z",
+      "status": "CANCELLED",
+      "updatedAt": "2026-10-12T08:15:25.934Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0011",
+      "orderNo": "GL-ORD-20261012-0011",
+      "idempotencyKey": null,
+      "userId": "usr_1791792925614_12f3c0",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 2000,
+      "gcUsed": 2000,
+      "finalPayAmount": 713000,
+      "finalAmount": 713000,
+      "orderTier": "SILVER",
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2852,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T08:15:25.886Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0010",
+      "orderNo": "GL-ORD-20261012-0010",
+      "idempotencyKey": null,
+      "userId": "usr_1791792911263_775047",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 0,
+      "gcUsed": 0,
+      "finalPayAmount": 715000,
+      "finalAmount": 715000,
+      "orderTier": "SILVER",
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2860,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T08:15:11.560Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0009",
+      "orderNo": "GL-ORD-20261012-0009",
+      "idempotencyKey": null,
+      "userId": "usr_1791792911263_775047",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 2000,
+      "gcUsed": 2000,
+      "finalPayAmount": 713000,
+      "finalAmount": 713000,
+      "orderTier": "SILVER",
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2852,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T08:15:11.532Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0008",
+      "orderNo": "GL-ORD-20261012-0008",
+      "idempotencyKey": null,
+      "userId": "usr_1791792866515_b74c7f",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 0,
+      "gcUsed": 0,
+      "finalPayAmount": 715000,
+      "finalAmount": 715000,
+      "orderTier": "SILVER",
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2860,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T08:14:26.800Z",
+      "updatedAt": "2026-10-12T08:14:26.811Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0007",
+      "orderNo": "GL-ORD-20261012-0007",
+      "idempotencyKey": null,
+      "userId": "usr_1791792866515_b74c7f",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 2000,
+      "gcUsed": 2000,
+      "finalPayAmount": 713000,
+      "finalAmount": 713000,
+      "orderTier": "SILVER",
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2852,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T08:14:26.780Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0006",
+      "orderNo": "GL-ORD-20261012-0006",
+      "idempotencyKey": null,
+      "userId": "usr_1791792827354_43a889",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 0,
+      "gcUsed": 0,
+      "finalPayAmount": 715000,
+      "finalAmount": 715000,
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2860,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T08:13:47.745Z",
+      "updatedAt": "2026-10-12T08:13:47.752Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0005",
+      "orderNo": "GL-ORD-20261012-0005",
+      "idempotencyKey": null,
+      "userId": "usr_1791792827354_43a889",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 2000,
+      "gcUsed": 2000,
+      "finalPayAmount": 713000,
+      "finalAmount": 713000,
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2852,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T08:13:47.720Z"
+    },
+    {
+      "id": "GL-ORD-20261012-0004",
+      "orderNo": "GL-ORD-20261012-0004",
+      "idempotencyKey": null,
+      "userId": "usr_1791791845031_ba9ecb",
+      "items": [
+        {
+          "productId": "GL-PROD-002",
+          "name": "24K 순금 투자용 미니 골드바 1돈 (3.75g)",
+          "purity": "24K (순도 99.99%)",
+          "weightGrams": 3.75,
+          "price": 715000,
+          "quantity": 1,
+          "selectedOption": "1돈 (3.75g)",
+          "lineTotal": 715000
+        }
+      ],
+      "totalItemAmount": 715000,
+      "discountGCAmount": 2000,
+      "gcUsed": 2000,
+      "finalPayAmount": 713000,
+      "finalAmount": 713000,
+      "tierAtOrder": "SILVER",
+      "accrualRate": 0.004,
+      "accrualGC": 2852,
+      "gcAccrued": false,
+      "paymentStatus": "PENDING",
+      "orderStatus": "PENDING",
+      "paymentMethod": "CONSULTATION_OR_BANK",
+      "shippingInfo": {
+        "recipient": "고객A",
+        "phone": "010-1111-2222"
+      },
+      "trackingNumber": null,
+      "courier": null,
+      "createdAt": "2026-10-12T07:57:25.310Z"
+    },
     {
       "id": "GL-ORD-20261012-0003",
       "orderNo": "GL-ORD-20261012-0003",
@@ -371,20 +964,101 @@
   ],
   "gv_gc_ledgers": [],
   "inquiries": [],
-  "audit_logs": [],
+  "audit_logs": [
+    {
+      "id": "AUDIT-1791792925934-5baf39fa",
+      "adminId": "usr_admin_001",
+      "action": "UPDATE_ORDER",
+      "targetType": "ORDER",
+      "targetId": "GL-ORD-20261012-0012",
+      "ip": "::ffff:127.0.0.1",
+      "details": {
+        "paymentStatus": "COMPLETED",
+        "orderStatus": "CANCELLED"
+      },
+      "timestamp": "2026-10-12T08:15:25.934Z"
+    },
+    {
+      "id": "AUDIT-1791792925929-234c23d1",
+      "adminId": "usr_admin_001",
+      "action": "UPDATE_ORDER",
+      "targetType": "ORDER",
+      "targetId": "GL-ORD-20261012-0012",
+      "ip": "::ffff:127.0.0.1",
+      "details": {
+        "paymentStatus": "COMPLETED",
+        "orderStatus": "DELIVERED"
+      },
+      "timestamp": "2026-10-12T08:15:25.929Z"
+    },
+    {
+      "id": "AUDIT-1791792925922-18b7f17e",
+      "adminId": "usr_admin_001",
+      "action": "UPDATE_ORDER",
+      "targetType": "ORDER",
+      "targetId": "GL-ORD-20261012-0012",
+      "ip": "::ffff:127.0.0.1",
+      "details": {
+        "paymentStatus": "COMPLETED",
+        "orderStatus": "DELIVERED"
+      },
+      "timestamp": "2026-10-12T08:15:25.922Z"
+    },
+    {
+      "id": "AUDIT-1791792866811-80d7b14b",
+      "adminId": "usr_admin_001",
+      "action": "UPDATE_ORDER",
+      "targetType": "ORDER",
+      "targetId": "GL-ORD-20261012-0008",
+      "ip": "::ffff:127.0.0.1",
+      "details": {},
+      "timestamp": "2026-10-12T08:14:26.811Z"
+    },
+    {
+      "id": "AUDIT-1791792866805-5228ca0b",
+      "adminId": "usr_admin_001",
+      "action": "UPDATE_ORDER",
+      "targetType": "ORDER",
+      "targetId": "GL-ORD-20261012-0008",
+      "ip": "::ffff:127.0.0.1",
+      "details": {},
+      "timestamp": "2026-10-12T08:14:26.805Z"
+    },
+    {
+      "id": "AUDIT-1791792827752-85d6bf91",
+      "adminId": "usr_admin_001",
+      "action": "UPDATE_ORDER",
+      "targetType": "ORDER",
+      "targetId": "GL-ORD-20261012-0006",
+      "ip": "::ffff:127.0.0.1",
+      "details": {},
+      "timestamp": "2026-10-12T08:13:47.752Z"
+    }
+  ],
   "settings": {
     "siteName": "GoldLab&co",
     "appraisal": {
-      "visitPrice": 29000,
-      "deliveryPrice": 39000,
-      "returnShippingFee": 6000,
-      "isPricePublished": false,
-      "priceReviewNotice": "위 감정대행 수수료는 검토 중인 초안으로 운영자 확정 후 공지됩니다."
+      "baseFee": 29900,
+      "visitPrice": 29900,
+      "deliveryPrice": 29900,
+      "returnShippingFee": "별도 안내 (왕복 배송비 고객 부담)",
+      "isPricePublished": true,
+      "priceNotice": "감정대행 기본요금 29,900원\n방문·택배 동일 요금 · 배송비 별도\n정밀·특수 추가검사는 별도 견적"
     },
     "membership": {
-      "gcEarnRateGoldbarPercent": 0.1,
-      "gcEarnRateJewelryPercent": 1,
+      "gcEarnRates": {
+        "SILVER": 0.004,
+        "GOLD": 0.007,
+        "VIP_PLATINUM": 0.01
+      },
       "gcMaxUsePercent": 5,
+      "policyEffectiveDate": "2026-10-12",
+      "policyHistory": [
+        {
+          "date": "2026-10-12",
+          "description": "일반 고객 상품 구매 적립률 확정 (SILVER 0.4%, GOLD 0.7%, VIP 1.0%), 상품 결제 시 GC 사용 한도 최대 5% 유지"
+        }
+      ],
       "gcValidityDays": 365,
       "gcRuleDescription": "1 GC = 1원 할인 / 유상충전·예치금·현금화·양도 불가"
     },
@@ -394,7 +1068,8 @@
       "endHour": 18,
       "slotDurationMinutes": 30,
       "closedDays": [
-        0
+        0,
+        6
       ]
     },
     "business": {

@@ -160,6 +160,10 @@
             <span>GC 포인트 할인</span>
             <span id="summaryGcDiscount" style="font-family:var(--font-num);">-0 원</span>
           </div>
+          <div style="display:flex; justify-content:space-between; font-size:0.92rem; color:var(--gold-light);">
+            <span>구매 완료 시 적립 예정 (<span id="summaryTierLabel">SILVER 0.4%</span>)</span>
+            <span id="summaryExpectedGc" style="font-family:var(--font-num); font-weight:700;">+0 GC</span>
+          </div>
           <div style="display:flex; justify-content:space-between; border-top:1px solid rgba(255,255,255,0.1); padding-top:0.6rem; margin-top:0.6rem; font-size:1.15rem; font-weight:900;">
             <span style="color:var(--text-white);">최종 결제 예정 금액</span>
             <span id="summaryFinalPrice" class="text-gold" style="font-family:var(--font-num); font-size:1.3rem;">0 원</span>
@@ -182,6 +186,9 @@
     let activeProducts = [];
     let currentModalProduct = null;
     let userGcBalance = 0;
+    let userTier = 'SILVER';
+    let userAccrualRate = 0.004;
+    let userAccrualRatePercent = '0.4%';
 
     document.addEventListener('DOMContentLoaded', async () => {
       await LoadCatalog();
@@ -194,8 +201,14 @@
           const res = await ApiRequest('/api/membership/me');
           if (res && res.success) {
             userGcBalance = res.gcBalance || 0;
+            userTier = res.tier || 'SILVER';
+            userAccrualRate = res.accrualRate || 0.004;
+            userAccrualRatePercent = res.accrualRatePercent || (userAccrualRate * 100).toFixed(1) + '%';
             const el = document.getElementById('myGcBalanceDisplay');
             if (el) el.innerText = userGcBalance.toLocaleString('ko-KR') + ' GC';
+            const tierEl = document.getElementById('summaryTierLabel');
+            if (tierEl) tierEl.innerText = `${userTier} ${userAccrualRatePercent}`;
+            UpdateOrderPriceSummary();
           }
         } catch (e) {}
       }
@@ -357,10 +370,13 @@
       }
 
       const finalPrice = Math.max(0, subtotal - gcUsed);
+      const expectedGc = Math.floor(finalPrice * userAccrualRate);
 
       document.getElementById('summaryUnitPrice').innerText = basePrice.toLocaleString('ko-KR') + ' 원';
       document.getElementById('summaryOptionPrice').innerText = (option ? option.name : '기본') + ` (${qty}개)`;
       document.getElementById('summaryGcDiscount').innerText = `-${gcUsed.toLocaleString('ko-KR')} 원`;
+      const expEl = document.getElementById('summaryExpectedGc');
+      if (expEl) expEl.innerText = `+${expectedGc.toLocaleString('ko-KR')} GC`;
       document.getElementById('summaryFinalPrice').innerText = finalPrice.toLocaleString('ko-KR') + ' 원';
     }
 
