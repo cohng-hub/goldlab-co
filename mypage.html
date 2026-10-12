@@ -149,7 +149,7 @@
         </div>
 
         <!-- GV & GC Stats Badges -->
-        <div style="display:flex; gap:1.2rem;">
+        <div style="display:flex; gap:1.2rem; flex-wrap:wrap;">
           <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1rem 1.4rem; text-align:right;">
             <span style="font-size:0.8rem; color:var(--text-muted); display:block;">누적 거래실적 (GV)</span>
             <strong id="clientProfileGv" style="font-size:1.3rem; color:var(--gold-light); font-family:var(--font-num);">0 GV</strong>
@@ -157,6 +157,10 @@
           <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:14px; padding:1rem 1.4rem; text-align:right;">
             <span style="font-size:0.8rem; color:var(--text-muted); display:block;">보유 할인포인트 (GC)</span>
             <strong id="clientProfileGc" style="font-size:1.3rem; color:#10b981; font-family:var(--font-num);">0 GC</strong>
+          </div>
+          <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1rem 1.4rem; text-align:right;">
+            <span style="font-size:0.8rem; color:var(--text-muted); display:block;">올해 무료 감정</span>
+            <strong id="clientProfileFreeAppraisal" style="font-size:1.3rem; color:var(--gold-light); font-family:var(--font-num);">-</strong>
           </div>
         </div>
       </div>
@@ -530,7 +534,7 @@
               <input type="number" id="adjGc" class="form-control" value="0">
             </div>
             <div class="form-group" style="margin-bottom:1.5rem;">
-              <label class="form-label">조정 사유 * (원장에 영구 기록됩니다)</label>
+              <label class="form-label">조정 사유 * (원장에 안전하게 기록·보존됩니다)</label>
               <input type="text" id="adjReason" class="form-control" placeholder="예: 오프라인 본점 골드바 구매 실적 수동 반영" required>
             </div>
             <button type="submit" class="btn btn-gold" style="width:100%;"><i class="fa-solid fa-check"></i> 원장 기록 및 포인트 반영</button>
@@ -774,7 +778,7 @@
       });
     }
 
-    // Load Client Overview (GV / GC)
+    // Load Client Overview (GV / GC / Free Appraisals)
     async function LoadClientOverview() {
       try {
         const res = await ApiRequest('/api/membership/me');
@@ -783,6 +787,10 @@
           document.getElementById('clientProfileGc').innerText = (res.gcBalance || 0).toLocaleString('ko-KR') + ' GC';
           if (res.tier) {
             document.getElementById('clientProfileTier').innerText = `${res.tier} (${res.accrualRatePercent || '0.4%'} 적립)`;
+          }
+          if (res.freeAppraisals) {
+            const freeEl = document.getElementById('clientProfileFreeAppraisal');
+            if (freeEl) freeEl.innerText = `${res.freeAppraisals.remaining} / ${res.freeAppraisals.allowed}회`;
           }
         }
       } catch (e) {}
@@ -805,12 +813,25 @@
             ? `<button class="btn btn-gold btn-sm" onclick="ViewCertificate('${a.certificateNo}')"><i class="fa-solid fa-certificate"></i> 확인서 열람</button>`
             : '<span style="color:var(--text-muted); font-size:0.82rem;">검사 완료 후 발급</span>';
 
+          const itemDesc = (a.items && a.items.length > 0)
+            ? a.items.map(it => it.itemType).join(', ')
+            : a.itemType;
+
+          const feeDesc = a.freeBenefitApplied
+            ? '<div style="font-size:0.75rem; color:#10b981;">무료 혜택 적용 (0원)</div>'
+            : (a.gcUsed > 0 
+                ? `<div style="font-size:0.75rem; color:var(--gold-light);">GC -${a.gcUsed.toLocaleString('ko-KR')}원 할인 -> ${a.finalPayAmount.toLocaleString('ko-KR')}원</div>`
+                : '<div style="font-size:0.75rem; color:var(--text-muted);">기본 29,900원</div>');
+
           return `
             <tr>
               <td>${a.createdAt.substring(0, 16)}</td>
               <td><strong class="text-gold">${a.receiptNo}</strong></td>
               <td>${a.method === 'VISIT' ? '종로 본점 방문' : '우체국 안심택배'}</td>
-              <td>${a.itemType} (${a.quantity}개)</td>
+              <td>
+                <strong>${itemDesc}</strong> <span style="color:var(--text-muted); font-size:0.82rem;">(${a.quantity || 1}개)</span>
+                ${feeDesc}
+              </td>
               <td><span class="${statusClass}">${statusLabel}</span></td>
               <td>${a.measuredWeight || '-'}</td>
               <td>${certBtn}</td>

@@ -508,6 +508,205 @@ async function runTests() {
     assert.strictEqual(memAfterCancel.gvTotal, memBeforeCancel.gvTotal - orderToFulfill.finalAmount);
   });
 
+  // 18. Appraisal Quantity Standards (1 & 2 items flat 29,900 KRW, 0 or >=3 rejected, multi-item records)
+  await test('18. 감정대행 수량 기준 검증 (1개/2개 동일 29,900원, 0개/3개이상 차단, 1개 접수번호 아래 제품별 기록)', async () => {
+    // Qty 2: same 29,900 KRW
+    const resQty2 = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      method: 'VISIT',
+      applicantName: '고객A',
+      applicantPhone: '010-1111-2222',
+      quantity: 2,
+      itemType: '24K 골드바',
+      expectedPurity: '24K',
+      items: [
+        { itemIndex: 1, itemType: '24K 골드바', expectedPurity: '24K', expectedWeight: '10돈' },
+        { itemIndex: 2, itemType: '18K 체인 팔찌', expectedPurity: '18K', expectedWeight: '5돈' }
+      ]
+    });
+    assert.strictEqual(resQty2.status, 201);
+    assert.strictEqual(resQty2.body.appraisal.costBase, 29900, 'Fee for 2 items must remain 29,900 KRW (not 59,800 KRW)');
+    assert.strictEqual(resQty2.body.appraisal.quantity, 2);
+    assert.strictEqual(resQty2.body.appraisal.items.length, 2, 'Must record 2 items under the single receipt');
+    assert.strictEqual(resQty2.body.appraisal.items[1].itemType, '18K 체인 팔찌');
+
+    // Qty 0: blocked with 400
+    const resQty0 = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      method: 'VISIT',
+      applicantName: '고객A',
+      applicantPhone: '010-1111-2222',
+      quantity: 0,
+      itemType: '골드바'
+    });
+    assert.strictEqual(resQty0.status, 400);
+
+    // Qty 3: blocked with 400
+    const resQty3 = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      method: 'VISIT',
+      applicantName: '고객A',
+      applicantPhone: '010-1111-2222',
+      quantity: 3,
+      itemType: '골드바'
+    });
+    assert.strictEqual(resQty3.status, 400);
+    assert(resQty3.body.error.includes('최대 2개'), 'Must guide max 2 items per application');
+  });
+
+  // 19. Tier Free Appraisal Benefit (SILVER 1, GOLD 2, VIP 3, fee 0 KRW, no GC deduction, cancellation restoration)
+  let freeApId;
+  await test('19. 등급별 무료 감정 혜택 (SILVER 1회 적용시 기본료 0원, GC 미차감, 소진후 차단, 취소시 혜택 복원)', async () => {
+    // Check initial remaining free appraisals for Customer A (SILVER)
+    const memBefore = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body;
+    assert.strictEqual(memBefore.tier, 'SILVER');
+    assert.strictEqual(memBefore.freeAppraisals.allowed, 1);
+    assert.strictEqual(memBefore.freeAppraisals.remaining, 1);
+
+    // Apply with free appraisal benefit
+    const resFree = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      method: 'VISIT',
+      applicantName: '고객A',
+      applicantPhone: '010-1111-2222',
+      quantity: 2,
+      itemType: '24K 골드바',
+      applyFreeBenefit: true,
+      gcUsed: 5000 // Free benefit applies: GC must NOT be deducted
+    });
+    assert.strictEqual(resFree.status, 201);
+    const ap = resFree.body.appraisal;
+    freeApId = ap.id;
+    assert.strictEqual(ap.freeBenefitApplied, true);
+    assert.strictEqual(ap.costBase, 0, 'Base cost must be 0 for free appraisal');
+    assert.strictEqual(ap.gcUsed, 0, 'GC used must be 0 for free appraisal');
+    assert.strictEqual(ap.finalPayAmount, 0, 'Final pay amount must be 0');
+
+    // Remaining count should now be 0
+    const memAfter = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body;
+    assert.strictEqual(memAfter.freeAppraisals.remaining, 0, 'Remaining free count must be 0');
+
+    // Attempting a second free appraisal in the same year must be rejected
+    const resSecondFree = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      method: 'VISIT',
+      applicantName: '고객A',
+      applicantPhone: '010-1111-2222',
+      quantity: 1,
+      itemType: '골드바',
+      applyFreeBenefit: true
+    });
+    assert.strictEqual(resSecondFree.status, 400);
+    assert(resSecondFree.body.error.includes('소진'), 'Must reject when annual free benefit exhausted');
+
+    // Cancelling the application restores the free benefit
+    const resCancelAp = await request({
+      path: `/api/appraisals/${freeApId}/cancel`,
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    });
+    assert.strictEqual(resCancelAp.status, 200);
+
+    const memAfterRestore = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body;
+    assert.strictEqual(memAfterRestore.freeAppraisals.remaining, 1, 'Free appraisal count must be restored to 1 upon cancellation');
+  });
+
+  // 20. Appraisal GC Discount (max 10,000 GC, balance limit, cancellation restore)
+  let paidApId;
+  await test('20. 감정대행 GC 할인 (접수 1건당 최대 10,000 GC, 잔액 내 차감, 취소 시 GC 환원)', async () => {
+    // User B has 5,000 GC signup balance
+    const memB1 = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenB}` }
+    })).body;
+    assert.strictEqual(memB1.gcBalance, 5000);
+
+    // Apply with 5,000 GC
+    const resPaidAp = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenB}` }
+    }, {
+      method: 'VISIT',
+      applicantName: '고객B',
+      applicantPhone: '010-3333-4444',
+      quantity: 1,
+      itemType: '18K 팔찌',
+      gcUsed: 5000
+    });
+    assert.strictEqual(resPaidAp.status, 201);
+    const paidAp = resPaidAp.body.appraisal;
+    paidApId = paidAp.id;
+    assert.strictEqual(paidAp.costBase, 29900);
+    assert.strictEqual(paidAp.gcUsed, 5000);
+    assert.strictEqual(paidAp.finalPayAmount, 24900, '29,900 - 5,000 = 24,900 KRW');
+
+    // Balance after use: 0 GC
+    const memB2 = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenB}` }
+    })).body;
+    assert.strictEqual(memB2.gcBalance, 0);
+
+    // Cancel appraisal restores 5,000 GC
+    const resCancelPaid = await request({
+      path: `/api/appraisals/${paidApId}/cancel`,
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenB}` }
+    });
+    assert.strictEqual(resCancelPaid.status, 200);
+
+    const memB3 = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenB}` }
+    })).body;
+    assert.strictEqual(memB3.gcBalance, 5000, 'Used 5,000 GC must be restored upon cancellation');
+  });
+
+  // 21. Customer Ledger without Raw Codes (no GC_RESTORE, GC_REVOKE)
+  await test('21. 회원 원장 조회 시 고객 친화 문구 표시 및 내부 코드(GC_RESTORE/GC_REVOKE) 미노출', async () => {
+    const memB = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenB}` }
+    })).body;
+    assert(memB.ledger && memB.ledger.length > 0);
+    for (const entry of memB.ledger) {
+      assert(!entry.reason.includes('GC_RESTORE'), 'Reason must not contain raw code GC_RESTORE');
+      assert(!entry.reason.includes('GC_REVOKE'), 'Reason must not contain raw code GC_REVOKE');
+    }
+  });
+
   console.log('\n------------------------------------------------------');
   console.log(`Results: ${passed} / ${total} tests passed!`);
   console.log('------------------------------------------------------\n');
@@ -524,7 +723,7 @@ async function runTests() {
       dbData.users = validUsers;
       dbData.sessions = dbData.sessions.filter(s => validIds.has(s.userId));
       dbData.reservations = dbData.reservations.filter(r => !r.name.startsWith('예약자'));
-      dbData.appraisals = dbData.appraisals.filter(a => a.applicantName !== '고객A');
+      dbData.appraisals = dbData.appraisals.filter(a => a.applicantName !== '고객A' && a.applicantName !== '고객B');
       const validApIds = new Set(dbData.appraisals.map(a => a.id));
       dbData.certificates = dbData.certificates.filter(c => validApIds.has(c.appraisalId));
       dbData.orders = dbData.orders.filter(o => validIds.has(o.userId));

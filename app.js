@@ -37,6 +37,7 @@ let priceChartInstance = null;
 let activeMetalKey = '24K';
 let activePeriod = '1M';
 let currentMarketRegion = 'DOMESTIC';
+let lastFetchTime = null;
 
 const ALL_TIME_SLOTS = [
   '11:00', '11:30', '12:00', '12:30',
@@ -163,6 +164,21 @@ async function SyncLiveKGERates() {
           const json = await res.json();
           if (json && json.officialPrice4 && json.officialPrice4.s_pure) {
             fetchedData = json;
+            break;
+          } else if (json && json.rates && json.rates['24K_buy']) {
+            fetchedData = {
+              officialPrice4: {
+                s_pure: json.rates['24K_buy'],
+                p_pure: json.rates['24K_sell'],
+                p_18k: json.rates['18K_sell'],
+                p_14k: json.rates['14K_sell'],
+                s_white: json.rates['PT_buy'],
+                p_white: json.rates['PT_sell'],
+                s_silver: json.rates['AG_buy'],
+                p_silver: json.rates['AG_sell'],
+                date: json.benchmarkTimestamp || new Date().toISOString()
+              }
+            };
             break;
           }
         }
@@ -1294,6 +1310,7 @@ function UpdateLiveMarketDisplay() {
   // Live Timestamp
   const now = new Date();
   const timeStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+  lastFetchTime = timeStr;
   const timestampEl = document.getElementById('liveTimestamp');
   if (timestampEl) {
     timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 실시간 수신중 (${timeStr})`;
@@ -1321,9 +1338,7 @@ function UpdateLiveMarketDisplay() {
   RenderMetalSelectorCards();
   UpdateProductPrices(buy24K);
   RenderMyPageLedger();
-  if (priceChartInstance) {
-    UpdateChartData();
-  }
+  UpdateChartData();
 }
 
 function SwitchMarketRegion(region) {
@@ -1516,22 +1531,14 @@ function GetKstDateString(dateObj = new Date()) {
 
 // Verified historical benchmark rates from Korea Gold Exchange (KGE)
 // Unverified / arbitrary values are not displayed; unverified periods display "시세 이력 준비 중"
-const OFFICIAL_24K_HISTORY = {
-  '1M': [
-    { date: '09.28', buy: 816000, sell: 701000 },
-    { date: '10.02', buy: 808000, sell: 692000 },
-    { date: '10.05', buy: 798000, sell: 685000 },
-    { date: '10.08', buy: 782000, sell: 671000 }
-  ]
-};
+const OFFICIAL_24K_HISTORY = {};
 
 function UpdateChartData() {
-  if (!priceChartInstance) return;
-
   const titleEl = document.getElementById('chartMetalTitle');
   const subEl = document.getElementById('chartMetalSub');
   const canvasEl = document.getElementById('heroPriceChart') || document.getElementById('goldPriceChart');
   const emptyEl = document.getElementById('chartEmptyState');
+  const statsBanner = document.getElementById('chartStatsBanner') || document.querySelector('.chart-stats-banner');
   const highEl = document.getElementById('highPriceText');
   const lowEl = document.getElementById('lowPriceText');
   const avgEl = document.getElementById('avgPriceText');
@@ -1543,11 +1550,11 @@ function UpdateChartData() {
   if (currentMarketRegion === 'DOMESTIC') {
     if (activeMetalKey === '18K') {
       metalName = '🇰🇷 국내 18K 금 (3.75g 1돈)';
-      buyTxt = '제품시세';
+      buyTxt = '제품시세 적용';
       sellTxt = `${formatWon(currentRates["18K_sell"])}원`;
     } else if (activeMetalKey === '14K') {
       metalName = '🇰🇷 국내 14K 금 (3.75g 1돈)';
-      buyTxt = '제품시세';
+      buyTxt = '제품시세 적용';
       sellTxt = `${formatWon(currentRates["14K_sell"])}원`;
     } else if (activeMetalKey === 'PT') {
       metalName = '🇰🇷 국내 백금 Platinum (3.75g 1돈)';
@@ -1582,28 +1589,31 @@ function UpdateChartData() {
   if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-chart-line text-gold"></i> ${metalName} 시세 변동 추이`;
 
   if (currentMarketRegion === 'DOMESTIC') {
-    if (subEl) subEl.innerText = `출처: 한국금거래소 당일 공식 고시 | 살 때: ${buyTxt} · 팔 때: ${sellTxt} | 마지막 갱신: ${syncTimeStr}`;
+    if (subEl) {
+      if (activeMetalKey === '18K' || activeMetalKey === '14K') {
+        subEl.innerText = `출처: 한국금거래소 당일 공식 고시 | 살 때: ${buyTxt} · 팔 때(매입가): ${sellTxt} | 마지막 갱신: ${syncTimeStr}`;
+      } else {
+        subEl.innerText = `출처: 한국금거래소 당일 공식 고시 | 살 때(VAT포함): ${buyTxt} · 팔 때(매입가): ${sellTxt} | 마지막 갱신: ${syncTimeStr}`;
+      }
+    }
   } else {
     if (subEl) subEl.innerText = `참고용 국제 지표 (정기 고시 기준, 실시간 체결호가 아님) | 매수참고: ${buyTxt} · 매도참고: ${sellTxt} | 마지막 갱신: ${syncTimeStr}`;
   }
 
-  // Show chart only for verified 24K '1M' historical sample series
-  if (currentMarketRegion === 'DOMESTIC' && activeMetalKey === '24K' && activePeriod === '1M' && OFFICIAL_24K_HISTORY['1M']) {
+  // Check if verified complete historical series exists
+  const hasVerifiedHistory = currentMarketRegion === 'DOMESTIC' && 
+                             OFFICIAL_24K_HISTORY[activeMetalKey] && 
+                             OFFICIAL_24K_HISTORY[activeMetalKey][activePeriod] &&
+                             OFFICIAL_24K_HISTORY[activeMetalKey][activePeriod].length >= 10;
+
+  if (hasVerifiedHistory && priceChartInstance) {
     if (canvasEl) canvasEl.style.display = 'block';
     if (emptyEl) emptyEl.style.display = 'none';
+    if (statsBanner) statsBanner.style.display = 'flex';
 
-    const kstToday = GetKstDateString();
-    const seriesCopy = [
-      ...OFFICIAL_24K_HISTORY['1M'],
-      {
-        date: `${kstToday} (오늘)`,
-        buy: currentRates["24K_buy"] || 794000,
-        sell: currentRates["24K_sell"] || 679000
-      }
-    ];
-
-    const labels = seriesCopy.map(s => s.date);
-    const points = seriesCopy.map(s => s.buy);
+    const historyData = OFFICIAL_24K_HISTORY[activeMetalKey][activePeriod];
+    const labels = historyData.map(s => s.date);
+    const points = historyData.map(s => s.buy);
 
     priceChartInstance.data.labels = labels;
     priceChartInstance.data.datasets[0].data = points;
@@ -1613,29 +1623,30 @@ function UpdateChartData() {
     const maxP = Math.max(...points);
     const avgP = Math.round(points.reduce((a, b) => a + b, 0) / points.length);
 
-    if (highEl) highEl.innerHTML = `${formatWon(maxP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(최근 1개월 표본)</small>`;
-    if (lowEl) lowEl.innerHTML = `${formatWon(minP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(최근 1개월 표본)</small>`;
-    if (avgEl) avgEl.innerHTML = `${formatWon(avgP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(최근 1개월 표본)</small>`;
+    if (highEl) highEl.innerHTML = `${formatWon(maxP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(${activePeriod} 공식)</small>`;
+    if (lowEl) lowEl.innerHTML = `${formatWon(minP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(${activePeriod} 공식)</small>`;
+    if (avgEl) avgEl.innerHTML = `${formatWon(avgP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(${activePeriod} 공식)</small>`;
   } else {
-    // When no verified historical series exists for the selected period/metal, show clean empty state
+    // When no verified historical series exists: hide chart canvas, hide stats banner, show only clean notice
     if (canvasEl) canvasEl.style.display = 'none';
+    if (statsBanner) statsBanner.style.display = 'none';
     if (emptyEl) {
       emptyEl.style.display = 'flex';
       emptyEl.innerHTML = `
         <div style="text-align:center; padding:3rem 1.5rem;">
-          <i class="fa-solid fa-chart-area text-gold" style="font-size:3rem; margin-bottom:1rem; opacity:0.6;"></i>
+          <i class="fa-solid fa-chart-line text-gold" style="font-size:2.8rem; margin-bottom:1rem; opacity:0.7;"></i>
           <h4 style="color:#fff; font-size:1.25rem; font-weight:800; margin-bottom:0.5rem;">시세 이력 준비 중</h4>
           <p style="color:var(--text-muted); font-size:0.92rem; max-width:440px; margin:0 auto; line-height:1.6;">
             선택하신 기간(${activePeriod})의 공식 시세 이력 DB는 연동 준비 중입니다.<br>
-            당일 실시간 시세는 좌측 시세 전광판에서 확인하실 수 있습니다.
+            당일 실시간 공식 시세는 좌측 시세 전광판에서 확인하실 수 있습니다.
           </p>
         </div>
       `;
     }
 
-    if (highEl) highEl.innerText = '시세 이력 준비 중';
-    if (lowEl) lowEl.innerText = '시세 이력 준비 중';
-    if (avgEl) avgEl.innerText = '시세 이력 준비 중';
+    if (highEl) highEl.innerText = '-';
+    if (lowEl) lowEl.innerText = '-';
+    if (avgEl) avgEl.innerText = '-';
   }
 }
 

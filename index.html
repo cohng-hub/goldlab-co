@@ -170,25 +170,25 @@
             </div>
 
             <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;" id="chartMetalSub">
-              살 때(VAT포함): 914,000원 | 팔 때(매입가): 764,000원
+              출처: 한국금거래소 당일 공식 고시 | 살 때(VAT포함): 790,000원 · 팔 때(매입가): 677,000원
             </div>
 
             <!-- Chart Canvas -->
             <div class="canvas-wrapper" style="position:relative; width:100%; height:235px;">
               <canvas id="goldPriceChart"></canvas>
               <div id="chartEmptyState" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; background:rgba(18,20,29,0.92); border-radius:12px; color:var(--text-muted); text-align:center;">
-                <i class="fa-solid fa-chart-line" style="font-size:2.2rem; margin-bottom:0.6rem; color:var(--gold-primary); opacity:0.6;"></i>
-                <div style="font-size:1.05rem; font-weight:800; color:var(--text-white); margin-bottom:0.25rem;">시세 이력 준비 중</div>
-                <div style="font-size:0.82rem; color:var(--text-muted);">해당 귀금속/기간의 공인 검증 과거 시세 데이터를 준비하고 있습니다.</div>
+                <i class="fa-solid fa-chart-line text-gold" style="font-size:2.8rem; margin-bottom:1rem; opacity:0.7;"></i>
+                <div style="font-size:1.15rem; font-weight:800; color:var(--text-white); margin-bottom:0.35rem;">시세 이력 준비 중</div>
+                <div style="font-size:0.88rem; color:var(--text-muted); max-width:420px; line-height:1.5;">해당 귀금속의 공인 검증 과거 시세 DB를 연동 준비하고 있습니다. 당일 실시간 공식 시세는 좌측 시세 전광판에서 확인하실 수 있습니다.</div>
               </div>
             </div>
           </div>
 
-          <!-- Chart Summary Footer Badges -->
-          <div class="chart-stats-banner" style="display:flex; justify-content:space-between; background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:0.85rem 1.1rem; margin-top:1rem; font-size:0.85rem;">
-            <div><span style="color:var(--text-muted);">최고 시세:</span> <strong id="highPriceText" style="color:var(--pnl-plus); font-weight:800;">835,000 원</strong></div>
-            <div><span style="color:var(--text-muted);">최저 시세:</span> <strong id="lowPriceText" style="color:var(--pnl-minus); font-weight:800;">805,000 원</strong></div>
-            <div><span style="color:var(--text-muted);">평균 시세:</span> <strong id="avgPriceText" style="color:var(--gold-light); font-weight:800;">820,000 원</strong></div>
+          <!-- Chart Summary Footer Badges (Hidden when no verified historical series exists) -->
+          <div class="chart-stats-banner" id="chartStatsBanner" style="display:none; justify-content:space-between; background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:0.85rem 1.1rem; margin-top:1rem; font-size:0.85rem;">
+            <div><span style="color:var(--text-muted);">최고 시세:</span> <strong id="highPriceText" style="color:var(--pnl-plus); font-weight:800;">-</strong></div>
+            <div><span style="color:var(--text-muted);">최저 시세:</span> <strong id="lowPriceText" style="color:var(--pnl-minus); font-weight:800;">-</strong></div>
+            <div><span style="color:var(--text-muted);">평균 시세:</span> <strong id="avgPriceText" style="color:var(--gold-light); font-weight:800;">-</strong></div>
           </div>
           <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.6rem; line-height:1.5;">
             ※ 출처: 한국금거래소 당일 공식 고시 기준 (외부 참고 시세) · 단위: 3.75g (1돈, 살 때 VAT 10% 포함) · GoldLab 실제 거래가격은 주문/매입 시 제휴 공급단가가 별도 적용됩니다.
@@ -227,7 +227,7 @@
             <div style="font-size:0.8rem; color:var(--gold-light); font-weight:800; letter-spacing:1px; margin-bottom:0.3rem;">XRF PRECISION</div>
             <h3 style="color:#fff; font-size:1.25rem; font-weight:800; margin-bottom:0.6rem;">감정대행 센터</h3>
             <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.6; margin-bottom:1.2rem;">
-              기본요금 29,900원 (방문·택배 동일 요금, 배송비 별도). 비파괴 XRF 성분분석 및 9단계 투명 진행.
+              접수 1건당 29,900원 (제품 최대 2개 · 방문/택배 동일 · 배송비 별도). 보유 GC로 기본 감정료 최대 10,000원 할인.
             </p>
           </div>
           <div style="color:var(--gold-light); font-weight:800; font-size:0.92rem; display:flex; align-items:center; gap:0.4rem;">
@@ -385,7 +385,7 @@
 
           <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.4rem;">
             <h3 style="color:var(--text-white); font-size:1.45rem; font-weight:800; margin-bottom:0.5rem;">24K 프리미엄 프레스 골드바 (3돈~1kg)</h3>
-            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.6rem;">종로 본점 직영 당일 현장 수령 및 시큐리티 실물 전달</p>
+            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:1.6rem;">종로 본점 센터 당일 현장 수령 및 시큐리티 실물 전달</p>
             
             <button class="btn btn-gold" onclick="event.stopPropagation(); OpenWeightModal('프리미엄 프레스 골드바');" style="width:100%; padding:0.95rem; font-size:1.05rem; font-weight:800;">
               <i class="fa-solid fa-hand-pointer"></i> 중량 선택 및 예약하기

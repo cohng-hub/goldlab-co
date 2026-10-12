@@ -61,14 +61,17 @@
           <i class="fa-solid fa-microscope text-gold" style="font-size:1.6rem;"></i>
         </div>
         <div>
-          <strong style="color:var(--gold-light); font-size:1.15rem; font-weight:900; display:block; margin-bottom:0.2rem;">
-            감정대행 기본요금 29,900원
+          <strong style="color:var(--gold-light); font-size:1.2rem; font-weight:900; display:block; margin-bottom:0.25rem;">
+            감정대행 접수 1건당 29,900원
           </strong>
-          <p style="color:var(--text-light); font-size:0.95rem; margin:0; line-height:1.6;">
-            방문·택배 동일 요금 · 배송비 별도 · 정밀·특수 추가검사는 별도 견적
+          <p style="color:var(--text-light); font-size:0.95rem; margin:0; line-height:1.6; font-weight:700;">
+            제품 최대 2개 · 방문·택배 동일 요금 · 배송비 별도
           </p>
-          <small style="color:var(--text-muted); font-size:0.83rem; display:block; margin-top:0.2rem;">
-            ※ 택배 이용 시 왕복 배송비는 고객 부담(별도 안내)이며, 추가 검사는 고객 사전 동의 없이 절대 진행하지 않습니다.
+          <div style="color:var(--gold-light); font-size:0.9rem; font-weight:800; margin-top:0.3rem;">
+            보유 GC로 기본 감정료 최대 10,000원 할인 <span style="color:var(--text-muted); font-size:0.82rem; font-weight:normal;">(회원 등급별 연간 무료 감정 혜택 중복 미적용)</span>
+          </div>
+          <small style="color:var(--text-muted); font-size:0.82rem; display:block; margin-top:0.25rem;">
+            ※ 1개 또는 2개 모두 기본요금 동일하며 3개 이상은 별도 접수가 필요합니다. 택배 배송비는 별도 안내됩니다.
           </small>
         </div>
       </div>
@@ -226,32 +229,44 @@
           </small>
         </div>
 
-        <!-- 품목 및 예상 사양 -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem;">
-          <div class="form-group">
-            <label class="form-label">제품 종류 *</label>
-            <select class="form-control" id="apItemType" required>
-              <option value="골드바">24K 골드바 (인곳/프레스바/골드빈)</option>
-              <option value="팔찌">18K / 14K / 24K 팔찌</option>
-              <option value="반지">18K / 14K / 24K 반지</option>
-              <option value="목걸이">18K / 14K / 24K 목걸이</option>
-              <option value="백금">백금(Platinum) 제품</option>
-              <option value="실버">실버(Silver) 제품</option>
-              <option value="치금">치과용 치금(합금)</option>
-              <option value="기타">기타 귀금속 및 원자재</option>
+        <!-- 의뢰 수량 선택 (최대 2개 / 1개 또는 2개 모두 기본요금 29,900원 동일) -->
+        <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:16px; padding:1.2rem 1.4rem; margin-bottom:1.8rem;">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label" style="font-weight:800; font-size:1rem; color:var(--gold-light);">
+              2. 의뢰 제품 수량 선택 (접수 1건당 최대 2개) *
+            </label>
+            <select class="form-control" id="apQuantity" onchange="HandleAppraisalQtyChange()" required style="font-size:1.02rem; font-weight:700;">
+              <option value="1" selected>제품 1개 의뢰 (기본 감정료 29,900원)</option>
+              <option value="2">제품 2개 의뢰 (기본 감정료 29,900원 동일)</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">의뢰 수량 *</label>
-            <input type="number" class="form-control" id="apQuantity" value="1" min="1" max="100" required>
+            <small style="color:var(--text-muted); font-size:0.83rem; display:block; margin-top:0.4rem; line-height:1.5;">
+              ※ 접수 1건당 제품 최대 2개까지 접수 가능하며, <strong>제품 1개 또는 2개 모두 기본 감정료(29,900원)는 동일</strong>합니다. (3개 이상 감정을 원하실 경우 별도 접수가 필요합니다.)
+            </small>
           </div>
         </div>
 
-        <!-- 예상 순도 및 중량 (모름 체크 가능) -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.5rem;">
-          <div class="form-group">
-            <label class="form-label">예상 순도</label>
-            <div style="display:flex; gap:0.5rem;">
+        <!-- [의뢰 제품 1] 기본 정보 -->
+        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:18px; padding:1.5rem; margin-bottom:1.5rem;">
+          <div style="font-size:1.05rem; font-weight:800; color:var(--gold-light); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-gem text-gold"></i> 의뢰 제품 1 정보 *
+          </div>
+          
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem;">
+            <div class="form-group">
+              <label class="form-label">제품 종류 *</label>
+              <select class="form-control" id="apItemType" required>
+                <option value="골드바">24K 골드바 (인곳/프레스바/골드빈)</option>
+                <option value="팔찌">18K / 14K / 24K 팔찌</option>
+                <option value="반지">18K / 14K / 24K 반지</option>
+                <option value="목걸이">18K / 14K / 24K 목걸이</option>
+                <option value="백금">백금(Platinum) 제품</option>
+                <option value="실버">실버(Silver) 제품</option>
+                <option value="치금">치과용 치금(합금)</option>
+                <option value="기타">기타 귀금속 및 원자재</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">예상 순도</label>
               <select class="form-control" id="apExpectedPurity">
                 <option value="24K (99.99%)">24K (99.99%)</option>
                 <option value="18K (75.0%)">18K (75.0%)</option>
@@ -262,28 +277,86 @@
               </select>
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">예상 중량</label>
-            <input type="text" class="form-control" id="apExpectedWeight" placeholder="예: 5돈 / 18.75g (모를 경우 비워두세요)">
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem;">
+            <div class="form-group">
+              <label class="form-label">예상 중량</label>
+              <input type="text" class="form-control" id="apExpectedWeight" placeholder="예: 5돈 / 18.75g (모를 경우 비워두세요)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">제품 1 사진 첨부 (최대 10MB)</label>
+              <input type="file" id="apPhotoFile" accept="image/jpeg,image/png,image/webp" class="form-control" onchange="PreviewAppraisalPhoto(this, 1)">
+            </div>
+          </div>
+
+          <div id="photoPreviewBox1" style="display:none; margin-bottom:1rem; text-align:center;">
+            <img id="photoPreviewImg1" src="" alt="제품1 미리보기" style="max-height:140px; border-radius:10px; border:1px solid var(--border-gold-bright);">
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">제품 1 특이사항 / 요청사항</label>
+            <input type="text" class="form-control" id="apRequests" placeholder="각인 보존 요청, 특정 부위 검사 요청 등">
           </div>
         </div>
 
-        <!-- 제품 사진 첨부 -->
-        <div class="form-group" style="margin-bottom:1.5rem;">
-          <label class="form-label">제품 사진 첨부 (선택 사항 / 최대 10MB)</label>
-          <input type="file" id="apPhotoFile" accept="image/jpeg,image/png,image/webp" class="form-control" onchange="PreviewAppraisalPhoto(this)">
-          <div id="photoPreviewBox" style="display:none; margin-top:0.8rem; text-align:center;">
-            <img id="photoPreviewImg" src="" alt="미리보기" style="max-height:160px; border-radius:10px; border:1px solid var(--border-gold-bright);">
+        <!-- [의뢰 제품 2] 추가 제품 정보 (수량 2개 선택 시 노출) -->
+        <div id="apItem2Container" style="display:none; background:rgba(224,184,72,0.03); border:1px dashed var(--border-gold-bright); border-radius:18px; padding:1.5rem; margin-bottom:1.5rem;">
+          <div style="font-size:1.05rem; font-weight:800; color:var(--gold-light); margin-bottom:1rem; display:flex; align-items:center; justify-content:space-between;">
+            <span style="display:flex; align-items:center; gap:0.5rem;">
+              <i class="fa-solid fa-gem text-gold"></i> 의뢰 제품 2 정보 (기본요금 추가 없음)
+            </span>
+            <span style="font-size:0.8rem; background:rgba(224,184,72,0.15); color:var(--gold-light); padding:0.2rem 0.6rem; border-radius:6px; font-weight:700;">수량 2개 적용</span>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem;">
+            <div class="form-group">
+              <label class="form-label">제품 종류 *</label>
+              <select class="form-control" id="apItemType2">
+                <option value="골드바">24K 골드바 (인곳/프레스바/골드빈)</option>
+                <option value="팔찌">18K / 14K / 24K 팔찌</option>
+                <option value="반지">18K / 14K / 24K 반지</option>
+                <option value="목걸이">18K / 14K / 24K 목걸이</option>
+                <option value="백금">백금(Platinum) 제품</option>
+                <option value="실버">실버(Silver) 제품</option>
+                <option value="치금">치과용 치금(합금)</option>
+                <option value="기타">기타 귀금속 및 원자재</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">예상 순도</label>
+              <select class="form-control" id="apExpectedPurity2">
+                <option value="24K (99.99%)">24K (99.99%)</option>
+                <option value="18K (75.0%)">18K (75.0%)</option>
+                <option value="14K (58.5%)">14K (58.5%)</option>
+                <option value="PT990/950">백금 PT990 / PT950</option>
+                <option value="AG999/925">은 AG999 / AG925</option>
+                <option value="모름">순도 잘 모름 (분석 의뢰)</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.2rem;">
+            <div class="form-group">
+              <label class="form-label">예상 중량</label>
+              <input type="text" class="form-control" id="apExpectedWeight2" placeholder="예: 3돈 / 11.25g">
+            </div>
+            <div class="form-group">
+              <label class="form-label">제품 2 사진 첨부 (최대 10MB)</label>
+              <input type="file" id="apPhotoFile2" accept="image/jpeg,image/png,image/webp" class="form-control" onchange="PreviewAppraisalPhoto(this, 2)">
+            </div>
+          </div>
+
+          <div id="photoPreviewBox2" style="display:none; margin-bottom:1rem; text-align:center;">
+            <img id="photoPreviewImg2" src="" alt="제품2 미리보기" style="max-height:140px; border-radius:10px; border:1px solid var(--border-gold-bright);">
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">제품 2 특이사항 / 요청사항</label>
+            <input type="text" class="form-control" id="apRequests2" placeholder="제품 2에 대한 별도 요청사항">
           </div>
         </div>
 
-        <!-- 요청사항 -->
-        <div class="form-group" style="margin-bottom:1.5rem;">
-          <label class="form-label">고객 요청사항 / 특이사항</label>
-          <textarea class="form-control" id="apRequests" rows="3" placeholder="각인 보존 요청, 특정 부위 검사 요청 등 참고 사항을 적어주세요"></textarea>
-        </div>
-
-        <!-- 무료 기본 광택 신청 여부 및 주의사항 동의 -->
+        <!-- 무료 기본 세척 및 광택 신청 -->
         <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.5rem;">
           <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer;">
             <input type="checkbox" id="apFreePolish" style="accent-color:var(--gold-primary); margin-top:0.25rem;">
@@ -297,8 +370,44 @@
           </label>
         </div>
 
+        <!-- 회원 혜택 및 GC 포인트 할인 섹션 -->
+        <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:16px; padding:1.4rem 1.6rem; margin-bottom:1.5rem;">
+          <div style="font-size:1rem; font-weight:800; color:var(--gold-light); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-crown text-gold"></i> 회원 등급 무료 감정 혜택 및 GC 포인트 할인
+          </div>
+
+          <!-- 1. 등급별 무료 감정 혜택 적용 -->
+          <div style="background:rgba(224,184,72,0.06); border:1px solid rgba(224,184,72,0.25); border-radius:12px; padding:1rem 1.2rem; margin-bottom:1.2rem;">
+            <label style="display:flex; align-items:flex-start; gap:0.7rem; cursor:pointer;">
+              <input type="checkbox" id="apApplyFreeBenefit" onchange="RecalculateAppraisalFee()" style="accent-color:var(--gold-primary); margin-top:0.25rem;">
+              <div>
+                <strong style="color:var(--gold-light); font-size:0.98rem;">[회원 혜택] 연간 무료 감정 혜택 1회 적용 (기본 감정료 29,900원 전액 면제)</strong>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem; line-height:1.5;" id="apFreeBenefitNotice">
+                  회원 등급별 연간 무료 감정 혜택 (SILVER 연 1회 / GOLD 연 2회 / VIP 연 3회)을 적용합니다. 로그인 시 잔여 횟수가 확인됩니다.
+                </p>
+              </div>
+            </label>
+          </div>
+
+          <!-- 2. GC 포인트 할인 (유료 접수 시) -->
+          <div id="apGcRow" style="display:grid; grid-template-columns:1fr auto; gap:0.8rem; align-items:center;">
+            <div>
+              <label class="form-label" style="font-size:0.9rem; color:var(--text-light); margin-bottom:0.35rem;">
+                보유 GC 포인트 사용 (접수 1건당 최대 10,000 GC / 1 GC = 1원 할인)
+              </label>
+              <input type="number" id="apGcAmount" class="form-control" placeholder="0" min="0" max="10000" oninput="RecalculateAppraisalFee()" style="font-family:var(--font-num); font-size:1.02rem;">
+              <small style="color:var(--text-muted); font-size:0.82rem; display:block; margin-top:0.3rem;" id="apGcAvailableNotice">
+                보유 사용가능 GC: <span id="apUserGcBalance" style="color:#10b981; font-weight:800;">0</span> GC (기본 감정료에만 적용, 상품 5% 한도 미적용, 배송비 제외)
+              </small>
+            </div>
+            <button type="button" class="btn btn-outline-gold btn-sm" onclick="ApplyMaxAppraisalGC()" style="align-self:flex-start; margin-top:1.8rem; white-space:nowrap;">
+              최대 사용
+            </button>
+          </div>
+        </div>
+
         <!-- 필수 약관 및 동의 체크 -->
-        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:2rem; font-size:0.88rem; color:var(--text-light); line-height:1.7;">
+        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.8rem; font-size:0.88rem; color:var(--text-light); line-height:1.7;">
           <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; margin-bottom:0.6rem;">
             <input type="checkbox" id="apAgreeInspection" required style="accent-color:var(--gold-primary);">
             <span>[필수] 비파괴 XRF 성분분석 시험의 범위와 기술적 한계 및 보증서 재발급 불가 정책을 확인하였으며 이에 동의합니다.</span>
@@ -315,31 +424,51 @@
           </label>
         </div>
 
-        <!-- 감정 수수료 및 금액 요약 -->
-        <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:16px; padding:1.4rem 1.6rem; margin-bottom:1.8rem;">
-          <div style="font-size:0.98rem; font-weight:800; color:var(--gold-light); margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem;">
-            <i class="fa-solid fa-receipt text-gold"></i> 감정대행 수수료 및 금액 요약
+        <!-- 감정 수수료 및 금액 요약 (6개 항목 엄격 구분) -->
+        <div style="background:#090b10; border:1px solid var(--border-gold-bright); border-radius:18px; padding:1.5rem 1.8rem; margin-bottom:1.8rem;">
+          <div style="font-size:1.02rem; font-weight:800; color:var(--gold-light); margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-receipt text-gold"></i> 감정 신청 금액 요약
           </div>
-          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.92rem; color:var(--text-light);">
-            <span>기본 감정 수수료 (비파괴 XRF 성분분석 및 정밀비중 측정)</span>
-            <strong style="color:#fff;">29,900원</strong>
+          
+          <!-- 1. 기본 감정료 -->
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.92rem; color:var(--text-light);">
+            <span>1. 기본 감정료 (비파괴 XRF 성분분석 및 정밀비중 측정 / 제품 최대 2개)</span>
+            <strong style="color:#fff;" id="apSummaryBaseFee">29,900원</strong>
           </div>
-          <div style="display:flex; justify-content:space-between; margin-bottom:0.5rem; font-size:0.92rem; color:var(--text-light);">
-            <span>배송비</span>
-            <span id="apSummaryShippingFee" style="color:var(--gold-light); font-weight:700;">현장 방문 (배송비 없음)</span>
+
+          <!-- 2. 무료 감정 혜택 -->
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.92rem; color:var(--text-light);">
+            <span>2. 회원 무료 감정 혜택</span>
+            <strong id="apSummaryFreeDiscount" style="color:var(--text-muted); font-weight:700;">미적용 (0원)</strong>
           </div>
-          <div style="display:flex; justify-content:space-between; font-size:0.92rem; color:var(--text-light);">
-            <span>정밀·특수 추가검사</span>
+
+          <!-- 3. GC 할인 -->
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.92rem; color:var(--text-light);">
+            <span>3. GC 포인트 할인 (유료 접수 시 최대 -10,000원)</span>
+            <strong id="apSummaryGcDiscount" style="color:var(--text-muted); font-weight:700;">0원</strong>
+          </div>
+
+          <!-- 4. 배송비 -->
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.6rem; font-size:0.92rem; color:var(--text-light);">
+            <span>4. 배송비</span>
+            <span id="apSummaryShippingFee" style="color:var(--text-light); font-weight:700;">현장 방문 (배송비 없음)</span>
+          </div>
+
+          <!-- 5. 정밀·특수 추가검사비 -->
+          <div style="display:flex; justify-content:space-between; margin-bottom:0.8rem; font-size:0.92rem; color:var(--text-light);">
+            <span>5. 정밀·특수 추가검사비</span>
             <span style="color:var(--text-muted);">별도 견적 (고객 사전 동의 시에만 진행)</span>
           </div>
-          <div style="margin-top:0.9rem; padding-top:0.9rem; border-top:1px dashed rgba(255,255,255,0.1); display:flex; justify-content:space-between; align-items:center;">
-            <span style="font-weight:800; color:#fff; font-size:1.02rem;">기본 요금 합계</span>
-            <span style="font-size:1.25rem; font-weight:900; color:var(--gold-light); font-family:var(--font-num);">
-              29,900원 <small style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">(배송비/추가검사 별도)</small>
+
+          <!-- 6. 최종 결제금액 -->
+          <div style="margin-top:0.9rem; padding-top:0.9rem; border-top:1px dashed rgba(255,255,255,0.15); display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:900; color:#fff; font-size:1.05rem;">기본 감정료 최종 결제금액</span>
+            <span style="font-size:1.35rem; font-weight:900; color:var(--gold-light); font-family:var(--font-num);">
+              <span id="apSummaryFinalAmount">29,900</span>원 <small style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">(배송비/추가검사 별도)</small>
             </span>
           </div>
           <p style="font-size:0.82rem; color:var(--text-muted); margin-top:0.6rem; margin-bottom:0; line-height:1.5;">
-            ※ 방문·택배 접수 모두 동일한 기본요금(29,900원)이 적용되며, 택배 이용 시 왕복 배송비는 고객 부담(별도 안내)입니다.
+            ※ 방문·택배 접수 모두 동일한 기본요금(29,900원)이 적용되며, 1개 또는 2개 모두 기본요금은 동일합니다. 택배 이용 시 왕복 배송비는 고객 부담(별도 안내)입니다.
           </p>
         </div>
 
@@ -478,6 +607,13 @@
 
   <script src="app.js?v=20261012_v1"></script>
   <script>
+    let photoBase64_1 = null;
+    let photoBase64_2 = null;
+    let userGcBalance = 0;
+    let userFreeAllowed = 0;
+    let userFreeRemaining = 0;
+    let userTier = 'SILVER';
+
     function ToggleCourierFields() {
       const isCourier = document.querySelector('input[name="appraisalMethod"]:checked')?.value === 'COURIER';
       const addressBox = document.getElementById('courierAddressGroup');
@@ -496,10 +632,23 @@
         feeSummaryEl.style.color = isCourier ? 'var(--gold-light)' : 'var(--text-light)';
       }
     }
-    document.addEventListener('DOMContentLoaded', ToggleCourierFields);
 
-    let photoBase64 = null;
-    function PreviewAppraisalPhoto(input) {
+    function HandleAppraisalQtyChange() {
+      const qty = parseInt(document.getElementById('apQuantity').value, 10) || 1;
+      const item2Container = document.getElementById('apItem2Container');
+      const itemType2 = document.getElementById('apItemType2');
+
+      if (qty === 2) {
+        if (item2Container) item2Container.style.display = 'block';
+        if (itemType2) itemType2.required = true;
+      } else {
+        if (item2Container) item2Container.style.display = 'none';
+        if (itemType2) itemType2.required = false;
+      }
+      RecalculateAppraisalFee();
+    }
+
+    function PreviewAppraisalPhoto(input, itemIndex) {
       if (input.files && input.files[0]) {
         const file = input.files[0];
         if (file.size > 10 * 1024 * 1024) {
@@ -509,11 +658,122 @@
         }
         const reader = new FileReader();
         reader.onload = function(e) {
-          photoBase64 = e.target.result;
-          document.getElementById('photoPreviewImg').src = photoBase64;
-          document.getElementById('photoPreviewBox').style.display = 'block';
+          if (itemIndex === 1) {
+            photoBase64_1 = e.target.result;
+            const imgEl = document.getElementById('photoPreviewImg1');
+            const boxEl = document.getElementById('photoPreviewBox1');
+            if (imgEl && boxEl) { imgEl.src = photoBase64_1; boxEl.style.display = 'block'; }
+          } else {
+            photoBase64_2 = e.target.result;
+            const imgEl = document.getElementById('photoPreviewImg2');
+            const boxEl = document.getElementById('photoPreviewBox2');
+            if (imgEl && boxEl) { imgEl.src = photoBase64_2; boxEl.style.display = 'block'; }
+          }
         };
         reader.readAsDataURL(file);
+      }
+    }
+
+    function RecalculateAppraisalFee() {
+      const isFree = document.getElementById('apApplyFreeBenefit')?.checked;
+      const gcInput = document.getElementById('apGcAmount');
+      const freeEl = document.getElementById('apSummaryFreeDiscount');
+      const gcEl = document.getElementById('apSummaryGcDiscount');
+      const finalEl = document.getElementById('apSummaryFinalAmount');
+
+      const baseFee = 29900;
+
+      if (isFree) {
+        if (gcInput) {
+          gcInput.value = '';
+          gcInput.disabled = true;
+        }
+        if (freeEl) {
+          freeEl.innerText = '-29,900원 (회원 무료 혜택)';
+          freeEl.style.color = '#10b981';
+        }
+        if (gcEl) {
+          gcEl.innerText = '0원 (무료 적용 시 GC 미사용)';
+          gcEl.style.color = 'var(--text-muted)';
+        }
+        if (finalEl) finalEl.innerText = '0';
+      } else {
+        if (gcInput) gcInput.disabled = false;
+        if (freeEl) {
+          freeEl.innerText = '미적용 (0원)';
+          freeEl.style.color = 'var(--text-muted)';
+        }
+
+        let enteredGC = parseInt(gcInput?.value, 10) || 0;
+        if (enteredGC < 0) enteredGC = 0;
+        
+        // Appraisal max GC: min(balance, 10000, 29900)
+        const maxUsableGC = Math.min(userGcBalance, 10000, baseFee);
+        if (enteredGC > maxUsableGC) {
+          enteredGC = maxUsableGC;
+          if (gcInput) gcInput.value = enteredGC;
+        }
+
+        const finalAmount = Math.max(0, baseFee - enteredGC);
+
+        if (gcEl) {
+          gcEl.innerText = enteredGC > 0 ? `-${enteredGC.toLocaleString('ko-KR')}원` : '0원';
+          gcEl.style.color = enteredGC > 0 ? 'var(--gold-light)' : 'var(--text-muted)';
+        }
+        if (finalEl) {
+          finalEl.innerText = finalAmount.toLocaleString('ko-KR');
+        }
+      }
+    }
+
+    function ApplyMaxAppraisalGC() {
+      const isFree = document.getElementById('apApplyFreeBenefit')?.checked;
+      if (isFree) {
+        alert('무료 감정 혜택 적용 시 기본 감정료가 0원이므로 GC를 사용하실 수 없습니다.');
+        return;
+      }
+      if (userGcBalance <= 0) {
+        alert('사용 가능한 GC 포인트 잔액이 없습니다.');
+        return;
+      }
+      const maxUsableGC = Math.min(userGcBalance, 10000, 29900);
+      const gcInput = document.getElementById('apGcAmount');
+      if (gcInput) gcInput.value = maxUsableGC;
+      RecalculateAppraisalFee();
+    }
+
+    async function LoadUserAppraisalBenefits() {
+      try {
+        const res = await ApiRequest('/api/membership/me');
+        if (res.success) {
+          userGcBalance = res.gcBalance || 0;
+          userTier = res.tier || 'SILVER';
+
+          const balEl = document.getElementById('apUserGcBalance');
+          if (balEl) balEl.innerText = userGcBalance.toLocaleString('ko-KR');
+
+          if (res.freeAppraisals) {
+            userFreeAllowed = res.freeAppraisals.allowed;
+            userFreeRemaining = res.freeAppraisals.remaining;
+            const freeNotice = document.getElementById('apFreeBenefitNotice');
+            if (freeNotice) {
+              freeNotice.innerHTML = `회원 등급(<strong>${userTier}</strong>) 연간 무료 감정 혜택: <strong>잔여 ${userFreeRemaining}회</strong> / 연 ${userFreeAllowed}회 제공 (기본 감정료 29,900원 면제)`;
+            }
+            const freeCheckbox = document.getElementById('apApplyFreeBenefit');
+            if (freeCheckbox && userFreeRemaining <= 0) {
+              freeCheckbox.disabled = true;
+              if (freeNotice) freeNotice.innerHTML += '<br><span style="color:#ef4444;">※ 올해 제공된 무료 감정 횟수를 모두 소진하셨습니다.</span>';
+            }
+          }
+        }
+      } catch (e) {
+        // Guest mode: free benefits and GC require login
+        const freeNotice = document.getElementById('apFreeBenefitNotice');
+        if (freeNotice) {
+          freeNotice.innerHTML = '※ 회원 무료 감정 혜택 및 GC 할인은 로그인 후 이용하실 수 있습니다.';
+        }
+        const freeCheckbox = document.getElementById('apApplyFreeBenefit');
+        if (freeCheckbox) freeCheckbox.disabled = true;
       }
     }
 
@@ -523,16 +783,54 @@
       const applicantName = document.getElementById('apApplicantName').value.trim();
       const applicantPhone = document.getElementById('apApplicantPhone').value.trim();
       const returnAddress = document.getElementById('apReturnAddress')?.value.trim() || '';
-      const itemType = document.getElementById('apItemType').value;
       const quantity = parseInt(document.getElementById('apQuantity').value, 10) || 1;
-      const expectedPurity = document.getElementById('apExpectedPurity').value;
-      const expectedWeight = document.getElementById('apExpectedWeight').value.trim();
-      const requests = document.getElementById('apRequests').value.trim();
+
+      // Item 1
+      const itemType1 = document.getElementById('apItemType').value;
+      const expectedPurity1 = document.getElementById('apExpectedPurity').value;
+      const expectedWeight1 = document.getElementById('apExpectedWeight').value.trim();
+      const requests1 = document.getElementById('apRequests').value.trim();
+
+      // Free polish & terms
       const freePolish = document.getElementById('apFreePolish').checked;
+      const applyFreeBenefit = document.getElementById('apApplyFreeBenefit')?.checked || false;
+      const gcUsed = applyFreeBenefit ? 0 : (parseInt(document.getElementById('apGcAmount')?.value, 10) || 0);
 
       if (method === 'COURIER' && !returnAddress) {
         alert('택배 반환 배송지를 입력해주세요.');
         return;
+      }
+
+      if (quantity < 1 || quantity > 2) {
+        alert('감정대행 접수는 1건당 제품 최대 2개까지만 가능합니다.');
+        return;
+      }
+
+      const items = [
+        {
+          itemIndex: 1,
+          itemType: itemType1,
+          expectedPurity: expectedPurity1,
+          expectedWeight: expectedWeight1 || '미측정',
+          requests: requests1,
+          photoData: photoBase64_1
+        }
+      ];
+
+      // Item 2 if selected
+      if (quantity === 2) {
+        const itemType2 = document.getElementById('apItemType2').value;
+        const expectedPurity2 = document.getElementById('apExpectedPurity2').value;
+        const expectedWeight2 = document.getElementById('apExpectedWeight2').value.trim();
+        const requests2 = document.getElementById('apRequests2').value.trim();
+        items.push({
+          itemIndex: 2,
+          itemType: itemType2,
+          expectedPurity: expectedPurity2,
+          expectedWeight: expectedWeight2 || '미측정',
+          requests: requests2,
+          photoData: photoBase64_2
+        });
       }
 
       const submitBtn = document.getElementById('btnSubmitAppraisal');
@@ -544,13 +842,17 @@
           applicantName,
           applicantPhone,
           returnAddress,
-          itemType,
+          itemType: itemType1,
           quantity,
-          expectedPurity,
-          expectedWeight,
-          requests,
+          expectedPurity: expectedPurity1,
+          expectedWeight: expectedWeight1,
+          requests: requests1,
           freePolish,
-          photoData: photoBase64
+          freePolishConsent: freePolish,
+          applyFreeBenefit,
+          gcUsed,
+          items,
+          photoData: photoBase64_1
         });
 
         // Show result card
@@ -559,13 +861,26 @@
 
         document.getElementById('resApNo').innerText = res.appraisal.receiptNo;
         document.getElementById('resApMethod').innerText = method === 'VISIT' ? '종로 본점 방문 접수' : '전국 안심 택배 접수';
-        document.getElementById('resApItem').innerText = `${itemType} (${quantity}개)`;
+        
+        const itemsSummary = quantity === 2
+          ? `${items[0].itemType}, ${items[1].itemType} (총 2개 제품 / 기본요금 29,900원)`
+          : `${itemType1} (1개 제품 / 기본요금 29,900원)`;
+        document.getElementById('resApItem').innerText = itemsSummary;
         
         const noteEl = document.getElementById('resApShippingNote');
         if (noteEl) {
-          noteEl.innerHTML = method === 'VISIT'
-            ? '※ 종로 본점 방문 시 접수번호를 제시해 주시면 우선 입회 감정이 진행됩니다.'
-            : '※ 택배 발송 주소: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 GoldLab 정밀분석실 (접수번호 동봉 요망)';
+          const payNotice = res.appraisal.freeBenefitApplied 
+            ? '✓ 회원 무료 감정 혜택이 적용되어 기본 감정료 0원으로 접수되었습니다.'
+            : (res.appraisal.gcUsed > 0 
+                ? `✓ 기본 감정료 29,900원에서 GC ${res.appraisal.gcUsed.toLocaleString('ko-KR')}원 할인 적용 (최종 결제: ${res.appraisal.finalPayAmount.toLocaleString('ko-KR')}원)`
+                : `✓ 기본 감정료 29,900원 결제 예정 (배송비 별도)`);
+
+          noteEl.innerHTML = `
+            <strong>${payNotice}</strong><br>
+            ${method === 'VISIT'
+              ? '※ 종로 본점 방문 시 접수번호를 제시해 주시면 우선 입회 감정이 진행됩니다.'
+              : '※ 택배 발송 주소: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 GoldLab 정밀분석실 (접수번호 동봉 요망 / 왕복 배송비 별도)'}
+          `;
         }
 
       } catch (err) {
@@ -582,10 +897,23 @@
       document.getElementById('appraisalForm').reset();
       document.getElementById('appraisalForm').style.display = 'block';
       document.getElementById('apResultCard').style.display = 'none';
-      document.getElementById('photoPreviewBox').style.display = 'none';
-      photoBase64 = null;
+      const p1 = document.getElementById('photoPreviewBox1');
+      const p2 = document.getElementById('photoPreviewBox2');
+      if (p1) p1.style.display = 'none';
+      if (p2) p2.style.display = 'none';
+      photoBase64_1 = null;
+      photoBase64_2 = null;
       ToggleCourierFields();
+      HandleAppraisalQtyChange();
+      RecalculateAppraisalFee();
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      ToggleCourierFields();
+      HandleAppraisalQtyChange();
+      RecalculateAppraisalFee();
+      LoadUserAppraisalBenefits();
+    });
   </script>
 </body>
 </html>
