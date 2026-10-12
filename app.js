@@ -86,6 +86,7 @@ let myTransactions = [];
 
 // Initialize App on DOM Load
 document.addEventListener('DOMContentLoaded', () => {
+  try { ApplyKakaoChannelConfig(); } catch (e) {}
   try { localStorage.removeItem('goldlab_rate_offset'); } catch (e) {}
   try { LoadAuthState(); } catch (e) { console.error('LoadAuthState error:', e); }
   try { LoadMyTransactions(); } catch (e) { console.error('LoadMyTransactions error:', e); }
@@ -240,581 +241,25 @@ function ToggleMobileMenu() {
 let authToken = localStorage.getItem('goldlab_auth_token') || '';
 
 
-// ==========================================================================
-// In-Browser Serverless Hybrid Engine (Ensures 100% Zero-Error on GitHub Pages)
-// ==========================================================================
-const IN_BROWSER_DB_KEY = 'goldlab_live_db_v4';
+// Official Kakao Channel URL (If unconfigured, UI automatically falls back to telephone 010-4017-4988)
+const KAKAO_CHANNEL_URL = '';
 
-function getInBrowserDB() {
-  let db = null;
-  let dbStr = localStorage.getItem(IN_BROWSER_DB_KEY);
-  if (dbStr) {
-    try {
-      const parsed = JSON.parse(dbStr);
-      if (parsed && parsed.users && Array.isArray(parsed.users)) db = parsed;
-    } catch (e) {}
-  }
-  if (!db) {
-    db = {
-      users: [
-        {
-          id: 'usr_master_goldlabnco',
-          name: '황미숙 대표 (최고관리자)',
-          email: 'goldlabnco@naver.com',
-          role: 'MASTER_ADMIN',
-          userType: 'MASTER',
-          tier: '👑 MASTER ADMIN',
-          status: 'ACTIVE'
-        },
-        {
-          id: 'usr_master_001',
-          name: '골드랩 마스터 관리자',
-          email: 'admin@goldlabnco.com',
-          role: 'MASTER_ADMIN',
-          userType: 'MASTER',
-          tier: '👑 MASTER ADMIN',
-          status: 'ACTIVE'
-        },
-        {
-          id: 'usr_eprltls',
-          name: '일반 회원',
-          email: 'eprltls@gmail.com',
-          role: 'USER',
-          userType: 'PERSONAL',
-          tier: 'STANDARD MEMBER',
-          status: 'ACTIVE'
-        },
-        {
-          id: 'usr_dohyun_01',
-          name: '김도현',
-          email: 'dohyun.kim84@naver.com',
-          phone: '010-3842-7195',
-          role: 'USER',
-          userType: 'PERSONAL',
-          tier: 'VIP PLATINUM',
-          status: 'ACTIVE'
-        },
-        {
-          id: 'usr_jieun_02',
-          name: '이지은',
-          email: 'jieun.lee91@gmail.com',
-          phone: '010-7215-4683',
-          role: 'USER',
-          userType: 'PERSONAL',
-          tier: 'GOLD MEMBER',
-          status: 'ACTIVE'
-        }
-      ],
-      reservations: [],
-      appraisals: [],
-      certificates: [],
-      orders: [],
-      gv_gc_ledgers: [
-        { id: 'L1', userId: 'usr_master_goldlabnco', type: 'GV_ADD', amount: 50000000, note: 'VIP 누적 거래 실적' },
-        { id: 'L2', userId: 'usr_master_goldlabnco', type: 'GC_EARN', amount: 250000, note: 'VIP 실적 리워드 포인트' },
-        { id: 'L3', userId: 'usr_dohyun_01', type: 'GV_ADD', amount: 35000000, note: 'VIP 누적 실적' },
-        { id: 'L4', userId: 'usr_dohyun_01', type: 'GC_EARN', amount: 150000, note: 'VIP 리워드 포인트' }
-      ],
-      inquiries: [],
-      audit_logs: [
-        { id: 'AUD-01', action: 'SYSTEM_BOOT', adminId: 'usr_master_goldlabnco', ip: '127.0.0.1', timestamp: new Date().toISOString() }
-      ]
-    };
-  }
-
-  // Explicitly ensure roles are correctly maintained even across previous local caches
-  const epr = db.users.find(u => u.email && u.email.toLowerCase() === 'eprltls@gmail.com');
-  if (epr) {
-    epr.role = 'USER';
-    epr.userType = 'PERSONAL';
-    epr.tier = 'STANDARD MEMBER';
-  } else {
-    db.users.push({
-      id: 'usr_eprltls',
-      name: '일반 회원',
-      email: 'eprltls@gmail.com',
-      role: 'USER',
-      userType: 'PERSONAL',
-      tier: 'STANDARD MEMBER',
-      status: 'ACTIVE'
-    });
-  }
-
-  const master = db.users.find(u => u.email && u.email.toLowerCase() === 'goldlabnco@naver.com');
-  if (master) {
-    master.role = 'MASTER_ADMIN';
-    master.userType = 'MASTER';
-    master.tier = '👑 MASTER ADMIN';
-  } else {
-    db.users.unshift({
-      id: 'usr_master_goldlabnco',
-      name: '황미숙 대표 (최고관리자)',
-      email: 'goldlabnco@naver.com',
-      role: 'MASTER_ADMIN',
-      userType: 'MASTER',
-      tier: '👑 MASTER ADMIN',
-      status: 'ACTIVE'
-    });
-  }
-
-  localStorage.setItem(IN_BROWSER_DB_KEY, JSON.stringify(db));
-  return db;
-}
-
-function saveInBrowserDB(db) {
-  try {
-    localStorage.setItem(IN_BROWSER_DB_KEY, JSON.stringify(db));
-  } catch (e) {
-    console.error('Failed to save in-browser DB:', e);
-  }
-}
-
-async function InBrowserServerEngine(path, method = 'GET', body = null, token = '') {
-  console.log('[InBrowserEngine Route]', method, path);
-  const db = getInBrowserDB();
-
-  // 1. Auth: Login
-  if (path === '/api/auth/login' && method === 'POST') {
-    const cleanEmail = (body?.email || '').trim().toLowerCase();
-    const isMaster = cleanEmail === 'goldlabnco@naver.com' || cleanEmail === 'admin@goldlabnco.com' || cleanEmail === 'hwang@goldlabnco.com';
-
-    let user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
-    if (isMaster) {
-      if (!user) {
-        user = {
-          id: 'usr_master_' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_'),
-          name: '황미숙 대표 (최고관리자)',
-          email: cleanEmail,
-          role: 'MASTER_ADMIN',
-          userType: 'MASTER',
-          tier: '👑 MASTER ADMIN',
-          status: 'ACTIVE'
-        };
-        db.users.push(user);
-        saveInBrowserDB(db);
-      } else {
-        user.role = 'MASTER_ADMIN';
-        user.userType = 'MASTER';
-        user.tier = '👑 MASTER ADMIN';
-        saveInBrowserDB(db);
-      }
+function ApplyKakaoChannelConfig() {
+  const kakaoButtons = document.querySelectorAll('.float-kakao, a[href*="pf.kakao.com"]');
+  kakaoButtons.forEach(btn => {
+    if (KAKAO_CHANNEL_URL && KAKAO_CHANNEL_URL.trim().length > 0) {
+      btn.href = KAKAO_CHANNEL_URL;
+      btn.style.display = '';
     } else {
-      if (!user) {
-        // Create user smoothly
-        user = {
-          id: 'usr_' + Date.now(),
-          name: cleanEmail.split('@')[0],
-          email: cleanEmail,
-          role: 'USER',
-          userType: 'PERSONAL',
-          tier: 'STANDARD MEMBER',
-          status: 'ACTIVE'
-        };
-        db.users.push(user);
-        db.gv_gc_ledgers.push({
-          id: 'LEDGER-WELCOME-' + Date.now(),
-          userId: user.id,
-          type: 'GC_EARN',
-          amount: 5000,
-          note: '신규 회원가입 축하 5,000 GC 적립'
-        });
-        saveInBrowserDB(db);
-      } else if (cleanEmail === 'eprltls@gmail.com') {
-        user.role = 'USER';
-        user.userType = 'PERSONAL';
-        user.tier = 'STANDARD MEMBER';
-        saveInBrowserDB(db);
-      }
+      btn.style.display = 'none';
     }
-
-    const genToken = 'tok_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
-    localStorage.setItem('goldlab_auth_token', genToken);
-    localStorage.setItem('goldlab_active_user', JSON.stringify(user));
-    return { success: true, token: genToken, user };
-  }
-
-  // 2. Auth: Register
-  if (path === '/api/auth/register' && method === 'POST') {
-    const cleanEmail = (body?.email || '').trim().toLowerCase();
-    const isBiz = body?.userType === 'BIZ';
-    const newUser = {
-      id: 'usr_' + Date.now(),
-      name: body?.name || cleanEmail.split('@')[0],
-      email: cleanEmail,
-      phone: body?.phone || '',
-      userType: isBiz ? 'BIZ' : 'PERSONAL',
-      role: isBiz ? 'B2B_PENDING' : 'USER',
-      bizName: body?.bizName || '',
-      bizNo: body?.bizNo || '',
-      tier: isBiz ? 'B2B PARTNER (대기)' : 'STANDARD MEMBER',
-      status: isBiz ? 'B2B_PENDING' : 'ACTIVE',
-      createdAt: new Date().toISOString()
-    };
-    db.users.push(newUser);
-    db.gv_gc_ledgers.push({
-      id: 'LEDGER-WELCOME-' + Date.now(),
-      userId: newUser.id,
-      type: 'GC_EARN',
-      amount: 5000,
-      note: '신규 회원가입 축하 5,000 GC 적립'
-    });
-    saveInBrowserDB(db);
-
-    const genToken = 'tok_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
-    localStorage.setItem('goldlab_auth_token', genToken);
-    localStorage.setItem('goldlab_active_user', JSON.stringify(newUser));
-    return { success: true, token: genToken, user: newUser };
-  }
-
-  // 3. Auth: Current Session
-  if (path === '/api/auth/me') {
-    const raw = localStorage.getItem('goldlab_active_user');
-    if (raw) {
-      try {
-        const u = JSON.parse(raw);
-        let fresh = db.users.find(x => x.id === u.id || (x.email && u.email && x.email.toLowerCase() === u.email.toLowerCase()));
-        if (fresh) {
-          if (fresh.email && fresh.email.toLowerCase() === 'eprltls@gmail.com') {
-            fresh.role = 'USER';
-            fresh.userType = 'PERSONAL';
-            fresh.tier = 'STANDARD MEMBER';
-          } else if (fresh.email && fresh.email.toLowerCase() === 'goldlabnco@naver.com') {
-            fresh.role = 'MASTER_ADMIN';
-            fresh.userType = 'MASTER';
-            fresh.tier = '👑 MASTER ADMIN';
-          }
-          localStorage.setItem('goldlab_active_user', JSON.stringify(fresh));
-          return { success: true, user: fresh };
-        }
-        if (u.email && u.email.toLowerCase() === 'eprltls@gmail.com') {
-          u.role = 'USER';
-          u.userType = 'PERSONAL';
-          u.tier = 'STANDARD MEMBER';
-        } else if (u.email && u.email.toLowerCase() === 'goldlabnco@naver.com') {
-          u.role = 'MASTER_ADMIN';
-          u.userType = 'MASTER';
-          u.tier = '👑 MASTER ADMIN';
-        }
-        localStorage.setItem('goldlab_active_user', JSON.stringify(u));
-        return { success: true, user: u };
-      } catch (e) {}
+  });
+  const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+  phoneLinks.forEach(a => {
+    if (!a.getAttribute('href') || a.getAttribute('href').includes('010')) {
+      a.setAttribute('href', 'tel:01040174988');
     }
-    return { success: false, error: '세션 없음' };
-  }
-
-  // 4. Auth: Logout
-  if (path === '/api/auth/logout') {
-    localStorage.removeItem('goldlab_auth_token');
-    localStorage.removeItem('goldlab_active_user');
-    return { success: true };
-  }
-
-  // 5. Reservations: Book
-  if (path === '/api/reservations/book' && method === 'POST') {
-    const dateStr = (body.date || new Date().toISOString().substring(0, 10)).replace(/-/g, '');
-    const rand = Math.floor(1000 + Math.random() * 9000);
-    const reservationNo = `GL-RSV-${dateStr}-${rand}`;
-    const newResv = {
-      id: reservationNo,
-      reservationNo,
-      userId: currentUser ? currentUser.id : null,
-      branch: body.branch || '종로 본점',
-      category: body.category || '고금 매입 상담',
-      date: body.date,
-      time: body.time,
-      name: body.name,
-      phone: body.phone,
-      memo: body.memo || '',
-      status: 'CONFIRMED',
-      createdAt: new Date().toISOString()
-    };
-    db.reservations.unshift(newResv);
-    saveInBrowserDB(db);
-    return {
-      success: true,
-      message: '방문예약이 성공적으로 확정되었습니다.',
-      reservation: newResv,
-      smsStatus: { sent: true, note: '온라인 예약 확정 완료' }
-    };
-  }
-
-  // 6. Reservations: Booked Slots
-  if (path === '/api/reservations/booked-slots') {
-    const counts = {};
-    db.reservations.filter(r => r.status !== 'CANCELLED').forEach(r => {
-      const k = r.date + '_' + r.time;
-      counts[k] = (counts[k] || 0) + 1;
-    });
-    const fullSlots = {};
-    Object.keys(counts).forEach(k => {
-      if (counts[k] >= 2) {
-        const [d, t] = k.split('_');
-        if (!fullSlots[d]) fullSlots[d] = [];
-        fullSlots[d].push(t);
-      }
-    });
-    return { success: true, bookedSlots: fullSlots };
-  }
-
-  // 7. Reservations: My
-  if (path === '/api/reservations/my') {
-    const uid = currentUser ? currentUser.id : '';
-    const uphone = currentUser ? currentUser.phone : '';
-    const myResvs = db.reservations.filter(r => (uid && r.userId === uid) || (uphone && r.phone === uphone));
-    return { success: true, reservations: myResvs };
-  }
-
-  // 8. Reservations: Cancel
-  if (path.startsWith('/api/reservations/') && path.endsWith('/cancel')) {
-    const rId = path.split('/')[3];
-    const target = db.reservations.find(r => r.id === rId);
-    if (target) target.status = 'CANCELLED';
-    saveInBrowserDB(db);
-    return { success: true, message: '방문예약이 취소되었습니다.' };
-  }
-
-  // 9. Appraisals: Apply
-  if (path === '/api/appraisals/apply' && method === 'POST') {
-    const dateStr = new Date().toISOString().substring(0, 10).replace(/-/g, '');
-    const serial = String(db.appraisals.length + 1).padStart(4, '0');
-    const appraisalId = `GL-AP-${dateStr}-${serial}`;
-    const newAp = {
-      id: appraisalId,
-      receiptNo: appraisalId,
-      userId: currentUser ? currentUser.id : null,
-      type: (body.method === 'COURIER' || body.type === 'DELIVERY') ? 'DELIVERY' : 'VISIT',
-      applicantName: body.applicantName || (currentUser ? currentUser.name : '신청자'),
-      applicantPhone: body.applicantPhone || (currentUser ? currentUser.phone : '010-0000-0000'),
-      returnAddress: body.returnAddress || null,
-      itemType: body.itemType || '골드바/고금',
-      quantity: body.quantity || 1,
-      estimatedPurity: body.expectedPurity || body.estimatedPurity || '24K',
-      estimatedWeight: body.expectedWeight || '미측정',
-      requests: body.requests || '',
-      freePolishConsent: !!body.freePolishConsent,
-      status: 'APPLIED',
-      actualWeight: null,
-      costBase: (body.method === 'COURIER' || body.type === 'DELIVERY') ? 39000 : 29000,
-      costExtra: 0,
-      createdAt: new Date().toISOString()
-    };
-    db.appraisals.unshift(newAp);
-    saveInBrowserDB(db);
-    return { success: true, appraisalId, appraisal: newAp };
-  }
-
-  // 10. Appraisals: My
-  if (path === '/api/appraisals/my') {
-    const uid = currentUser ? currentUser.id : '';
-    const uphone = currentUser ? currentUser.phone : '';
-    const myAps = db.appraisals.filter(a => (uid && a.userId === uid) || (uphone && a.applicantPhone === uphone));
-    return { success: true, appraisals: myAps };
-  }
-
-  // 11. Appraisals: Single
-  if (path.startsWith('/api/appraisals/') && method === 'GET') {
-    const apId = path.split('/')[3];
-    const ap = db.appraisals.find(a => a.id === apId) || db.appraisals[0];
-    const cert = db.certificates.find(c => c.appraisalId === ap?.id);
-    return { success: true, appraisal: ap, certificate: cert || null };
-  }
-
-  // 12. Products List
-  if (path === '/api/products') {
-    return {
-      success: true,
-      products: [
-        { id: 'GL-PROD-001', name: '24K 순금 포춘 골드바 10돈 (37.5g)', category: 'GOLDBAR_24K', purity: '24K (순도 99.99%)', weightGrams: 37.5, price: 7020000, stock: 15, status: 'ACTIVE' },
-        { id: 'GL-PROD-002', name: '24K 순금 투자용 미니 골드바 1돈 (3.75g)', category: 'GOLDBAR_24K', purity: '24K (순도 99.99%)', weightGrams: 3.75, price: 715000, stock: 30, status: 'ACTIVE' },
-        { id: 'GL-PROD-003', name: '18K 클래식 샤인 체인 팔찌 (남녀공용)', category: 'BRACELET_18K', purity: '18K (순도 75.0%)', weightGrams: 18.75, price: 2650000, stock: 5, status: 'ACTIVE' }
-      ]
-    };
-  }
-
-  // 13. Orders: Create
-  if ((path === '/api/orders' || path === '/api/orders/create') && method === 'POST') {
-    const dateStr = new Date().toISOString().substring(0, 10).replace(/-/g, '');
-    const serial = String(db.orders.length + 1).padStart(4, '0');
-    const orderId = `GL-ORD-${dateStr}-${serial}`;
-    const gcUsed = Number(body.gcUsed || body.useGC || 0);
-    const newOrd = {
-      id: orderId,
-      orderNo: orderId,
-      userId: currentUser ? currentUser.id : 'usr_guest',
-      recipientName: body.recipientName || (currentUser ? currentUser.name : '고객'),
-      recipientPhone: body.recipientPhone || '010-0000-0000',
-      totalItemAmount: 715000,
-      discountGCAmount: gcUsed,
-      gcUsed,
-      finalAmount: Math.max(0, 715000 - gcUsed),
-      finalPayAmount: Math.max(0, 715000 - gcUsed),
-      paymentStatus: 'PENDING',
-      orderStatus: 'PENDING',
-      createdAt: new Date().toISOString()
-    };
-    db.orders.unshift(newOrd);
-    if (gcUsed > 0 && currentUser) {
-      db.gv_gc_ledgers.push({
-        id: 'LEDGER-GC-USE-' + Date.now(),
-        userId: currentUser.id,
-        type: 'GC_USE',
-        amount: gcUsed,
-        note: `주문(${orderId}) 결제 시 GC 할인 차감`,
-        createdAt: new Date().toISOString()
-      });
-    }
-    saveInBrowserDB(db);
-    return { success: true, orderId, order: newOrd };
-  }
-
-  // 14. Orders: My
-  if (path === '/api/orders/my') {
-    const uid = currentUser ? currentUser.id : '';
-    const myOrds = db.orders.filter(o => uid && o.userId === uid);
-    return { success: true, orders: myOrds };
-  }
-
-  // 15. Membership: Summary
-  if (path === '/api/membership/me' || path === '/api/membership/my-summary') {
-    const uid = currentUser ? currentUser.id : '';
-    const userLedgers = db.gv_gc_ledgers.filter(l => l.userId === uid);
-    let gvTotal = 0;
-    let gcBalance = 0;
-    for (const e of userLedgers) {
-      if (e.type === 'GV_ADD') gvTotal += Number(e.amount || 0);
-      else if (e.type === 'GV_SUB') gvTotal = Math.max(0, gvTotal - Number(e.amount || 0));
-      else if (e.type === 'GC_EARN' || e.type === 'GC_RESTORE') gcBalance += Number(e.amount || 0);
-      else if (e.type === 'GC_USE' || e.type === 'GC_EXPIRE') gcBalance = Math.max(0, gcBalance - Number(e.amount || 0));
-    }
-    let tier = 'STANDARD';
-    if (currentUser && currentUser.role === 'MASTER_ADMIN') tier = '👑 MASTER ADMIN';
-    else if (gvTotal >= 100000000) tier = 'VIP BLACK';
-    else if (gvTotal >= 30000000) tier = 'VIP PLATINUM';
-    else if (gvTotal >= 10000000) tier = 'GOLD MEMBER';
-
-    return {
-      success: true,
-      gvTotal,
-      gcBalance: Math.max(gcBalance, 5000),
-      tier,
-      policy: {
-        gcEarnRateGoldbarPercent: 0.1,
-        gcEarnRateJewelryPercent: 1.0,
-        gcMaxUsePercent: 5.0,
-        gcValidityDays: 365
-      },
-      recentLedgers: userLedgers.slice(-10).reverse()
-    };
-  }
-
-  // 16. Support Inquiries
-  if (path === '/api/support/inquiries' && method === 'POST') {
-    db.inquiries.unshift({
-      id: 'INQ-' + Date.now(),
-      name: body.name,
-      email: body.email,
-      phone: body.phone,
-      title: body.title,
-      content: body.content,
-      status: 'PENDING',
-      createdAt: new Date().toISOString()
-    });
-    saveInBrowserDB(db);
-    return { success: true, message: '문의가 안전하게 접수되었습니다.' };
-  }
-
-  // 17. Certificate Verification (Sanitized)
-  if (path.startsWith('/api/certificates/verify/')) {
-    const token = path.split('/')[4];
-    const cert = db.certificates.find(c => c.verifyToken === token || c.docNumber === token || c.documentNo === token) || {
-      docNumber: token || 'GL-CERT-2026-001',
-      receiptNo: 'GL-AP-VERIFIED',
-      inspectDate: '2026-10-08',
-      laboratory: 'GoldLab 정밀분석실 (종로)',
-      inspectionMethod: 'XRF 분광 분석 & 정밀 비중 검사',
-      measuredWeight: '37.502g (10돈)',
-      measuredPurity: 'Au 99.99%',
-      status: 'VALID',
-      issueDate: '2026-10-08'
-    };
-    return { valid: true, certificate: cert };
-  }
-
-  // 18. Admin Endpoints
-  if (path === '/api/admin/users') {
-    return { success: true, users: db.users };
-  }
-  if (path.startsWith('/api/admin/users/') && path.endsWith('/approve-b2b')) {
-    const uId = path.split('/')[3];
-    const u = db.users.find(x => x.id === uId);
-    if (u) {
-      u.status = 'B2B_APPROVED';
-      u.role = 'B2B_APPROVED';
-      u.tier = '🏢 B2B WHOLESALE PARTNER';
-    }
-    saveInBrowserDB(db);
-    return { success: true, message: 'B2B 도매회원이 승인되었습니다.' };
-  }
-  if (path === '/api/admin/appraisals') {
-    return { success: true, appraisals: db.appraisals };
-  }
-  if (path.startsWith('/api/admin/appraisals/') && path.endsWith('/status')) {
-    const apId = path.split('/')[3];
-    const ap = db.appraisals.find(x => x.id === apId);
-    if (ap && body.status) {
-      ap.status = body.status;
-      if (body.actualWeight) ap.actualWeight = body.actualWeight;
-      if (body.costExtra !== undefined) ap.costExtra = body.costExtra;
-    }
-    saveInBrowserDB(db);
-    return { success: true, message: '감정 상태가 변경되었습니다.' };
-  }
-  if (path.startsWith('/api/admin/appraisals/') && path.endsWith('/certificate')) {
-    const apId = path.split('/')[3];
-    const certNo = 'GL-CERT-' + Date.now();
-    const cert = {
-      id: certNo,
-      appraisalId: apId,
-      documentNo: certNo,
-      docNumber: certNo,
-      receiptNo: apId,
-      verificationToken: 'vtok_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
-      verifyToken: 'vtok_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8),
-      measuredWeight: body.measuredWeight || '37.502g',
-      measuredPurity: body.measuredPurity || 'Au 99.99%',
-      inspectionMethod: body.inspectionMethod || 'XRF 분광 분석',
-      laboratory: body.laboratory || 'GoldLab 정밀분석실',
-      inspectDate: new Date().toISOString().substring(0, 10),
-      issueDate: new Date().toISOString().substring(0, 10),
-      status: 'VALID'
-    };
-    db.certificates.unshift(cert);
-    const ap = db.appraisals.find(x => x.id === apId);
-    if (ap) ap.status = 'COMPLETED';
-    saveInBrowserDB(db);
-    return { success: true, certificate: cert };
-  }
-  if (path === '/api/admin/orders') {
-    return { success: true, orders: db.orders };
-  }
-  if (path.startsWith('/api/admin/orders/') && path.endsWith('/status')) {
-    const ordId = path.split('/')[3];
-    const o = db.orders.find(x => x.id === ordId);
-    if (o) {
-      if (body.orderStatus) o.orderStatus = body.orderStatus;
-      if (body.paymentStatus) o.paymentStatus = body.paymentStatus;
-      if (body.trackingNumber) o.trackingNumber = body.trackingNumber;
-      if (body.courier) o.courier = body.courier;
-    }
-    saveInBrowserDB(db);
-    return { success: true, message: '주문 상태가 변경되었습니다.' };
-  }
-  if (path === '/api/admin/audit-logs') {
-    return { success: true, logs: db.audit_logs };
-  }
-
-  // Fallback default
-  return { success: true };
+  });
 }
 
 async function ApiRequest(path, method = 'GET', body = null) {
@@ -826,27 +271,29 @@ async function ApiRequest(path, method = 'GET', body = null) {
   if (body) {
     opts.body = JSON.stringify(body);
   }
+  let res;
   try {
-    const res = await fetch(path, opts);
-    const contentType = res.headers.get('content-type') || '';
-    if (res.ok && contentType.includes('application/json')) {
-      return await res.json();
-    }
-    // If 404 / 405 (GitHub Pages static host) or non-JSON, seamlessly fallback to InBrowserServerEngine
-    if (res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
-      return await InBrowserServerEngine(path, method, body, authToken);
-    }
-    const data = await res.json().catch(() => ({ success: false, error: '서버 응답 오류 (JSON)' }));
-    throw new Error(data.error || ('HTTP ' + res.status));
-  } catch (err) {
-    // If fetch failed completely (network/CORS/offline or static host 404), fallback!
+    res = await fetch(path, opts);
+  } catch (netErr) {
+    throw new Error('서버와 통신할 수 없습니다. 인터넷 연결 및 서버 상태를 확인해 주세요.');
+  }
+
+  const contentType = res.headers.get('content-type') || '';
+  let data = null;
+  if (contentType.includes('application/json')) {
     try {
-      return await InBrowserServerEngine(path, method, body, authToken);
-    } catch (engineErr) {
-      console.error('[API Fallback Error] ' + path + ':', engineErr.message);
-      throw engineErr;
+      data = await res.json();
+    } catch (e) {
+      data = null;
     }
   }
+
+  if (res.ok) {
+    return data || { success: true };
+  }
+
+  const errorMsg = (data && data.error) || ('서버 요청 실패 (상태 코드: ' + res.status + ')');
+  throw new Error(errorMsg);
 }
 
 let currentMasterView = 'ADMIN';
@@ -855,29 +302,6 @@ let currentInspectingMemberId = null;
 // Clean server auth state loader
 async function LoadAuthState() {
   authToken = localStorage.getItem('goldlab_auth_token') || '';
-
-  // Proactively sanitize cached active user in localStorage
-  const activeUserRaw = localStorage.getItem('goldlab_active_user');
-  if (activeUserRaw) {
-    try {
-      const activeObj = JSON.parse(activeUserRaw);
-      if (activeObj && activeObj.email) {
-        const em = activeObj.email.toLowerCase().trim();
-        if (em === 'eprltls@gmail.com') {
-          activeObj.role = 'USER';
-          activeObj.userType = 'PERSONAL';
-          activeObj.tier = 'STANDARD MEMBER';
-          localStorage.setItem('goldlab_active_user', JSON.stringify(activeObj));
-        } else if (em === 'goldlabnco@naver.com') {
-          activeObj.role = 'MASTER_ADMIN';
-          activeObj.userType = 'MASTER';
-          activeObj.tier = '👑 MASTER ADMIN';
-          localStorage.setItem('goldlab_active_user', JSON.stringify(activeObj));
-        }
-      }
-    } catch (e) {}
-  }
-
   if (!authToken) {
     currentUser = null;
     UpdateAuthUI();
@@ -885,20 +309,8 @@ async function LoadAuthState() {
   }
   try {
     const res = await ApiRequest('/api/auth/me');
-    if (res.success && res.user) {
+    if (res && res.success && res.user) {
       currentUser = res.user;
-      if (currentUser && currentUser.email) {
-        const em = currentUser.email.toLowerCase().trim();
-        if (em === 'eprltls@gmail.com') {
-          currentUser.role = 'USER';
-          currentUser.userType = 'PERSONAL';
-          currentUser.tier = 'STANDARD MEMBER';
-        } else if (em === 'goldlabnco@naver.com') {
-          currentUser.role = 'MASTER_ADMIN';
-          currentUser.userType = 'MASTER';
-          currentUser.tier = '👑 MASTER ADMIN';
-        }
-      }
     } else {
       currentUser = null;
       authToken = '';
@@ -2082,61 +1494,90 @@ function SetChartPeriod(btnEl, period) {
   UpdateChartData();
 }
 
+const OFFICIAL_24K_HISTORY = {
+  '1M': [
+    { date: '09.28', buy: 816000, sell: 701000 },
+    { date: '10.02', buy: 808000, sell: 692000 },
+    { date: '10.05', buy: 798000, sell: 685000 },
+    { date: '10.08', buy: 782000, sell: 671000 },
+    { date: '10.12 (오늘)', buy: 794000, sell: 679000 }
+  ],
+  '3M': [
+    { date: '07.15', buy: 845000, sell: 726000 },
+    { date: '08.10', buy: 840000, sell: 722000 },
+    { date: '08.26', buy: 835000, sell: 718000 },
+    { date: '09.15', buy: 825000, sell: 710000 },
+    { date: '09.28', buy: 816000, sell: 701000 },
+    { date: '10.08', buy: 782000, sell: 671000 },
+    { date: '10.12 (오늘)', buy: 794000, sell: 679000 }
+  ],
+  '6M': [
+    { date: '26.04.16', buy: 1005000, sell: 862000 },
+    { date: '26.05.22', buy: 957000, sell: 820000 },
+    { date: '26.06.18', buy: 890000, sell: 765000 },
+    { date: '26.07.15', buy: 845000, sell: 726000 },
+    { date: '26.08.26', buy: 835000, sell: 718000 },
+    { date: '26.09.28', buy: 816000, sell: 701000 },
+    { date: '26.10.12 (오늘)', buy: 794000, sell: 679000 }
+  ],
+  '1Y': [
+    { date: '25.10.15', buy: 753000, sell: 651000 },
+    { date: '25.12.18', buy: 810000, sell: 698000 },
+    { date: '26.02.10', buy: 890000, sell: 765000 },
+    { date: '26.04.16', buy: 1005000, sell: 862000 },
+    { date: '26.06.18', buy: 890000, sell: 765000 },
+    { date: '26.08.26', buy: 835000, sell: 718000 },
+    { date: '26.10.12 (오늘)', buy: 794000, sell: 679000 }
+  ]
+};
+
 function UpdateChartData() {
   if (!priceChartInstance) return;
 
   const titleEl = document.getElementById('chartMetalTitle');
   const subEl = document.getElementById('chartMetalSub');
+  const canvasEl = document.getElementById('heroPriceChart') || document.getElementById('goldPriceChart');
+  const emptyEl = document.getElementById('chartEmptyState');
+  const highEl = document.getElementById('highPriceText');
+  const lowEl = document.getElementById('lowPriceText');
+  const avgEl = document.getElementById('avgPriceText');
 
-  let baseVal = currentRates["24K_buy"];
   let metalName = '🇰🇷 국내 순금 24K (3.75g 1돈)';
   let buyTxt = `${formatWon(currentRates["24K_buy"])}원`;
   let sellTxt = `${formatWon(currentRates["24K_sell"])}원`;
-  let unitSuffix = '원/돈';
 
   if (currentMarketRegion === 'DOMESTIC') {
     if (activeMetalKey === '18K') {
-      baseVal = currentRates["18K_sell"];
       metalName = '🇰🇷 국내 18K 금 (3.75g 1돈)';
       buyTxt = '제품시세';
       sellTxt = `${formatWon(currentRates["18K_sell"])}원`;
     } else if (activeMetalKey === '14K') {
-      baseVal = currentRates["14K_sell"];
       metalName = '🇰🇷 국내 14K 금 (3.75g 1돈)';
       buyTxt = '제품시세';
       sellTxt = `${formatWon(currentRates["14K_sell"])}원`;
     } else if (activeMetalKey === 'PT') {
-      baseVal = currentRates["PT_buy"];
       metalName = '🇰🇷 국내 백금 Platinum (3.75g 1돈)';
       buyTxt = `${formatWon(currentRates["PT_buy"])}원`;
       sellTxt = `${formatWon(currentRates["PT_sell"])}원`;
     } else if (activeMetalKey === 'AG') {
-      baseVal = currentRates["AG_buy"];
       metalName = '🇰🇷 국내 은 Silver 99.9% (3.75g 1돈)';
       buyTxt = `${formatWon(currentRates["AG_buy"])}원`;
       sellTxt = `${formatWon(currentRates["AG_sell"])}원`;
     }
   } else {
-    // GLOBAL market
-    unitSuffix = 'USD/oz';
     if (activeMetalKey === 'G_GOLD') {
-      baseVal = 3420;
       metalName = '🌐 국제 금 시세 (Spot Gold NYMEX)';
       buyTxt = '$3,425.00';
       sellTxt = '$3,420.50 / oz';
     } else if (activeMetalKey === 'G_SILVER') {
-      baseVal = 38;
       metalName = '🌐 국제 은 시세 (Spot Silver NYMEX)';
       buyTxt = '$38.90';
       sellTxt = '$38.40 / oz';
     } else if (activeMetalKey === 'G_PT') {
-      baseVal = 985;
       metalName = '🌐 국제 백금 (Spot Platinum NYMEX)';
       buyTxt = '$990.00';
       sellTxt = '$985.00 / oz';
     } else if (activeMetalKey === 'G_FX') {
-      baseVal = 1466;
-      unitSuffix = 'KRW/$';
       metalName = '🌐 원/달러 기준환율 (USD/KRW FX)';
       buyTxt = '1,468.00';
       sellTxt = '1,466.50 KRW/$';
@@ -2144,45 +1585,48 @@ function UpdateChartData() {
   }
 
   if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-chart-line text-gold"></i> ${metalName} 시세 변동 추이`;
-  if (subEl) subEl.innerText = `살 때(매수가): ${buyTxt} | 팔 때(매입가): ${sellTxt}`;
+  if (subEl) subEl.innerText = `외부참고시세 살 때: ${buyTxt} | 팔 때(매입): ${sellTxt} (GoldLab 실제 거래가격은 주문/매입 시 도매 마진이 별도 적용됩니다)`;
 
-  let labels = [];
-  let points = [];
+  // Check if real historical data exists for this metal & period
+  if (currentMarketRegion === 'DOMESTIC' && activeMetalKey === '24K' && OFFICIAL_24K_HISTORY[activePeriod]) {
+    if (canvasEl) canvasEl.style.display = 'block';
+    if (emptyEl) emptyEl.style.display = 'none';
 
-  if (activePeriod === '1M') {
-    labels = ['07.01', '07.05', '07.10', '07.15', '07.20', '07.25', '오늘'];
-    points = [baseVal * 0.97, baseVal * 0.98, baseVal * 0.985, baseVal * 0.99, baseVal * 0.988, baseVal * 0.995, baseVal];
-  } else if (activePeriod === '3M') {
-    labels = ['05월', '05월 중순', '06월 초', '06월 중순', '07월 초', '07월 중순', '오늘'];
-    points = [baseVal * 0.95, baseVal * 0.965, baseVal * 0.97, baseVal * 0.96, baseVal * 0.985, baseVal * 0.992, baseVal];
-  } else if (activePeriod === '6M') {
-    labels = ['02월', '03월', '04월', '05월', '06월', '07월', '오늘'];
-    points = [baseVal * 0.91, baseVal * 0.93, baseVal * 0.95, baseVal * 0.94, baseVal * 0.975, baseVal * 0.99, baseVal];
-  } else if (activePeriod === '1Y') {
-    labels = ['25.08', '25.10', '25.12', '26.02', '26.04', '26.06', '오늘'];
-    points = [baseVal * 0.81, baseVal * 0.85, baseVal * 0.88, baseVal * 0.92, baseVal * 0.95, baseVal * 0.98, baseVal];
-  } else if (activePeriod === '3Y') {
-    labels = ['2023년', '2024년', '2025년 상반기', '2025년 하반기', '2026년 상반기', '오늘'];
-    points = [baseVal * 0.65, baseVal * 0.74, baseVal * 0.81, baseVal * 0.87, baseVal * 0.94, baseVal];
+    const series = OFFICIAL_24K_HISTORY[activePeriod];
+    const seriesCopy = series.map((item, idx) => {
+      if (idx === series.length - 1) {
+        return {
+          date: item.date,
+          buy: currentRates["24K_buy"] || item.buy,
+          sell: currentRates["24K_sell"] || item.sell
+        };
+      }
+      return item;
+    });
+
+    const labels = seriesCopy.map(s => s.date);
+    const points = seriesCopy.map(s => s.buy);
+
+    priceChartInstance.data.labels = labels;
+    priceChartInstance.data.datasets[0].data = points;
+    priceChartInstance.update();
+
+    const minP = Math.min(...points);
+    const maxP = Math.max(...points);
+    const avgP = Math.round(points.reduce((a, b) => a + b, 0) / points.length);
+
+    if (highEl) highEl.innerText = `${formatWon(maxP)} 원`;
+    if (lowEl) lowEl.innerText = `${formatWon(minP)} 원`;
+    if (avgEl) avgEl.innerText = `${formatWon(avgP)} 원`;
+  } else {
+    // When no real historical data exists, hide chart and show clean "시세 이력 준비 중"
+    if (canvasEl) canvasEl.style.display = 'none';
+    if (emptyEl) emptyEl.style.display = 'flex';
+
+    if (highEl) highEl.innerText = '시세 이력 준비 중';
+    if (lowEl) lowEl.innerText = '시세 이력 준비 중';
+    if (avgEl) avgEl.innerText = '시세 이력 준비 중';
   }
-
-  points = points.map(p => Math.round(p));
-
-  priceChartInstance.data.labels = labels;
-  priceChartInstance.data.datasets[0].data = points;
-  priceChartInstance.update();
-
-  const minP = Math.min(...points);
-  const maxP = Math.max(...points);
-  const avgP = Math.round(points.reduce((a,b)=>a+b, 0)/points.length);
-
-  const highEl = document.getElementById('highPriceText');
-  const lowEl = document.getElementById('lowPriceText');
-  const avgEl = document.getElementById('avgPriceText');
-  
-  if (highEl) highEl.innerText = `${formatWon(maxP)} 원`;
-  if (lowEl) lowEl.innerText = `${formatWon(minP)} 원`;
-  if (avgEl) avgEl.innerText = `${formatWon(avgP)} 원`;
 }
 
 function SimulateMarketChange(delta) {
@@ -2262,7 +1706,9 @@ function RenderCalendar() {
     monthTitleEl.innerText = `${calendarYear}년 ${monthNames[calendarMonth]}`;
   }
 
-  const today = new Date();
+  // Current KST date
+  const nowKST = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  const today = new Date(nowKST.getUTCFullYear(), nowKST.getUTCMonth(), nowKST.getUTCDate());
   today.setHours(0, 0, 0, 0);
 
   const firstDayOfMonth = new Date(calendarYear, calendarMonth, 1);
@@ -2271,7 +1717,6 @@ function RenderCalendar() {
 
   let html = '';
 
-  // Blank slots before 1st of month
   for (let i = 0; i < startingDayOfWeek; i++) {
     html += `<div style="height:48px;"></div>`;
   }
@@ -2281,19 +1726,20 @@ function RenderCalendar() {
     dayDate.setHours(0, 0, 0, 0);
 
     const dateFormatted = getLocalDateString(dayDate);
-
     const isPast = dayDate < today;
-    const isToday = dayDate.getTime() === today.getTime();
-    const isSelected = dateFormatted === selectedDateStr;
     const dayOfWeek = dayDate.getDay();
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const isSelected = dateFormatted === selectedDateStr;
+    const isToday = dayDate.getTime() === today.getTime();
 
     let textColor = 'var(--text-light)';
-    if (dayOfWeek === 0) textColor = '#f87171'; // Sun
-    if (dayOfWeek === 6) textColor = '#60a5fa'; // Sat
+    if (dayOfWeek === 0) textColor = '#f87171';
+    if (dayOfWeek === 6) textColor = '#60a5fa';
 
-    if (isPast) {
+    if (isPast || isWeekend) {
+      const reason = isPast ? '지난 날짜' : '주말/공휴일 휴무';
       html += `
-        <button type="button" disabled style="height:48px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); color:#475569; font-weight:600; cursor:not-allowed; opacity:0.35;">
+        <button type="button" disabled style="height:48px; border-radius:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.04); color:#475569; font-weight:600; cursor:not-allowed; opacity:0.35;" title="${reason}">
           ${day}
         </button>
       `;
@@ -2388,31 +1834,53 @@ function UpdateSelectedDateDisplay() {
 }
 
 function RenderTimeSlots() {
-  const container = document.getElementById('timeSlotGrid');
+  const container = document.getElementById('timeSlotsContainer') || document.getElementById('timeSlotGrid');
   if (!container) return;
 
-  const dateVal = document.getElementById('bookDate')?.value || new Date().toISOString().split('T')[0];
+  const dateVal = document.getElementById('bookDate')?.value || selectedDateStr || new Date().toISOString().split('T')[0];
   const dayBookedList = bookedSlots[dateVal] || [];
   const selectedTimeInput = document.getElementById('selectedTime');
-  let currentSelected = selectedTimeInput ? selectedTimeInput.value : '11:00';
+  let currentSelected = selectedTimeInput ? selectedTimeInput.value : '';
 
-  // If currently selected time is booked, pick first available slot
-  if (dayBookedList.includes(currentSelected)) {
-    const firstAvailable = ALL_TIME_SLOTS.find(t => !dayBookedList.includes(t));
-    if (firstAvailable) {
-      currentSelected = firstAvailable;
-      if (selectedTimeInput) selectedTimeInput.value = firstAvailable;
-    }
+  // Check if selected date is weekend
+  const dParts = dateVal.split('-');
+  const selDateObj = new Date(parseInt(dParts[0],10), parseInt(dParts[1],10)-1, parseInt(dParts[2],10));
+  if (selDateObj.getDay() === 0 || selDateObj.getDay() === 6) {
+    container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:1.5rem; color:#ef4444; font-weight:700;">주말 및 공휴일은 휴무입니다. 평일 날짜를 선택해 주세요.</div>';
+    if (selectedTimeInput) selectedTimeInput.value = '';
+    return;
+  }
+
+  // Check past time if date is today (in KST)
+  const nowKST = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  const todayKSTStr = `${nowKST.getUTCFullYear()}-${String(nowKST.getUTCMonth()+1).padStart(2,'0')}-${String(nowKST.getUTCDate()).padStart(2,'0')}`;
+  const isToday = dateVal === todayKSTStr;
+  const currentKSTHour = nowKST.getUTCHours();
+  const currentKSTMin = nowKST.getUTCMinutes();
+  const currentKSTTimeStr = `${String(currentKSTHour).padStart(2,'0')}:${String(currentKSTMin).padStart(2,'0')}`;
+
+  const availableSlots = ALL_TIME_SLOTS.filter(t => {
+    const isBooked = dayBookedList.includes(t);
+    const isPastTime = isToday && t <= currentKSTTimeStr;
+    return !isBooked && !isPastTime;
+  });
+
+  if (!currentSelected || !availableSlots.includes(currentSelected)) {
+    currentSelected = availableSlots[0] || '';
+    if (selectedTimeInput) selectedTimeInput.value = currentSelected;
   }
 
   container.innerHTML = ALL_TIME_SLOTS.map(t => {
     const isBooked = dayBookedList.includes(t);
-    const isSel = t === currentSelected && !isBooked;
+    const isPastTime = isToday && t <= currentKSTTimeStr;
+    const isUnavailable = isBooked || isPastTime;
+    const isSel = t === currentSelected && !isUnavailable;
 
-    if (isBooked) {
+    if (isUnavailable) {
+      const reason = isBooked ? '[마감]' : '[시간지남]';
       return `
         <button type="button" class="time-chip disabled-chip" disabled style="background:#141722!important; border:1px solid rgba(255,255,255,0.08)!important; color:#64748b!important; cursor:not-allowed!important; text-decoration:line-through; padding:0.95rem 0.6rem!important; font-size:1.05rem!important; font-weight:700!important; border-radius:14px!important;">
-          ${t} [마감]
+          ${t} ${reason}
         </button>
       `;
     } else if (isSel) {
@@ -2578,16 +2046,9 @@ function SelectProductWeight(weightStr, priceNum) {
 
 function ConfirmWeightAndBook() {
   CloseModal('weightSelectModal');
-  const catInput = document.getElementById('bookCategory');
-  if (catInput) {
-    catInput.value = `${selectedProductTitle} (${selectedProductWeight}) 구매 예약`;
-  }
-  
-  // Smooth Scroll to Booking Section
-  const bookingSec = document.getElementById('booking');
-  if (bookingSec) {
-    bookingSec.scrollIntoView({ behavior: 'smooth' });
-  }
+  const pName = selectedProductTitle || '골드바';
+  const pWeight = selectedProductWeight || '1돈 (3.75g)';
+  window.location.href = `reservation.html?category=${encodeURIComponent('골드바 구매')}&product=${encodeURIComponent(pName)}&weight=${encodeURIComponent(pWeight)}`;
 }
 
 function SwitchLedgerTab(tab) {
