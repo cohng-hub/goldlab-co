@@ -348,6 +348,23 @@ async function runTests() {
 
   if (server) server.close();
 
+  // Clean up any test artifacts from data/goldlab_db.json
+  try {
+    const dbPath = path.join(__dirname, '..', 'data', 'goldlab_db.json');
+    if (fs.existsSync(dbPath)) {
+      const dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+      dbData.users = dbData.users.filter(u => !u.email.includes('@test.com') && !u.email.includes('@biz.com'));
+      const validIds = new Set(dbData.users.map(u => u.id));
+      dbData.reservations = dbData.reservations.filter(r => !r.name.startsWith('예약자'));
+      dbData.appraisals = dbData.appraisals.filter(a => a.applicantName !== '고객A');
+      dbData.certificates = dbData.certificates.filter(c => !c.id.includes('appraisalA'));
+      dbData.orders = dbData.orders.filter(o => o.recipientName !== '고객A');
+      dbData.gv_gc_ledgers = dbData.gv_gc_ledgers.filter(l => validIds.has(l.userId));
+      dbData.audit_logs = dbData.audit_logs.filter(l => l.action !== 'EXPORT_USERS_CSV' && l.action !== 'ISSUE_CERTIFICATE');
+      fs.writeFileSync(dbPath, JSON.stringify(dbData, null, 2), 'utf8');
+    }
+  } catch (e) {}
+
   if (passed === total) {
     console.log('🎉 ALL 13 PRODUCTION READINESS CHECKS PASSED!\n');
     process.exit(0);

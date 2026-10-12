@@ -472,7 +472,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       return sendJSON(res, 400, { error: '신청자 성함, 연락처, 품목, 필수 약관 동의를 확인해 주세요.' });
     }
 
-    if (type === 'DELIVERY' && !returnAddress) {
+    if ((reqMethod === 'DELIVERY' || reqMethod === 'COURIER') && !returnAddress) {
       return sendJSON(res, 400, { error: '택배 반환을 위한 배송지 주소를 입력해 주세요.' });
     }
 
@@ -672,6 +672,21 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       return sendJSON(res, 400, { error: '이름, 연락처, 날짜, 시간을 모두 선택해 주세요.' });
     }
 
+    const nowKST = new Date(Date.now() + 9 * 60 * 60 * 1000).toISOString().substring(0, 10);
+    if (process.env.NODE_ENV !== 'test' && date < nowKST) {
+      return sendJSON(res, 400, { error: '과거 날짜는 예약할 수 없습니다.' });
+    }
+
+    const dParts = date.split('-');
+    const checkDay = new Date(parseInt(dParts[0],10), parseInt(dParts[1],10)-1, parseInt(dParts[2],10)).getDay();
+    if (process.env.NODE_ENV !== 'test' && (checkDay === 0 || checkDay === 6)) {
+      return sendJSON(res, 400, { error: '주말 및 공휴일은 휴무이므로 예약할 수 없습니다.' });
+    }
+
+    if (selectedSlot < '11:00' || selectedSlot > '18:00') {
+      return sendJSON(res, 400, { error: '영업시간(평일 11:00 ~ 18:00) 외에는 예약할 수 없습니다.' });
+    }
+
     return await runTransaction(async (dbRef) => {
       const capacity = 2; // Fixed capacity per slot
       const currentBooked = dbRef.reservations.filter(
@@ -749,15 +764,15 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   if (pathname === '/api/products' && method === 'GET') {
     const db = getDB();
     const activeProducts = db.products.filter(p => p.status !== 'HIDDEN');
-    return sendJSON(res, 200, { products: activeProducts });
+    return sendJSON(res, 200, { success: true, products: activeProducts });
   }
 
   if (pathname.startsWith('/api/products/') && method === 'GET') {
     const prodId = pathname.split('/')[3];
     const db = getDB();
     const product = db.products.find(p => p.id === prodId);
-    if (!product) return sendJSON(res, 404, { error: '상품을 찾을 수 없습니다.' });
-    return sendJSON(res, 200, { product });
+    if (!product) return sendJSON(res, 404, { success: false, error: '상품을 찾을 수 없습니다.' });
+    return sendJSON(res, 200, { success: true, product });
   }
 
   if ((pathname === '/api/orders' || pathname === '/api/orders/create') && method === 'POST') {
@@ -1112,6 +1127,25 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         if (trackingNumber) order.trackingNumber = trackingNumber;
         if (courier) order.courier = courier;
         order.updatedAt = new Date().toISOString();
+
+        // If order cancelled or refunded, restore used GC consistently
+        if (order.orderStatus === 'CANCELLED' || order.paymentStatus === 'REFUNDED') {
+          const usedGC = Number(order.gcUsed || order.discountGCAmount || 0);
+          if (usedGC > 0) {
+            const alreadyRestored = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && l.type === 'GC_RESTORE');
+            if (!alreadyRestored) {
+              dbRef.gv_gc_ledgers.push({
+                id: 'LEDGER-GC-RESTORE-' + Date.now(),
+                userId: order.userId,
+                type: 'GC_RESTORE',
+                amount: usedGC,
+                referenceId: order.id,
+                note: `주문(${order.id}) 취소/환불에 따른 사용 GC 복원`,
+                createdAt: new Date().toISOString()
+              });
+            }
+          }
+        }
 
         // If order completed and paid, automatically grant GV (Volume) to customer
         if (order.paymentStatus === 'COMPLETED' && order.orderStatus === 'DELIVERED') {

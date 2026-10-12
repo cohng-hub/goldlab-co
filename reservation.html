@@ -7,7 +7,7 @@
   <meta name="description" content="GoldLab & Co. 종로 본점 방문예약. 실시간 시간대별 정원 예약, 골드바 구매 및 고금 매입 1:1 VIP 상담">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261008_v4">
+  <link rel="stylesheet" href="style.css?v=20261012_v1">
 </head>
 <body>
 
@@ -115,7 +115,7 @@
           <div class="form-group" style="margin-bottom:1.2rem;">
             <label class="form-label">상담 목적 *</label>
             <select class="form-control" id="bookCategory" required>
-              <option value="고금 매입 상담">고금(14K/18K/24K) 최고가 매입 상담</option>
+              <option value="고금 매입 상담">고금(14K/18K/24K) 전문 매입 우대 상담</option>
               <option value="골드바 구매">24K 순금 골드바 현물 구매</option>
               <option value="정밀 감정대행">귀금속 정밀 시험 감정대행 입회</option>
               <option value="B2B 도매 제휴">B2B 도매 파트너십 및 원자재 상담</option>
@@ -186,6 +186,43 @@
     <p>© 2026 GoldLab & Co. All Rights Reserved. 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 대표전화 010-4017-4988</p>
   </footer>
 
-  <script src="app.js?v=20261008_v4"></script>
+  <script src="app.js?v=20261012_v1"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('category');
+      const prod = params.get('product');
+      const weight = params.get('weight') || params.get('spec');
+
+      if (cat) {
+        const catEl = document.getElementById('bookCategory');
+        if (catEl) {
+          if (cat === 'GOLDBAR_PURCHASE' || cat.includes('골드바')) {
+            catEl.value = '골드바 구매';
+          } else if (cat.includes('고금')) {
+            catEl.value = '고금 매입 상담';
+          } else if (cat.includes('감정')) {
+            catEl.value = '정밀 감정대행';
+          }
+        }
+      }
+      if (prod || weight) {
+        const memoEl = document.getElementById('bookMemo');
+        if (memoEl) {
+          const detail = [prod, weight].filter(Boolean).join(' ');
+          memoEl.value = `[사전 선택 규격] ${detail} 현장 확인 및 구매/상담 희망`;
+        }
+      }
+
+      setTimeout(() => {
+        if (typeof currentUser !== 'undefined' && currentUser) {
+          const nameEl = document.getElementById('bookName');
+          const phoneEl = document.getElementById('bookPhone');
+          if (nameEl && !nameEl.value && currentUser.name) nameEl.value = currentUser.name;
+          if (phoneEl && !phoneEl.value && currentUser.phone) phoneEl.value = currentUser.phone;
+        }
+      }, 300);
+    });
+  </script>
 </body>
 </html>

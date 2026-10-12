@@ -7,7 +7,7 @@
   <meta name="description" content="GoldLab & Co. 실시간 방송 특가 주얼리 및 골드바 라이브 쇼핑 모바일 전용관">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261008_v4">
+  <link rel="stylesheet" href="style.css?v=20261012_v1">
   <style>
     .live-hero-card {
       background: #12141d;
@@ -48,7 +48,7 @@
         <span style="font-size:1.45rem; font-weight:900;">GoldLab<span class="gradient-text">&Co.</span></span>
       </a>
       <div style="display:flex; align-items:center; gap:0.6rem;">
-        <span class="live-indicator"><i class="fa-solid fa-tower-broadcast"></i> LIVE ON</span>
+        <span class="live-indicator" style="background:#334155; animation:none;"><i class="fa-solid fa-video"></i> 라이브 방송 준비 중</span>
         <a href="mypage.html" style="color:var(--gold-light); font-size:1.1rem; padding:0.3rem;"><i class="fa-solid fa-user"></i></a>
       </div>
     </div>
@@ -80,7 +80,7 @@
       <div style="margin-bottom:1.2rem;">
         <div style="color:var(--text-muted); font-size:0.82rem;">제품번호: <strong class="text-gold" id="featuredProdId">GL-P02</strong></div>
         <h2 style="color:var(--text-white); font-size:1.45rem; font-weight:900; margin:0.3rem 0;" id="featuredProdName">18K 클래식 체인 팔찌</h2>
-        <p style="color:var(--text-muted); font-size:0.9rem;" id="featuredProdDesc">종로 장인 수작업 핸드메이드 체인 · 남녀 공용 클래식 럭셔리 라인</p>
+        <p style="color:var(--text-muted); font-size:0.9rem;" id="featuredProdDesc">18K (금 함량 75.0% 보증) · 남녀 공용 클래식 럭셔리 라인</p>
       </div>
 
       <div style="background:#090b10; border-radius:14px; padding:1rem; margin-bottom:1.2rem; display:flex; justify-content:space-between; align-items:baseline;">
@@ -92,8 +92,8 @@
         <a href="products.html" class="btn btn-gold" style="flex:2; padding:0.9rem; text-align:center; font-weight:900; font-size:1.02rem;">
           <i class="fa-solid fa-bolt"></i> 바로 주문하기
         </a>
-        <a href="https://pf.kakao.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold" style="flex:1; padding:0.9rem; text-align:center; font-weight:800; font-size:0.9rem;">
-          <i class="fa-solid fa-comment"></i> 상담톡
+        <a href="tel:01040174988" class="btn btn-outline-gold" style="flex:1; padding:0.9rem; text-align:center; font-weight:800; font-size:0.9rem;">
+          <i class="fa-solid fa-phone"></i> 전화 상담
         </a>
       </div>
     </div>
@@ -135,22 +135,47 @@
 
   <footer style="background:#06070a; border-top:1px solid var(--border-dark); padding:2rem 1.2rem; text-align:center; font-size:0.82rem; color:var(--text-muted); max-width:540px; margin:0 auto;">
     <p>GoldLab & Co. 종로 본점 010-4017-4988</p>
-    <p style="margin-top:0.3rem;">시세 연동 방송 특가 · 순도 99.99% 보증 · 안전 에스크로 상담</p>
+    <p style="margin-top:0.3rem;">실시간 시세 연동 · 18K(75.0%) / 24K(99.99%) 상품별 정품 보증 · 전화 상담 (010-4017-4988)</p>
   </footer>
 
-  <script src="app.js?v=20261008_v4"></script>
+  <script src="app.js?v=20261012_v1"></script>
   <script>
     let liveProducts = [];
 
     document.addEventListener('DOMContentLoaded', async () => {
+      const stockBadge = document.getElementById('featuredStockBadge');
       try {
-        const res = await fetch('/api/products');
-        const data = await res.json();
-        if (data.success && data.products) {
-          liveProducts = data.products;
+        const res = await ApiRequest('/api/products');
+        if (res && res.success && res.products && res.products.length > 0) {
+          liveProducts = res.products;
           RenderLiveList(liveProducts);
+
+          // Wire featured product with real data
+          const featured = liveProducts.find(p => p.id === 'GL-PROD-003') || liveProducts[0];
+          if (featured) {
+            document.getElementById('featuredProdId').innerText = featured.id;
+            document.getElementById('featuredProdName').innerText = featured.name;
+            const purityText = featured.purity ? `${featured.purity} 정품 보증` : '공인 보증';
+            document.getElementById('featuredProdDesc').innerText = `${purityText} · 실측 중량 ${featured.weightGrams || ''}g`;
+            document.getElementById('featuredProdPrice').innerText = `${(featured.price || 0).toLocaleString('ko-KR')}원`;
+            if (stockBadge) {
+              stockBadge.innerHTML = featured.stock > 0 
+                ? '<span style="color:#10b981;"><i class="fa-solid fa-check"></i> 주문 가능</span>'
+                : '<span style="color:#ef4444;">일시 품절</span>';
+            }
+          }
+        } else {
+          throw new Error('상품 목록을 불러올 수 없습니다.');
         }
-      } catch (e) {}
+      } catch (e) {
+        if (stockBadge) {
+          stockBadge.innerHTML = '<span style="color:#f59e0b;"><i class="fa-solid fa-triangle-exclamation"></i> 상품 정보 확인 중</span>';
+        }
+        const container = document.getElementById('liveProductList');
+        if (container) {
+          container.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--text-muted);">상품 목록을 불러오는 중 통신 오류가 발생했습니다.<br><a href="tel:01040174988" style="color:var(--gold-light); margin-top:0.6rem; display:inline-block;"><i class="fa-solid fa-phone"></i> 전화 문의 (010-4017-4988)</a></div>';
+        }
+      }
     });
 
     function RenderLiveList(products) {
@@ -158,12 +183,14 @@
       if (!container) return;
 
       container.innerHTML = products.map(p => {
+        const price = p.price || p.basePrice || 0;
+        const purityBadge = p.purity ? `<span style="background:rgba(224,184,72,0.1); color:var(--gold-light); padding:0.15rem 0.5rem; border-radius:6px; font-size:0.75rem; margin-left:0.4rem;">${p.purity}</span>` : '';
         return `
           <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:16px; padding:1.1rem; display:flex; justify-content:space-between; align-items:center;">
             <div style="flex:1;">
-              <span style="font-size:0.75rem; color:var(--gold-light); font-weight:800;">[${p.id}] ${p.category}</span>
+              <div style="font-size:0.75rem; color:var(--gold-light); font-weight:800;">[${p.id}] ${p.category} ${purityBadge}</div>
               <h4 style="color:var(--text-white); font-size:1.05rem; font-weight:800; margin:0.2rem 0;">${p.name}</h4>
-              <span style="color:var(--gold-light); font-weight:800; font-family:var(--font-num); font-size:1.1rem;">${p.basePrice.toLocaleString('ko-KR')}원</span>
+              <span style="color:var(--gold-light); font-weight:800; font-family:var(--font-num); font-size:1.1rem;">${price.toLocaleString('ko-KR')}원</span>
             </div>
             <a href="products.html" class="btn btn-outline-gold btn-sm" style="white-space:nowrap; padding:0.5rem 0.9rem;">
               주문하기
