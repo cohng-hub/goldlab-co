@@ -56,6 +56,15 @@ async function runTests() {
   console.log('🚀 GoldLab & Co. Production Verification Test Suite');
   console.log('======================================================\n');
 
+  try {
+    const dbPath = path.join(__dirname, '..', 'data', 'goldlab_db.json');
+    if (fs.existsSync(dbPath)) {
+      const dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
+      const p = dbData.products.find(x => x.id === 'GL-PROD-002');
+      if (p) { p.stock = 10; fs.writeFileSync(dbPath, JSON.stringify(dbData, null, 2), 'utf8'); }
+    }
+  } catch (e) {}
+
   let passed = 0;
   let total = 0;
 
@@ -510,14 +519,19 @@ async function runTests() {
     const dbPath = path.join(__dirname, '..', 'data', 'goldlab_db.json');
     if (fs.existsSync(dbPath)) {
       const dbData = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
-      dbData.users = dbData.users.filter(u => !u.email.includes('@test.com') && !u.email.includes('@biz.com'));
-      const validIds = new Set(dbData.users.map(u => u.id));
+      const validUsers = dbData.users.filter(u => !u.email.includes('@test.com') && !u.email.includes('@biz.com'));
+      const validIds = new Set(validUsers.map(u => u.id));
+      dbData.users = validUsers;
+      dbData.sessions = dbData.sessions.filter(s => validIds.has(s.userId));
       dbData.reservations = dbData.reservations.filter(r => !r.name.startsWith('예약자'));
       dbData.appraisals = dbData.appraisals.filter(a => a.applicantName !== '고객A');
-      dbData.certificates = dbData.certificates.filter(c => !c.id.includes('appraisalA'));
-      dbData.orders = dbData.orders.filter(o => o.recipientName !== '고객A');
+      const validApIds = new Set(dbData.appraisals.map(a => a.id));
+      dbData.certificates = dbData.certificates.filter(c => validApIds.has(c.appraisalId));
+      dbData.orders = dbData.orders.filter(o => validIds.has(o.userId));
       dbData.gv_gc_ledgers = dbData.gv_gc_ledgers.filter(l => validIds.has(l.userId));
-      dbData.audit_logs = dbData.audit_logs.filter(l => l.action !== 'EXPORT_USERS_CSV' && l.action !== 'ISSUE_CERTIFICATE');
+      dbData.audit_logs = dbData.audit_logs.filter(l => l.action !== 'EXPORT_USERS_CSV' && l.action !== 'ISSUE_CERTIFICATE' && l.action !== 'UPDATE_ORDER');
+      const p2 = dbData.products.find(p => p.id === 'GL-PROD-002');
+      if (p2) p2.stock = 6;
       fs.writeFileSync(dbPath, JSON.stringify(dbData, null, 2), 'utf8');
     }
   } catch (e) {}

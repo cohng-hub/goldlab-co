@@ -125,7 +125,7 @@ function getDefaultDBSchema() {
         companyName: '골드랩 (GoldLab&co)',
         ceo: '황미숙',
         bizNo: '101-86-77777', // 예시 등록
-        mailOrderNo: '제 20205-서울종로-XXXX 호 (원본 신고증 확인 대상 항목)',
+        mailOrderNo: '제 2025-서울은평-1081 호',
         address: '서울특별시 종로구 돈화문로 12길',
         tel: '02-765-8888',
         csEmail: 'cs@goldlabnco.com'
