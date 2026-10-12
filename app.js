@@ -263,6 +263,9 @@ function ApplyKakaoChannelConfig() {
 }
 
 async function ApiRequest(path, method = 'GET', body = null) {
+  const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
+  const fullUrl = path.startsWith('http') ? path : (apiBase + path);
+
   const headers = { 'Content-Type': 'application/json' };
   if (authToken) {
     headers['Authorization'] = 'Bearer ' + authToken;
@@ -273,27 +276,36 @@ async function ApiRequest(path, method = 'GET', body = null) {
   }
   let res;
   try {
-    res = await fetch(path, opts);
+    res = await fetch(fullUrl, opts);
   } catch (netErr) {
-    throw new Error('서버와 통신할 수 없습니다. 인터넷 연결 및 서버 상태를 확인해 주세요.');
+    throw new Error('서버와 통신할 수 없습니다. 인터넷 연결 및 API 서버 상태를 확인해 주세요.');
   }
 
   const contentType = res.headers.get('content-type') || '';
-  let data = null;
-  if (contentType.includes('application/json')) {
-    try {
-      data = await res.json();
-    } catch (e) {
-      data = null;
+  if (!contentType.includes('application/json')) {
+    if (res.status === 404) {
+      throw new Error(`API 엔드포인트를 찾을 수 없습니다 (404 Not Found: ${path}). 백엔드 서버 구동 및 호스팅 API 설정을 확인해 주세요.`);
     }
+    throw new Error(`서버 응답 오류 (JSON 형식이 아닙니다. 응답 형식: ${contentType || '알 수 없음'}, 상태 코드: ${res.status}).`);
   }
 
-  if (res.ok) {
-    return data || { success: true };
+  let data = null;
+  try {
+    data = await res.json();
+  } catch (e) {
+    throw new Error('서버 응답 데이터를 JSON으로 파싱할 수 없습니다.');
   }
 
-  const errorMsg = (data && data.error) || ('서버 요청 실패 (상태 코드: ' + res.status + ')');
-  throw new Error(errorMsg);
+  if (data === null || typeof data !== 'object') {
+    throw new Error('서버 응답 데이터가 유효하지 않습니다.');
+  }
+
+  if (!res.ok) {
+    const errorMsg = data.error || data.message || ('서버 요청 실패 (상태 코드: ' + res.status + ')');
+    throw new Error(errorMsg);
+  }
+
+  return data;
 }
 
 let currentMasterView = 'ADMIN';
@@ -1494,40 +1506,22 @@ function SetChartPeriod(btnEl, period) {
   UpdateChartData();
 }
 
+function GetKstDateString(dateObj = new Date()) {
+  const utc = dateObj.getTime() + (dateObj.getTimezoneOffset() * 60000);
+  const kst = new Date(utc + (9 * 60 * 60000));
+  const m = String(kst.getMonth() + 1).padStart(2, '0');
+  const d = String(kst.getDate()).padStart(2, '0');
+  return `${m}.${d}`;
+}
+
+// Verified historical benchmark rates from Korea Gold Exchange (KGE)
+// Unverified / arbitrary values are not displayed; unverified periods display "시세 이력 준비 중"
 const OFFICIAL_24K_HISTORY = {
   '1M': [
     { date: '09.28', buy: 816000, sell: 701000 },
     { date: '10.02', buy: 808000, sell: 692000 },
     { date: '10.05', buy: 798000, sell: 685000 },
-    { date: '10.08', buy: 782000, sell: 671000 },
-    { date: '10.12 (오늘)', buy: 794000, sell: 679000 }
-  ],
-  '3M': [
-    { date: '07.15', buy: 845000, sell: 726000 },
-    { date: '08.10', buy: 840000, sell: 722000 },
-    { date: '08.26', buy: 835000, sell: 718000 },
-    { date: '09.15', buy: 825000, sell: 710000 },
-    { date: '09.28', buy: 816000, sell: 701000 },
-    { date: '10.08', buy: 782000, sell: 671000 },
-    { date: '10.12 (오늘)', buy: 794000, sell: 679000 }
-  ],
-  '6M': [
-    { date: '26.04.16', buy: 1005000, sell: 862000 },
-    { date: '26.05.22', buy: 957000, sell: 820000 },
-    { date: '26.06.18', buy: 890000, sell: 765000 },
-    { date: '26.07.15', buy: 845000, sell: 726000 },
-    { date: '26.08.26', buy: 835000, sell: 718000 },
-    { date: '26.09.28', buy: 816000, sell: 701000 },
-    { date: '26.10.12 (오늘)', buy: 794000, sell: 679000 }
-  ],
-  '1Y': [
-    { date: '25.10.15', buy: 753000, sell: 651000 },
-    { date: '25.12.18', buy: 810000, sell: 698000 },
-    { date: '26.02.10', buy: 890000, sell: 765000 },
-    { date: '26.04.16', buy: 1005000, sell: 862000 },
-    { date: '26.06.18', buy: 890000, sell: 765000 },
-    { date: '26.08.26', buy: 835000, sell: 718000 },
-    { date: '26.10.12 (오늘)', buy: 794000, sell: 679000 }
+    { date: '10.08', buy: 782000, sell: 671000 }
   ]
 };
 
@@ -1566,43 +1560,47 @@ function UpdateChartData() {
     }
   } else {
     if (activeMetalKey === 'G_GOLD') {
-      metalName = '🌐 국제 금 시세 (Spot Gold NYMEX)';
+      metalName = '🌐 국제 금 시세 (Spot Gold NYMEX 참고지표)';
       buyTxt = '$3,425.00';
       sellTxt = '$3,420.50 / oz';
     } else if (activeMetalKey === 'G_SILVER') {
-      metalName = '🌐 국제 은 시세 (Spot Silver NYMEX)';
+      metalName = '🌐 국제 은 시세 (Spot Silver NYMEX 참고지표)';
       buyTxt = '$38.90';
       sellTxt = '$38.40 / oz';
     } else if (activeMetalKey === 'G_PT') {
-      metalName = '🌐 국제 백금 (Spot Platinum NYMEX)';
+      metalName = '🌐 국제 백금 (Spot Platinum NYMEX 참고지표)';
       buyTxt = '$990.00';
       sellTxt = '$985.00 / oz';
     } else if (activeMetalKey === 'G_FX') {
-      metalName = '🌐 원/달러 기준환율 (USD/KRW FX)';
+      metalName = '🌐 원/달러 기준환율 (USD/KRW FX 참고지표)';
       buyTxt = '1,468.00';
       sellTxt = '1,466.50 KRW/$';
     }
   }
 
+  const syncTimeStr = lastFetchTime || '당일 공식 고시 기준';
   if (titleEl) titleEl.innerHTML = `<i class="fa-solid fa-chart-line text-gold"></i> ${metalName} 시세 변동 추이`;
-  if (subEl) subEl.innerText = `외부참고시세 살 때: ${buyTxt} | 팔 때(매입): ${sellTxt} (GoldLab 실제 거래가격은 주문/매입 시 도매 마진이 별도 적용됩니다)`;
 
-  // Check if real historical data exists for this metal & period
-  if (currentMarketRegion === 'DOMESTIC' && activeMetalKey === '24K' && OFFICIAL_24K_HISTORY[activePeriod]) {
+  if (currentMarketRegion === 'DOMESTIC') {
+    if (subEl) subEl.innerText = `출처: 한국금거래소 당일 공식 고시 | 살 때: ${buyTxt} · 팔 때: ${sellTxt} | 마지막 갱신: ${syncTimeStr}`;
+  } else {
+    if (subEl) subEl.innerText = `참고용 국제 지표 (정기 고시 기준, 실시간 체결호가 아님) | 매수참고: ${buyTxt} · 매도참고: ${sellTxt} | 마지막 갱신: ${syncTimeStr}`;
+  }
+
+  // Show chart only for verified 24K '1M' historical sample series
+  if (currentMarketRegion === 'DOMESTIC' && activeMetalKey === '24K' && activePeriod === '1M' && OFFICIAL_24K_HISTORY['1M']) {
     if (canvasEl) canvasEl.style.display = 'block';
     if (emptyEl) emptyEl.style.display = 'none';
 
-    const series = OFFICIAL_24K_HISTORY[activePeriod];
-    const seriesCopy = series.map((item, idx) => {
-      if (idx === series.length - 1) {
-        return {
-          date: item.date,
-          buy: currentRates["24K_buy"] || item.buy,
-          sell: currentRates["24K_sell"] || item.sell
-        };
+    const kstToday = GetKstDateString();
+    const seriesCopy = [
+      ...OFFICIAL_24K_HISTORY['1M'],
+      {
+        date: `${kstToday} (오늘)`,
+        buy: currentRates["24K_buy"] || 794000,
+        sell: currentRates["24K_sell"] || 679000
       }
-      return item;
-    });
+    ];
 
     const labels = seriesCopy.map(s => s.date);
     const points = seriesCopy.map(s => s.buy);
@@ -1615,13 +1613,25 @@ function UpdateChartData() {
     const maxP = Math.max(...points);
     const avgP = Math.round(points.reduce((a, b) => a + b, 0) / points.length);
 
-    if (highEl) highEl.innerText = `${formatWon(maxP)} 원`;
-    if (lowEl) lowEl.innerText = `${formatWon(minP)} 원`;
-    if (avgEl) avgEl.innerText = `${formatWon(avgP)} 원`;
+    if (highEl) highEl.innerHTML = `${formatWon(maxP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(최근 1개월 표본)</small>`;
+    if (lowEl) lowEl.innerHTML = `${formatWon(minP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(최근 1개월 표본)</small>`;
+    if (avgEl) avgEl.innerHTML = `${formatWon(avgP)} 원 <small style="font-size:0.75rem; color:var(--text-muted);">(최근 1개월 표본)</small>`;
   } else {
-    // When no real historical data exists, hide chart and show clean "시세 이력 준비 중"
+    // When no verified historical series exists for the selected period/metal, show clean empty state
     if (canvasEl) canvasEl.style.display = 'none';
-    if (emptyEl) emptyEl.style.display = 'flex';
+    if (emptyEl) {
+      emptyEl.style.display = 'flex';
+      emptyEl.innerHTML = `
+        <div style="text-align:center; padding:3rem 1.5rem;">
+          <i class="fa-solid fa-chart-area text-gold" style="font-size:3rem; margin-bottom:1rem; opacity:0.6;"></i>
+          <h4 style="color:#fff; font-size:1.25rem; font-weight:800; margin-bottom:0.5rem;">시세 이력 준비 중</h4>
+          <p style="color:var(--text-muted); font-size:0.92rem; max-width:440px; margin:0 auto; line-height:1.6;">
+            선택하신 기간(${activePeriod})의 공식 시세 이력 DB는 연동 준비 중입니다.<br>
+            당일 실시간 시세는 좌측 시세 전광판에서 확인하실 수 있습니다.
+          </p>
+        </div>
+      `;
+    }
 
     if (highEl) highEl.innerText = '시세 이력 준비 중';
     if (lowEl) lowEl.innerText = '시세 이력 준비 중';
