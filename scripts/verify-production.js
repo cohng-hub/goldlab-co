@@ -342,6 +342,163 @@ async function runTests() {
     assert(foundExport, 'CSV export must be recorded in audit logs');
   });
 
+  // 14. Uniform Appraisal Fee (29,900 KRW for both VISIT and COURIER)
+  await test('14. 감정대행 기본요금 29,900원 단일화 (방문/택배 동일 요금, 배송비 별도)', async () => {
+    const resVisit = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      method: 'VISIT',
+      applicantName: '고객A',
+      applicantPhone: '010-1111-2222',
+      itemType: '18K 반지',
+      quantity: 1,
+      expectedPurity: '18K'
+    });
+    assert.strictEqual(resVisit.status, 201);
+    assert.strictEqual(resVisit.body.appraisal.costBase, 29900);
+
+    const resCourier = await request({
+      path: '/api/appraisals/apply',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      method: 'COURIER',
+      applicantName: '고객A',
+      applicantPhone: '010-1111-2222',
+      itemType: '골드바 100g',
+      quantity: 1,
+      expectedPurity: '24K',
+      address: '서울시 종로구 돈화문로 100'
+    });
+    assert.strictEqual(resCourier.status, 201);
+    assert.strictEqual(resCourier.body.appraisal.costBase, 29900);
+    assert.strictEqual(resCourier.body.appraisal.courierReturnNotice, '별도 안내 (왕복 배송비 고객 부담)');
+  });
+
+  // 15. Tier Accrual Rates (SILVER 0.4%, GOLD 0.7%, VIP 1.0%) & 5% usage limit
+  await test('15. 등급별 GC 적립률 (SILVER 0.4%, GOLD 0.7%, VIP 1.0%) 및 5% 사용한도 계산 검증', async () => {
+    const resMemA = await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    });
+    assert.strictEqual(resMemA.body.tier, 'SILVER');
+    assert.strictEqual(resMemA.body.accrualRate, 0.004);
+    assert.strictEqual(resMemA.body.accrualRatePercent, '0.4%');
+
+    // Test 5% limit: if gcUsed exceeds 5%, server rejects
+    const resOver5 = await request({
+      path: '/api/orders/create',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      productId: 'GL-P01',
+      optionName: '1돈 (3.75g)',
+      quantity: 1,
+      recipientName: '고객A',
+      recipientPhone: '010-1111-2222',
+      deliveryMethod: 'VISIT',
+      shippingAddress: '종로 본점 수령',
+      gcUsed: 100000
+    });
+    assert.strictEqual(resOver5.status, 400);
+    assert(resOver5.body.error.includes('5%') || resOver5.body.error.includes('잔액'), 'Must enforce 5% GC cap or balance check');
+  });
+
+  // 16. Order Fulfillment Grants GC & GV, Idempotency Check
+  let orderToFulfill;
+  await test('16. 주문 배송완료(구매확정) 시 적립률 저장값 기준 GC/GV 적립 및 중복 지급 방지', async () => {
+    const resNewOrd = await request({
+      path: '/api/orders/create',
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    }, {
+      productId: 'GL-P01',
+      optionName: '1돈 (3.75g)',
+      quantity: 1,
+      recipientName: '고객A',
+      recipientPhone: '010-1111-2222',
+      deliveryMethod: 'VISIT',
+      shippingAddress: '종로 본점 수령',
+      gcUsed: 0
+    });
+    assert.strictEqual(resNewOrd.status, 201);
+    orderToFulfill = resNewOrd.body.order;
+    assert.strictEqual(orderToFulfill.orderTier, 'SILVER');
+    assert.strictEqual(orderToFulfill.accrualRate, 0.004);
+    assert.strictEqual(orderToFulfill.accrualGC, Math.floor(orderToFulfill.finalAmount * 0.004));
+
+    const initialGc = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body.gcBalance;
+
+    // Admin completes order
+    const resFulfill = await request({
+      path: `/api/admin/orders/${orderToFulfill.id}/status`,
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenAdmin}` }
+    }, {
+      status: 'DELIVERED',
+      trackingNo: '1234567890'
+    });
+    assert.strictEqual(resFulfill.status, 200);
+
+    const postMem = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body;
+    assert.strictEqual(postMem.gcBalance, initialGc + orderToFulfill.accrualGC);
+
+    // Duplicate call - idempotent
+    const resDup = await request({
+      path: `/api/admin/orders/${orderToFulfill.id}/status`,
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenAdmin}` }
+    }, {
+      status: 'DELIVERED'
+    });
+    assert.strictEqual(resDup.status, 200);
+
+    const afterDupMem = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body;
+    assert.strictEqual(afterDupMem.gcBalance, initialGc + orderToFulfill.accrualGC, 'GC balance must not increase again on duplicate status update');
+  });
+
+  // 17. Order Cancellation Revokes Granted GC/GV & Restores Used GC
+  await test('17. 주문 취소 시 저장된 적립률 기준 적립분 회수(GC_REVOKE/GV_SUB) 및 사용 GC 환원', async () => {
+    const memBeforeCancel = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body;
+
+    const resCancel = await request({
+      path: `/api/admin/orders/${orderToFulfill.id}/status`,
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${tokenAdmin}` }
+    }, {
+      status: 'CANCELLED',
+      cancelReason: '고객 단순 변심 및 주문 취소 요청'
+    });
+    assert.strictEqual(resCancel.status, 200);
+
+    const memAfterCancel = (await request({
+      path: '/api/membership/me',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${tokenA}` }
+    })).body;
+    assert.strictEqual(memAfterCancel.gcBalance, memBeforeCancel.gcBalance - orderToFulfill.accrualGC);
+    assert.strictEqual(memAfterCancel.gvTotal, memBeforeCancel.gvTotal - orderToFulfill.finalAmount);
+  });
+
   console.log('\n------------------------------------------------------');
   console.log(`Results: ${passed} / ${total} tests passed!`);
   console.log('------------------------------------------------------\n');
@@ -366,7 +523,7 @@ async function runTests() {
   } catch (e) {}
 
   if (passed === total) {
-    console.log('🎉 ALL 13 PRODUCTION READINESS CHECKS PASSED!\n');
+    console.log(`🎉 ALL ${total} PRODUCTION READINESS CHECKS PASSED!\n`);
     process.exit(0);
   } else {
     console.error('❌ Some tests failed. Please review the output.\n');

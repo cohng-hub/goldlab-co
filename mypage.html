@@ -138,7 +138,7 @@
           <div>
             <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;">
               <h2 style="color:var(--text-white); font-size:1.65rem; font-weight:900; margin:0;" id="clientProfileName">회원님</h2>
-              <span id="clientProfileTier" class="section-badge" style="font-size:0.78rem; padding:0.2rem 0.6rem;">VIP MEMBER</span>
+              <span id="clientProfileTier" class="section-badge" style="font-size:0.78rem; padding:0.2rem 0.6rem;">SILVER</span>
               <span id="clientProfileB2b" style="display:none; background:#3b82f6; color:#fff; font-size:0.75rem; font-weight:800; padding:0.2rem 0.5rem; border-radius:6px;">B2B 승인</span>
             </div>
             <div style="font-size:0.9rem; color:var(--text-muted); display:flex; gap:1.2rem; flex-wrap:wrap;">
@@ -187,7 +187,7 @@
                 <th>접수번호</th>
                 <th>접수방식</th>
                 <th>의뢰품목/수량</th>
-                <th>10단계 진행상태</th>
+                <th>9단계 진행상태</th>
                 <th>실측중량/기관</th>
                 <th>결과확인서</th>
               </tr>
@@ -362,7 +362,7 @@
               GoldLab & Co. 통합 관제센터
             </h2>
             <p style="font-size:0.92rem; color:var(--text-muted); margin:0;">
-              회원 관리, 10단계 감정 접수, 주문 및 배송, 예약, 포인트 원장 및 보안 감사 로그를 통합 운영합니다.
+              회원 관리, 9단계 감정 접수, 주문 및 배송, 예약, 포인트 원장 및 보안 감사 로그를 통합 운영합니다.
             </p>
           </div>
         </div>
@@ -374,7 +374,7 @@
 
       <!-- ADMIN TABS -->
       <div style="display:flex; gap:0.5rem; overflow-x:auto; background:#090b10; border:1px solid var(--border-dark); padding:0.4rem; border-radius:14px; margin-bottom:2rem;">
-        <button class="admin-tab-btn active" onclick="SwitchAdminTab('appraisals')"><i class="fa-solid fa-microscope"></i> 감정 접수 (10단계 관리)</button>
+        <button class="admin-tab-btn active" onclick="SwitchAdminTab('appraisals')"><i class="fa-solid fa-microscope"></i> 감정 접수 (9단계 관리)</button>
         <button class="admin-tab-btn" onclick="SwitchAdminTab('orders')"><i class="fa-solid fa-box"></i> 주문 및 배송 관리</button>
         <button class="admin-tab-btn" onclick="SwitchAdminTab('users')"><i class="fa-solid fa-users"></i> 회원 및 B2B 승인</button>
         <button class="admin-tab-btn" onclick="SwitchAdminTab('reservations')"><i class="fa-solid fa-calendar"></i> 방문예약 관리</button>
@@ -386,7 +386,7 @@
       <!-- ADMIN 1: APPRAISALS MANAGEMENT -->
       <div id="adminTabAppraisals">
         <h3 style="color:var(--text-white); font-size:1.3rem; font-weight:800; margin-bottom:1rem;">
-          <i class="fa-solid fa-microscope text-gold"></i> 감정 접수 10단계 상태 제어 및 확인서 발행
+          <i class="fa-solid fa-microscope text-gold"></i> 감정 접수 9단계 상태 제어 및 확인서 발행
         </h3>
         <div class="data-table-wrap">
           <table class="data-table">
@@ -396,7 +396,7 @@
                 <th>의뢰인</th>
                 <th>방식</th>
                 <th>품목</th>
-                <th>현재 상태 (10단계)</th>
+                <th>현재 상태 (9단계)</th>
                 <th>실측중량</th>
                 <th>상태 변경</th>
                 <th>확인서 발행</th>
@@ -700,7 +700,7 @@
     <p>© 2026 GoldLab & Co. All Rights Reserved. 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호</p>
   </footer>
 
-  <script src="app.js?v=202610120735"></script>
+  <script src="app.js?v=202610120815"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Check Auth
@@ -729,7 +729,7 @@
       document.getElementById('clientProfileName').innerText = currentUser.name;
       document.getElementById('clientProfileEmail').innerText = currentUser.email;
       document.getElementById('clientProfilePhone').innerText = currentUser.phone || '미등록';
-      document.getElementById('clientProfileTier').innerText = currentUser.tier || 'VIP MEMBER';
+      document.getElementById('clientProfileTier').innerText = currentUser.tier || 'SILVER';
       if (currentUser.userType === 'BIZ' && currentUser.status === 'B2B_APPROVED') {
         const b = document.getElementById('clientProfileB2b');
         if (b) b.style.display = 'inline-block';
@@ -781,6 +781,9 @@
         if (res.success) {
           document.getElementById('clientProfileGv').innerText = (res.gvTotal || 0).toLocaleString('ko-KR') + ' GV';
           document.getElementById('clientProfileGc').innerText = (res.gcBalance || 0).toLocaleString('ko-KR') + ' GC';
+          if (res.tier) {
+            document.getElementById('clientProfileTier').innerText = `${res.tier} (${res.accrualRatePercent || '0.4%'} 적립)`;
+          }
         }
       } catch (e) {}
     }

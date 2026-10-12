@@ -126,16 +126,21 @@ const cleanDB = {
   settings: {
     siteName: 'GoldLab&co',
     appraisal: {
-      visitPrice: 29000,
-      deliveryPrice: 39000,
-      returnShippingFee: 6000,
-      isPricePublished: false,
-      priceReviewNotice: '위 감정대행 수수료는 검토 중인 초안으로 운영자 확정 후 공지됩니다.'
+      baseFee: 29900,
+      visitPrice: 29900,
+      deliveryPrice: 29900,
+      returnShippingFee: '별도 안내 (왕복 배송비 고객 부담)',
+      isPricePublished: true,
+      priceNotice: '감정대행 기본요금 29,900원\n방문·택배 동일 요금 · 배송비 별도\n정밀·특수 추가검사는 별도 견적'
     },
     membership: {
-      gcEarnRateGoldbarPercent: 0.1,
-      gcEarnRateJewelryPercent: 1.0,
+      gcEarnRates: {
+        SILVER: 0.004,
+        GOLD: 0.007,
+        VIP_PLATINUM: 0.010
+      },
       gcMaxUsePercent: 5.0,
+      policyEffectiveDate: '2026-10-12',
       gcValidityDays: 365,
       gcRuleDescription: '1 GC = 1원 할인 / 유상충전·예치금·현금화·양도 불가'
     },
@@ -144,7 +149,7 @@ const cleanDB = {
       startHour: 10,
       endHour: 18,
       slotDurationMinutes: 30,
-      closedDays: [0]
+      closedDays: [0, 6]
     },
     business: {
       companyName: '골드랩 (GoldLab&co)',

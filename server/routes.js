@@ -74,6 +74,15 @@ function logAudit(db, adminId, action, targetType, targetId, details = {}, ip = 
   if (db.audit_logs.length > 2000) db.audit_logs.pop(); // Keep last 2,000 logs
 }
 
+// Helper: Get tier accrual rate for product purchases
+// SILVER: 0.4% (0.004), GOLD: 0.7% (0.007), VIP PLATINUM: 1.0% (0.010)
+function getTierAccrualRate(tier) {
+  const t = String(tier || '').toUpperCase();
+  if (t.includes('VIP') || t.includes('PLATINUM')) return 0.010;
+  if (t.includes('GOLD')) return 0.007;
+  return 0.004; // Default SILVER
+}
+
 // Helper: Calculate User's GV total and GC balance from ledger
 function calculateUserBalances(userId, db) {
   let gvTotal = 0;
@@ -83,15 +92,14 @@ function calculateUserBalances(userId, db) {
   for (const entry of userLedgers) {
     if (entry.type === 'GV_ADD') gvTotal += Number(entry.amount || 0);
     else if (entry.type === 'GV_SUB') gvTotal = Math.max(0, gvTotal - Number(entry.amount || 0));
-    else if (entry.type === 'GC_EARN' || entry.type === 'GC_RESTORE') gcBalance += Number(entry.amount || 0);
-    else if (entry.type === 'GC_USE' || entry.type === 'GC_EXPIRE') gcBalance = Math.max(0, gcBalance - Number(entry.amount || 0));
+    else if (entry.type === 'GC_EARN' || entry.type === 'GC_RESTORE' || entry.type === 'GC_ADD') gcBalance += Number(entry.amount || 0);
+    else if (entry.type === 'GC_USE' || entry.type === 'GC_EXPIRE' || entry.type === 'GC_SUB' || entry.type === 'GC_REVOKE') gcBalance = Math.max(0, gcBalance - Number(entry.amount || 0));
   }
 
   // Derive tier based on GV
-  let tier = 'STANDARD';
-  if (gvTotal >= 100000000) tier = 'VIP BLACK';
-  else if (gvTotal >= 30000000) tier = 'VIP PLATINUM';
-  else if (gvTotal >= 10000000) tier = 'GOLD MEMBER';
+  let tier = 'SILVER';
+  if (gvTotal >= 30000000) tier = 'VIP PLATINUM';
+  else if (gvTotal >= 10000000) tier = 'GOLD';
 
   return { gvTotal, gcBalance, tier };
 }
@@ -468,11 +476,13 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     const isTermsOk = termsAgreed !== false && agreeInspection !== false;
     const isPrivacyOk = privacyConsent !== false && agreePrivacy !== false;
 
+    const returnAddr = returnAddress || body.address || (currentUser && currentUser.address) || '';
+
     if (!applicantName || !applicantPhone || !itemType || !isTermsOk || !isPrivacyOk) {
       return sendJSON(res, 400, { error: '신청자 성함, 연락처, 품목, 필수 약관 동의를 확인해 주세요.' });
     }
 
-    if ((reqMethod === 'DELIVERY' || reqMethod === 'COURIER') && !returnAddress) {
+    if ((reqMethod === 'DELIVERY' || reqMethod === 'COURIER') && !returnAddr) {
       return sendJSON(res, 400, { error: '택배 반환을 위한 배송지 주소를 입력해 주세요.' });
     }
 
@@ -497,7 +507,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         type: (type === 'DELIVERY' || reqMethod === 'COURIER') ? 'DELIVERY' : 'VISIT',
         applicantName: String(applicantName).trim(),
         applicantPhone: String(applicantPhone).trim(),
-        returnAddress: type === 'DELIVERY' ? String(returnAddress).trim() : null,
+        returnAddress: (type === 'DELIVERY' || reqMethod === 'COURIER') ? String(returnAddr).trim() : null,
         itemType: String(itemType).trim(),
         quantity: Math.max(1, parseInt(quantity, 10) || 1),
         estimatedPurity: estimatedPurity || '모름 / 정밀 판정 희망',
@@ -511,7 +521,9 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         actualWeight: null,
         arrivedPhotos: [],
         labName: '골드랩 정밀감정센터 (종로공인제련소 협력)',
-        costBase: type === 'DELIVERY' ? 39000 : 29000,
+        costBase: 29900, // 감정대행 기본요금 29,900원 (방문·택배 동일 요금)
+        shippingCost: (reqMethod === 'COURIER' || type === 'DELIVERY') ? '별도 안내 (왕복 배송비 고객 부담)' : '없음 (현장 방문)',
+        courierReturnNotice: (reqMethod === 'COURIER' || type === 'DELIVERY') ? '별도 안내 (왕복 배송비 고객 부담)' : null,
         costExtra: 0,
         extraQuoteApproved: false,
         history: [
@@ -529,10 +541,14 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         appraisalId: newAppraisal.id,
         appraisal: {
           id: newAppraisal.id,
+          receiptNo: newAppraisal.receiptNo,
           applicantName: newAppraisal.applicantName,
           itemType: newAppraisal.itemType,
           status: newAppraisal.status,
           type: newAppraisal.type,
+          costBase: newAppraisal.costBase,
+          shippingCost: newAppraisal.shippingCost,
+          courierReturnNotice: newAppraisal.courierReturnNotice,
           createdAt: newAppraisal.createdAt
         }
       });
@@ -858,6 +874,11 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       const serial = String(dbRef.orders.length + 1).padStart(4, '0');
       const orderId = `GL-ORD-${orderDateStr}-${serial}`;
 
+      // Customer tier and accrual rate at the exact moment of order creation
+      const orderTier = balances.tier || currentUser.tier || 'SILVER';
+      const accrualRate = getTierAccrualRate(orderTier);
+      const expectedAccrualGC = Math.floor(finalPayAmount * accrualRate);
+
       const newOrder = {
         id: orderId,
         orderNo: orderId,
@@ -869,6 +890,11 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         gcUsed: appliedGC,
         finalPayAmount,
         finalAmount: finalPayAmount,
+        orderTier: orderTier,
+        tierAtOrder: orderTier,
+        accrualRate: accrualRate,
+        accrualGC: expectedAccrualGC,
+        gcAccrued: false,
         paymentStatus: 'PENDING', // Will be confirmed via PG or bank verification
         orderStatus: 'PENDING',
         paymentMethod: 'CONSULTATION_OR_BANK',
@@ -925,10 +951,13 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       .slice(-20)
       .reverse();
 
+    const accrualRate = getTierAccrualRate(balances.tier);
     return sendJSON(res, 200, {
       gvTotal: balances.gvTotal,
       gcBalance: balances.gcBalance,
       tier: balances.tier,
+      accrualRate: accrualRate,
+      accrualRatePercent: (accrualRate * 100).toFixed(1) + '%',
       policy: db.settings.membership,
       recentLedgers
     });
@@ -1114,22 +1143,77 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       return sendJSON(res, 200, { orders: db.orders });
     }
 
-    if (pathname.startsWith('/api/admin/orders/') && pathname.endsWith('/fulfillment') && method === 'PUT') {
+    if (pathname.startsWith('/api/admin/orders/') && (pathname.endsWith('/fulfillment') || pathname.endsWith('/status')) && (method === 'PUT' || method === 'POST')) {
       const orderId = pathname.split('/')[4];
-      const { paymentStatus, orderStatus, trackingNumber, courier } = body || {};
+      const targetStatus = body.orderStatus || body.status || body.nextStatus;
+      const targetPayStatus = body.paymentStatus;
+      const targetTracking = body.trackingNumber || body.trackingNo;
+      const targetCourier = body.courier;
 
       return await runTransaction(async (dbRef) => {
         const order = dbRef.orders.find(o => o.id === orderId);
         if (!order) return sendJSON(res, 404, { error: '주문 내역을 찾을 수 없습니다.' });
 
-        if (paymentStatus) order.paymentStatus = paymentStatus;
-        if (orderStatus) order.orderStatus = orderStatus;
-        if (trackingNumber) order.trackingNumber = trackingNumber;
-        if (courier) order.courier = courier;
+        if (targetPayStatus) order.paymentStatus = targetPayStatus;
+        if (targetStatus) {
+          order.orderStatus = targetStatus;
+          order.status = targetStatus;
+          if (targetStatus === 'DELIVERED' || targetStatus === 'COMPLETED' || targetStatus === 'CONFIRMED') {
+            order.paymentStatus = 'COMPLETED';
+          }
+        }
+        if (targetTracking) order.trackingNumber = targetTracking;
+        if (targetCourier) order.courier = targetCourier;
         order.updatedAt = new Date().toISOString();
 
-        // If order cancelled or refunded, restore used GC consistently
-        if (order.orderStatus === 'CANCELLED' || order.paymentStatus === 'REFUNDED') {
+        const isCompleted = order.orderStatus === 'DELIVERED' || order.orderStatus === 'COMPLETED' || order.orderStatus === 'CONFIRMED' || order.status === 'DELIVERED' || order.status === 'COMPLETED' || order.status === 'CONFIRMED';
+        const isCancelled = order.orderStatus === 'CANCELLED' || order.paymentStatus === 'REFUNDED' || order.status === 'CANCELLED';
+
+        // 1. Completion: Grant GC (if not already granted) & Grant GV
+        if (isCompleted) {
+          if (!order.gcAccrued) {
+            const accrualRate = order.accrualRate || getTierAccrualRate(order.tierAtOrder);
+            const accrualGC = order.accrualGC !== undefined ? order.accrualGC : Math.floor(order.finalPayAmount * accrualRate);
+            if (accrualGC > 0) {
+              const alreadyGrantedGC = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && (l.type === 'GC_ADD' || l.type === 'GC_EARN'));
+              if (!alreadyGrantedGC) {
+                dbRef.gv_gc_ledgers.push({
+                  id: 'LEDGER-GC-ACCRUAL-' + Date.now(),
+                  userId: order.userId,
+                  type: 'GC_ADD',
+                  amount: accrualGC,
+                  referenceId: order.id,
+                  note: `주문(${order.id}) 구매확정 상품 적립 (${(accrualRate * 100).toFixed(1)}% / ${order.tierAtOrder || 'SILVER'})`,
+                  createdAt: new Date().toISOString()
+                });
+              }
+            }
+            order.gcAccrued = true;
+          }
+
+          const alreadyGrantedGV = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && l.type === 'GV_ADD');
+          if (!alreadyGrantedGV) {
+            dbRef.gv_gc_ledgers.push({
+              id: 'LEDGER-GV-AUTO-' + Date.now(),
+              userId: order.userId,
+              type: 'GV_ADD',
+              amount: order.finalPayAmount,
+              referenceId: order.id,
+              note: `주문(${order.id}) 구매 실적 GV 적립`,
+              createdAt: new Date().toISOString()
+            });
+          }
+
+          // Update user tier in DB for subsequent orders
+          const newBalances = calculateUserBalances(order.userId, dbRef);
+          const targetUser = dbRef.users.find(u => u.id === order.userId);
+          if (targetUser && newBalances.tier) {
+            targetUser.tier = newBalances.tier;
+          }
+        }
+
+        // 2. Cancellation / Refund: Restore used GC, Revoke granted GC & Revoke granted GV
+        if (isCancelled) {
           const usedGC = Number(order.gcUsed || order.discountGCAmount || 0);
           if (usedGC > 0) {
             const alreadyRestored = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && l.type === 'GC_RESTORE');
@@ -1145,26 +1229,49 @@ async function handleApiRequest(req, res, parsedUrl, body) {
               });
             }
           }
-        }
 
-        // If order completed and paid, automatically grant GV (Volume) to customer
-        if (order.paymentStatus === 'COMPLETED' && order.orderStatus === 'DELIVERED') {
-          const alreadyGranted = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && l.type === 'GV_ADD');
-          if (!alreadyGranted) {
+          const alreadyGrantedGC = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && (l.type === 'GC_ADD' || l.type === 'GC_EARN'));
+          const alreadyRevokedGC = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && l.type === 'GC_REVOKE');
+          if (alreadyGrantedGC && !alreadyRevokedGC) {
+            const accrualGC = order.accrualGC || Math.floor(order.finalPayAmount * (order.accrualRate || 0.004));
+            if (accrualGC > 0) {
+              dbRef.gv_gc_ledgers.push({
+                id: 'LEDGER-GC-REVOKE-' + Date.now(),
+                userId: order.userId,
+                type: 'GC_REVOKE',
+                amount: accrualGC,
+                referenceId: order.id,
+                note: `주문(${order.id}) 취소/환불에 따른 적립 GC 회수`,
+                createdAt: new Date().toISOString()
+              });
+            }
+            order.gcAccrued = false;
+          }
+
+          const alreadyGrantedGV = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && l.type === 'GV_ADD');
+          const alreadyRevokedGV = dbRef.gv_gc_ledgers.some(l => l.referenceId === order.id && l.type === 'GV_SUB');
+          if (alreadyGrantedGV && !alreadyRevokedGV) {
             dbRef.gv_gc_ledgers.push({
-              id: 'LEDGER-GV-AUTO-' + Date.now(),
+              id: 'LEDGER-GV-REVOKE-' + Date.now(),
               userId: order.userId,
-              type: 'GV_ADD',
+              type: 'GV_SUB',
               amount: order.finalPayAmount,
               referenceId: order.id,
-              note: `주문(${order.id}) 구매 실적 GV 적립`,
+              note: `주문(${order.id}) 취소/환불에 따른 실적 GV 회수`,
               createdAt: new Date().toISOString()
             });
           }
+
+          // Update user tier after revocation
+          const newBalances = calculateUserBalances(order.userId, dbRef);
+          const targetUser = dbRef.users.find(u => u.id === order.userId);
+          if (targetUser && newBalances.tier) {
+            targetUser.tier = newBalances.tier;
+          }
         }
 
-        logAudit(dbRef, currentUser.id, 'UPDATE_ORDER', 'ORDER', order.id, { paymentStatus, orderStatus }, clientIP);
-        return sendJSON(res, 200, { success: true, message: '주문 상태가 갱신되었습니다.' });
+        logAudit(dbRef, currentUser.id, 'UPDATE_ORDER', 'ORDER', order.id, { paymentStatus: order.paymentStatus, orderStatus: order.orderStatus }, clientIP);
+        return sendJSON(res, 200, { success: true, message: '주문 상태가 갱신되었습니다.', order });
       });
     }
 

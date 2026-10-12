@@ -97,10 +97,13 @@
     </div>
 
     <!-- MEMBERSHIP TIERS & BENEFITS TABLE -->
-    <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:24px; padding:2.5rem; margin-bottom:3.5rem;">
-      <h2 style="color:var(--text-white); font-size:1.6rem; font-weight:900; margin-bottom:1.5rem; text-align:center;">
+    <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:24px; padding:2.5rem; margin-bottom:2.5rem;">
+      <h2 style="color:var(--text-white); font-size:1.6rem; font-weight:900; margin-bottom:0.5rem; text-align:center;">
         <i class="fa-solid fa-ranking-star text-gold"></i> 회원 등급별 혜택 기준표
       </h2>
+      <p style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
+        시행일자: 2026년 10월 12일 부 확정 시행 (기존 잔액 및 과거 적립 내역 소급 변경 없음)
+      </p>
 
       <div style="overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; text-align:center; font-size:0.95rem;">
@@ -108,37 +111,43 @@
             <tr style="border-bottom:2px solid var(--border-dark); background:#090b10;">
               <th style="padding:1.2rem 1rem; color:var(--text-white);">등급 구분</th>
               <th style="padding:1.2rem 1rem; color:var(--text-white);">달성 기준 (누적 GV)</th>
-              <th style="padding:1.2rem 1rem; color:var(--text-white);">신규/거래 적립</th>
+              <th style="padding:1.2rem 1rem; color:var(--text-white);">상품 구매 적립률 (GC)</th>
               <th style="padding:1.2rem 1rem; color:var(--text-white);">주얼리 공임 할인</th>
               <th style="padding:1.2rem 1rem; color:var(--text-white);">정밀 감정 혜택</th>
             </tr>
           </thead>
           <tbody>
             <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
-              <td style="padding:1.2rem 1rem; font-weight:800; color:var(--text-light);">SILVER MEMBER</td>
+              <td style="padding:1.2rem 1rem; font-weight:800; color:var(--text-light);">SILVER</td>
               <td style="padding:1.2rem 1rem; color:var(--text-muted);">신규 가입 고객</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light);">가입 축하 5,000 GC</td>
+              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:800;">
+                0.4% 적립 <small style="display:block; color:var(--text-muted); font-weight:normal;">(가입 축하 5,000 GC 별도 지급)</small>
+              </td>
               <td style="padding:1.2rem 1rem; color:var(--text-muted);">-</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-muted);">정상 수수료 적용</td>
+              <td style="padding:1.2rem 1rem; color:var(--text-muted);">정밀감정 무료 연 1회</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(224,184,72,0.03);">
-              <td style="padding:1.2rem 1rem; font-weight:900; color:var(--gold-light);">GOLD MEMBER</td>
+              <td style="padding:1.2rem 1rem; font-weight:900; color:var(--gold-light);">GOLD</td>
               <td style="padding:1.2rem 1rem; color:var(--text-white); font-weight:700;">누적 GV 1,000만 원 이상</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light);">결제금액의 0.5% GC 적립</td>
+              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:800;">
+                0.7% 적립
+              </td>
               <td style="padding:1.2rem 1rem; color:#10b981; font-weight:700;">공임 5% 할인</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-light);">기본 세척 광택 무상</td>
+              <td style="padding:1.2rem 1rem; color:var(--text-light);">정밀감정 무료 연 2회 · 기본 세척 무상</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(224,184,72,0.06);">
               <td style="padding:1.2rem 1rem; font-weight:900; color:#f5e4a2;">👑 VIP PLATINUM</td>
               <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:900;">누적 GV 3,000만 원 이상</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:800;">결제금액의 1.0% GC 적립</td>
+              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:900;">
+                1.0% 적립
+              </td>
               <td style="padding:1.2rem 1rem; color:#10b981; font-weight:800;">공임 10% 우대 할인</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:700;">정밀감정 무료 연 2회</td>
+              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:700;">정밀감정 무료 연 3회 · 기본 세척 무상</td>
             </tr>
             <tr>
               <td style="padding:1.2rem 1rem; font-weight:900; color:#3b82f6;">🏢 B2B PARTNER</td>
               <td style="padding:1.2rem 1rem; color:var(--text-light);">사업자등록증 인증 승인</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-muted);">도매 원자재 마진율 적용</td>
+              <td style="padding:1.2rem 1rem; color:var(--text-muted);">도매 공급 마진율 별도 적용</td>
               <td style="padding:1.2rem 1rem; color:#3b82f6; font-weight:700;">종로 도매 특가 공급</td>
               <td style="padding:1.2rem 1rem; color:#3b82f6; font-weight:700;">대량 검사 우선 배정</td>
             </tr>
@@ -147,15 +156,81 @@
       </div>
     </div>
 
+    <!-- CALCULATION EXAMPLES & CLARIFICATION CARD -->
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.8rem; margin-bottom:2.5rem;">
+      
+      <!-- Example 1: 전액 결제 시 -->
+      <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:20px; padding:1.8rem;">
+        <h4 style="color:#fff; font-size:1.15rem; font-weight:800; margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem;">
+          <i class="fa-solid fa-calculator text-gold"></i> 실결제 상품금액 100만 원 기준
+        </h4>
+        <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem; line-height:1.6;">
+          GC 할인 미적용 후 실결제 상품금액 1,000,000원 기준 (배송비 제외):
+        </p>
+        <ul style="list-style:none; padding:0; margin:0; line-height:2.2; font-size:0.95rem;">
+          <li style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding:0.2rem 0;">
+            <span style="color:var(--text-light);">• SILVER (0.4%)</span>
+            <strong style="color:var(--gold-light);">4,000 GC</strong>
+          </li>
+          <li style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding:0.2rem 0;">
+            <span style="color:var(--gold-light);">• GOLD (0.7%)</span>
+            <strong style="color:var(--gold-light);">7,000 GC</strong>
+          </li>
+          <li style="display:flex; justify-content:space-between; padding:0.2rem 0;">
+            <span style="color:#f5e4a2; font-weight:800;">• VIP PLATINUM (1.0%)</span>
+            <strong style="color:#f5e4a2; font-weight:900;">10,000 GC</strong>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Example 2: 5% GC 사용 시 -->
+      <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:20px; padding:1.8rem;">
+        <h4 style="color:#fff; font-size:1.15rem; font-weight:800; margin-bottom:0.8rem; display:flex; align-items:center; gap:0.5rem;">
+          <i class="fa-solid fa-tags text-gold"></i> 100만 원 상품에 50,000 GC 사용 시
+        </h4>
+        <p style="color:var(--text-muted); font-size:0.88rem; margin-bottom:1rem; line-height:1.6;">
+          최대 5% GC 할인 적용 후 <strong>실결제 상품금액 950,000원</strong> 기준:
+        </p>
+        <ul style="list-style:none; padding:0; margin:0; line-height:2.2; font-size:0.95rem;">
+          <li style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding:0.2rem 0;">
+            <span style="color:var(--text-light);">• SILVER (0.4%)</span>
+            <strong style="color:var(--gold-light);">3,800 GC</strong>
+          </li>
+          <li style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.06); padding:0.2rem 0;">
+            <span style="color:var(--gold-light);">• GOLD (0.7%)</span>
+            <strong style="color:var(--gold-light);">6,650 GC</strong>
+          </li>
+          <li style="display:flex; justify-content:space-between; padding:0.2rem 0;">
+            <span style="color:#f5e4a2; font-weight:800;">• VIP PLATINUM (1.0%)</span>
+            <strong style="color:#f5e4a2; font-weight:900;">9,500 GC</strong>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- IMPORTANT DISTINCTION NOTICE -->
+    <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-gold-bright); border-radius:18px; padding:1.4rem 1.8rem; margin-bottom:2.5rem; display:flex; align-items:flex-start; gap:1rem;">
+      <i class="fa-solid fa-circle-info text-gold" style="font-size:1.6rem; margin-top:0.2rem;"></i>
+      <div style="font-size:0.92rem; line-height:1.7; color:var(--text-light);">
+        <strong style="color:var(--gold-light); font-size:1rem; display:block; margin-bottom:0.3rem;">공임 할인과 GC 사용 한도(5%) 명확 구분 안내</strong>
+        주얼리 공임 할인(GOLD 5%, VIP 10%)은 주문 제작 주얼리의 <strong>세공 공임</strong>에 적용되는 우대 할인이며, 상품 주문 시 결제금액의 최대 5%까지 보유 GC 포인트를 사용할 수 있는 <strong>GC 사용 한도(5%)</strong>와는 전혀 별개의 혜택입니다. 공임 할인과 GC 포인트 할인은 중복으로 적용받으실 수 있습니다.
+      </div>
+    </div>
+
     <!-- LEDGER TRANSPARENCY & INTEGRITY POLICY -->
     <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:20px; padding:2rem; line-height:1.8; font-size:0.92rem; color:var(--text-muted);">
       <h3 style="color:var(--text-white); font-size:1.15rem; font-weight:800; margin-bottom:0.8rem;">
-        <i class="fa-solid fa-book-bookmark text-gold"></i> 포인트 적립·사용 내역 확인 및 복원 정책
+        <i class="fa-solid fa-book-bookmark text-gold"></i> 포인트 적립·사용 및 보존 세부 규정
       </h3>
       <ul style="padding-left:1.2rem;">
-        <li><strong>포인트 내역 투명 보존:</strong> 회원의 모든 GC 적립 및 사용 내역은 안전하게 기록 보존되어 마이페이지에서 언제든지 투명하게 확인하실 수 있습니다.</li>
-        <li><strong>주문 취소 시 포인트 복원:</strong> 주문 취소 또는 환불 발생 시 실제 사용하셨던 GC 포인트는 고객님의 계정으로 정확하고 일관되게 복원 처리됩니다.</li>
-        <li><strong>중복 처리 방지:</strong> 고유 거래 번호 기반으로 포인트 중복 지급 및 시스템 오류를 사전에 철저히 방지합니다.</li>
+        <li><strong>적립 기준 금액:</strong> GC 및 기타 상품 할인을 모두 적용한 후 고객이 <strong>실제 결제한 순수 상품금액</strong>을 기준으로 적립됩니다. (배송비 및 별도 서비스 수수료 제외)</li>
+        <li><strong>절사 기준:</strong> 적립 GC는 원 단위 미만을 절사(floor)하여 산정합니다.</li>
+        <li><strong>주문 시점 등급 보존:</strong> 주문 결제 확정 시점의 고객 등급과 적립률이 해당 주문 데이터에 영구 보존됩니다. 해당 주문으로 누적 GV가 증가하여 상위 등급으로 승급되더라도, 해당 주문의 적립은 주문 시점 등급으로 계산되며 새 등급은 <strong>다음 주문부터</strong> 적용됩니다.</li>
+        <li><strong>구매확정 후 적립:</strong> 고객의 구매확정 또는 관리자의 배송 완료 처리 시점에 적립이 실행되며, 동일 주문에 대한 중복 적립은 엄격히 차단됩니다.</li>
+        <li><strong>주문 취소 및 환불 처리:</strong> 주문 취소 또는 환불 시 사용하셨던 GC는 원장에 의해 계정으로 정확히 복원(`GC_RESTORE`)되며, 이미 적립된 GC가 있는 경우 저장된 적립률에 따라 지급분(`GC_REVOKE`) 및 실적 GV가 투명하게 회수 처리됩니다.</li>
+        <li><strong>감정 수수료 적립 별도 확인:</strong> 위 상품 구매 적립률(0.4% / 0.7% / 1.0%) 및 상품 결제 5% 사용 한도는 귀금속 상품에 적용되며, 감정대행 수수료에 대한 GC 정책은 별도 확인 대상으로 운영됩니다.</li>
+        <li><strong>과거 내역 소급 금지:</strong> 기존 보유 GC 잔액 및 2026년 10월 12일 이전의 과거 적립 기록은 소급하여 변경하지 않습니다.</li>
       </ul>
     </div>
 
