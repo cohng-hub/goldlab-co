@@ -1,12 +1,12 @@
 {
   "version": "2.0.0",
   "createdAt": "2026-10-08T12:26:04.017Z",
-  "updatedAt": "2026-10-12T09:51:20.875Z",
+  "updatedAt": "2026-10-14T09:50:39.308Z",
   "users": [
     {
       "id": "usr_master_001",
       "email": "goldlabnco@naver.com",
-      "passwordHash": "231a3605ada0aa1eb66e2cbec24e1085:ce0281104bd36d0a6df90256e137047a2b4179c27558c30c25066d43de936688d9d4fc6e5c626334624071a89b4b22cf04062230cd2a5d998db97fc8ea320259",
+      "passwordHash": "a9890afd59e67906efb7cf42e72233a6:bb3fd0872ebdfa897188f546711e77acf72186268241dcd7c82944c957023ce12133a0ce5fc30b2f42d4895285f2ae4672313d5c84a91e9928c149467714dd93",
       "name": "황미숙 대표 (최고관리자)",
       "phone": "010-4017-4988",
       "userType": "MASTER",
@@ -153,6 +153,14 @@
       "expiresAt": "2026-10-19T09:51:20.677Z",
       "clientIP": "::ffff:127.0.0.1",
       "createdAt": "2026-10-12T09:51:20.677Z"
+    },
+    {
+      "id": "sess_1791971439301",
+      "userId": "usr_master_001",
+      "hashedToken": "cf42d1dad52b65bbe856cc973580fec37d6cf82555ba32aabc73acb6da57003d",
+      "expiresAt": "2026-10-21T09:50:39.301Z",
+      "clientIP": "::1",
+      "createdAt": "2026-10-14T09:50:39.307Z"
     }
   ],
   "password_resets": [],
