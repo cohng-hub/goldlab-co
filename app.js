@@ -1372,12 +1372,14 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     const safeReviews = paginated.map(r => ({
       id: r.id,
       authorMasked: r.authorMasked || maskName(r.authorName),
+      maskedAuthor: r.authorMasked || maskName(r.authorName),
       category: r.category,
       categoryLabel: r.categoryLabel,
       rating: r.rating,
       content: r.content,
       photos: r.photos || [],
       isVerifiedTrade: !!r.isVerifiedTrade,
+      isVerified: !!r.isVerifiedTrade,
       adminReply: r.adminReply ? {
         content: r.adminReply.content,
         repliedAt: r.adminReply.repliedAt,
