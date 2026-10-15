@@ -101,6 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
     SyncLiveKGERates();
     setInterval(SyncLiveKGERates, 60000);
   } catch (e) { console.error('SyncLiveKGERates error:', e); }
+
+  try { LoadMainReviewPreview(); } catch (e) {}
 });
 
 // Window load fallback to guarantee calendar initialization
@@ -3984,4 +3986,63 @@ function DeleteTransaction(id, event) {
 setTimeout(() => {
   try { SetDefaultBookingDate(); } catch(e) { console.error(e); }
 }, 50);
+
+// Load Main Page Customer Reviews Preview (Top 3 only if >= 3 reviews exist)
+async function LoadMainReviewPreview() {
+  const section = document.getElementById('mainReviewPreviewSection');
+  const container = document.getElementById('mainReviewPreviewCards');
+  if (!section || !container) return;
+
+  try {
+    const res = await ApiRequest('/api/reviews?limit=3');
+    if (res && res.success && Array.isArray(res.reviews) && res.reviews.length >= 3) {
+      container.innerHTML = res.reviews.slice(0, 3).map(rev => {
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+          starsHtml += `<i class="fa-solid fa-star" style="color:${i <= rev.rating ? '#e0b848' : '#2d3348'}; font-size:0.85rem;"></i>`;
+        }
+
+        const photoHtml = (rev.photos && rev.photos.length > 0)
+          ? `<div style="margin-top:0.9rem; height:130px; border-radius:10px; overflow:hidden; background:#000;">
+               <img src="${rev.photos[0]}" alt="후기 사진" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
+             </div>`
+          : '';
+
+        return `
+          <div style="background:#121520; border:1px solid var(--border-dark); border-radius:18px; padding:1.4rem; display:flex; flex-direction:column; justify-content:space-between; box-shadow:0 8px 25px rgba(0,0,0,0.35);">
+            <div>
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <span class="badge-status badge-status-inspected" style="font-size:0.75rem; padding:3px 9px;">
+                  <i class="fa-solid fa-circle-check"></i> ${rev.categoryLabel || '거래인증'}
+                </span>
+                <span style="font-size:0.75rem; color:var(--text-muted);">${(rev.createdAt || '').substring(0, 10)}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:0.4rem; margin-bottom:0.7rem;">
+                <div style="display:flex; gap:2px;">${starsHtml}</div>
+                <strong style="color:var(--gold-light); font-size:0.9rem; font-family:var(--font-num);">${Number(rev.rating).toFixed(1)}</strong>
+              </div>
+              <p style="color:var(--text-light); font-size:0.88rem; line-height:1.6; margin:0; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">
+                ${rev.content}
+              </p>
+              ${photoHtml}
+            </div>
+            <div style="margin-top:1.1rem; padding-top:0.8rem; border-top:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-size:0.8rem; color:var(--text-muted); font-weight:600;">
+                <i class="fa-solid fa-user-shield text-gold"></i> ${rev.maskedAuthor}
+              </span>
+              <a href="reviews.html" style="font-size:0.78rem; color:var(--gold-light); text-decoration:none; font-weight:700;">
+                전체보기 <i class="fa-solid fa-chevron-right" style="font-size:0.68rem;"></i>
+              </a>
+            </div>
+          </div>
+        `;
+      }).join('');
+      section.style.display = 'block';
+    } else {
+      section.style.display = 'none';
+    }
+  } catch (err) {
+    section.style.display = 'none';
+  }
+}
 

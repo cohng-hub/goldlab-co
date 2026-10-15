@@ -8,6 +8,7 @@
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=20261012_v1">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body {
       background: radial-gradient(circle at 50% 20%, rgba(20, 24, 35, 0.95) 0%, #06070a 100%);
@@ -900,7 +901,7 @@
     <p>© 2026 GoldLab & Co. All Rights Reserved. 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호</p>
   </footer>
 
-  <script src="app.js?v=202610150633"></script>
+  <script src="app.js?v=202610150653"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Check Auth
@@ -961,7 +962,7 @@
 
     // Admin tab switcher
     function SwitchAdminTab(tabKey) {
-      const tabs = ['appraisals', 'orders', 'users', 'reservations', 'inquiries', 'points', 'audits'];
+      const tabs = ['appraisals', 'orders', 'users', 'reservations', 'inquiries', 'points', 'audits', 'reviews'];
       tabs.forEach(t => {
         const el = document.getElementById('adminTab' + t.charAt(0).toUpperCase() + t.slice(1));
         if (el) el.style.display = (t === tabKey) ? 'block' : 'none';
@@ -972,6 +973,29 @@
         if (tabs[idx] === tabKey) btn.classList.add('active');
         else btn.classList.remove('active');
       });
+
+      if (tabKey === 'reviews') {
+        LoadAdminReviews();
+      }
+    }
+
+    // Helper: Cached map of user's eligible/reviewed transactions
+    let clientEligibleTxMap = null;
+    async function GetClientEligibleMap() {
+      if (clientEligibleTxMap !== null) return clientEligibleTxMap;
+      clientEligibleTxMap = {};
+      try {
+        const res = await ApiRequest('/api/reviews/my-eligible-transactions');
+        if (res && res.eligibleItems) {
+          res.eligibleItems.forEach(it => {
+            clientEligibleTxMap[`${it.transactionType}_${it.transactionId}`] = {
+              alreadyReviewed: it.alreadyReviewed,
+              reviewId: it.reviewId
+            };
+          });
+        }
+      } catch (e) {}
+      return clientEligibleTxMap;
     }
 
     // Load Client Overview (GV / GC / Free Appraisals)
@@ -996,9 +1020,13 @@
     async function LoadClientAppraisals() {
       const tbody = document.getElementById('clientAppraisalsBody');
       try {
-        const res = await ApiRequest('/api/appraisals/my');
+        const [res, eligibleMap] = await Promise.all([
+          ApiRequest('/api/appraisals/my'),
+          GetClientEligibleMap()
+        ]);
+
         if (!res.success || !res.appraisals || res.appraisals.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:3rem; color:var(--text-muted);">신청하신 감정대행 내역이 없습니다.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--text-muted);">신청하신 감정대행 내역이 없습니다.</td></tr>';
           return;
         }
 
@@ -1019,6 +1047,17 @@
                 ? `<div style="font-size:0.75rem; color:var(--gold-light);">GC -${a.gcUsed.toLocaleString('ko-KR')}원 할인 -> ${a.finalPayAmount.toLocaleString('ko-KR')}원</div>`
                 : '<div style="font-size:0.75rem; color:var(--text-muted);">기본 29,900원</div>');
 
+          const apInfo = eligibleMap[`APPRAISAL_${a.id}`];
+          const isDone = ['COMPLETED', 'INSPECTED', 'RETURN_SHIPPED'].includes(a.status);
+          let reviewActionHtml = '';
+          if (apInfo && apInfo.alreadyReviewed) {
+            reviewActionHtml = `<a href="reviews.html" class="btn btn-outline-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-star"></i> 내 후기 보기</a>`;
+          } else if (isDone) {
+            reviewActionHtml = `<a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
+          } else {
+            reviewActionHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">검사완료 후 작성</span>`;
+          }
+
           return `
             <tr>
               <td>${a.createdAt.substring(0, 16)}</td>
@@ -1031,11 +1070,12 @@
               <td><span class="${statusClass}">${statusLabel}</span></td>
               <td>${a.measuredWeight || '-'}</td>
               <td>${certBtn}</td>
+              <td>${reviewActionHtml}</td>
             </tr>
           `;
         }).join('');
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef4444;">감정 내역 로드 실패</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#ef4444;">감정 내역 로드 실패</td></tr>';
       }
     }
 
@@ -1043,13 +1083,28 @@
     async function LoadClientOrders() {
       const tbody = document.getElementById('clientOrdersBody');
       try {
-        const res = await ApiRequest('/api/orders/my');
+        const [res, eligibleMap] = await Promise.all([
+          ApiRequest('/api/orders/my'),
+          GetClientEligibleMap()
+        ]);
+
         if (!res.success || !res.orders || res.orders.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--text-muted);">주문하신 내역이 없습니다.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:3rem; color:var(--text-muted);">주문하신 내역이 없습니다.</td></tr>';
           return;
         }
 
         tbody.innerHTML = res.orders.map(o => {
+          const ordInfo = eligibleMap[`ORDER_${o.id}`];
+          const isDone = ['COMPLETED', 'DELIVERED', 'SHIPPED'].includes(o.status);
+          let reviewActionHtml = '';
+          if (ordInfo && ordInfo.alreadyReviewed) {
+            reviewActionHtml = `<a href="reviews.html" class="btn btn-outline-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-star"></i> 내 후기 보기</a>`;
+          } else if (isDone) {
+            reviewActionHtml = `<a href="reviews.html?write_type=ORDER&ref_id=${o.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
+          } else {
+            reviewActionHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">배송완료 후 작성</span>`;
+          }
+
           return `
             <tr>
               <td>${o.createdAt.substring(0, 16)}</td>
@@ -1060,11 +1115,12 @@
               <td>${o.deliveryMethod === 'COURIER' ? '택배' : '방문수령'}</td>
               <td><span class="badge-status badge-status-inspecting">${o.status}</span></td>
               <td>${o.trackingNo ? `<span style="color:#10b981;">우체국: ${o.trackingNo}</span>` : '<span style="color:var(--text-muted); font-size:0.82rem;">배송준비중</span>'}</td>
+              <td>${reviewActionHtml}</td>
             </tr>
           `;
         }).join('');
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#ef4444;">주문 내역 로드 실패</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:#ef4444;">주문 내역 로드 실패</td></tr>';
       }
     }
 
@@ -1513,7 +1569,8 @@
         typeof LoadAdminUsers === 'function' ? LoadAdminUsers() : null,
         typeof LoadAdminReservations === 'function' ? LoadAdminReservations() : null,
         typeof LoadAdminInquiries === 'function' ? LoadAdminInquiries() : null,
-        typeof LoadAdminAudits === 'function' ? LoadAdminAudits() : null
+        typeof LoadAdminAudits === 'function' ? LoadAdminAudits() : null,
+        typeof LoadAdminReviews === 'function' ? LoadAdminReviews() : null
       ].filter(Boolean));
     }
 
@@ -1584,6 +1641,359 @@
         }).join('');
       } catch (e) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#ef4444;">로그 로드 실패</td></tr>';
+      }
+    }
+
+    // =========================================================================
+    // MASTER ADMIN REVIEW & OFFLINE TRADE CONTROLLER
+    // =========================================================================
+    let adminCurrentReviews = [];
+
+    async function LoadAdminReviews() {
+      const tbody = document.getElementById('adminReviewsBody');
+      if (!tbody) return;
+
+      try {
+        const res = await ApiRequest('/api/admin/reviews');
+        if (!res.success || !res.reviews || res.reviews.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:3rem; color:var(--text-muted);">등록된 고객 후기가 없습니다.</td></tr>';
+          return;
+        }
+
+        adminCurrentReviews = res.reviews;
+        const pendingReports = res.pendingReportCount || 0;
+        const badgeEl = document.getElementById('adminPendingReportCount');
+        if (badgeEl) badgeEl.innerText = pendingReports;
+
+        tbody.innerHTML = res.reviews.map(rev => {
+          let starsHtml = '';
+          for (let i = 1; i <= 5; i++) {
+            starsHtml += `<i class="fa-solid fa-star" style="color:${i <= rev.rating ? '#e0b848' : '#2d3348'}; font-size:0.8rem;"></i>`;
+          }
+
+          let photosHtml = '';
+          if (rev.photos && rev.photos.length > 0) {
+            photosHtml = `<div style="display:flex; gap:4px; margin-top:6px; flex-wrap:wrap;">` + rev.photos.map(p => 
+              `<img src="${p}" style="width:38px; height:38px; border-radius:6px; object-fit:cover; border:1px solid #333; cursor:pointer;" onclick="window.open('${p}', '_blank')" title="클릭시 원본보기">`
+            ).join('') + `</div>`;
+          }
+
+          let txInfoHtml = '';
+          if (rev.linkedTransaction) {
+            const lt = rev.linkedTransaction;
+            if (lt.type === 'ORDER') {
+              txInfoHtml = `주문: <span class="text-gold">${lt.orderNo || '-'}</span><br><small style="color:var(--text-muted);">${lt.productName || ''} (${(lt.finalAmount||0).toLocaleString()}원)</small>`;
+            } else if (lt.type === 'APPRAISAL') {
+              txInfoHtml = `감정: <span class="text-gold">${lt.receiptNo || '-'}</span><br><small style="color:var(--text-muted);">${lt.itemType || ''}</small>`;
+            } else if (lt.type === 'OFFLINE') {
+              txInfoHtml = `오프라인: <span class="text-gold">${lt.authCode || '-'}</span><br><small style="color:var(--text-muted);">${lt.customerMemo || '현장인증'}</small>`;
+            }
+          } else {
+            txInfoHtml = `<span style="color:var(--text-muted);">-</span>`;
+          }
+
+          let replyHtml = '';
+          if (rev.adminReply) {
+            replyHtml = `
+              <div style="font-size:0.75rem; background:#181c28; border-left:2px solid var(--gold-light); padding:4px 8px; border-radius:4px; margin-bottom:5px; max-width:170px; overflow:hidden; text-overflow:ellipsis;">
+                ${rev.adminReply.content}
+              </div>
+              <button class="btn btn-outline-gold btn-sm" onclick="OpenAdminReplyModal('${rev.id}')" style="font-size:0.72rem; padding:2px 7px;">답변 수정</button>
+            `;
+          } else {
+            replyHtml = `<button class="btn btn-gold btn-sm" onclick="OpenAdminReplyModal('${rev.id}')" style="font-size:0.72rem; padding:2px 8px;"><i class="fa-solid fa-reply"></i> 답변 등록</button>`;
+          }
+
+          let visBadge = '';
+          let visBtn = '';
+          if (rev.isVisible) {
+            visBadge = `<span class="badge-status badge-status-inspected">공개중</span>`;
+            visBtn = `<button class="btn btn-secondary btn-sm" onclick="OpenAdminHideModal('${rev.id}')" style="font-size:0.72rem; padding:2px 6px; color:#ef4444;"><i class="fa-solid fa-eye-slash"></i> 숨김</button>`;
+          } else {
+            visBadge = `<span class="badge-status badge-status-cancelled" title="사유: ${rev.hiddenReason || '운영원칙 위반'}">비공개(숨김)</span><br><small style="color:#ef4444; font-size:0.7rem;">${rev.hiddenReason || ''}</small>`;
+            visBtn = `<button class="btn btn-outline-gold btn-sm" onclick="AdminRestoreReview('${rev.id}')" style="font-size:0.72rem; padding:2px 6px; color:#10b981;"><i class="fa-solid fa-eye"></i> 복원</button>`;
+          }
+
+          const reportCount = rev.reportCount || 0;
+          const reportAlert = reportCount > 0 ? `<br><span style="color:#f87171; font-size:0.72rem; font-weight:700;"><i class="fa-solid fa-flag"></i> 신고 ${reportCount}건</span>` : '';
+
+          return `
+            <tr>
+              <td>
+                ${(rev.createdAt || '').substring(0, 16)}<br>
+                <small style="color:var(--text-muted); font-size:0.72rem;">${rev.id}</small>
+                ${reportAlert}
+              </td>
+              <td><span class="section-badge" style="font-size:0.72rem;">${rev.categoryLabel || rev.category}</span></td>
+              <td>
+                <div style="display:flex; gap:1px;">${starsHtml}</div>
+                <strong style="font-family:var(--font-num); font-size:0.85rem; color:var(--gold-light);">${Number(rev.rating).toFixed(1)}</strong>
+              </td>
+              <td>
+                <strong>${rev.authorName || rev.authorEmail || '-'}</strong><br>
+                <small style="color:var(--text-muted); font-size:0.75rem;">${rev.authorPhone || rev.authorEmail || '-'}</small>
+              </td>
+              <td style="font-size:0.82rem;">${txInfoHtml}</td>
+              <td style="max-width:220px; font-size:0.82rem;">
+                <div style="display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">${rev.content}</div>
+                ${photosHtml}
+              </td>
+              <td>${replyHtml}</td>
+              <td>${visBadge}</td>
+              <td><div style="display:flex; flex-direction:column; gap:4px;">${visBtn}</div></td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:#ef4444;">후기 데이터를 불러오지 못했습니다.</td></tr>';
+      }
+    }
+
+    function OpenAdminReplyModal(reviewId) {
+      const rev = adminCurrentReviews.find(r => r.id === reviewId);
+      document.getElementById('replyTargetReviewId').value = reviewId;
+      const replyText = (rev && rev.adminReply && rev.adminReply.content) || '';
+      document.getElementById('adminReplyText').value = replyText;
+      const delBtn = document.getElementById('btnDeleteReply');
+      if (delBtn) delBtn.style.display = replyText ? 'inline-block' : 'none';
+      document.getElementById('adminReviewReplyModal').classList.add('active');
+    }
+
+    async function SubmitAdminReply(e) {
+      e.preventDefault();
+      const reviewId = document.getElementById('replyTargetReviewId').value;
+      const content = document.getElementById('adminReplyText').value.trim();
+      if (!content) return alert('답변 내용을 입력하세요.');
+
+      try {
+        const res = await ApiRequest(`/api/admin/reviews/${reviewId}/reply`, 'POST', { reply: content });
+        if (res.success) {
+          alert('대표 공식 답변이 성공적으로 저장되었습니다.');
+          CloseModal('adminReviewReplyModal');
+          await LoadAdminReviews();
+        } else {
+          alert('답변 저장 실패: ' + (res.error || '오류 발생'));
+        }
+      } catch (err) {
+        alert('답변 저장 오류: ' + err.message);
+      }
+    }
+
+    async function DeleteCurrentReply() {
+      const reviewId = document.getElementById('replyTargetReviewId').value;
+      if (!confirm('등록된 대표 공식 답변을 삭제하시겠습니까?')) return;
+
+      try {
+        const res = await ApiRequest(`/api/admin/reviews/${reviewId}/reply`, 'DELETE');
+        if (res.success) {
+          alert('답변이 삭제되었습니다.');
+          CloseModal('adminReviewReplyModal');
+          await LoadAdminReviews();
+        } else {
+          alert('삭제 실패: ' + (res.error || '오류 발생'));
+        }
+      } catch (err) {
+        alert('삭제 오류: ' + err.message);
+      }
+    }
+
+    function OpenAdminHideModal(reviewId) {
+      document.getElementById('hideTargetReviewId').value = reviewId;
+      document.getElementById('adminHideReasonSelect').value = '';
+      document.getElementById('adminReviewHideModal').classList.add('active');
+    }
+
+    async function SubmitAdminHide(e) {
+      e.preventDefault();
+      const reviewId = document.getElementById('hideTargetReviewId').value;
+      const reason = document.getElementById('adminHideReasonSelect').value;
+      if (!reason) return alert('숨김 사유를 선택하세요.');
+
+      try {
+        const res = await ApiRequest(`/api/admin/reviews/${reviewId}/visibility`, 'POST', {
+          isVisible: false,
+          reason
+        });
+        if (res.success) {
+          alert('후기가 비공개(숨김) 처리되었으며 사유와 감사 로그가 기록되었습니다.');
+          CloseModal('adminReviewHideModal');
+          await LoadAdminReviews();
+        } else {
+          alert('숨김 실패: ' + (res.error || '오류 발생'));
+        }
+      } catch (err) {
+        alert('숨김 오류: ' + err.message);
+      }
+    }
+
+    async function AdminRestoreReview(reviewId) {
+      if (!confirm('이 후기를 다시 공개 상태로 복원하시겠습니까?')) return;
+
+      try {
+        const res = await ApiRequest(`/api/admin/reviews/${reviewId}/visibility`, 'POST', {
+          isVisible: true,
+          reason: '관리자 직권 공개 복원'
+        });
+        if (res.success) {
+          alert('후기가 정상 공개 상태로 복원되었습니다.');
+          await LoadAdminReviews();
+        } else {
+          alert('복원 실패: ' + (res.error || '오류 발생'));
+        }
+      } catch (err) {
+        alert('복원 오류: ' + err.message);
+      }
+    }
+
+    let adminReportsOpen = false;
+    async function ToggleAdminReportsView() {
+      const sec = document.getElementById('adminReportsSection');
+      if (!sec) return;
+      adminReportsOpen = !adminReportsOpen;
+      sec.style.display = adminReportsOpen ? 'block' : 'none';
+      if (adminReportsOpen) {
+        await LoadAdminReports();
+      }
+    }
+
+    async function LoadAdminReports() {
+      const tbody = document.getElementById('adminReportsBody');
+      if (!tbody) return;
+
+      try {
+        const res = await ApiRequest('/api/admin/reviews/reports');
+        if (!res.success || !res.reports || res.reports.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; padding:2rem; color:var(--text-muted);">미처리된 신고 내역이 없습니다.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = res.reports.map(rep => {
+          return `
+            <tr>
+              <td>${(rep.createdAt || '').substring(0, 16)}</td>
+              <td><strong class="text-gold">${rep.reviewId}</strong></td>
+              <td><span style="color:#f87171; font-weight:700;">${rep.reason}</span></td>
+              <td style="max-width:200px; font-size:0.8rem;">${rep.detail || '-'}</td>
+              <td>${rep.reporterEmail || rep.reporterIp || '-'}</td>
+              <td><span class="badge-status badge-status-${rep.status === 'PENDING' ? 'applied' : 'inspected'}">${rep.status}</span></td>
+              <td>
+                ${rep.status === 'PENDING' ? `
+                  <div style="display:flex; gap:4px;">
+                    <button class="btn btn-gold btn-sm" onclick="ResolveAdminReport('${rep.id}', 'HIDE_REVIEW')" style="font-size:0.72rem; padding:2px 6px;">후기숨김</button>
+                    <button class="btn btn-secondary btn-sm" onclick="ResolveAdminReport('${rep.id}', 'DISMISS')" style="font-size:0.72rem; padding:2px 6px;">기각</button>
+                  </div>
+                ` : '-'}
+              </td>
+            </tr>
+          `;
+        }).join('');
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center; color:#ef4444;">신고 목록 로드 실패</td></tr>';
+      }
+    }
+
+    async function ResolveAdminReport(reportId, action) {
+      try {
+        const res = await ApiRequest(`/api/admin/reviews/reports/${reportId}/resolve`, 'POST', { action });
+        if (res.success) {
+          alert('신고 처리가 완료되었습니다.');
+          await LoadAdminReports();
+          await LoadAdminReviews();
+        } else {
+          alert('처리 실패: ' + (res.error || '오류 발생'));
+        }
+      } catch (err) {
+        alert('처리 오류: ' + err.message);
+      }
+    }
+
+    function OpenAdminIssueOfflineCodeModal() {
+      document.getElementById('formAdminOfflineAuth').reset();
+      document.getElementById('offlineResultArea').style.display = 'none';
+      document.getElementById('adminOfflineAuthModal').classList.add('active');
+    }
+
+    async function SubmitAdminIssueOfflineCode(e) {
+      e.preventDefault();
+      const tradeType = document.getElementById('offlineTradeTypeSelect').value;
+      const customerMemo = document.getElementById('offlineCustomerMemo').value.trim();
+
+      try {
+        const res = await ApiRequest('/api/admin/reviews/offline-auth', 'POST', {
+          tradeType,
+          customerMemo
+        });
+
+        if (res.success) {
+          document.getElementById('resOfflineCodeDisplay').innerText = res.authCode;
+          const shareUrl = res.shareUrl || `${window.location.origin}/reviews.html?auth_code=${res.authCode}`;
+          document.getElementById('resOfflineShareLink').value = shareUrl;
+
+          DrawOfflineQRCode(shareUrl);
+          document.getElementById('offlineResultArea').style.display = 'block';
+        } else {
+          alert('발급 실패: ' + (res.error || '오류 발생'));
+        }
+      } catch (err) {
+        alert('발급 오류: ' + err.message);
+      }
+    }
+
+    function DrawOfflineQRCode(text) {
+      const container = document.getElementById('resQrContainer');
+      const canvas = document.getElementById('offlineQrCanvas');
+      if (!container) return;
+
+      if (typeof QRCode !== 'undefined') {
+        container.innerHTML = '';
+        new QRCode(container, {
+          text: text,
+          width: 160,
+          height: 160,
+          colorDark: "#000000",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+        return;
+      }
+
+      if (canvas) {
+        const qrApiUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(text)}`;
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.onload = () => {
+          const ctx = canvas.getContext('2d');
+          ctx.clearRect(0, 0, 160, 160);
+          ctx.drawImage(img, 0, 0, 160, 160);
+        };
+        img.onerror = () => {
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, 160, 160);
+          ctx.fillStyle = '#000';
+          ctx.font = '12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText('QR Code', 80, 80);
+        };
+        img.src = qrApiUrl;
+      }
+    }
+
+    function CopyOfflineShareUrl() {
+      const input = document.getElementById('resOfflineShareLink');
+      if (!input) return;
+      input.select();
+      input.setSelectionRange(0, 99999);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(input.value).then(() => {
+          alert('고객 안내용 링크가 클립보드에 복사되었습니다.');
+        }).catch(() => {
+          document.execCommand('copy');
+          alert('고객 안내용 링크가 복사되었습니다.');
+        });
+      } else {
+        document.execCommand('copy');
+        alert('고객 안내용 링크가 복사되었습니다.');
       }
     }
   </script>
