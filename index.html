@@ -30,6 +30,7 @@
           <li><a href="index.html#hero-split" class="nav-link active"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
           <li><a href="products.html" class="nav-link"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
           <li><a href="appraisal.html" class="nav-link"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
+          <li><a href="reviews.html" class="nav-link"><i class="fa-solid fa-star"></i> 고객 후기</a></li>
           <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
           <li><a href="reservation.html" class="nav-link"><i class="fa-solid fa-calendar-check"></i> 방문예약</a></li>
           <li><a href="support.html" class="nav-link"><i class="fa-solid fa-headset"></i> 고객센터</a></li>
@@ -397,6 +398,30 @@
     </div>
   </section>
 
+  <!-- DYNAMIC CUSTOMER REVIEWS PREVIEW SECTION (최신 공개 후기 3개 이상일 때만 자동 노출, 미만이면 숨김) -->
+  <section id="mainReviewPreviewSection" style="display:none; padding:4.5rem 0 3.5rem 0; background:linear-gradient(180deg, rgba(10,12,18,0) 0%, rgba(19,23,34,0.7) 50%, rgba(10,12,18,0) 100%); border-top:1px solid rgba(224,184,72,0.12);">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:2.2rem; flex-wrap:wrap; gap:1rem;">
+        <div>
+          <div class="section-badge" style="margin-bottom:0.5rem;"><i class="fa-solid fa-star text-gold"></i> REAL CUSTOMER STORIES</div>
+          <h2 style="font-size:2rem; font-weight:900; color:var(--text-white); margin:0;">
+            골드랩앤코 <span class="gradient-text">고객 실제 이용 후기</span>
+          </h2>
+          <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+            골드랩앤코를 이용하신 고객님의 경험을 확인해 보세요.
+          </p>
+        </div>
+        <a href="reviews.html" class="btn btn-secondary" style="font-size:0.92rem; padding:0.6rem 1.3rem;">
+          전체 후기 보기 <i class="fa-solid fa-arrow-right" style="margin-left:0.3rem;"></i>
+        </a>
+      </div>
+
+      <div id="mainReviewsCardsGrid" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;">
+        <!-- Dynamically injected up to 3 cards -->
+      </div>
+    </div>
+  </section>
+
   <!-- FOOTER -->
   <footer class="footer">
     <div class="container">
@@ -635,6 +660,6 @@
   </div>
 
   <!-- Application JS Script -->
-  <script src="app.js?v=202610150613"></script>
+  <script src="app.js?v=202610150633"></script>
 </body>
 </html>
