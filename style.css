@@ -499,27 +499,43 @@ button, input, select {
   box-shadow: 0 0 15px rgba(224, 184, 72, 0.25);
 }
 
-/* Ledger Table */
-.ledger-table {
+/* Ledger & Data Tables */
+.ledger-table,
+.data-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.ledger-table th {
+.ledger-table th,
+.data-table th {
   background: rgba(10, 12, 18, 0.9);
   color: var(--text-muted);
   font-weight: 700;
   font-size: 0.95rem;
-  padding: 1.2rem 1rem;
+  padding: 1.1rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--border-dark);
+  white-space: nowrap;
 }
 
-.ledger-table td {
-  padding: 1.2rem 1rem;
+.ledger-table td,
+.data-table td {
+  padding: 1.1rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  font-size: 1.05rem;
+  font-size: 1rem;
   color: var(--text-light);
+  white-space: nowrap;
+}
+
+.data-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 14px;
+}
+
+.data-table {
+  min-width: 650px;
 }
 
 /* Footer */
@@ -1381,9 +1397,11 @@ button, input, select {
     border-radius: 18px !important;
   }
 
-  /* 2-Column Form Fields Collapse on Mobile */
+  /* Form Grids Collapse on Mobile */
   form div[style*="grid-template-columns:1fr 1fr"],
-  form div[style*="grid-template-columns: 1fr 1fr"] {
+  form div[style*="grid-template-columns: 1fr 1fr"],
+  form div[style*="repeat(3, 1fr)"],
+  form div[style*="repeat(3,1fr)"] {
     grid-template-columns: 1fr !important;
     gap: 0.8rem !important;
   }
@@ -1538,6 +1556,45 @@ button, input, select {
     grid-template-columns: 1fr !important;
   }
 
+  /* Small Mobile Membership & Cards */
+  .membership-tier-card-section {
+    padding: 1.2rem 0.85rem !important;
+  }
+  .tier-card-mobile {
+    padding: 1.1rem 0.9rem !important;
+  }
+  .tier-badge-pill {
+    font-size: 0.85rem !important;
+    padding: 0.28rem 0.65rem !important;
+  }
+  .tier-condition-m {
+    font-size: 0.82rem !important;
+  }
+  .tier-highlight-m {
+    padding: 0.7rem 0.8rem !important;
+  }
+  .tier-highlight-m .highlight-val {
+    font-size: 1.1rem !important;
+  }
+  .benefit-val-m {
+    font-size: 0.84rem !important;
+  }
+
+  /* Verify & Search Inputs Stack */
+  #verifyForm > div {
+    flex-direction: column !important;
+  }
+  #verifyForm button {
+    width: 100% !important;
+    padding: 0.85rem !important;
+  }
+
+  /* Process Pipeline & Small Grid Optimization */
+  div[style*="minmax(170px, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.6rem !important;
+  }
+
   /* Footer Bottom Formatting */
   .footer-bottom {
     font-size: 0.78rem !important;
@@ -1569,5 +1626,20 @@ button, input, select {
   }
   .container {
     padding: 0 0.85rem !important;
+  }
+  .tier-card-mobile {
+    padding: 0.95rem 0.75rem !important;
+  }
+  .benefit-row-m {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+  }
+  .benefit-val-m {
+    text-align: left !important;
+    max-width: 100% !important;
+  }
+  div[style*="minmax(170px, 1fr)"] {
+    grid-template-columns: 1fr !important;
   }
 }
