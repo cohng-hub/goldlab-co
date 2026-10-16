@@ -560,6 +560,212 @@ button, input, select {
   color: rgba(255, 255, 255, 0.2);
 }
 
+/* ==========================================================================
+   MEMBERSHIP PROGRAM RESPONSIVE DESIGN & LUXURY TIER CARDS
+   ========================================================================== */
+.membership-concept-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 3.5rem;
+}
+
+.membership-calc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.8rem;
+  margin-bottom: 2.5rem;
+}
+
+.membership-tier-card-section {
+  background: #12141d;
+  border: 1px solid var(--border-dark);
+  border-radius: 24px;
+  padding: 2.5rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.membership-desktop-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #090b10;
+}
+
+.membership-desktop-table table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 0.95rem;
+}
+
+.membership-desktop-table th,
+.membership-desktop-table td {
+  white-space: nowrap;
+}
+
+/* Mobile Tier Cards Deck (Hidden on desktop) */
+.membership-mobile-cards {
+  display: none;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.tier-card-mobile {
+  background: linear-gradient(145deg, #131722 0%, #0d0f17 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 1.4rem 1.2rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  word-break: keep-all;
+}
+
+.tier-card-mobile.silver {
+  border-color: rgba(203, 213, 225, 0.3);
+}
+
+.tier-card-mobile.gold {
+  border-color: rgba(224, 184, 72, 0.5);
+  background: linear-gradient(145deg, #171c2a 0%, #10131e 100%);
+  box-shadow: 0 10px 30px rgba(224, 184, 72, 0.12);
+}
+
+.tier-card-mobile.vip {
+  border: 1.5px solid var(--gold-light);
+  background: linear-gradient(145deg, #1c2132 0%, #121622 100%);
+  box-shadow: 0 12px 35px rgba(245, 228, 162, 0.18);
+}
+
+.tier-card-mobile.vip::before {
+  content: 'TOP TIER';
+  position: absolute;
+  top: 0.9rem;
+  right: -2.2rem;
+  background: var(--gold-gradient);
+  color: #000;
+  font-size: 0.65rem;
+  font-weight: 900;
+  padding: 0.22rem 2.4rem;
+  transform: rotate(45deg);
+  letter-spacing: 0.8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.tier-card-mobile.b2b {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: linear-gradient(145deg, #111a2d 0%, #0c121e 100%);
+}
+
+.tier-header-m {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.9rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.tier-badge-pill {
+  font-size: 0.92rem;
+  font-weight: 900;
+  padding: 0.35rem 0.85rem;
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.tier-badge-pill.silver {
+  background: rgba(203, 213, 225, 0.15);
+  color: #cbd5e1;
+  border: 1px solid rgba(203, 213, 225, 0.3);
+}
+
+.tier-badge-pill.gold {
+  background: rgba(224, 184, 72, 0.2);
+  color: var(--gold-light);
+  border: 1px solid var(--gold-primary);
+}
+
+.tier-badge-pill.vip {
+  background: var(--gold-gradient);
+  color: #000;
+  box-shadow: 0 0 15px rgba(224, 184, 72, 0.5);
+}
+
+.tier-badge-pill.b2b {
+  background: rgba(59, 130, 246, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.tier-condition-m {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.tier-highlight-m {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  margin-bottom: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tier-highlight-m .highlight-label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.tier-highlight-m .highlight-val {
+  font-family: var(--font-num);
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.tier-benefits-list-m {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: 0.88rem;
+}
+
+.benefit-row-m {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.05);
+}
+
+.benefit-row-m:last-child {
+  border-bottom: none;
+}
+
+.benefit-label-m {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.benefit-val-m {
+  color: var(--text-light);
+  font-weight: 700;
+  text-align: right;
+  max-width: 65%;
+  word-break: keep-all;
+}
+
 /* Floating Widgets */
 .floating-widgets {
   position: fixed;
@@ -1065,12 +1271,27 @@ button, input, select {
     grid-template-columns: 1fr !important;
     gap: 2rem !important;
   }
+
+  /* Membership Grids on Tablet/Mobile */
+  .membership-concept-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+  .membership-calc-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
 }
 
 /* Standard Mobile Devices (<= 768px) */
 @media (max-width: 768px) {
   html {
     font-size: 15px; /* Optimize base font size for mobile reading */
+  }
+
+  /* Natural Korean Word Breaking & Spacing */
+  h1, h2, h3, h4, p, li {
+    word-break: keep-all;
   }
 
   .container {
@@ -1133,12 +1354,57 @@ button, input, select {
     border-radius: 18px !important;
   }
 
+  /* Membership Page Responsive Switch */
+  .membership-desktop-table {
+    display: none !important;
+  }
+  .membership-mobile-cards {
+    display: flex !important;
+  }
+  .membership-concept-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.4rem !important;
+    margin-bottom: 2.2rem !important;
+  }
+  .membership-calc-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.2rem !important;
+    margin-bottom: 2rem !important;
+  }
+  .membership-tier-card-section {
+    padding: 1.5rem 1.1rem !important;
+    border-radius: 20px !important;
+    margin-bottom: 2rem !important;
+  }
+  .policy-content-card {
+    padding: 1.5rem 1.1rem !important;
+    border-radius: 18px !important;
+  }
+
+  /* 2-Column Form Fields Collapse on Mobile */
+  form div[style*="grid-template-columns:1fr 1fr"],
+  form div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 0.8rem !important;
+  }
+
   /* Products 2-Column Grid on Mobile */
   #products div[style*="grid-template-columns: 1fr 1fr"],
   div[style*="grid-template-columns: 1fr 1fr"],
   div[style*="grid-template-columns:1fr 1fr"] {
     grid-template-columns: 1fr !important;
     gap: 1.4rem !important;
+  }
+
+  /* Exclude Compact Live Rate Cards & Segmented Controls from 1-column override */
+  .live-price-card div[style*="grid-template-columns:1fr 1fr"],
+  .live-price-card div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.6rem !important;
+  }
+  div[style*="border-radius:12px"][style*="grid-template-columns:1fr 1fr"],
+  div[style*="border-radius:12px"][style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
   }
 
   /* Floating Action Buttons */

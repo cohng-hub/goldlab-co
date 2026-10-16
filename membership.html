@@ -53,10 +53,10 @@
     </div>
 
     <!-- GV vs GC CORE CONCEPT DEFINITION -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-bottom:3.5rem;">
+    <div class="membership-concept-grid">
       
       <!-- GV Card -->
-      <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:2.2rem; box-shadow:0 15px 40px rgba(0,0,0,0.5);">
+      <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:2.2rem; box-shadow:0 15px 40px rgba(0,0,0,0.5); word-break:keep-all;">
         <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem;">
           <div style="width:48px; height:48px; border-radius:14px; background:rgba(224,184,72,0.15); display:flex; align-items:center; justify-content:center;">
             <i class="fa-solid fa-award text-gold" style="font-size:1.5rem;"></i>
@@ -76,7 +76,7 @@
       </div>
 
       <!-- GC Card -->
-      <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:2.2rem; box-shadow:0 15px 40px rgba(0,0,0,0.5);">
+      <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:2.2rem; box-shadow:0 15px 40px rgba(0,0,0,0.5); word-break:keep-all;">
         <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1.2rem;">
           <div style="width:48px; height:48px; border-radius:14px; background:rgba(16,185,129,0.15); display:flex; align-items:center; justify-content:center;">
             <i class="fa-solid fa-coins" style="color:#10b981; font-size:1.5rem;"></i>
@@ -97,71 +97,167 @@
 
     </div>
 
-    <!-- MEMBERSHIP TIERS & BENEFITS TABLE -->
-    <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:24px; padding:2.5rem; margin-bottom:2.5rem;">
-      <h2 style="color:var(--text-white); font-size:1.6rem; font-weight:900; margin-bottom:0.5rem; text-align:center;">
+    <!-- MEMBERSHIP TIERS & BENEFITS SECTION -->
+    <div class="membership-tier-card-section">
+      <h2 style="color:var(--text-white); font-size:1.6rem; font-weight:900; margin-bottom:0.5rem; text-align:center; word-break:keep-all;">
         <i class="fa-solid fa-ranking-star text-gold"></i> 회원 등급별 혜택 기준표
       </h2>
-      <p style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem;">
+      <p style="text-align:center; color:var(--text-muted); font-size:0.9rem; margin-bottom:1.5rem; word-break:keep-all;">
         시행일자: 2026년 10월 12일 부 확정 시행 (기존 잔액 및 과거 적립 내역 소급 변경 없음)
       </p>
 
-      <div style="overflow-x:auto;">
-        <table style="width:100%; border-collapse:collapse; text-align:center; font-size:0.95rem;">
+      <!-- DESKTOP / TABLET VIEW: Uncompressed Wide Table with Horizontal Scroll Safe Guard -->
+      <div class="membership-desktop-table">
+        <table>
           <thead>
             <tr style="border-bottom:2px solid var(--border-dark); background:#090b10;">
-              <th style="padding:1.2rem 1rem; color:var(--text-white);">등급 구분</th>
-              <th style="padding:1.2rem 1rem; color:var(--text-white);">달성 기준 (누적 GV)</th>
-              <th style="padding:1.2rem 1rem; color:var(--text-white);">상품 구매 적립률 (GC)</th>
-              <th style="padding:1.2rem 1rem; color:var(--text-white);">주얼리 공임 할인</th>
-              <th style="padding:1.2rem 1rem; color:var(--text-white);">정밀 감정 혜택</th>
+              <th style="padding:1.2rem 1.1rem; color:var(--text-white);">등급 구분</th>
+              <th style="padding:1.2rem 1.1rem; color:var(--text-white);">달성 기준 (누적 GV)</th>
+              <th style="padding:1.2rem 1.1rem; color:var(--text-white);">상품 구매 적립률 (GC)</th>
+              <th style="padding:1.2rem 1.1rem; color:var(--text-white);">주얼리 공임 할인</th>
+              <th style="padding:1.2rem 1.1rem; color:var(--text-white);">정밀 감정 혜택</th>
             </tr>
           </thead>
           <tbody>
             <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
-              <td style="padding:1.2rem 1rem; font-weight:800; color:var(--text-light);">SILVER</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-muted);">신규 가입 고객</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:800;">
+              <td style="padding:1.2rem 1.1rem; font-weight:800; color:var(--text-light);">SILVER</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--text-muted);">신규 가입 고객</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--gold-light); font-weight:800;">
                 0.4% 적립 <small style="display:block; color:var(--text-muted); font-weight:normal;">(가입 축하 5,000 GC 별도 지급)</small>
               </td>
-              <td style="padding:1.2rem 1rem; color:var(--text-muted);">-</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-muted);">정밀감정 무료 연 1회</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--text-muted);">-</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--text-muted);">정밀감정 무료 연 1회</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(224,184,72,0.03);">
-              <td style="padding:1.2rem 1rem; font-weight:900; color:var(--gold-light);">GOLD</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-white); font-weight:700;">누적 GV 1,000만 원 이상</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:800;">
+              <td style="padding:1.2rem 1.1rem; font-weight:900; color:var(--gold-light);">GOLD</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--text-white); font-weight:700;">누적 GV 1,000만 원 이상</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--gold-light); font-weight:800;">
                 0.7% 적립
               </td>
-              <td style="padding:1.2rem 1rem; color:#10b981; font-weight:700;">공임 5% 할인</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-light);">정밀감정 무료 연 2회 · 기본 세척 무상</td>
+              <td style="padding:1.2rem 1.1rem; color:#10b981; font-weight:700;">공임 5% 우대 할인</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--text-light);">정밀감정 무료 연 2회 · 기본 세척 무상</td>
             </tr>
             <tr style="border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(224,184,72,0.06);">
-              <td style="padding:1.2rem 1rem; font-weight:900; color:#f5e4a2;">👑 VIP PLATINUM</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:900;">누적 GV 3,000만 원 이상</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:900;">
+              <td style="padding:1.2rem 1.1rem; font-weight:900; color:#f5e4a2;">👑 VIP PLATINUM</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--gold-light); font-weight:900;">누적 GV 3,000만 원 이상</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--gold-light); font-weight:900;">
                 1.0% 적립
               </td>
-              <td style="padding:1.2rem 1rem; color:#10b981; font-weight:800;">공임 10% 우대 할인</td>
-              <td style="padding:1.2rem 1rem; color:var(--gold-light); font-weight:700;">정밀감정 무료 연 3회 · 기본 세척 무상</td>
+              <td style="padding:1.2rem 1.1rem; color:#10b981; font-weight:800;">공임 10% 최고 우대 할인</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--gold-light); font-weight:700;">정밀감정 무료 연 3회 · 기본 세척 무상</td>
             </tr>
             <tr>
-              <td style="padding:1.2rem 1rem; font-weight:900; color:#3b82f6;">🏢 B2B PARTNER</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-light);">사업자등록증 인증 승인</td>
-              <td style="padding:1.2rem 1rem; color:var(--text-muted);">도매 공급 마진율 별도 적용</td>
-              <td style="padding:1.2rem 1rem; color:#3b82f6; font-weight:700;">종로 도매 특가 공급</td>
-              <td style="padding:1.2rem 1rem; color:#3b82f6; font-weight:700;">대량 검사 우선 배정</td>
+              <td style="padding:1.2rem 1.1rem; font-weight:900; color:#3b82f6;">🏢 B2B PARTNER</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--text-light);">사업자등록증 인증 승인</td>
+              <td style="padding:1.2rem 1.1rem; color:var(--text-muted);">도매 공급 마진율 별도 적용</td>
+              <td style="padding:1.2rem 1.1rem; color:#3b82f6; font-weight:700;">종로 도매 특가 공급</td>
+              <td style="padding:1.2rem 1.1rem; color:#3b82f6; font-weight:700;">대량 검사 우선 배정</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p style="margin-top:1rem; font-size:0.85rem; color:var(--text-muted); line-height:1.6; text-align:left;">
+
+      <!-- MOBILE VIEW: Dedicated Luxury Tier Cards Deck -->
+      <div class="membership-mobile-cards">
+        <!-- 1. SILVER -->
+        <div class="tier-card-mobile silver">
+          <div class="tier-header-m">
+            <div class="tier-badge-pill silver">SILVER</div>
+            <span class="tier-condition-m">신규 가입 고객</span>
+          </div>
+          <div class="tier-highlight-m">
+            <span class="highlight-label">상품 구매 적립률</span>
+            <span class="highlight-val" style="color:var(--gold-light);">0.4% 적립</span>
+          </div>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.9rem; padding-left:0.2rem;">
+            ※ 가입 축하 5,000 GC 별도 지급
+          </div>
+          <div class="tier-benefits-list-m">
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">주얼리 세공 공임</span>
+              <span class="benefit-val-m text-muted">기본 공임</span>
+            </div>
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">정밀 감정 혜택</span>
+              <span class="benefit-val-m">정밀감정 무료 연 1회</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. GOLD -->
+        <div class="tier-card-mobile gold">
+          <div class="tier-header-m">
+            <div class="tier-badge-pill gold">GOLD</div>
+            <span class="tier-condition-m" style="color:var(--gold-light); font-weight:700;">누적 GV 1,000만 원 이상</span>
+          </div>
+          <div class="tier-highlight-m">
+            <span class="highlight-label">상품 구매 적립률</span>
+            <span class="highlight-val" style="color:var(--gold-light);">0.7% 적립</span>
+          </div>
+          <div class="tier-benefits-list-m">
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">주얼리 세공 공임</span>
+              <span class="benefit-val-m" style="color:#10b981;"><i class="fa-solid fa-gem"></i> 공임 5% 우대 할인</span>
+            </div>
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">정밀 감정 혜택</span>
+              <span class="benefit-val-m">정밀감정 무료 연 2회 · 세척 무상</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. VIP PLATINUM -->
+        <div class="tier-card-mobile vip">
+          <div class="tier-header-m">
+            <div class="tier-badge-pill vip">👑 VIP PLATINUM</div>
+            <span class="tier-condition-m" style="color:var(--gold-light); font-weight:800;">누적 GV 3,000만 원 이상</span>
+          </div>
+          <div class="tier-highlight-m">
+            <span class="highlight-label">상품 구매 적립률</span>
+            <span class="highlight-val" style="color:var(--gold-light);">1.0% 적립</span>
+          </div>
+          <div class="tier-benefits-list-m">
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">주얼리 세공 공임</span>
+              <span class="benefit-val-m" style="color:#10b981; font-weight:800;"><i class="fa-solid fa-gem"></i> 공임 10% 최고 우대 할인</span>
+            </div>
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">정밀 감정 혜택</span>
+              <span class="benefit-val-m" style="color:var(--gold-light);"><i class="fa-solid fa-crown"></i> 정밀감정 무료 연 3회 · 세척 무상</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. B2B PARTNER -->
+        <div class="tier-card-mobile b2b">
+          <div class="tier-header-m">
+            <div class="tier-badge-pill b2b">🏢 B2B PARTNER</div>
+            <span class="tier-condition-m">사업자등록증 인증 승인</span>
+          </div>
+          <div class="tier-highlight-m">
+            <span class="highlight-label">도매 거래 우대</span>
+            <span class="highlight-val" style="color:#60a5fa;">도매 공급가</span>
+          </div>
+          <div class="tier-benefits-list-m">
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">주얼리 및 골드바</span>
+              <span class="benefit-val-m" style="color:#60a5fa;">종로 도매 특가 공급</span>
+            </div>
+            <div class="benefit-row-m">
+              <span class="benefit-label-m">정밀 감정 접수</span>
+              <span class="benefit-val-m" style="color:#60a5fa;">대량 검사 우선 배정</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top:1.2rem; font-size:0.85rem; color:var(--text-muted); line-height:1.6; text-align:left; word-break:keep-all;">
         ※ <strong>무료 감정 혜택 안내:</strong> 무료 감정 1회는 접수 1건으로 계산하며 제품 최대 2개까지 적용됩니다. 기본 감정료 29,900원이 전액 면제되며, 배송비 및 정밀·특수 추가검사비는 별도입니다. 무료 적용 건에는 GC가 추가 차감되지 않으며, 접수 취소 시 무료 혜택 횟수가 원장에 의해 안전하게 복원됩니다.
       </p>
     </div>
 
     <!-- CALCULATION EXAMPLES & CLARIFICATION CARD -->
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.8rem; margin-bottom:2.5rem;">
+    <div class="membership-calc-grid">
       
       <!-- Example 1: 전액 결제 시 -->
       <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:20px; padding:1.8rem;">
