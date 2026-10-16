@@ -86,6 +86,9 @@ function getDefaultDBSchema() {
     orders: [],
     gv_gc_ledgers: [],
     inquiries: [],
+    reviews: [],
+    offline_transactions: [],
+    review_reports: [],
     audit_logs: [],
     settings: {
       siteName: 'GoldLab&co',
@@ -169,7 +172,16 @@ function persistDBToDisk(data) {
       try {
         const payload = JSON.stringify(data, null, 2);
         fs.writeFileSync(DB_TMP_FILE, payload, 'utf8');
-        fs.renameSync(DB_TMP_FILE, DB_FILE);
+        try {
+          fs.renameSync(DB_TMP_FILE, DB_FILE);
+        } catch (renameErr) {
+          if (renameErr.code === 'EPERM' || renameErr.code === 'EACCES') {
+            fs.copyFileSync(DB_TMP_FILE, DB_FILE);
+            try { fs.unlinkSync(DB_TMP_FILE); } catch (e) {}
+          } else {
+            throw renameErr;
+          }
+        }
         resolve(true);
       } catch (err) {
         console.error('[Database] Atomic write failed:', err);
@@ -276,7 +288,11 @@ function loadDB() {
       persistDBToDisk(dbMemoryCache);
     }
 
-    console.log(`[Database] Loaded persistent database (${dbMemoryCache.users.length} users, ${dbMemoryCache.appraisals.length} appraisals).`);
+    if (!Array.isArray(dbMemoryCache.reviews)) dbMemoryCache.reviews = [];
+    if (!Array.isArray(dbMemoryCache.offline_transactions)) dbMemoryCache.offline_transactions = [];
+    if (!Array.isArray(dbMemoryCache.review_reports)) dbMemoryCache.review_reports = [];
+
+    console.log(`[Database] Loaded persistent database (${dbMemoryCache.users.length} users, ${dbMemoryCache.appraisals.length} appraisals, ${dbMemoryCache.reviews.length} reviews).`);
     return dbMemoryCache;
   } catch (err) {
     console.error('[Database] Read error, attempting backup restore:', err.message);

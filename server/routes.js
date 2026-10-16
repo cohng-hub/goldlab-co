@@ -2,6 +2,7 @@
 const crypto = require('crypto');
 const path = require('path');
 const fs = require('fs');
+const { execFile } = require('child_process');
 const { getDB, saveDB, runTransaction, backupDB } = require('./db');
 const {
   hashPassword,
@@ -20,6 +21,30 @@ const loginLimiter = new RateLimiter(60000, 5);      // Max 5 attempts per minut
 const registerLimiter = new RateLimiter(60000, 3);   // Max 3 registrations per minute
 const resetLimiter = new RateLimiter(60000, 3);      // Max 3 reset requests per minute
 const submitLimiter = new RateLimiter(60000, 10);    // Max 10 submissions per minute
+const reviewLimiter = new RateLimiter(60000, 15);    // Max 15 review actions per minute
+const reportLimiter = new RateLimiter(60000, 5);     // Max 5 reports per minute
+
+// Helper: Mask author name for privacy protection
+function maskAuthorName(name) {
+  if (!name || typeof name !== 'string') return '고객*';
+  const clean = name.trim();
+  if (clean.length <= 1) return clean + '*';
+  if (clean.length === 2) return clean[0] + '*';
+  if (clean.length === 3) return clean[0] + '*' + clean[2];
+  if (clean.length === 4) return clean[0] + '**' + clean[3];
+  return clean.slice(0, 2) + '*'.repeat(Math.min(clean.length - 3, 3)) + clean.slice(-1);
+}
+
+// Helper: Sanitize text for XSS defense
+function sanitizeText(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 // Helper: Parse cookies from request header
 function parseCookies(req) {
@@ -1252,6 +1277,500 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   }
 
   // ------------------------------------------------------------
+  // 8-B. CUSTOMER REVIEWS (PUBLIC & AUTHENTICATED VERIFIED REVIEWS)
+  // ------------------------------------------------------------
+  async function processReviewImage(base64Data, filename) {
+    let rawB64 = base64Data;
+    if (base64Data.includes(',')) {
+      rawB64 = base64Data.split(',')[1];
+    }
+    const dataBuffer = Buffer.from(rawB64, 'base64');
+    
+    // Size check: Max 10MB
+    if (dataBuffer.length > 10 * 1024 * 1024) {
+      throw new Error('사진 1장당 10MB 이하만 업로드 가능합니다.');
+    }
+
+    // Magic bytes check (JPEG: FF D8 FF, PNG: 89 50 4E 47, WebP: RIFF...WEBP)
+    let isJpeg = dataBuffer.length >= 3 && dataBuffer[0] === 0xFF && dataBuffer[1] === 0xD8 && dataBuffer[2] === 0xFF;
+    let isPng = dataBuffer.length >= 8 && dataBuffer[0] === 0x89 && dataBuffer[1] === 0x50 && dataBuffer[2] === 0x4E && dataBuffer[3] === 0x47;
+    let isWebp = dataBuffer.length >= 12 && dataBuffer.toString('ascii', 0, 4) === 'RIFF' && dataBuffer.toString('ascii', 8, 12) === 'WEBP';
+
+    if (!isJpeg && !isPng && !isWebp) {
+      throw new Error('지원되지 않는 파일 형식입니다. JPG, PNG, WebP 형식의 이미지만 업로드 가능합니다.');
+    }
+
+    const reviewsDir = path.resolve(__dirname, '..', 'uploads', 'reviews');
+    if (!fs.existsSync(reviewsDir)) fs.mkdirSync(reviewsDir, { recursive: true });
+
+    const tmpFilename = 'tmp_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex') + '.bin';
+    const tmpPath = path.join(reviewsDir, tmpFilename);
+    const finalFilename = 'rev_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex') + '.webp';
+    const finalPath = path.join(reviewsDir, finalFilename);
+
+    fs.writeFileSync(tmpPath, dataBuffer);
+
+    const pyScript = path.resolve(__dirname, '..', 'scripts', 'process_review_image.py');
+    return new Promise((resolve, reject) => {
+      execFile('python', [pyScript, tmpPath, finalPath], (error, stdout, stderr) => {
+        try { if (fs.existsSync(tmpPath)) fs.unlinkSync(tmpPath); } catch (e) {}
+
+        if (error) {
+          // Fallback to saving original image directly if python fails
+          try {
+            const fallbackExt = isPng ? '.png' : (isWebp ? '.webp' : '.jpg');
+            const fallbackFilename = 'rev_' + Date.now() + '_' + crypto.randomBytes(4).toString('hex') + fallbackExt;
+            const fallbackPath = path.join(reviewsDir, fallbackFilename);
+            fs.writeFileSync(fallbackPath, dataBuffer);
+            return resolve({
+              url: '/uploads/reviews/' + fallbackFilename,
+              photoUrl: '/uploads/reviews/' + fallbackFilename,
+              size: dataBuffer.length
+            });
+          } catch (fbErr) {
+            return reject(new Error('이미지 처리 실패: ' + (stderr || error.message)));
+          }
+        }
+
+        try {
+          const res = JSON.parse(stdout);
+          if (res.success) {
+            resolve({
+              url: '/uploads/reviews/' + finalFilename,
+              photoUrl: '/uploads/reviews/' + finalFilename,
+              width: res.width,
+              height: res.height,
+              size: res.processed_size
+            });
+          } else {
+            reject(new Error(res.error || '이미지 처리 실패'));
+          }
+        } catch (parseErr) {
+          resolve({
+            url: '/uploads/reviews/' + finalFilename,
+            photoUrl: '/uploads/reviews/' + finalFilename,
+            size: fs.existsSync(finalPath) ? fs.statSync(finalPath).size : dataBuffer.length
+          });
+        }
+      });
+    });
+  }
+
+  // 8-B-1. Public Reviews List with Dynamic Aggregates & Filtering
+  if (pathname === '/api/reviews' && method === 'GET') {
+    const db = getDB();
+    const query = parsedUrl.searchParams;
+    const reqCategory = query.get('category') || 'ALL';
+    const page = Math.max(1, parseInt(query.get('page') || '1', 10));
+    const limit = Math.max(1, Math.min(50, parseInt(query.get('limit') || '10', 10)));
+
+    // Active public reviews only
+    const allPublic = (db.reviews || []).filter(r => r.isPublic && !r.isDeleted);
+
+    // Real dynamic aggregates (never fake or arbitrary)
+    const totalCount = allPublic.length;
+    let sumRating = 0;
+    const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    const categoryCounts = { ALL: totalCount, GOLD_SELL: 0, PRODUCT_BUY: 0, APPRAISAL: 0 };
+
+    allPublic.forEach(r => {
+      const rt = Math.round(Number(r.rating) || 5);
+      sumRating += rt;
+      if (ratingCounts[rt] !== undefined) ratingCounts[rt]++;
+      if (categoryCounts[r.category] !== undefined) categoryCounts[r.category]++;
+    });
+
+    const averageRating = totalCount > 0 ? Number((sumRating / totalCount).toFixed(1)) : 0;
+
+    // Filter by requested category
+    let filtered = allPublic;
+    if (reqCategory && reqCategory !== 'ALL') {
+      filtered = allPublic.filter(r => r.category === reqCategory);
+    }
+
+    // Sort latest first
+    filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const filteredCount = filtered.length;
+    const totalPages = Math.max(1, Math.ceil(filteredCount / limit));
+    const startIndex = (page - 1) * limit;
+    const paginated = filtered.slice(startIndex, startIndex + limit);
+
+    // Format safe public view (strip internal IDs, PII, email, phone)
+    const safeReviews = paginated.map(r => ({
+      id: r.id,
+      authorMasked: r.authorMasked || maskAuthorName(r.authorName),
+      maskedAuthor: r.authorMasked || maskAuthorName(r.authorName),
+      category: r.category,
+      categoryLabel: r.categoryLabel,
+      rating: r.rating,
+      content: r.content,
+      photos: r.photos || [],
+      isVerifiedTrade: !!r.isVerifiedTrade,
+      isVerified: !!r.isVerifiedTrade,
+      adminReply: r.adminReply ? {
+        content: r.adminReply.content,
+        repliedAt: r.adminReply.repliedAt,
+        adminName: r.adminReply.adminName || '황미숙 대표 (골드랩&co)'
+      } : null,
+      createdAt: r.createdAt,
+      isMyReview: currentUser ? (r.userId === currentUser.id) : false
+    }));
+
+    return sendJSON(res, 200, {
+      success: true,
+      reviews: safeReviews,
+      totalCount,
+      filteredCount,
+      totalPages,
+      currentPage: page,
+      averageRating,
+      ratingCounts,
+      categoryCounts
+    });
+  }
+
+  // 8-B-2. Get User's Eligible Completed Transactions for Review Writing
+  if (pathname === '/api/reviews/my-eligible-transactions' && method === 'GET') {
+    if (!currentUser) {
+      return sendJSON(res, 401, { error: '로그인 후 이용 가능합니다.' });
+    }
+    const db = getDB();
+    const myOrders = (db.orders || []).filter(o => 
+      (o.userId === currentUser.id || o.customerPhone === currentUser.phone) &&
+      (o.status === 'COMPLETED' || o.status === 'DELIVERED' || o.orderStatus === 'COMPLETED' || o.orderStatus === 'DELIVERED')
+    );
+
+    const myAppraisals = (db.appraisals || []).filter(a =>
+      (a.userId === currentUser.id || a.applicantPhone === currentUser.phone) &&
+      (a.status === 'COMPLETED' || a.status === 'INSPECTED')
+    );
+
+    // Check existing reviews
+    const myReviews = (db.reviews || []).filter(r => r.userId === currentUser.id);
+    const reviewedMap = {};
+    (db.reviews || []).forEach(r => {
+      if (r.transactionType && r.transactionId) {
+        reviewedMap[r.transactionType + ':' + r.transactionId] = r.id;
+      }
+    });
+
+    const eligibleItems = [];
+
+    // 1. Orders (제품 구매)
+    for (const o of myOrders) {
+      const key = 'ORDER:' + o.id;
+      const alreadyReviewId = reviewedMap[key];
+      const prodName = o.items && o.items[0] ? o.items[0].name : (o.productName || '주문 상품');
+      const itemTitle = (o.items && o.items.length > 1) ? `${prodName} 외 ${o.items.length - 1}건` : prodName;
+      eligibleItems.push({
+        transactionType: 'ORDER',
+        transactionId: o.id,
+        category: 'PRODUCT_BUY',
+        categoryLabel: '제품 구매',
+        title: itemTitle,
+        date: o.createdAt ? o.createdAt.substring(0, 10) : '',
+        status: o.status || o.orderStatus,
+        alreadyReviewed: !!alreadyReviewId,
+        reviewId: alreadyReviewId || null
+      });
+    }
+
+    // 2. Appraisals (금 판매 / 감정 이용)
+    for (const a of myAppraisals) {
+      const key = 'APPRAISAL:' + a.id;
+      const alreadyReviewId = reviewedMap[key];
+      const isGoldSell = (a.itemType && (a.itemType.includes('매입') || a.itemType.includes('판매') || a.itemType.includes('고금')));
+      const cat = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
+      const catLabel = isGoldSell ? '금 판매' : '감정 이용';
+      eligibleItems.push({
+        transactionType: 'APPRAISAL',
+        transactionId: a.id,
+        category: cat,
+        categoryLabel: catLabel,
+        title: `${catLabel} - ${a.itemType || '귀금속 정밀 감정'} (${a.receiptNo || a.id})`,
+        date: a.createdAt ? a.createdAt.substring(0, 10) : '',
+        status: a.status,
+        alreadyReviewed: !!alreadyReviewId,
+        reviewId: alreadyReviewId || null
+      });
+    }
+
+    return sendJSON(res, 200, {
+      success: true,
+      eligibleItems,
+      myReviewsCount: myReviews.length
+    });
+  }
+
+  // 8-B-3. Verify Offline Trade Code Entered by Customer
+  if (pathname === '/api/reviews/verify-offline-code' && method === 'POST') {
+    if (!currentUser) return sendJSON(res, 401, { error: '로그인 후 인증코드를 조회할 수 있습니다.' });
+    const { authCode } = body || {};
+    if (!authCode || typeof authCode !== 'string') {
+      return sendJSON(res, 400, { error: '인증코드를 입력해 주세요.' });
+    }
+    const cleanCode = authCode.trim().toUpperCase();
+    const db = getDB();
+    const offTx = (db.offline_transactions || []).find(t => t.authCode && t.authCode.toUpperCase() === cleanCode);
+    if (!offTx) {
+      return sendJSON(res, 404, { error: '유효하지 않은 오프라인 거래 인증코드입니다. 코드를 다시 확인해 주세요.' });
+    }
+    if (offTx.status === 'REVIEWED') {
+      return sendJSON(res, 409, { error: '이미 후기 작성이 완료된 오프라인 거래 인증코드입니다.' });
+    }
+    if (offTx.status !== 'AUTHORIZED') {
+      return sendJSON(res, 400, { error: '현재 사용 불가능한 인증코드입니다.' });
+    }
+    return sendJSON(res, 200, {
+      success: true,
+      valid: true,
+      offlineTx: {
+        id: offTx.id,
+        authCode: offTx.authCode,
+        tradeType: offTx.tradeType,
+        tradeTypeLabel: offTx.tradeTypeLabel,
+        customerMemo: offTx.customerMemo
+      }
+    });
+  }
+
+  // 8-B-4. Upload Review Photo (Magic Bytes, Resize <= 1600px, EXIF Strip)
+  if (pathname === '/api/reviews/upload-photo' && method === 'POST') {
+    if (!currentUser) return sendJSON(res, 401, { error: '로그인 후 사진을 업로드할 수 있습니다.' });
+    const rateCheck = reviewLimiter.isAllowed(currentUser.id);
+    if (!rateCheck.allowed) return sendJSON(res, 429, { error: '업로드 요청이 너무 빈번합니다. 잠시 후 다시 시도해 주세요.' });
+
+    const { dataUrl, filename } = body || {};
+    if (!dataUrl) return sendJSON(res, 400, { error: '업로드할 이미지 데이터가 없습니다.' });
+
+    try {
+      const processed = await processReviewImage(dataUrl, filename || 'photo.jpg');
+      return sendJSON(res, 200, { success: true, ...processed });
+    } catch (err) {
+      return sendJSON(res, 400, { error: err.message || '이미지 처리에 실패했습니다.' });
+    }
+  }
+
+  // 8-B-5. Create Verified Customer Review
+  if (pathname === '/api/reviews' && method === 'POST') {
+    if (!currentUser) return sendJSON(res, 401, { error: '로그인 후 후기를 작성할 수 있습니다.' });
+    const rateCheck = reviewLimiter.isAllowed(currentUser.id);
+    if (!rateCheck.allowed) return sendJSON(res, 429, { error: '요청이 너무 빈번합니다. 잠시 후 다시 시도해 주세요.' });
+
+    const { rating, content, photos, transactionType, transactionId, authCode } = body || {};
+
+    const numRating = parseInt(rating, 10);
+    if (!numRating || numRating < 1 || numRating > 5) {
+      return sendJSON(res, 400, { error: '별점은 1점부터 5점까지 직접 선택해 주세요.' });
+    }
+
+    const trimmedContent = (content || '').trim();
+    if (trimmedContent.length < 20 || trimmedContent.length > 1000) {
+      return sendJSON(res, 400, { error: '후기 본문은 최소 20자 이상 1,000자 이하로 작성해 주세요. (현재: ' + trimmedContent.length + '자)' });
+    }
+
+    // Reservation check: Simple reservation STRICTLY forbidden
+    if (transactionType === 'RESERVATION' || String(transactionId).startsWith('GL-RS-')) {
+      return sendJSON(res, 403, { error: '단순 상담 예약 건은 거래 인증 후기를 작성할 수 없습니다. 실제 완료된 거래 내역을 이용해 주세요.' });
+    }
+
+    const safePhotos = Array.isArray(photos) ? photos.slice(0, 3).filter(p => typeof p === 'string' && (p.includes('uploads/reviews/') || p.startsWith('data:image/'))) : [];
+
+    return await runTransaction(async (dbRef) => {
+      let finalCategory = 'PRODUCT_BUY';
+      let finalCategoryLabel = '제품 구매';
+      let verifiedTxId = transactionId || authCode;
+      let verifiedTxType = transactionType;
+
+      if (!verifiedTxType || !verifiedTxId) {
+        return sendJSON(res, 400, { error: '연결할 거래 완료 내역을 선택해 주세요.' });
+      }
+
+      // Duplicate check: Block if any review (active or soft-deleted) exists for this transaction
+      const existingRev = dbRef.reviews.find(r => r.transactionType === verifiedTxType && r.transactionId === verifiedTxId);
+      if (existingRev) {
+        return sendJSON(res, 409, { error: '해당 거래 건은 이미 후기가 작성되었습니다. (완료 내역 1건당 후기 1개 제한)' });
+      }
+
+      // Verify transaction according to type
+      if (verifiedTxType === 'ORDER') {
+        const order = dbRef.orders.find(o => o.id === verifiedTxId && (o.userId === currentUser.id || o.customerPhone === currentUser.phone));
+        if (!order) return sendJSON(res, 404, { error: '본인의 주문 내역을 찾을 수 없습니다.' });
+        const isCompleted = order.status === 'COMPLETED' || order.status === 'DELIVERED' || order.orderStatus === 'COMPLETED' || order.orderStatus === 'DELIVERED';
+        if (!isCompleted) {
+          return sendJSON(res, 403, { error: '아직 배송 및 거래가 완료되지 않은 주문입니다. 거래 완료 후 작성 가능합니다.' });
+        }
+        finalCategory = 'PRODUCT_BUY';
+        finalCategoryLabel = '제품 구매';
+      } else if (verifiedTxType === 'APPRAISAL') {
+        const appraisal = dbRef.appraisals.find(a => a.id === verifiedTxId && (a.userId === currentUser.id || a.applicantPhone === currentUser.phone));
+        if (!appraisal) return sendJSON(res, 404, { error: '본인의 감정 접수 내역을 찾을 수 없습니다.' });
+        const isCompleted = appraisal.status === 'COMPLETED' || appraisal.status === 'INSPECTED';
+        if (!isCompleted) {
+          return sendJSON(res, 403, { error: '검사 또는 감정 대행이 완료된 후에만 후기를 작성할 수 있습니다.' });
+        }
+        const isGoldSell = appraisal.itemType && (appraisal.itemType.includes('매입') || appraisal.itemType.includes('판매') || appraisal.itemType.includes('고금'));
+        finalCategory = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
+        finalCategoryLabel = isGoldSell ? '금 판매' : '감정 이용';
+      } else if (verifiedTxType === 'OFFLINE') {
+        const cleanCode = (authCode || verifiedTxId).trim().toUpperCase();
+        const offTx = dbRef.offline_transactions.find(t => t.authCode && t.authCode.toUpperCase() === cleanCode);
+        if (!offTx || offTx.status !== 'AUTHORIZED') {
+          return sendJSON(res, 400, { error: '유효한 오프라인 거래 인증코드가 아닙니다.' });
+        }
+        verifiedTxId = offTx.authCode;
+        finalCategory = offTx.tradeType;
+        finalCategoryLabel = offTx.tradeTypeLabel || (offTx.tradeType === 'GOLD_SELL' ? '금 판매' : (offTx.tradeType === 'PRODUCT_BUY' ? '제품 구매' : '감정 이용'));
+        offTx.status = 'REVIEWED';
+        offTx.reviewedUserId = currentUser.id;
+        offTx.usedAt = new Date().toISOString();
+      } else {
+        return sendJSON(res, 400, { error: '올바른 거래 구분이 아닙니다.' });
+      }
+
+      const dateStr = new Date().toISOString().substring(0, 10).replace(/-/g, '');
+      const serial = String(dbRef.reviews.length + 1).padStart(4, '0');
+      const newReview = {
+        id: `REV-${dateStr}-${serial}`,
+        userId: currentUser.id,
+        authorName: currentUser.name,
+        authorMasked: maskAuthorName(currentUser.name),
+        category: finalCategory,
+        categoryLabel: finalCategoryLabel,
+        transactionType: verifiedTxType,
+        transactionId: verifiedTxId,
+        rating: numRating,
+        content: sanitizeText(trimmedContent),
+        photos: safePhotos,
+        isVerifiedTrade: true,
+        isPublic: true,
+        hiddenReason: null,
+        hiddenAt: null,
+        hiddenBy: null,
+        isDeleted: false,
+        adminReply: null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+
+      if (verifiedTxType === 'OFFLINE') {
+        const offTx = dbRef.offline_transactions.find(t => t.authCode && t.authCode.toUpperCase() === verifiedTxId.toUpperCase());
+        if (offTx) offTx.reviewedReviewId = newReview.id;
+      }
+
+      dbRef.reviews.unshift(newReview);
+      return sendJSON(res, 201, {
+        success: true,
+        message: '소중한 후기가 성공적으로 등록되었습니다.',
+        review: newReview
+      });
+    });
+  }
+
+  // 8-B-6. Edit Customer Review (Author only)
+  if (pathname.startsWith('/api/reviews/') && method === 'PUT') {
+    if (!currentUser) return sendJSON(res, 401, { error: '로그인 후 수정할 수 있습니다.' });
+    const reviewId = pathname.split('/')[3];
+
+    const { rating, content, photos } = body || {};
+    const numRating = rating ? parseInt(rating, 10) : null;
+    if (numRating !== null && (numRating < 1 || numRating > 5)) {
+      return sendJSON(res, 400, { error: '별점은 1점부터 5점까지 선택해 주세요.' });
+    }
+
+    const trimmedContent = content !== undefined ? String(content).trim() : null;
+    if (trimmedContent !== null && (trimmedContent.length < 20 || trimmedContent.length > 1000)) {
+      return sendJSON(res, 400, { error: '후기 본문은 20자 이상 1,000자 이하로 입력해 주세요.' });
+    }
+
+    return await runTransaction(async (dbRef) => {
+      const review = dbRef.reviews.find(r => r.id === reviewId && !r.isDeleted);
+      if (!review) return sendJSON(res, 404, { error: '후기를 찾을 수 없습니다.' });
+
+      const isAuthor = review.userId === currentUser.id;
+      const isAdmin = currentUser.role === 'MASTER_ADMIN' || currentUser.role === 'STAFF';
+      if (!isAuthor && !isAdmin) {
+        return sendJSON(res, 403, { error: '본인이 작성한 후기만 수정할 수 있습니다.' });
+      }
+
+      if (numRating) review.rating = numRating;
+      if (trimmedContent !== null) review.content = sanitizeText(trimmedContent);
+      if (Array.isArray(photos)) review.photos = photos.slice(0, 3);
+      review.updatedAt = new Date().toISOString();
+
+      return sendJSON(res, 200, { success: true, message: '후기가 성공적으로 수정되었습니다.', review });
+    });
+  }
+
+  // 8-B-7. Delete Customer Review (Author only; prevents duplicate review reuse)
+  if (pathname.startsWith('/api/reviews/') && method === 'DELETE') {
+    if (!currentUser) return sendJSON(res, 401, { error: '로그인 후 삭제할 수 있습니다.' });
+    const reviewId = pathname.split('/')[3];
+
+    return await runTransaction(async (dbRef) => {
+      const review = dbRef.reviews.find(r => r.id === reviewId && !r.isDeleted);
+      if (!review) return sendJSON(res, 404, { error: '후기를 찾을 수 없습니다.' });
+
+      const isAuthor = review.userId === currentUser.id;
+      const isAdmin = currentUser.role === 'MASTER_ADMIN' || currentUser.role === 'STAFF';
+      if (!isAuthor && !isAdmin) {
+        return sendJSON(res, 403, { error: '본인이 작성한 후기만 삭제할 수 있습니다.' });
+      }
+
+      // Soft delete to preserve duplicate transaction locking
+      review.isDeleted = true;
+      review.isPublic = false;
+      review.deletedAt = new Date().toISOString();
+      review.deletedBy = currentUser.id;
+
+      // Clean up orphaned local photos
+      if (Array.isArray(review.photos)) {
+        for (const p of review.photos) {
+          if (typeof p === 'string' && p.startsWith('/uploads/reviews/')) {
+            const diskPath = path.resolve(__dirname, '..', p.replace(/^\//, ''));
+            try { if (fs.existsSync(diskPath)) fs.unlinkSync(diskPath); } catch (e) {}
+          }
+        }
+      }
+
+      return sendJSON(res, 200, { success: true, message: '후기가 성공적으로 삭제되었습니다.' });
+    });
+  }
+
+  // 8-B-8. Customer Report for Inappropriate Review
+  if (pathname.startsWith('/api/reviews/') && pathname.endsWith('/report') && method === 'POST') {
+    const rateCheck = reportLimiter.isAllowed(clientIP);
+    if (!rateCheck.allowed) return sendJSON(res, 429, { error: '신고 요청이 너무 많습니다. 잠시 후 다시 시도해 주세요.' });
+
+    const reviewId = pathname.split('/')[3];
+    const { reason, detail } = body || {};
+
+    if (!reason) return sendJSON(res, 400, { error: '신고 사유를 선택해 주세요.' });
+
+    return await runTransaction(async (dbRef) => {
+      const review = dbRef.reviews.find(r => r.id === reviewId && !r.isDeleted);
+      if (!review) return sendJSON(res, 404, { error: '신고 대상 후기를 찾을 수 없습니다.' });
+
+      const newReport = {
+        id: 'REP-' + Date.now() + '-' + crypto.randomBytes(3).toString('hex'),
+        reviewId: review.id,
+        reason: sanitizeText(String(reason)),
+        detail: sanitizeText(String(detail || '').slice(0, 300)),
+        reporterIp: clientIP,
+        reporterUserId: currentUser ? currentUser.id : null,
+        status: 'PENDING',
+        createdAt: new Date().toISOString()
+      };
+
+      if (!Array.isArray(dbRef.review_reports)) dbRef.review_reports = [];
+      dbRef.review_reports.unshift(newReport);
+
+      return sendJSON(res, 200, { success: true, message: '신고가 정상 접수되었습니다. 관리자 검토 후 신속히 조치하겠습니다.', report: newReport });
+    });
+  }
+
+  // ------------------------------------------------------------
   // 9. ADMIN INTEGRATED MANAGEMENT (RBAC PROTECTED!)
   // ------------------------------------------------------------
   if (pathname.startsWith('/api/admin/')) {
@@ -1640,6 +2159,241 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         'Content-Disposition': `attachment; filename="${filename}"`
       });
       return res.end(csvContent);
+    }
+
+    // 9-7. Customer Reviews Moderation & Offline Trade Authorization
+    if (pathname === '/api/admin/reviews' && method === 'GET') {
+      const allReviews = db.reviews || [];
+      const reports = db.review_reports || [];
+      
+      const adminViewReviews = allReviews.map(r => {
+        const author = db.users.find(u => u.id === r.userId);
+        const reportCount = reports.filter(rep => rep.reviewId === r.id && rep.status === 'PENDING').length;
+        
+        let txDetails = null;
+        if (r.transactionType === 'ORDER') {
+          const ord = db.orders.find(o => o.id === r.transactionId);
+          if (ord) {
+            txDetails = {
+              type: '주문 결제',
+              id: ord.id,
+              date: ord.createdAt ? ord.createdAt.substring(0, 10) : '',
+              amount: ord.finalPayAmount || ord.totalAmount,
+              status: ord.status || ord.orderStatus,
+              summary: ord.productName || (ord.items && ord.items[0] ? ord.items[0].name : '주문 상품')
+            };
+          }
+        } else if (r.transactionType === 'APPRAISAL') {
+          const ap = db.appraisals.find(a => a.id === r.transactionId);
+          if (ap) {
+            txDetails = {
+              type: '감정/매입 접수',
+              id: ap.id,
+              date: ap.createdAt ? ap.createdAt.substring(0, 10) : '',
+              itemType: ap.itemType,
+              status: ap.status,
+              summary: ap.itemType || '감정 대행'
+            };
+          }
+        } else if (r.transactionType === 'OFFLINE') {
+          const off = (db.offline_transactions || []).find(o => o.authCode === r.transactionId);
+          if (off) {
+            txDetails = {
+              type: '오프라인 매장 거래',
+              id: off.authCode,
+              authCode: off.authCode,
+              date: off.createdAt ? off.createdAt.substring(0, 10) : '',
+              tradeType: off.tradeTypeLabel,
+              memo: off.customerMemo,
+              customerMemo: off.customerMemo,
+              status: '인증 완료'
+            };
+          }
+        }
+
+        return {
+          ...r,
+          authorName: author ? author.name : r.authorName,
+          authorRealName: author ? author.name : r.authorName,
+          authorEmail: author ? author.email : '',
+          authorPhone: author ? author.phone : '',
+          pendingReportsCount: reportCount,
+          reportCount,
+          transactionDetails: txDetails,
+          linkedTransaction: txDetails,
+          isVisible: !!r.isPublic
+        };
+      });
+
+      return sendJSON(res, 200, {
+        success: true,
+        reviews: adminViewReviews,
+        totalReviews: adminViewReviews.length,
+        reportsCount: reports.filter(rep => rep.status === 'PENDING').length
+      });
+    }
+
+    // Admin Reply to Review
+    if (pathname.startsWith('/api/admin/reviews/') && pathname.endsWith('/reply') && method === 'POST') {
+      const reviewId = pathname.split('/')[4];
+      const rawContent = (body && (body.content || body.reply)) || '';
+      if (!rawContent || !String(rawContent).trim()) {
+        return sendJSON(res, 400, { error: '답변 내용을 입력해 주세요.' });
+      }
+
+      return await runTransaction(async (dbRef) => {
+        const review = dbRef.reviews.find(r => r.id === reviewId);
+        if (!review) return sendJSON(res, 404, { error: '후기를 찾을 수 없습니다.' });
+
+        review.adminReply = {
+          content: sanitizeText(String(rawContent).trim()),
+          repliedAt: new Date().toISOString(),
+          adminName: currentUser.name || '황미숙 대표 (골드랩&co)',
+          adminId: currentUser.id
+        };
+        review.updatedAt = new Date().toISOString();
+
+        logAudit(dbRef, currentUser.id, 'REPLY_REVIEW', 'REVIEW', review.id, { reviewId: review.id }, clientIP);
+        return sendJSON(res, 200, { success: true, message: '관리자 답변이 등록되었습니다.', review, adminReply: review.adminReply });
+      });
+    }
+
+    if (pathname.startsWith('/api/admin/reviews/') && pathname.endsWith('/reply') && method === 'DELETE') {
+      const reviewId = pathname.split('/')[4];
+      return await runTransaction(async (dbRef) => {
+        const review = dbRef.reviews.find(r => r.id === reviewId);
+        if (!review) return sendJSON(res, 404, { error: '후기를 찾을 수 없습니다.' });
+
+        review.adminReply = null;
+        review.updatedAt = new Date().toISOString();
+
+        logAudit(dbRef, currentUser.id, 'DELETE_REVIEW_REPLY', 'REVIEW', review.id, {}, clientIP);
+        return sendJSON(res, 200, { success: true, message: '관리자 답변이 삭제되었습니다.' });
+      });
+    }
+
+    // Admin Hide / Restore Review
+    if (pathname.startsWith('/api/admin/reviews/') && pathname.endsWith('/visibility') && method === 'POST') {
+      const reviewId = pathname.split('/')[4];
+      const { isPublic, isVisible, reason } = body || {};
+      const targetVisibility = (isVisible !== undefined) ? !!isVisible : ((isPublic !== undefined) ? !!isPublic : true);
+
+      if (targetVisibility === false && (!reason || !String(reason).trim())) {
+        return sendJSON(res, 400, { error: '후기를 숨길 때는 사유(개인정보 노출, 스팸, 욕설 등)를 반드시 선택 또는 입력해 주세요.' });
+      }
+
+      return await runTransaction(async (dbRef) => {
+        const review = dbRef.reviews.find(r => r.id === reviewId);
+        if (!review) return sendJSON(res, 404, { error: '후기를 찾을 수 없습니다.' });
+
+        review.isPublic = targetVisibility;
+        review.isVisible = targetVisibility;
+        if (!targetVisibility) {
+          review.hiddenReason = sanitizeText(String(reason).trim());
+          review.hiddenAt = new Date().toISOString();
+          review.hiddenBy = currentUser.id;
+        } else {
+          review.hiddenReason = null;
+          review.hiddenAt = null;
+          review.hiddenBy = null;
+        }
+        review.updatedAt = new Date().toISOString();
+
+        logAudit(dbRef, currentUser.id, targetVisibility ? 'RESTORE_REVIEW' : 'HIDE_REVIEW', 'REVIEW', review.id, { reason: review.hiddenReason, isPublic: targetVisibility }, clientIP);
+        return sendJSON(res, 200, {
+          success: true,
+          message: targetVisibility ? '후기가 다시 공개 상태로 복원되었습니다.' : '후기가 비공개(숨김) 처리되었습니다.',
+          review: { ...review, isVisible: review.isPublic }
+        });
+      });
+    }
+
+    // Admin View & Resolve Reports
+    if (pathname === '/api/admin/reviews/reports' && method === 'GET') {
+      const reports = (db.review_reports || []).map(rep => {
+        const targetReview = (db.reviews || []).find(r => r.id === rep.reviewId);
+        return {
+          ...rep,
+          reviewSnippet: targetReview ? targetReview.content.substring(0, 80) : '(삭제된 후기)',
+          reviewAuthor: targetReview ? targetReview.authorName : '',
+          reviewCategory: targetReview ? targetReview.categoryLabel : ''
+        };
+      });
+      return sendJSON(res, 200, { success: true, reports });
+    }
+
+    if (pathname.startsWith('/api/admin/reviews/reports/') && pathname.endsWith('/resolve') && method === 'POST') {
+      const reportId = pathname.split('/')[5];
+      const { action } = body || {}; // 'RESOLVED' or 'DISMISSED'
+
+      return await runTransaction(async (dbRef) => {
+        const rep = (dbRef.review_reports || []).find(r => r.id === reportId);
+        if (!rep) return sendJSON(res, 404, { error: '신고 내역을 찾을 수 없습니다.' });
+
+        rep.status = action === 'DISMISSED' ? 'DISMISSED' : 'RESOLVED';
+        rep.resolvedAt = new Date().toISOString();
+        rep.resolvedBy = currentUser.id;
+
+        logAudit(dbRef, currentUser.id, 'RESOLVE_REVIEW_REPORT', 'REPORT', rep.id, { action: rep.status }, clientIP);
+        return sendJSON(res, 200, { success: true, message: '신고 처리가 완료되었습니다.', report: rep });
+      });
+    }
+
+    // Admin Issue Offline Trade Review Authorization
+    if (pathname === '/api/admin/reviews/offline-auth' && method === 'POST') {
+      const { tradeType, customerMemo } = body || {};
+      const validTypes = ['GOLD_SELL', 'PRODUCT_BUY', 'APPRAISAL'];
+      if (!tradeType || !validTypes.includes(tradeType)) {
+        return sendJSON(res, 400, { error: '올바른 거래 구분을 선택해 주세요. (금 판매 / 제품 구매 / 감정 이용)' });
+      }
+
+      const labels = {
+        GOLD_SELL: '금 판매',
+        PRODUCT_BUY: '제품 구매',
+        APPRAISAL: '감정 이용'
+      };
+
+      const dateStr = new Date().toISOString().substring(0, 10).replace(/-/g, '');
+      const randPart1 = crypto.randomBytes(2).toString('hex').toUpperCase();
+      const randPart2 = crypto.randomBytes(2).toString('hex').toUpperCase();
+      const authCode = `GL-REV-${randPart1}-${randPart2}`;
+
+      return await runTransaction(async (dbRef) => {
+        if (!Array.isArray(dbRef.offline_transactions)) dbRef.offline_transactions = [];
+
+        const serial = String(dbRef.offline_transactions.length + 1).padStart(4, '0');
+        const offTx = {
+          id: `GL-OFF-${dateStr}-${serial}`,
+          authCode,
+          tradeType,
+          tradeTypeLabel: labels[tradeType],
+          customerMemo: sanitizeText(String(customerMemo || '').trim()),
+          status: 'AUTHORIZED', // 'AUTHORIZED' -> 'REVIEWED' once used
+          reviewedReviewId: null,
+          reviewedUserId: null,
+          createdAdminId: currentUser.id,
+          createdAt: new Date().toISOString(),
+          usedAt: null
+        };
+
+        dbRef.offline_transactions.unshift(offTx);
+        logAudit(dbRef, currentUser.id, 'ISSUE_OFFLINE_REVIEW_AUTH', 'OFFLINE_TX', offTx.authCode, { tradeType, authCode }, clientIP);
+
+        return sendJSON(res, 200, {
+          success: true,
+          message: '오프라인 거래 인증코드가 발급되었습니다.',
+          authCode,
+          offlineTx: offTx,
+          shareUrl: `https://goldlabnco.com/reviews.html?auth_code=${authCode}`
+        });
+      });
+    }
+
+    if (pathname === '/api/admin/reviews/offline-auth' && method === 'GET') {
+      return sendJSON(res, 200, {
+        success: true,
+        offlineTransactions: db.offline_transactions || []
+      });
     }
   }
 

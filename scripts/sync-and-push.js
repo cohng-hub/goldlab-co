@@ -31,7 +31,7 @@ async function run() {
     log(syncOutput.trim());
 
     // 2. Check git status for changes
-    const status = execSync('git status --porcelain app.js index.html wholesale.html mypage.html', { cwd: ROOT_DIR, encoding: 'utf8' }).trim();
+    const status = execSync('git status --porcelain app.js index.html wholesale.html mypage.html reviews.html review.html 404.html appraisal.html products.html reservation.html support.html verify.html membership.html style.css', { cwd: ROOT_DIR, encoding: 'utf8' }).trim();
 
     if (!status) {
       log('ℹ️ [GoldLab Auto-Sync] Rates are already up to date. No git commit needed.');
@@ -40,7 +40,7 @@ async function run() {
     }
 
     log('📝 Detected rate updates. Committing and pushing to GitHub...');
-    execSync('git add app.js index.html wholesale.html mypage.html', { cwd: ROOT_DIR });
+    execSync('git add app.js index.html wholesale.html mypage.html reviews.html review.html 404.html appraisal.html products.html reservation.html support.html verify.html membership.html style.css', { cwd: ROOT_DIR });
     
     const now = new Date();
     const dateStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
