@@ -1891,7 +1891,157 @@ function UpdateAuthUI() {
   CheckWholesaleAccess();
 }
 
+function EnsureAuthModalDOM() {
+  if (document.getElementById('authModal')) return;
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.id = 'authModal';
+  overlay.innerHTML = `
+    <div class="modal-box">
+      <div style="display:flex; justify-content:space-between; align-items:center; position:absolute; top:1.4rem; left:1.6rem; right:1.6rem; z-index:2;">
+        <button type="button" id="authHeaderBackBtn" onclick="SwitchAuthTab('login')" style="display:none; background:none!important; border:none!important; color:var(--gold-light)!important; font-size:0.95rem; font-weight:700; cursor:pointer; gap:0.4rem; align-items:center;">
+          <i class="fa-solid fa-arrow-left"></i> 뒤로가기
+        </button>
+        <div style="flex:1;"></div>
+        <button class="modal-close" onclick="CloseModal('authModal')" style="position:static;">&times;</button>
+      </div>
+
+      <div class="auth-modal-header" style="margin-top:1rem;">
+        <div class="brand-logo" style="justify-content:center; margin-bottom:0.6rem;">
+          <div class="brand-icon" style="width:38px; height:38px; font-size:1.15rem;"><i class="fa-solid fa-gem"></i></div>
+          <span style="font-size:1.5rem;">GoldLab<span class="gradient-text">&Co.</span></span>
+        </div>
+        <p style="font-size:0.92rem; color:var(--text-muted); text-align:center;" id="authModalSubTitle">VIP 회원 전용 자산 관리 서비스</p>
+      </div>
+
+      <!-- 1. LOGIN VIEW -->
+      <div id="authViewLogin">
+        <form onsubmit="HandleUserLogin(event)">
+          <div class="form-group">
+            <label class="form-label">로그인 유형 선택</label>
+            <select class="form-control" id="loginUserTypeSelect">
+              <option value="PERSONAL">👤 일반 회원 로그인 (자산 관리)</option>
+              <option value="BIZ">🏢 사업자 회원 로그인 (B2B 도매 전용)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일 주소)</label>
+            <input type="email" class="form-control" id="loginEmail" placeholder="example@goldlab.co.kr" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.2rem;">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="loginPass" placeholder="••••••••" required>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.8rem; font-size:0.92rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; color:var(--text-muted);">
+              <input type="checkbox" id="loginRemember" checked style="accent-color:var(--gold-primary);"> 로그인 상태 유지
+            </label>
+            <button type="button" onclick="SwitchAuthTab('find')" style="background:transparent; border:none; color:var(--gold-light); font-size:0.9rem; cursor:pointer;">아이디 · 비밀번호 찾기</button>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem; font-size:1.05rem;"><i class="fa-solid fa-right-to-bracket"></i> 로그인 하기</button>
+        </form>
+
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.95rem; color:var(--text-muted);">
+          <span>처음 방문하셨나요?</span>
+          <button type="button" onclick="SwitchAuthTab('signup')" style="background:none; border:none; color:var(--gold-light); font-weight:800; cursor:pointer; text-decoration:underline; margin-left:0.5rem;">
+            간편 회원가입 <i class="fa-solid fa-arrow-right-long"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. SIGN UP VIEW -->
+      <div id="authViewSignup" style="display:none;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem; background:rgba(9,11,16,0.9); padding:0.35rem; border-radius:12px; border:1px solid var(--border-dark); margin-bottom:1.5rem;">
+          <button type="button" id="btnSignupPersonal" onclick="SwitchSignupUserType('PERSONAL')" style="background:var(--gold-gradient); color:#000; font-weight:800; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; font-size:0.92rem;">
+            👤 일반 고객 회원가입
+          </button>
+          <button type="button" id="btnSignupBiz" onclick="SwitchSignupUserType('BIZ')" style="background:transparent; color:var(--text-muted); font-weight:800; border:none; padding:0.6rem; border-radius:8px; cursor:pointer; font-size:0.92rem;">
+            🏢 사업자 회원가입 (B2B)
+          </button>
+        </div>
+
+        <form onsubmit="HandleUserSignup(event)">
+          <div id="signupBizFields" style="display:none;">
+            <div class="form-group">
+              <label class="form-label text-gold">상호명 (사업자명)</label>
+              <input type="text" class="form-control" id="signupBizName" placeholder="예: (주)종로골드 주얼리">
+            </div>
+            <div class="form-group">
+              <label class="form-label text-gold">사업자등록번호 (10자리)</label>
+              <input type="text" class="form-control" id="signupBizNo" placeholder="101-86-77777">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" id="signupNameLabel">성함 / 이름</label>
+            <input type="text" class="form-control" id="signupName" placeholder="예: 홍길동" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">아이디 (이메일 주소)</label>
+            <input type="email" class="form-control" id="signupEmail" placeholder="example@goldlab.co.kr" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">비밀번호</label>
+            <input type="password" class="form-control" id="signupPass" placeholder="8자리 이상 입력" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:1.2rem;">
+            <label class="form-label">휴대폰 번호</label>
+            <input type="tel" class="form-control" id="signupPhone" placeholder="010-1234-5678" required>
+          </div>
+
+          <div style="margin-bottom:1.8rem; font-size:0.88rem; color:var(--text-muted);">
+            <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+              <input type="checkbox" required checked style="accent-color:var(--gold-primary);"> [필수] 서비스 이용약관 및 개인정보 처리방침 동의
+            </label>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem; font-size:1.05rem;"><i class="fa-solid fa-user-plus"></i> 회원가입 완료하기</button>
+        </form>
+
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.95rem; color:var(--text-muted);">
+          <span>이미 계정이 있으신가요?</span>
+          <button type="button" onclick="SwitchAuthTab('login')" style="background:none; border:none; color:var(--gold-light); font-weight:800; cursor:pointer; text-decoration:underline; margin-left:0.5rem;">
+            ← 로그인 화면으로 돌아가기
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. FIND ACCOUNT VIEW -->
+      <div id="authViewFind" style="display:none;">
+        <form onsubmit="HandleFindAccount(event)">
+          <div class="form-group">
+            <label class="form-label">가입된 성함</label>
+            <input type="text" class="form-control" id="findName" placeholder="예: 김골드" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom:2rem;">
+            <label class="form-label">가입 시 입력한 휴대폰 번호</label>
+            <input type="tel" class="form-control" id="findPhone" placeholder="010-1234-5678" required>
+          </div>
+
+          <button type="submit" class="btn btn-gold" style="width:100%; padding:0.95rem; font-size:1.05rem;"><i class="fa-solid fa-key"></i> 아이디 찾기 / 임시 비밀번호 발송</button>
+        </form>
+
+        <div style="margin-top:1.5rem; text-align:center; font-size:0.95rem;">
+          <button type="button" onclick="SwitchAuthTab('login')" style="background:none; border:none; color:var(--gold-light); font-weight:800; cursor:pointer; text-decoration:underline;">
+            ← 로그인 화면으로 돌아가기
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
 function OpenAuthModal(tab = 'login') {
+  EnsureAuthModalDOM();
   SwitchAuthTab(tab);
   const m = document.getElementById('authModal');
   if (m) m.classList.add('active');

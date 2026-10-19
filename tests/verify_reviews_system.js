@@ -205,15 +205,21 @@ async function runTests() {
   assert(adminAccessBlocked.status === 403, 'Normal user blocked from GET /api/admin/reviews with 403');
 
   // Test 3: Transaction Eligibility Verification
-  console.log('\n▶ [4] Transaction Verification Engine');
-  // Attempt to write review with simple reservation
-  const resvAttempt = await mockRequest('POST', '/api/reviews', {
-    transactionType: 'RESERVATION',
-    transactionId: testReservation.id,
+  console.log('\n▶ [4] Member & Transaction Eligibility Verification Engine');
+  
+  // Member general review without any transactions is allowed for any registered member
+  const memberGeneralAttempt = await mockRequest('POST', '/api/reviews', {
+    transactionType: 'MEMBER',
+    category: 'GENERAL',
     rating: 5,
-    content: '단순 방문 예약만으로 후기를 쓰려는 시도입니다 (20자 이상 필수)'
-  }, { 'authorization': `Bearer ${cust1Token}` });
-  assert(resvAttempt.status === 403, 'Simple reservation strictly rejected from writing review with 403');
+    content: '골드랩앤코 정회원으로서 매장 친절도와 서비스 만족에 대해 작성하는 솔직한 후기입니다!'
+  }, { 'authorization': `Bearer ${cust2Token}` });
+  assert((memberGeneralAttempt.status === 200 || memberGeneralAttempt.status === 201) && memberGeneralAttempt.body.review, 'Registered member without transactions can write general review with 200/201');
+  const memberReviewId = memberGeneralAttempt.body && memberGeneralAttempt.body.review ? memberGeneralAttempt.body.review.id : null;
+  // Clean up member review immediately to preserve subsequent single-review test baseline
+  if (memberReviewId) {
+    db.reviews = db.reviews.filter(r => r.id !== memberReviewId);
+  }
 
   // Attempt to write review with incomplete order
   const pendingAttempt = await mockRequest('POST', '/api/reviews', {
@@ -229,10 +235,11 @@ async function runTests() {
     'authorization': `Bearer ${cust1Token}`
   });
   assert(eligibleRes.status === 200, 'GET /api/reviews/my-eligible-transactions returns 200');
+  assert(eligibleRes.body.eligibleItems.some(it => it.transactionType === 'MEMBER'), 'General member review option is always provided in eligible items');
   assert(eligibleRes.body.eligibleItems.some(it => it.transactionId === completedOrder.id && !it.alreadyReviewed), 'Completed order is listed as eligible for review');
   assert(eligibleRes.body.eligibleItems.some(it => it.transactionId === completedAppraisal.id && !it.alreadyReviewed), 'Completed appraisal is listed as eligible for review');
+  assert(eligibleRes.body.eligibleItems.some(it => it.transactionId === testReservation.id), 'Reservation is included in eligible items');
   assert(!eligibleRes.body.eligibleItems.some(it => it.transactionId === pendingOrder.id), 'Pending order is excluded from eligible items');
-  assert(!eligibleRes.body.eligibleItems.some(it => it.transactionId === testReservation.id), 'Reservation is excluded from eligible items');
 
   // Test 4: Image Upload and Validation
   console.log('\n▶ [5] Image Validation & Optimization Pipeline');
@@ -451,6 +458,8 @@ async function runTests() {
   db.appraisals = db.appraisals.filter(a => a.id !== completedAppraisal.id);
   db.reservations = db.reservations.filter(r => r.id !== testReservation.id);
   db.users = db.users.filter(u => u.id !== testMasterUser.id && u.id !== testCustomer1.id && u.id !== testCustomer2.id);
+  db.sessions = db.sessions.filter(s => !String(s.userId).startsWith('test_'));
+  db.audit_logs = db.audit_logs.filter(a => !String(a.adminId).startsWith('test_'));
   await saveDB();
 
   // Remove test photo file

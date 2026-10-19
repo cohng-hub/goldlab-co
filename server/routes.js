@@ -1371,13 +1371,15 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     const totalCount = allPublic.length;
     let sumRating = 0;
     const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    const categoryCounts = { ALL: totalCount, GOLD_SELL: 0, PRODUCT_BUY: 0, APPRAISAL: 0 };
+    const categoryCounts = { ALL: totalCount, GOLD_SELL: 0, PRODUCT_BUY: 0, APPRAISAL: 0, GENERAL: 0 };
 
     allPublic.forEach(r => {
       const rt = Math.round(Number(r.rating) || 5);
       sumRating += rt;
       if (ratingCounts[rt] !== undefined) ratingCounts[rt]++;
-      if (categoryCounts[r.category] !== undefined) categoryCounts[r.category]++;
+      const cat = r.category || 'GENERAL';
+      if (categoryCounts[cat] !== undefined) categoryCounts[cat]++;
+      else categoryCounts[cat] = 1;
     });
 
     const averageRating = totalCount > 0 ? Number((sumRating / totalCount).toFixed(1)) : 0;
@@ -1446,6 +1448,10 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       (a.status === 'COMPLETED' || a.status === 'INSPECTED')
     );
 
+    const myReservations = (db.reservations || []).filter(r =>
+      (r.userId === currentUser.id || r.bookPhone === currentUser.phone || r.phone === currentUser.phone)
+    );
+
     // Check existing reviews
     const myReviews = (db.reviews || []).filter(r => r.userId === currentUser.id);
     const reviewedMap = {};
@@ -1456,6 +1462,19 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     });
 
     const eligibleItems = [];
+
+    // 0. Member general review option (Always available to every member)
+    eligibleItems.push({
+      transactionType: 'MEMBER',
+      transactionId: 'MEMBER',
+      category: 'GENERAL',
+      categoryLabel: '회원 이용 후기',
+      title: '골드랩앤코 회원 이용 경험 솔직 후기 (상시 작성 가능)',
+      date: '상시 작성 가능',
+      status: 'AVAILABLE',
+      alreadyReviewed: false,
+      reviewId: null
+    });
 
     // 1. Orders (제품 구매)
     for (const o of myOrders) {
@@ -1491,6 +1510,23 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         title: `${catLabel} - ${a.itemType || '귀금속 정밀 감정'} (${a.receiptNo || a.id})`,
         date: a.createdAt ? a.createdAt.substring(0, 10) : '',
         status: a.status,
+        alreadyReviewed: !!alreadyReviewId,
+        reviewId: alreadyReviewId || null
+      });
+    }
+
+    // 3. Reservations (방문 상담 예약)
+    for (const resv of myReservations) {
+      const key = 'RESERVATION:' + resv.id;
+      const alreadyReviewId = reviewedMap[key];
+      eligibleItems.push({
+        transactionType: 'RESERVATION',
+        transactionId: resv.id,
+        category: 'GENERAL',
+        categoryLabel: '방문 상담 예약',
+        title: `종로 본점 방문 상담 예약 (${resv.bookDate || resv.date || ''} ${resv.selectedTime || resv.time || ''}) - ${resv.id}`,
+        date: resv.createdAt ? resv.createdAt.substring(0, 10) : (resv.bookDate || ''),
+        status: resv.status || 'CONFIRMED',
         alreadyReviewed: !!alreadyReviewId,
         reviewId: alreadyReviewId || null
       });
@@ -1558,7 +1594,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     const rateCheck = reviewLimiter.isAllowed(currentUser.id);
     if (!rateCheck.allowed) return sendJSON(res, 429, { error: '요청이 너무 빈번합니다. 잠시 후 다시 시도해 주세요.' });
 
-    const { rating, content, photos, transactionType, transactionId, authCode } = body || {};
+    const { rating, content, photos, transactionType, transactionId, authCode, category } = body || {};
 
     const numRating = parseInt(rating, 10);
     if (!numRating || numRating < 1 || numRating > 5) {
@@ -1570,31 +1606,23 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       return sendJSON(res, 400, { error: '후기 본문은 최소 20자 이상 1,000자 이하로 작성해 주세요. (현재: ' + trimmedContent.length + '자)' });
     }
 
-    // Reservation check: Simple reservation STRICTLY forbidden
-    if (transactionType === 'RESERVATION' || String(transactionId).startsWith('GL-RS-')) {
-      return sendJSON(res, 403, { error: '단순 상담 예약 건은 거래 인증 후기를 작성할 수 없습니다. 실제 완료된 거래 내역을 이용해 주세요.' });
-    }
-
     const safePhotos = Array.isArray(photos) ? photos.slice(0, 3).filter(p => typeof p === 'string' && (p.includes('uploads/reviews/') || p.startsWith('data:image/'))) : [];
 
     return await runTransaction(async (dbRef) => {
-      let finalCategory = 'PRODUCT_BUY';
-      let finalCategoryLabel = '제품 구매';
+      let finalCategory = category || 'GENERAL';
+      let finalCategoryLabel = '회원 이용 후기';
       let verifiedTxId = transactionId || authCode;
-      let verifiedTxType = transactionType;
+      let verifiedTxType = transactionType || 'MEMBER';
 
-      if (!verifiedTxType || !verifiedTxId) {
-        return sendJSON(res, 400, { error: '연결할 거래 완료 내역을 선택해 주세요.' });
-      }
-
-      // Duplicate check: Block if any review (active or soft-deleted) exists for this transaction
-      const existingRev = dbRef.reviews.find(r => r.transactionType === verifiedTxType && r.transactionId === verifiedTxId);
-      if (existingRev) {
-        return sendJSON(res, 409, { error: '해당 거래 건은 이미 후기가 작성되었습니다. (완료 내역 1건당 후기 1개 제한)' });
-      }
-
-      // Verify transaction according to type
-      if (verifiedTxType === 'ORDER') {
+      // 1. Member general review (Always allowed for any registered member)
+      if (!verifiedTxType || verifiedTxType === 'MEMBER' || verifiedTxId === 'MEMBER') {
+        verifiedTxType = 'MEMBER';
+        verifiedTxId = `MEMBER-${currentUser.id}-${Date.now()}`;
+        if (finalCategory === 'GOLD_SELL') finalCategoryLabel = '금 판매';
+        else if (finalCategory === 'PRODUCT_BUY') finalCategoryLabel = '제품 구매';
+        else if (finalCategory === 'APPRAISAL') finalCategoryLabel = '감정 이용';
+        else { finalCategory = 'GENERAL'; finalCategoryLabel = '회원 이용 후기'; }
+      } else if (verifiedTxType === 'ORDER') {
         const order = dbRef.orders.find(o => o.id === verifiedTxId && (o.userId === currentUser.id || o.customerPhone === currentUser.phone));
         if (!order) return sendJSON(res, 404, { error: '본인의 주문 내역을 찾을 수 없습니다.' });
         const isCompleted = order.status === 'COMPLETED' || order.status === 'DELIVERED' || order.orderStatus === 'COMPLETED' || order.orderStatus === 'DELIVERED';
@@ -1613,6 +1641,12 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         const isGoldSell = appraisal.itemType && (appraisal.itemType.includes('매입') || appraisal.itemType.includes('판매') || appraisal.itemType.includes('고금'));
         finalCategory = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
         finalCategoryLabel = isGoldSell ? '금 판매' : '감정 이용';
+      } else if (verifiedTxType === 'RESERVATION') {
+        const resv = (dbRef.reservations || []).find(r => r.id === verifiedTxId && (r.userId === currentUser.id || r.bookPhone === currentUser.phone || r.phone === currentUser.phone));
+        if (finalCategory === 'GOLD_SELL') finalCategoryLabel = '금 판매';
+        else if (finalCategory === 'PRODUCT_BUY') finalCategoryLabel = '제품 구매';
+        else if (finalCategory === 'APPRAISAL') finalCategoryLabel = '감정 이용';
+        else { finalCategory = 'GENERAL'; finalCategoryLabel = '방문 상담 후기'; }
       } else if (verifiedTxType === 'OFFLINE') {
         const cleanCode = (authCode || verifiedTxId).trim().toUpperCase();
         const offTx = dbRef.offline_transactions.find(t => t.authCode && t.authCode.toUpperCase() === cleanCode);
@@ -1629,6 +1663,14 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         return sendJSON(res, 400, { error: '올바른 거래 구분이 아닙니다.' });
       }
 
+      // Duplicate check: Block if already reviewed for this transaction (non-MEMBER)
+      if (verifiedTxType !== 'MEMBER') {
+        const existingRev = dbRef.reviews.find(r => r.transactionType === verifiedTxType && r.transactionId === verifiedTxId);
+        if (existingRev) {
+          return sendJSON(res, 409, { error: '해당 내역은 이미 후기가 작성되었습니다. (내역 1건당 후기 1개 제한)' });
+        }
+      }
+
       const dateStr = new Date().toISOString().substring(0, 10).replace(/-/g, '');
       const serial = String(dbRef.reviews.length + 1).padStart(4, '0');
       const newReview = {
@@ -1643,7 +1685,8 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         rating: numRating,
         content: sanitizeText(trimmedContent),
         photos: safePhotos,
-        isVerifiedTrade: true,
+        isVerifiedTrade: verifiedTxType !== 'MEMBER',
+        isMemberReview: true,
         isPublic: true,
         hiddenReason: null,
         hiddenAt: null,
@@ -1673,7 +1716,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     if (!currentUser) return sendJSON(res, 401, { error: '로그인 후 수정할 수 있습니다.' });
     const reviewId = pathname.split('/')[3];
 
-    const { rating, content, photos } = body || {};
+    const { rating, content, photos, category } = body || {};
     const numRating = rating ? parseInt(rating, 10) : null;
     if (numRating !== null && (numRating < 1 || numRating > 5)) {
       return sendJSON(res, 400, { error: '별점은 1점부터 5점까지 선택해 주세요.' });
@@ -1697,6 +1740,13 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       if (numRating) review.rating = numRating;
       if (trimmedContent !== null) review.content = sanitizeText(trimmedContent);
       if (Array.isArray(photos)) review.photos = photos.slice(0, 3);
+      if (category && (review.transactionType === 'MEMBER' || review.transactionType === 'RESERVATION' || !review.isVerifiedTrade)) {
+        review.category = category;
+        if (category === 'GOLD_SELL') review.categoryLabel = '금 판매';
+        else if (category === 'PRODUCT_BUY') review.categoryLabel = '제품 구매';
+        else if (category === 'APPRAISAL') review.categoryLabel = '감정 이용';
+        else { review.category = 'GENERAL'; review.categoryLabel = review.transactionType === 'RESERVATION' ? '방문 상담 후기' : '회원 이용 후기'; }
+      }
       review.updatedAt = new Date().toISOString();
 
       return sendJSON(res, 200, { success: true, message: '후기가 성공적으로 수정되었습니다.', review });

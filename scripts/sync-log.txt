@@ -19581,3 +19581,819 @@
 [2026. 10. 16. 오후 1:57:25] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 13:57!
 [2026. 10. 16. 오후 1:57:25] ====================================================
 
+[2026. 10. 16. 오후 2:17:11] ====================================================
+[2026. 10. 16. 오후 2:17:11] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 2:17:11] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 2:17:11] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1612, Sample: {"date":"2026-10-16 14:17:00","marketPriceList":[{"date":"2026-10-16 14:17:00","askDiff":20.79,"bidDiff":20.99,"priceGram":180238.87,"ask":4174.53,"type":"au","bid":4172.13,"bidDiffPer":0.5,"askDiffPe
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160517).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 2:17:11] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 2:17:19] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 14:17!
+[2026. 10. 16. 오후 2:17:19] ====================================================
+
+[2026. 10. 16. 오후 2:37:11] ====================================================
+[2026. 10. 16. 오후 2:37:11] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 2:37:11] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 2:37:11] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1605, Sample: {"date":"2026-10-16 14:37:00","marketPriceList":[{"date":"2026-10-16 14:37:00","askDiff":23.4,"bidDiff":23.6,"priceGram":179917.78,"ask":4177.14,"type":"au","bid":4174.74,"bidDiffPer":0.57,"askDiffPer
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160537).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 2:37:12] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 2:37:17] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 14:37!
+[2026. 10. 16. 오후 2:37:17] ====================================================
+
+[2026. 10. 16. 오후 2:57:11] ====================================================
+[2026. 10. 16. 오후 2:57:11] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 2:57:11] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 2:57:12] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1616, Sample: {"date":"2026-10-16 14:57:00","marketPriceList":[{"date":"2026-10-16 14:57:00","askDiff":23.98,"bidDiff":24.18,"priceGram":179839.34,"ask":4177.72,"type":"au","bid":4175.32,"bidDiffPer":0.58,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160557).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 2:57:13] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 2:57:19] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 14:57!
+[2026. 10. 16. 오후 2:57:19] ====================================================
+
+[2026. 10. 16. 오후 3:17:11] ====================================================
+[2026. 10. 16. 오후 3:17:11] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 3:17:11] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 3:17:11] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1616, Sample: {"date":"2026-10-16 15:17:00","marketPriceList":[{"date":"2026-10-16 15:17:00","askDiff":18.24,"bidDiff":18.44,"priceGram":179337.4,"ask":4171.98,"type":"au","bid":4169.58,"bidDiffPer":0.44,"askDiffPe
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160617).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 3:17:11] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 3:17:17] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 15:17!
+[2026. 10. 16. 오후 3:17:17] ====================================================
+
+[2026. 10. 16. 오후 3:37:32] ====================================================
+[2026. 10. 16. 오후 3:37:32] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 3:37:32] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 3:37:35] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1631, Sample: {"date":"2026-10-16 15:37:25","marketPriceList":[{"date":"2026-10-16 15:37:25","askDiff":26.06,"bidDiff":26.26,"priceGram":179173.64,"ask":4179.8,"type":"au","bid":4177.4,"bidDiffPer":0.63,"askDiffPer
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160637).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 3:37:36] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 3:38:05] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 15:37!
+[2026. 10. 16. 오후 3:38:05] ====================================================
+
+[2026. 10. 16. 오후 3:57:13] ====================================================
+[2026. 10. 16. 오후 3:57:13] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 3:57:13] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 3:57:14] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1619, Sample: {"date":"2026-10-16 15:57:05","marketPriceList":[{"date":"2026-10-16 15:57:05","askDiff":25.91,"bidDiff":26.11,"priceGram":179274.71,"ask":4179.65,"type":"au","bid":4177.25,"bidDiffPer":0.63,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160657).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 3:57:15] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 3:57:27] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 15:57!
+[2026. 10. 16. 오후 3:57:27] ====================================================
+
+[2026. 10. 16. 오후 4:17:11] ====================================================
+[2026. 10. 16. 오후 4:17:11] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 4:17:11] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 4:17:12] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1614, Sample: {"date":"2026-10-16 16:17:05","marketPriceList":[{"date":"2026-10-16 16:17:05","askDiff":34.58,"bidDiff":34.78,"priceGram":179514.63,"ask":4188.32,"type":"au","bid":4185.92,"bidDiffPer":0.83,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160717).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 4:17:12] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 4:17:19] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 16:17!
+[2026. 10. 16. 오후 4:17:19] ====================================================
+
+[2026. 10. 16. 오후 4:37:10] ====================================================
+[2026. 10. 16. 오후 4:37:10] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 4:37:10] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 4:37:10] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1614, Sample: {"date":"2026-10-16 16:37:00","marketPriceList":[{"date":"2026-10-16 16:37:00","askDiff":37.42,"bidDiff":37.62,"priceGram":179420.75,"ask":4191.16,"type":"au","bid":4188.76,"bidDiffPer":0.9,"askDiffPe
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160737).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 4:37:11] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 4:37:16] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 16:37!
+[2026. 10. 16. 오후 4:37:16] ====================================================
+
+[2026. 10. 16. 오후 4:57:11] ====================================================
+[2026. 10. 16. 오후 4:57:12] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 4:57:12] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 4:57:12] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1618, Sample: {"date":"2026-10-16 16:57:05","marketPriceList":[{"date":"2026-10-16 16:57:05","askDiff":35.69,"bidDiff":35.89,"priceGram":179606.65,"ask":4189.43,"type":"au","bid":4187.03,"bidDiffPer":0.86,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160757).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 4:57:12] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 4:57:19] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 16:57!
+[2026. 10. 16. 오후 4:57:19] ====================================================
+
+[2026. 10. 16. 오후 5:17:11] ====================================================
+[2026. 10. 16. 오후 5:17:11] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 5:17:11] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 5:17:11] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1617, Sample: {"date":"2026-10-16 17:17:00","marketPriceList":[{"date":"2026-10-16 17:17:00","askDiff":27.09,"bidDiff":27.29,"priceGram":179336.08,"ask":4180.83,"type":"au","bid":4178.43,"bidDiffPer":0.65,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160817).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 5:17:11] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 5:17:15] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 17:17!
+[2026. 10. 16. 오후 5:17:15] ====================================================
+
+[2026. 10. 16. 오후 5:37:11] ====================================================
+[2026. 10. 16. 오후 5:37:11] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 16. 오후 5:37:11] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 16. 오후 5:37:11] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1616, Sample: {"date":"2026-10-16 17:37:00","marketPriceList":[{"date":"2026-10-16 17:37:00","askDiff":30.93,"bidDiff":31.13,"priceGram":179370.29,"ask":4184.67,"type":"au","bid":4182.27,"bidDiffPer":0.74,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-16 13:04:38',
+  s_pure: 794000,
+  p_pure: 675000,
+  p_18k: 496200,
+  p_14k: 384800,
+  s_white: 309000,
+  p_white: 251000,
+  s_silver: 10500,
+  p_silver: 8740
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610160837).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 16. 오후 5:37:12] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 16. 오후 5:37:16] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.16 17:37!
+[2026. 10. 16. 오후 5:37:16] ====================================================
+
+[2026. 10. 19. 오전 10:11:38] ====================================================
+[2026. 10. 19. 오전 10:11:39] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오전 10:11:39] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오전 10:11:50] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1603, Sample: {"date":"2026-10-19 10:11:45","marketPriceList":[{"date":"2026-10-19 10:11:45","askDiff":3.5,"bidDiff":4.3,"priceGram":179349.14,"ask":4171.91,"type":"au","bid":4168.71,"bidDiffPer":0.1,"askDiffPer":0
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190111).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오전 10:11:51] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오전 10:11:57] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 10:11!
+[2026. 10. 19. 오전 10:11:57] ====================================================
+
+[2026. 10. 19. 오전 10:15:02] ====================================================
+[2026. 10. 19. 오전 10:15:02] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오전 10:15:02] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오전 10:15:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1606, Sample: {"date":"2026-10-19 10:14:55","marketPriceList":[{"date":"2026-10-19 10:14:55","askDiff":6.83,"bidDiff":7.63,"priceGram":179582.24,"ask":4175.24,"type":"au","bid":4172.04,"bidDiffPer":0.18,"askDiffPer
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190115).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오전 10:15:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오전 10:15:07] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 10:15!
+[2026. 10. 19. 오전 10:15:07] ====================================================
+
+[2026. 10. 19. 오전 10:35:04] ====================================================
+[2026. 10. 19. 오전 10:35:04] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오전 10:35:04] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오전 10:35:05] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1602, Sample: {"date":"2026-10-19 10:35:00","marketPriceList":[{"date":"2026-10-19 10:35:00","askDiff":6.69,"bidDiff":7.49,"priceGram":179039.28,"ask":4175.1,"type":"au","bid":4171.9,"bidDiffPer":0.18,"askDiffPer":
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190135).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오전 10:35:05] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오전 10:35:10] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 10:35!
+[2026. 10. 19. 오전 10:35:10] ====================================================
+
+[2026. 10. 19. 오전 10:55:03] ====================================================
+[2026. 10. 19. 오전 10:55:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오전 10:55:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오전 10:55:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1609, Sample: {"date":"2026-10-19 10:54:55","marketPriceList":[{"date":"2026-10-19 10:54:55","askDiff":7.77,"bidDiff":8.57,"priceGram":179050.69,"ask":4176.18,"type":"au","bid":4172.98,"bidDiffPer":0.21,"askDiffPer
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190155).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오전 10:55:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오전 10:55:11] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 10:55!
+[2026. 10. 19. 오전 10:55:11] ====================================================
+
+[2026. 10. 19. 오전 11:15:03] ====================================================
+[2026. 10. 19. 오전 11:15:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오전 11:15:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오전 11:15:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1627, Sample: {"date":"2026-10-19 11:15:00","marketPriceList":[{"date":"2026-10-19 11:15:00","askDiff":15.78,"bidDiff":16.58,"priceGram":179213.85,"ask":4184.19,"type":"au","bid":4180.99,"bidDiffPer":0.4,"askDiffPe
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190215).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오전 11:15:04] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오전 11:15:09] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 11:15!
+[2026. 10. 19. 오전 11:15:09] ====================================================
+
+[2026. 10. 19. 오전 11:35:03] ====================================================
+[2026. 10. 19. 오전 11:35:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오전 11:35:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오전 11:35:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1605, Sample: {"date":"2026-10-19 11:34:55","marketPriceList":[{"date":"2026-10-19 11:34:55","askDiff":7.62,"bidDiff":8.55,"priceGram":178609.25,"ask":4176.03,"type":"au","bid":4172.96,"bidDiffPer":0.2,"askDiffPer"
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190235).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오전 11:35:04] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오전 11:35:08] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 11:35!
+[2026. 10. 19. 오전 11:35:08] ====================================================
+
+[2026. 10. 19. 오전 11:55:03] ====================================================
+[2026. 10. 19. 오전 11:55:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오전 11:55:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오전 11:55:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1613, Sample: {"date":"2026-10-19 11:55:00","marketPriceList":[{"date":"2026-10-19 11:55:00","askDiff":7.96,"bidDiff":8.76,"priceGram":178937.99,"ask":4176.37,"type":"au","bid":4173.17,"bidDiffPer":0.21,"askDiffPer
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190255).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오전 11:55:04] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오전 11:55:10] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 11:55!
+[2026. 10. 19. 오전 11:55:10] ====================================================
+
+[2026. 10. 19. 오후 12:15:03] ====================================================
+[2026. 10. 19. 오후 12:15:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 12:15:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 12:15:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1612, Sample: {"date":"2026-10-19 12:14:55","marketPriceList":[{"date":"2026-10-19 12:14:55","askDiff":13.53,"bidDiff":14.33,"priceGram":179284.2,"ask":4181.94,"type":"au","bid":4178.74,"bidDiffPer":0.34,"askDiffPe
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190315).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 12:15:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 12:15:08] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 12:15!
+[2026. 10. 19. 오후 12:15:08] ====================================================
+
+[2026. 10. 19. 오후 12:35:03] ====================================================
+[2026. 10. 19. 오후 12:35:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 12:35:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 12:35:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1611, Sample: {"date":"2026-10-19 12:34:55","marketPriceList":[{"date":"2026-10-19 12:34:55","askDiff":12.61,"bidDiff":13.41,"priceGram":179252.82,"ask":4181.02,"type":"au","bid":4177.82,"bidDiffPer":0.32,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190335).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 12:35:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 12:35:08] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 12:35!
+[2026. 10. 19. 오후 12:35:08] ====================================================
+
+[2026. 10. 19. 오후 12:55:03] ====================================================
+[2026. 10. 19. 오후 12:55:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 12:55:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 12:55:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1611, Sample: {"date":"2026-10-19 12:54:55","marketPriceList":[{"date":"2026-10-19 12:54:55","askDiff":14.62,"bidDiff":15.42,"priceGram":179325.55,"ask":4183.03,"type":"au","bid":4179.83,"bidDiffPer":0.37,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190355).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 12:55:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 12:55:08] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 12:55!
+[2026. 10. 19. 오후 12:55:08] ====================================================
+
+[2026. 10. 19. 오후 1:15:03] ====================================================
+[2026. 10. 19. 오후 1:15:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 1:15:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 1:15:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1608, Sample: {"date":"2026-10-19 13:14:55","marketPriceList":[{"date":"2026-10-19 13:14:55","askDiff":12.69,"bidDiff":13.49,"priceGram":179230.71,"ask":4181.1,"type":"au","bid":4177.9,"bidDiffPer":0.32,"askDiffPer
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190415).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 1:15:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 1:15:07] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 13:15!
+[2026. 10. 19. 오후 1:15:07] ====================================================
+
+[2026. 10. 19. 오후 1:35:03] ====================================================
+[2026. 10. 19. 오후 1:35:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 1:35:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 1:35:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1613, Sample: {"date":"2026-10-19 13:34:55","marketPriceList":[{"date":"2026-10-19 13:34:55","askDiff":17.03,"bidDiff":17.83,"priceGram":179326.6,"ask":4185.44,"type":"au","bid":4182.24,"bidDiffPer":0.43,"askDiffPe
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190435).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 1:35:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 1:35:07] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 13:35!
+[2026. 10. 19. 오후 1:35:07] ====================================================
+
+[2026. 10. 19. 오후 1:55:03] ====================================================
+[2026. 10. 19. 오후 1:55:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 1:55:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 1:55:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1610, Sample: {"date":"2026-10-19 13:55:00","marketPriceList":[{"date":"2026-10-19 13:55:00","askDiff":16.91,"bidDiff":17.71,"priceGram":179356.44,"ask":4185.32,"type":"au","bid":4182.12,"bidDiffPer":0.42,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190455).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 1:55:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 1:55:07] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 13:55!
+[2026. 10. 19. 오후 1:55:07] ====================================================
+
+[2026. 10. 19. 오후 2:15:03] ====================================================
+[2026. 10. 19. 오후 2:15:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 2:15:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 2:15:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1611, Sample: {"date":"2026-10-19 14:14:55","marketPriceList":[{"date":"2026-10-19 14:14:55","askDiff":13.08,"bidDiff":13.88,"priceGram":178953.01,"ask":4181.49,"type":"au","bid":4178.29,"bidDiffPer":0.33,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190515).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 2:15:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 2:15:07] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 14:15!
+[2026. 10. 19. 오후 2:15:07] ====================================================
+
+[2026. 10. 19. 오후 2:35:03] ====================================================
+[2026. 10. 19. 오후 2:35:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 2:35:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 2:35:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1616, Sample: {"date":"2026-10-19 14:35:00","marketPriceList":[{"date":"2026-10-19 14:35:00","askDiff":10.68,"bidDiff":11.48,"priceGram":178687.72,"ask":4179.09,"type":"au","bid":4175.89,"bidDiffPer":0.27,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190535).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 2:35:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 2:35:07] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 14:35!
+[2026. 10. 19. 오후 2:35:07] ====================================================
+
+[2026. 10. 19. 오후 2:55:03] ====================================================
+[2026. 10. 19. 오후 2:55:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 2:55:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 2:55:04] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1614, Sample: {"date":"2026-10-19 14:54:55","marketPriceList":[{"date":"2026-10-19 14:54:55","askDiff":16.32,"bidDiff":17.12,"priceGram":179075.53,"ask":4184.73,"type":"au","bid":4181.53,"bidDiffPer":0.41,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190555).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 2:55:04] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 2:55:08] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 14:55!
+[2026. 10. 19. 오후 2:55:08] ====================================================
+
+[2026. 10. 19. 오후 3:15:03] ====================================================
+[2026. 10. 19. 오후 3:15:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 3:15:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 3:15:04] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1611, Sample: {"date":"2026-10-19 15:14:55","marketPriceList":[{"date":"2026-10-19 15:14:55","askDiff":10.74,"bidDiff":11.54,"priceGram":179051.72,"ask":4179.15,"type":"au","bid":4175.95,"bidDiffPer":0.28,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190615).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 3:15:04] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 3:15:09] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 15:15!
+[2026. 10. 19. 오후 3:15:09] ====================================================
+
+[2026. 10. 19. 오후 3:35:03] ====================================================
+[2026. 10. 19. 오후 3:35:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 3:35:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 3:35:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1612, Sample: {"date":"2026-10-19 15:34:55","marketPriceList":[{"date":"2026-10-19 15:34:55","askDiff":9.21,"bidDiff":10.01,"priceGram":178892.15,"ask":4177.62,"type":"au","bid":4174.42,"bidDiffPer":0.24,"askDiffPe
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190635).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 3:35:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 3:35:09] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 15:35!
+[2026. 10. 19. 오후 3:35:09] ====================================================
+
+[2026. 10. 19. 오후 3:55:03] ====================================================
+[2026. 10. 19. 오후 3:55:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 3:55:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 3:55:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1620, Sample: {"date":"2026-10-19 15:54:55","marketPriceList":[{"date":"2026-10-19 15:54:55","askDiff":15.28,"bidDiff":16.48,"priceGram":179205.88,"ask":4183.69,"type":"au","bid":4180.89,"bidDiffPer":0.39,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190655).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 3:55:04] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 3:55:10] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 15:55!
+[2026. 10. 19. 오후 3:55:10] ====================================================
+
+[2026. 10. 19. 오후 4:15:03] ====================================================
+[2026. 10. 19. 오후 4:15:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 4:15:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 4:15:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1613, Sample: {"date":"2026-10-19 16:14:55","marketPriceList":[{"date":"2026-10-19 16:14:55","askDiff":17.82,"bidDiff":19.02,"priceGram":179307.95,"ask":4186.23,"type":"au","bid":4183.43,"bidDiffPer":0.45,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190715).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 4:15:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 4:15:10] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 16:15!
+[2026. 10. 19. 오후 4:15:10] ====================================================
+
+[2026. 10. 19. 오후 4:35:04] ====================================================
+[2026. 10. 19. 오후 4:35:04] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 4:35:04] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 4:35:05] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1605, Sample: {"date":"2026-10-19 16:34:55","marketPriceList":[{"date":"2026-10-19 16:34:55","askDiff":22.24,"bidDiff":23.44,"priceGram":179512.09,"ask":4190.65,"type":"au","bid":4187.85,"bidDiffPer":0.56,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190735).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 4:35:05] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 4:35:14] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 16:35!
+[2026. 10. 19. 오후 4:35:14] ====================================================
+
+[2026. 10. 19. 오후 4:55:03] ====================================================
+[2026. 10. 19. 오후 4:55:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 4:55:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 4:55:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1607, Sample: {"date":"2026-10-19 16:54:55","marketPriceList":[{"date":"2026-10-19 16:54:55","askDiff":10.34,"bidDiff":11.54,"priceGram":179209.24,"ask":4178.75,"type":"au","bid":4175.95,"bidDiffPer":0.28,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190755).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 4:55:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 4:55:12] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 16:55!
+[2026. 10. 19. 오후 4:55:12] ====================================================
+
+[2026. 10. 19. 오후 5:15:03] ====================================================
+[2026. 10. 19. 오후 5:15:03] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 19. 오후 5:15:03] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 19. 오후 5:15:03] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1615, Sample: {"date":"2026-10-19 17:14:55","marketPriceList":[{"date":"2026-10-19 17:14:55","askDiff":13.35,"bidDiff":14.55,"priceGram":178994.14,"ask":4181.76,"type":"au","bid":4178.96,"bidDiffPer":0.35,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-19 09:47:31',
+  s_pure: 789000,
+  p_pure: 674000,
+  p_18k: 495400,
+  p_14k: 384200,
+  s_white: 307000,
+  p_white: 249000,
+  s_silver: 10350,
+  p_silver: 8610
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610190815).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 19. 오후 5:15:03] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 19. 오후 5:15:09] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.19 17:15!
+[2026. 10. 19. 오후 5:15:09] ====================================================
+
