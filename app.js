@@ -5,29 +5,29 @@
 
 // Official Live Rates from Korea Gold Exchange (koreagoldx.co.kr 100% Exact Official Rates)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 775000,
+  "24K_buy": 778000,
   "24K_sell": 667000,
   "18K_sell": 490300,
   "14K_sell": 380200,
-  "PT_buy": 304000,
-  "PT_sell": 247000,
-  "AG_buy": 10190,
-  "AG_sell": 8480
+  "PT_buy": 307000,
+  "PT_sell": 249000,
+  "AG_buy": 10310,
+  "AG_sell": 8580
 };
 
 let REALTIME_RATE_CHANGES = {
-  "24K_buy_diff": -14000,
-  "24K_buy_per": -1.81,
+  "24K_buy_diff": -11000,
+  "24K_buy_per": -1.41,
   "24K_sell_diff": -7000,
   "24K_sell_per": -1.05,
   "18K_sell_diff": -5100,
   "18K_sell_per": -1.04,
   "14K_sell_diff": -4000,
   "14K_sell_per": -1.05,
-  "PT_sell_diff": -2000,
-  "PT_sell_per": -0.81,
-  "AG_sell_diff": -130,
-  "AG_sell_per": -1.53,
+  "PT_sell_diff": 0,
+  "PT_sell_per": 0,
+  "AG_sell_diff": -30,
+  "AG_sell_per": -0.35,
   "date": "2026.10.20"
 };
 
@@ -38,6 +38,7 @@ let activeMetalKey = '24K';
 let activePeriod = '1M';
 let currentMarketRegion = 'DOMESTIC';
 let lastFetchTime = null;
+let isLiveSyncActive = false;
 
 const ALL_TIME_SLOTS = [
   '11:00', '11:30', '12:00', '12:30',
@@ -224,8 +225,12 @@ async function SyncLiveKGERates() {
       }));
 
       currentRates = { ...REALTIME_STANDARD_RATES };
+      isLiveSyncActive = true;
+    } else {
+      isLiveSyncActive = false;
     }
   } catch (e) {
+    isLiveSyncActive = false;
     console.log('[GoldLab Engine] Live KGE Auto-Sync fallback maintained.');
   }
 
@@ -3028,13 +3033,17 @@ function UpdateLiveMarketDisplay() {
   if (elSellPt) elSellPt.innerHTML = `${formatWon(sellPT)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
   if (elSellAg) elSellAg.innerHTML = `${formatWon(sellAG)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
 
-  // Live Timestamp
+  // Live Timestamp & Status Display
   const now = new Date();
   const timeStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
   lastFetchTime = timeStr;
   const timestampEl = document.getElementById('liveTimestamp');
   if (timestampEl) {
-    timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 실시간 수신중 (${timeStr})`;
+    if (isLiveSyncActive) {
+      timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 실시간 수신중 (${timeStr} · 한국금거래소)`;
+    } else {
+      timestampEl.innerHTML = `<i class="fa-solid fa-clock-rotate-left" style="color:var(--gold-light); font-size:0.7rem;"></i> 시세 갱신 지연 (한국금거래소 ${syncDate} 고시 기준)`;
+    }
   }
 
   // B2B Wholesale Table Rates Update (if present)
@@ -4143,8 +4152,8 @@ setTimeout(() => {
 
 // Load Main Page Customer Reviews Preview (Top 3 only if >= 3 reviews exist)
 async function LoadMainReviewPreview() {
-  const section = document.getElementById('mainReviewPreviewSection');
-  const container = document.getElementById('mainReviewPreviewCards');
+  const section = document.getElementById('mainReviewPreviewSection') || document.getElementById('mainReviewsSection');
+  const container = document.getElementById('mainReviewPreviewCards') || document.getElementById('mainReviewsCardsGrid');
   if (!section || !container) return;
 
   try {

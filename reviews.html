@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>고객 후기 | GoldLab & Co. - 골드랩앤코 실거래 인증 후기</title>
-  <meta name="description" content="골드랩앤코를 이용하신 고객님의 생생하고 정직한 실제 이용 경험을 확인해 보세요. 100% 실거래 인증 및 관리자 답변">
+  <title>고객 이용 후기 | GoldLab & Co. - 골드랩앤코 이용 후기</title>
+  <meta name="description" content="골드랩앤코를 이용하신 고객님의 생생한 실제 이용 경험을 확인해 보세요. 거래 인증 후기와 정회원 솔직 후기 투명 제공.">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=20261016_mobile_v3">
@@ -621,14 +621,14 @@
     <!-- HERO SECTION -->
     <div class="review-hero">
       <div class="section-badge" style="margin-bottom:0.8rem;">
-        <i class="fa-solid fa-shield-check text-gold"></i> 100% REAL MEMBER & TRANSACTION REVIEWS
+        <i class="fa-solid fa-comments text-gold"></i> 투명하고 솔직한 고객 이용 후기
       </div>
       <h1>
         고객 실제 이용 후기
       </h1>
       <p>
-        골드랩앤코를 이용하신 고객님의 생생하고 정직한 실제 이용 경험을 확인해 보세요.<br>
-        골드랩앤코 정회원이라면 누구나 소중한 이용 경험을 남기실 수 있으며, 가짜 후기나 임의 조작이 불가능한 정직한 리뷰 공간입니다.
+        골드랩앤코를 이용하신 회원님의 생생한 실제 이용 경험을 확인해 보세요.<br>
+        실제 거래 완료 기록이 확인된 거래 인증 후기와 정회원의 솔직한 이용 후기를 투명하게 제공합니다.
       </p>
 
       <div style="margin-top:1.8rem; display:flex; justify-content:center; gap:0.9rem; flex-wrap:wrap;">
@@ -643,14 +643,14 @@
 
     <!-- AGGREGATE SUMMARY CARD -->
     <div class="rating-summary-card" id="ratingSummaryCard">
-      <!-- 1. Big Score -->
+      <!-- 1. Big Score (Loading State by default) -->
       <div class="score-col">
-        <div class="big-score" id="statAvgRating">0.0</div>
+        <div class="big-score" id="statAvgRating" style="font-size:1.4rem; color:var(--gold-light);">-</div>
         <div class="stars-display" id="statStarsContainer">
-          <i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i>
+          <span style="font-size:0.85rem; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> 집계 확인 중...</span>
         </div>
         <div style="font-size:0.88rem; color:var(--text-muted);">
-          실제 공개 후기 <strong id="statTotalCount" style="color:var(--text-white); font-family:var(--font-num);">0</strong>건 집계
+          실제 공개 후기 <strong id="statTotalCount" style="color:var(--text-white); font-family:var(--font-num);">-</strong>건 집계
         </div>
       </div>
 
@@ -683,27 +683,27 @@
         </div>
       </div>
 
-      <!-- 3. Trust Column -->
+      <!-- 3. Trust Column (Delineating verified trade vs member review) -->
       <div class="trust-col">
         <div class="trust-item">
           <div class="trust-icon"><i class="fa-solid fa-crown text-gold"></i></div>
           <div>
-            <strong style="color:var(--gold-light); display:block; font-size:0.88rem;">회원 누구나 작성 가능</strong>
-            <span style="font-size:0.8rem; color:var(--text-muted);">골드랩앤코 정회원 누구나 솔직 후기 작성</span>
+            <strong style="color:var(--gold-light); display:block; font-size:0.88rem;">정회원 솔직 후기</strong>
+            <span style="font-size:0.8rem; color:var(--text-muted);">골드랩앤코 정회원 누구나 이용 경험 작성</span>
           </div>
         </div>
         <div class="trust-item">
-          <div class="trust-icon"><i class="fa-solid fa-circle-check"></i></div>
+          <div class="trust-icon"><i class="fa-solid fa-shield-check text-gold"></i></div>
           <div>
-            <strong style="color:var(--gold-light); display:block; font-size:0.88rem;">100% 본인 인증 기반</strong>
-            <span style="font-size:0.8rem; color:var(--text-muted);">실제 회원 계정 및 실거래 인증 연동</span>
+            <strong style="color:var(--gold-light); display:block; font-size:0.88rem;">서버 거래 인증 마크</strong>
+            <span style="font-size:0.8rem; color:var(--text-muted);">실제 거래 완료 기록이 확인된 후기만 표기</span>
           </div>
         </div>
         <div class="trust-item">
           <div class="trust-icon"><i class="fa-solid fa-comments"></i></div>
           <div>
             <strong style="color:var(--gold-light); display:block; font-size:0.88rem;">대표 공식 답변 운영</strong>
-            <span style="font-size:0.8rem; color:var(--text-muted);">별점과 무관한 투명한 공개</span>
+            <span style="font-size:0.8rem; color:var(--text-muted);">고객 의견에 대한 성실하고 투명한 소통</span>
           </div>
         </div>
       </div>
@@ -742,10 +742,16 @@
   </main>
 
   <!-- FOOTER -->
-  <footer class="footer" style="background:#06070a; border-top:1px solid var(--border-dark); padding:2.5rem 0; text-align:center; font-size:0.85rem; color:var(--text-muted);">
+  <footer class="footer" style="background:#06070a; border-top:1px solid var(--border-dark); padding:2.5rem 0; text-align:center; font-size:0.85rem; color:var(--text-muted); line-height:1.8;">
     <div class="container">
-      <p style="margin-bottom:0.6rem; color:var(--text-light); font-weight:700;">골드랩앤코 (GoldLab & Co.) | 대한민국 대표 귀금속 자산 분석 및 실거래 플랫폼</p>
-      <p>© 2026 GoldLab & Co. All Rights Reserved. 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 고객센터 010-4017-4988</p>
+      <p style="margin-bottom:0.4rem; color:var(--text-light); font-weight:700;">골드랩앤코 (GoldLab & Co.) | 종로 귀금속 전문 감정대행 및 실거래 연동 플랫폼</p>
+      <p style="margin-bottom:0.3rem;">
+        상호명: GoldLab & Co. (골드랩앤코) | 대표자: 황미숙 | 사업자등록번호: 185-07-02856 | 통신판매업신고: 제 2025-서울은평-1081 호
+      </p>
+      <p style="margin-bottom:0.3rem;">
+        소재지: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 대표전화: <a href="tel:010-4017-4988" style="color:var(--gold-light); text-decoration:none;">010-4017-4988</a> | 개인정보보호책임자: 황미숙 (skycraft102@naver.com)
+      </p>
+      <p>© 2026 GoldLab & Co. All Rights Reserved.</p>
     </div>
   </footer>
 
@@ -1205,23 +1211,43 @@
       const totalEl = document.getElementById('statTotalCount');
       const starsContainer = document.getElementById('statStarsContainer');
 
-      if (avgEl) avgEl.innerText = avg > 0 ? avg.toFixed(1) : '0.0';
-      if (totalEl) totalEl.innerText = total.toLocaleString('ko-KR');
-
-      if (starsContainer) {
-        let starsHtml = '';
-        const fullStars = Math.floor(avg);
-        const hasHalf = (avg - fullStars) >= 0.5;
-        for (let i = 1; i <= 5; i++) {
-          if (i <= fullStars) {
-            starsHtml += '<i class="fa-solid fa-star"></i>';
-          } else if (i === fullStars + 1 && hasHalf) {
-            starsHtml += '<i class="fa-solid fa-star-half-stroke"></i>';
-          } else {
-            starsHtml += '<i class="fa-regular fa-star empty-star"></i>';
-          }
+      if (total === 0) {
+        if (avgEl) {
+          avgEl.style.fontSize = '1.25rem';
+          avgEl.style.color = 'var(--gold-light)';
+          avgEl.innerText = '첫 후기를 기다리고 있습니다';
         }
-        starsContainer.innerHTML = starsHtml;
+        if (starsContainer) {
+          starsContainer.innerHTML = '<span style="font-size:0.85rem; color:var(--text-muted);">등록된 후기가 없습니다</span>';
+        }
+        if (totalEl) totalEl.innerText = '0';
+      } else {
+        if (avgEl) {
+          avgEl.style.fontSize = '';
+          avgEl.style.color = '';
+          avgEl.innerText = avg > 0 ? avg.toFixed(1) : '-';
+        }
+        if (totalEl) {
+          const vCount = Number(data.verifiedTradeCount) || 0;
+          const mCount = Number(data.memberReviewCount) || 0;
+          totalEl.innerHTML = `${total.toLocaleString('ko-KR')} <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">(거래 인증 ${vCount}건 · 회원 ${mCount}건)</span>`;
+        }
+
+        if (starsContainer) {
+          let starsHtml = '';
+          const fullStars = Math.floor(avg);
+          const hasHalf = (avg - fullStars) >= 0.5;
+          for (let i = 1; i <= 5; i++) {
+            if (i <= fullStars) {
+              starsHtml += '<i class="fa-solid fa-star"></i>';
+            } else if (i === fullStars + 1 && hasHalf) {
+              starsHtml += '<i class="fa-solid fa-star-half-stroke"></i>';
+            } else {
+              starsHtml += '<i class="fa-regular fa-star empty-star"></i>';
+            }
+          }
+          starsContainer.innerHTML = starsHtml;
+        }
       }
 
       // Update Breakdown Bars
@@ -1340,9 +1366,9 @@
 
         const dateStr = r.createdAt ? r.createdAt.substring(0, 10).replace(/-/g, '.') : '';
 
-        const badgeHtml = (r.transactionType === 'MEMBER' || !r.transactionId || String(r.transactionId).startsWith('MEMBER-'))
-          ? `<span class="verified-trade-badge" style="background:rgba(224,184,72,0.18); color:var(--gold-light); border-color:rgba(224,184,72,0.4);"><i class="fa-solid fa-crown"></i> 회원 인증</span>`
-          : `<span class="verified-trade-badge"><i class="fa-solid fa-circle-check"></i> 거래 인증</span>`;
+        const badgeHtml = r.isVerifiedTrade
+          ? `<span class="verified-trade-badge"><i class="fa-solid fa-shield-check"></i> 거래 인증</span>`
+          : `<span class="verified-trade-badge" style="background:rgba(224,184,72,0.18); color:var(--gold-light); border-color:rgba(224,184,72,0.4);"><i class="fa-solid fa-user-check"></i> 회원 후기</span>`;
 
         html += `
           <div class="review-card" id="revCard_${r.id}">

@@ -42,146 +42,443 @@
   <main class="container" style="padding-top:3rem; padding-bottom:5rem;">
 
     <!-- TOP HERO BANNER -->
-    <div style="text-align:center; max-width:860px; margin:0 auto 3rem auto;">
-      <div class="section-badge" style="margin-bottom:0.8rem;"><i class="fa-solid fa-microscope text-gold"></i> SCIENTIFIC PRECISION APPRAISAL</div>
+    <div style="text-align:center; max-width:860px; margin:0 auto 3.5rem auto;">
+      <div class="section-badge" style="margin-bottom:0.8rem;"><i class="fa-solid fa-microscope text-gold"></i> 귀금속 안심 감정대행 서비스</div>
       <h1 style="font-size:2.4rem; font-weight:900; line-height:1.3; margin-bottom:1rem;">
-        훼손 없는 비파괴 과학 감정, <br><span class="gradient-text">GoldLab 안심 감정대행 서비스</span>
+        보증서 없는 귀금속의 투명한 가치 증명, <br><span class="gradient-text">GoldLab 귀금속 감정대행</span>
       </h1>
-      <p style="color:var(--text-muted); font-size:1.05rem; line-height:1.7;">
-        최첨단 형광 X선(XRF) 분광 분석기와 0.001g 단위 정밀 비중 측정기를 통해 귀금속의 정확한 순도와 실측 중량을 검증해 드립니다.
-        방문 또는 전국 안심 택배로 편리하게 접수하실 수 있습니다.
+      <p style="color:var(--text-light); font-size:1.05rem; line-height:1.7; max-width:760px; margin:0 auto;">
+        골드랩앤코는 고객님의 소중한 귀금속을 안전하게 접수하여 전문 검사기관에 과학적 시험 분석을 의뢰하고,
+        신뢰할 수 있는 결과 확인서를 발급해 드리는 감정대행 전문 플랫폼입니다.
       </p>
     </div>
 
-    <!-- CONFIRMED PRICING NOTICE ALERT -->
-    <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-gold-bright); border-radius:18px; padding:1.4rem 1.8rem; margin-bottom:3rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1.2rem;">
-      <div style="display:flex; align-items:center; gap:1.2rem;">
-        <div style="width:50px; height:50px; border-radius:14px; background:rgba(224,184,72,0.15); display:flex; align-items:center; justify-content:center; border:1px solid rgba(224,184,72,0.3);">
-          <i class="fa-solid fa-microscope text-gold" style="font-size:1.6rem;"></i>
-        </div>
-        <div>
-          <strong style="color:var(--gold-light); font-size:1.2rem; font-weight:900; display:block; margin-bottom:0.25rem;">
-            감정대행 접수 1건당 29,900원
-          </strong>
-          <p style="color:var(--text-light); font-size:0.95rem; margin:0; line-height:1.6; font-weight:700;">
-            제품 최대 2개 · 방문·택배 동일 요금 · 배송비 별도
-          </p>
-          <div style="color:var(--gold-light); font-size:0.9rem; font-weight:800; margin-top:0.3rem;">
-            보유 GC로 기본 감정료 최대 10,000원 할인 <span style="color:var(--text-muted); font-size:0.82rem; font-weight:normal;">(회원 등급별 연간 무료 감정 혜택 중복 미적용)</span>
+    <!-- ==================================================================== -->
+    <!-- 1. 어떤 상황에 필요한가 (When is it needed?) -->
+    <!-- ==================================================================== -->
+    <section style="margin-bottom:4rem;" id="section-situations">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span class="section-badge" style="margin-bottom:0.4rem;"><i class="fa-solid fa-lightbulb text-gold"></i> STEP 1 · 이용 추천 상황</span>
+        <h2 style="font-size:1.85rem; font-weight:900; color:var(--text-white); margin:0;">
+          이런 상황에 감정대행이 필요합니다
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+          보증서가 없거나 정확한 함량을 알기 어려운 귀금속, 객관적인 과학 시험으로 확인하세요.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1.4rem;">
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="width:46px; height:46px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1rem; border:1px solid rgba(224,184,72,0.25);">
+              <i class="fa-solid fa-file-circle-question text-gold" style="font-size:1.3rem;"></i>
+            </div>
+            <h3 style="color:var(--text-white); font-size:1.15rem; font-weight:800; margin-bottom:0.6rem;">보증서 없는 귀금속</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin:0;">
+              상속, 증여, 선물로 받았거나 구매처 보증서를 분실하여 순도(24K, 18K, 14K 등)와 실제 금 함량이 불분명할 때
+            </p>
           </div>
-          <small style="color:var(--text-muted); font-size:0.82rem; display:block; margin-top:0.25rem;">
-            ※ 1개 또는 2개 모두 기본요금 동일하며 3개 이상은 별도 접수가 필요합니다. 택배 배송비는 별도 안내됩니다.
+        </div>
+
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="width:46px; height:46px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1rem; border:1px solid rgba(224,184,72,0.25);">
+              <i class="fa-solid fa-handshake-angle text-gold" style="font-size:1.3rem;"></i>
+            </div>
+            <h3 style="color:var(--text-white); font-size:1.15rem; font-weight:800; margin-bottom:0.6rem;">중고 개인 거래 전·후</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin:0;">
+              중고 플랫폼이나 개인 간 거래 전후, 표기된 함량과 실제 귀금속 성분이 일치하는지 객관적인 수치로 확인하고 싶을 때
+            </p>
+          </div>
+        </div>
+
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="width:46px; height:46px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1rem; border:1px solid rgba(224,184,72,0.25);">
+              <i class="fa-solid fa-clock-rotate-left text-gold" style="font-size:1.3rem;"></i>
+            </div>
+            <h3 style="color:var(--text-white); font-size:1.15rem; font-weight:800; margin-bottom:0.6rem;">오래 보관한 주얼리</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin:0;">
+              오랜 시간 보관으로 각인(금박/타각)이 마모·변색되어 육안으로 순도 구분이 어려울 때
+            </p>
+          </div>
+        </div>
+
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem; display:flex; flex-direction:column; justify-content:space-between;">
+          <div>
+            <div style="width:46px; height:46px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1rem; border:1px solid rgba(224,184,72,0.25);">
+              <i class="fa-solid fa-scale-balanced text-gold" style="font-size:1.3rem;"></i>
+            </div>
+            <h3 style="color:var(--text-white); font-size:1.15rem; font-weight:800; margin-bottom:0.6rem;">매도 전 객관적 확인</h3>
+            <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; margin:0;">
+              금은방이나 거래소에 매도하기 전, 비파괴 성분 분석 결과와 정밀 실측 중량을 미리 파악하고 싶을 때
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- 2. 무엇을 확인하는가 (What is tested?) -->
+    <!-- ==================================================================== -->
+    <section style="margin-bottom:4rem;" id="section-scope">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span class="section-badge" style="margin-bottom:0.4rem;"><i class="fa-solid fa-magnifying-glass-chart text-gold"></i> STEP 2 · 검사 항목 및 범위</span>
+        <h2 style="font-size:1.85rem; font-weight:900; color:var(--text-white); margin:0;">
+          무엇을 확인하고 분석하나요?
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+          골드랩이 제품을 안전하게 접수하여 전문 검사기관의 과학 시험을 통해 성분과 함량을 측정합니다.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.8rem; margin-bottom:1.5rem;">
+        
+        <!-- 성분 및 함량 분석 -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+          <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1.2rem;">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(224,184,72,0.15); display:flex; align-items:center; justify-content:center;">
+              <i class="fa-solid fa-atom text-gold" style="font-size:1.4rem;"></i>
+            </div>
+            <div>
+              <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin:0;">귀금속 원소 성분 및 순도(함량)</h3>
+              <span style="font-size:0.8rem; color:var(--gold-light);">비파괴 형광 X선(XRF) 분광 분석</span>
+            </div>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.7; margin-bottom:1rem;">
+            전문 검사기관의 비파괴 XRF 분석을 통해 제품 표면에 물리적 손상을 가하지 않고 금(Au), 은(Ag), 백금(Pt), 구리(Cu), 아연(Zn) 등 합금 주요 원소의 성분비와 순도를 정밀 측정합니다.
+          </p>
+          <div style="background:rgba(9,11,16,0.9); border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem; font-size:0.85rem; color:var(--text-light);">
+            <strong style="color:var(--gold-light); display:block; margin-bottom:0.3rem;">접수 가능 품목:</strong>
+            24K 순금 (골드바·덩어리·골드빈), 18K/14K 고금 주얼리, 백금(PT990/950/900), 실버(AG999/925), 치과용 치금 합금 등
+          </div>
+        </div>
+
+        <!-- 실측 중량 및 비중 시험 -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
+          <div style="display:flex; align-items:center; gap:0.8rem; margin-bottom:1.2rem;">
+            <div style="width:44px; height:44px; border-radius:12px; background:rgba(224,184,72,0.15); display:flex; align-items:center; justify-content:center;">
+              <i class="fa-solid fa-weight-scale text-gold" style="font-size:1.4rem;"></i>
+            </div>
+            <div>
+              <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin:0;">정밀 실측 중량 및 비중 시험</h3>
+              <span style="font-size:0.8rem; color:var(--gold-light);">0.001g 단위 전자저울 및 체적 밀도 검증</span>
+            </div>
+          </div>
+          <p style="color:var(--text-muted); font-size:0.92rem; line-height:1.7; margin-bottom:1rem;">
+            공인 계량 기준에 맞춘 0.001g 단위 초정밀 전자저울로 제품의 실측 중량을 계량하고, 아르키메데스 원리를 활용한 비중 시험으로 체적 대비 밀도를 측정하여 순도 오차를 상호 교차 검증합니다.
+          </p>
+          <div style="background:rgba(9,11,16,0.9); border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem; font-size:0.85rem; color:var(--text-light);">
+            <strong style="color:var(--gold-light); display:block; margin-bottom:0.3rem;">측정 결과 데이터:</strong>
+            실측 중량(g/돈 단위 환산), 측정 밀도(비중값), 표면 합금 성분비(%)
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 명품 브랜드 정품 감정 미제공 명확 안내 배너 -->
+      <div style="background:rgba(239,68,68,0.06); border:1px solid rgba(239,68,68,0.3); border-radius:16px; padding:1.2rem 1.6rem; display:flex; align-items:flex-start; gap:1rem;">
+        <i class="fa-solid fa-triangle-exclamation" style="color:#ef4444; font-size:1.3rem; margin-top:0.2rem; flex-shrink:0;"></i>
+        <div style="font-size:0.92rem; line-height:1.7;">
+          <strong style="color:#f87171; font-size:1rem; display:block; margin-bottom:0.2rem;">
+            [필수 안내] 귀금속 성분·함량 확인과 명품 브랜드 정품 감정의 명확한 구분
+          </strong>
+          <span style="color:var(--text-light);">
+            본 서비스는 귀금속의 <strong>금속 성분(금·은·백금 등) 및 순도(함량)를 과학적으로 측정</strong>하는 시험 감정대행입니다.
+            까르띠에, 티파니, 반클리프 아펠, 불가리 등 <strong>명품 주얼리 브랜드의 정품/가품 진위 판별 감정은 제공되지 않습니다</strong>.
+            브랜드 정품 여부는 해당 명품 브랜드 본사 및 부티크 서비스를 이용해 주시기 바랍니다.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- 3. 무엇을 받는가 (What do you receive?) -->
+    <!-- ==================================================================== -->
+    <section style="margin-bottom:4rem;" id="section-deliverables">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span class="section-badge" style="margin-bottom:0.4rem;"><i class="fa-solid fa-file-shield text-gold"></i> STEP 3 · 결과 문서 및 산출물</span>
+        <h2 style="font-size:1.85rem; font-weight:900; color:var(--text-white); margin:0;">
+          검사 후 무엇을 받게 되나요?
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+          전문 검사기관의 시험 분석 데이터를 바탕으로 골드랩앤코의 자체 결과 확인서를 발급해 드립니다.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1.1fr 0.9fr; gap:2rem; align-items:center;" class="hero-split-grid">
+        
+        <!-- 설명 카드 -->
+        <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:2rem;">
+          <div style="font-size:1.3rem; font-weight:900; color:var(--gold-light); margin-bottom:1rem; display:flex; align-items:center; gap:0.6rem;">
+            <i class="fa-solid fa-award text-gold"></i> 골드랩 귀금속 성분·함량 결과 확인서
+          </div>
+          <p style="color:var(--text-light); font-size:0.95rem; line-height:1.7; margin-bottom:1.2rem;">
+            검사를 수행한 검사기관의 성분 분석 및 실측 데이터를 종합하여, 골드랩앤코가 책임 발행하는 공식 결과 확인서입니다.
+          </p>
+
+          <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.2rem; font-size:0.88rem; line-height:1.8;">
+            <p>• <strong>발급 주체:</strong> GoldLab & Co. (골드랩앤코)</p>
+            <p>• <strong>확인서 용도:</strong> 고객 의뢰 제품의 귀금속 성분 비율(%), 추정 순도, 정밀 실측 중량에 대한 참고용 시험 성적 확인서</p>
+            <p>• <strong>표시 항목:</strong> 고유 접수번호, 발급일자, 의뢰 품목 정보, 실측 중량(g), 검사기관 비파괴 성분 분석치(Au/Ag/Pt 등 %), 위·변조 방지 QR코드</p>
+            <p style="color:var(--text-muted); font-size:0.82rem; margin-top:0.4rem;">
+              ※ 본 문서는 귀금속 제조사/판매점의 보증서 재발급이 아니며, 국가공인 감정서나 명품 브랜드 보증서가 아닙니다.
+            </p>
+          </div>
+
+          <!-- QR 조회 의미 명확화 -->
+          <div style="background:rgba(224,184,72,0.06); border:1px solid rgba(224,184,72,0.25); border-radius:12px; padding:1rem 1.2rem; font-size:0.85rem; color:var(--text-muted); line-height:1.6;">
+            <strong style="color:var(--gold-light); display:block; margin-bottom:0.2rem;">
+              <i class="fa-solid fa-qrcode text-gold"></i> QR 진위조회의 명확한 의미 안내
+            </strong>
+            확인서에 인쇄된 QR코드는 골드랩 공식 웹서버를 통해 <strong>‘해당 결과 확인서 문서 자체의 위·변조 여부 및 발급 내역의 일치성’을 확인</strong>하는 보안 기능입니다. 제품 전체의 진품 보증이나 시장 가치를 절대적으로 담보하는 표현이 아닙니다.
+          </div>
+        </div>
+
+        <!-- 확인서 예시 영역 (자료 검토 중 상태 안내) -->
+        <div style="background:#0d0f17; border:1px dashed var(--border-gold-bright); border-radius:22px; padding:2.2rem; text-align:center;">
+          <div style="width:58px; height:58px; border-radius:16px; background:rgba(224,184,72,0.1); border:1px solid rgba(224,184,72,0.3); display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem auto;">
+            <i class="fa-solid fa-file-invoice text-gold" style="font-size:1.8rem;"></i>
+          </div>
+          <h4 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin-bottom:0.6rem;">
+            결과 확인서 공식 양식 안내
+          </h4>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; max-width:360px; margin:0 auto 1.5rem auto;">
+            골드랩앤코의 실제 결과 확인서 표준 서식과 항목 배치 안내 영역입니다. 개인정보가 보호된 공식 양식이 확정되는 대로 본 영역에 게시될 예정입니다.
+          </p>
+          
+          <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; text-align:left; font-size:0.84rem; line-height:1.8; color:var(--text-muted);">
+            <div style="color:var(--gold-light); font-weight:800; margin-bottom:0.4rem; text-align:center;">
+              [확인서 표준 기재 항목 프레임]
+            </div>
+            <div>1. 접수 식별: 접수번호 / 접수일 / 발급일</div>
+            <div>2. 외관 정보: 의뢰 제품 종류 / 실측 사진</div>
+            <div>3. 계량 데이터: 0.001g 단위 정밀 실측 중량</div>
+            <div>4. 시험 성적: 원소 성분 분석 수치 (XRF 검사 결과)</div>
+            <div>5. 진위 검증: 위변조 방지 고유 QR 및 확인 토큰</div>
+          </div>
+          
+          <small style="color:var(--text-muted); font-size:0.78rem; display:block; margin-top:1rem;">
+            ※ 임의로 조작된 가짜 결과값이나 검사기관 직인은 게시하지 않습니다.
           </small>
         </div>
-      </div>
-      <a href="#applySection" class="btn btn-gold btn-sm"><i class="fa-solid fa-pen-to-square"></i> 즉시 감정 접수하기</a>
-    </div>
 
-    <!-- SERVICE PROCESS & LIMITATIONS GRID -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.8rem; margin-bottom:3.5rem;">
-      
-      <!-- 1. 접수 가능 품목 -->
-      <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
-        <div style="width:48px; height:48px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
-          <i class="fa-solid fa-boxes-stacked text-gold" style="font-size:1.4rem;"></i>
-        </div>
-        <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin-bottom:0.8rem;">접수 가능 품목</h3>
-        <ul style="color:var(--text-muted); font-size:0.95rem; line-height:1.8; padding-left:1.2rem;">
-          <li>24K 순금 골드바 (프레스바, 주물 덩어리, 골드빈)</li>
-          <li>18K / 14K 고금 주얼리 (반지, 목걸이, 팔찌, 귀걸이)</li>
-          <li>백금(Platinum / PT990, PT950, PT900) 바 및 주얼리</li>
-          <li>실버(Silver / AG999, AG925) 원자재 및 은수저, 기념주화</li>
-          <li>치금(치과용 합금골드) 및 산업용 귀금속 원자재</li>
-        </ul>
       </div>
+    </section>
 
-      <!-- 2. 검사 방법 및 확인 범위 -->
-      <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
-        <div style="width:48px; height:48px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
-          <i class="fa-solid fa-magnifying-glass-chart text-gold" style="font-size:1.4rem;"></i>
-        </div>
-        <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin-bottom:0.8rem;">검사 방법과 확인 범위</h3>
-        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:0.8rem;">
-          <strong>[비파괴 XRF 성분분석]</strong> 제품 표면에 손상을 주지 않고 금·은·백금 및 합금 원소의 함량을 정밀 측정합니다.
-        </p>
-        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7;">
-          <strong>[초정밀 비중 시험]</strong> 아르키메데스 원리를 적용하여 제품의 체적과 밀도를 측정함으로써 순도 오차를 교차 검증합니다.
+    <!-- ==================================================================== -->
+    <!-- 4. 비용 및 소요시간 (Cost & Estimated Time) -->
+    <!-- ==================================================================== -->
+    <section style="margin-bottom:4rem;" id="section-pricing-time">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span class="section-badge" style="margin-bottom:0.4rem;"><i class="fa-solid fa-receipt text-gold"></i> STEP 4 · 비용 및 소요시간</span>
+        <h2 style="font-size:1.85rem; font-weight:900; color:var(--text-white); margin:0;">
+          투명한 표준 감정료 및 소요시간 안내
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+          단일 요금제로 불필요한 추가 부담이 없으며, 검사 시간과 배송 기간을 명확히 구분합니다.
         </p>
       </div>
 
-      <!-- 3. 검사 한계 및 보증서와의 차이 -->
-      <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:2rem;">
-        <div style="width:48px; height:48px; border-radius:12px; background:rgba(224,184,72,0.12); display:flex; align-items:center; justify-content:center; margin-bottom:1.2rem;">
-          <i class="fa-solid fa-shield-halved text-gold" style="font-size:1.4rem;"></i>
+      <!-- CONFIRMED PRICING CARD -->
+      <div style="background:rgba(224,184,72,0.08); border:1px solid var(--border-gold-bright); border-radius:22px; padding:2rem; margin-bottom:2rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+          <div>
+            <span class="section-badge" style="margin-bottom:0.5rem; font-size:0.8rem;"><i class="fa-solid fa-check text-gold"></i> 확정 단일 표준요금</span>
+            <div style="font-size:2rem; font-weight:900; color:var(--gold-light); font-family:var(--font-num);">
+              접수 1건당 29,900원
+            </div>
+            <p style="color:var(--text-white); font-size:1.05rem; font-weight:700; margin:0.3rem 0;">
+              제품 최대 2개 · 방문·택배 동일 기본요금
+            </p>
+            <div style="font-size:0.88rem; color:var(--gold-light); font-weight:800; margin-top:0.4rem;">
+              배송비·추가검사비 별도 <span style="color:var(--text-muted); font-weight:normal;">(보유 GC로 기본 감정료 최대 10,000원 할인 가능)</span>
+            </div>
+          </div>
+          <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem 1.5rem; font-size:0.85rem; line-height:1.7; color:var(--text-muted); max-width:420px;">
+            <p>• <strong>수량 기준:</strong> 1개 또는 2개 모두 기본요금(29,900원)은 동일하며, 3개 이상은 별도 추가 접수가 필요합니다.</p>
+            <p>• <strong>회원 혜택:</strong> 등급별 연간 무료 감정 혜택 (SILVER 연 1회, GOLD 연 2회, VIP 연 3회) 1회 적용 시 기본 감정료 전액 면제</p>
+            <p>• <strong>추가검사비:</strong> 비파괴 검사 범위를 초과하는 정밀·특수 검사는 <strong>고객의 사전 설명 및 동의 후</strong>에만 별도 견적으로 진행</p>
+          </div>
         </div>
-        <h3 style="color:var(--text-white); font-size:1.25rem; font-weight:800; margin-bottom:0.8rem;">검사 한계 및 유의사항</h3>
-        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7; margin-bottom:0.6rem;">
-          ※ <strong>보증서 재발급 불가:</strong> 본 확인서는 기존 판매점의 보증서나 공인기관 문서가 아니며, 과학 장비로 측정한 시험 결과서입니다.
-        </p>
-        <p style="color:var(--text-muted); font-size:0.95rem; line-height:1.7;">
-          ※ <strong>비파괴 한계:</strong> 두꺼운 도금층 내부의 심재나 속이 빈(Hollow) 제품의 코어 이물질은 비파괴 방식상 완벽한 내부 측정이 어려울 수 있습니다.
-        </p>
       </div>
-    </div>
 
-    <!-- 10-STEP PROGRESSION PIPELINE EXPLANATION -->
-    <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:2.2rem; margin-bottom:3.5rem;">
-      <h3 style="font-size:1.35rem; color:var(--text-white); font-weight:800; margin-bottom:1.5rem; text-align:center;">
-        <i class="fa-solid fa-timeline text-gold"></i> 투명한 9단계 감정 프로세스 (별도 취소 처리)
-      </h3>
-      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:1rem; text-align:center;">
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">01. 신청 접수</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">접수번호 즉시 발급</div>
+      <!-- 소요시간 안내 (방문 접수 vs 택배 접수 명확 구분) -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.8rem;" class="hero-split-grid">
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+            <i class="fa-solid fa-building text-gold" style="font-size:1.3rem;"></i>
+            <h3 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin:0;">종로 본점 방문 접수</h3>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:var(--gold-light); margin-bottom:0.5rem;">
+            검사 의뢰 후 통상 1~2영업일 소요
+          </div>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; margin:0;">
+            방문 예약 시간에 매장에 내방하여 제품 인계 및 외관 검수를 진행한 뒤, 전문 검사기관에 안전하게 의뢰하여 검사가 완료되면 결과를 안내해 드립니다.
+            <br><strong style="color:#f87171;">※ 현장 즉시 검사나 30~60분 당일 완료가 아니며, 접수 후 검사기관 의뢰 절차를 거칩니다.</strong>
+          </p>
         </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">02. 발송·방문 안내</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">안심 패키징/일정 안내</div>
-        </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">03. 제품 입고</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">외관 상태 확인/개봉</div>
-        </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">04. 정밀 시험</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">XRF 및 비중 실측</div>
-        </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">05. 추가동의 확인</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">특수검사 필요시 확인</div>
-        </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">06. 검사 완료</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">자체 결과 확인서 작성</div>
-        </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">07. 반환 준비</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">안심 패킹 및 인도 준비</div>
-        </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">08. 반환 발송·인계</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">운송장 등록 / 현장 인계</div>
-        </div>
-        <div style="background:#090b10; padding:1rem; border-radius:12px; border:1px solid var(--border-dark);">
-          <div style="color:var(--gold-light); font-weight:900; font-size:1.05rem; margin-bottom:0.3rem;">09. 최종 완료</div>
-          <div style="color:var(--text-muted); font-size:0.82rem;">수령 및 QR 진위조회</div>
-        </div>
-      </div>
-      <div style="margin-top:1.2rem; background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1.2rem; display:flex; align-items:center; gap:0.8rem; font-size:0.88rem; color:var(--text-muted);">
-        <i class="fa-solid fa-circle-info text-gold"></i>
-        <div>
-          <strong style="color:var(--text-white);">별도 종료 상태 (취소):</strong> 검사 착수 전 고객 요청 또는 접수 취소 시, 단계 번호와 무관하게 즉시 <span style="color:#ef4444; font-weight:800;">별도 종료 상태(취소)</span>로 분류되어 안전하게 제품이 반송·인계 처리됩니다.
-        </div>
-      </div>
-    </div>
 
-    <!-- APPLICATION FORM SECTION -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem;">
+          <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+            <i class="fa-solid fa-truck text-gold" style="font-size:1.3rem;"></i>
+            <h3 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin:0;">전국 안심 택배 접수</h3>
+          </div>
+          <div style="font-size:1.15rem; font-weight:800; color:var(--gold-light); margin-bottom:0.5rem;">
+            제품 입고 후 통상 2~3영업일 소요
+          </div>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; margin:0;">
+            제품이 골드랩 본점에 도착하여 개봉 검수가 완료된 시점부터 검사기관 의뢰 및 결과 통보까지 2~3영업일 소요됩니다.
+            <br><strong style="color:var(--text-light);">※ 고객 발송 및 반환 배송에 소요되는 왕복 택배 운송 기간(통상 2~4일)은 별도입니다.</strong>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- 5. 방문·택배 절차 및 기존 예약과의 관계 (Procedures & Relation with Booking) -->
+    <!-- ==================================================================== -->
+    <section style="margin-bottom:4rem;" id="section-procedures">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span class="section-badge" style="margin-bottom:0.4rem;"><i class="fa-solid fa-route text-gold"></i> STEP 5 · 방문 및 택배 절차</span>
+        <h2 style="font-size:1.85rem; font-weight:900; color:var(--text-white); margin:0;">
+          방문 및 택배 진행 절차
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+          고객님이 하실 일과 골드랩의 안심 관리 절차를 투명하게 안내해 드립니다.
+        </p>
+      </div>
+
+      <!-- 기존 감정 신청과 방문예약 관계 핵심 안내 배너 -->
+      <div style="background:rgba(224,184,72,0.1); border:1px solid var(--border-gold-bright); border-radius:16px; padding:1.2rem 1.6rem; margin-bottom:2rem; display:flex; align-items:center; gap:1rem;">
+        <i class="fa-solid fa-circle-exclamation text-gold" style="font-size:1.6rem; flex-shrink:0;"></i>
+        <div style="font-size:0.92rem; line-height:1.7;">
+          <strong style="color:var(--gold-light); font-size:1.02rem; display:block; margin-bottom:0.2rem;">
+            [중요 안내] 감정대행 방문 접수 시 별도의 '방문예약' 중복 신청이 필요 없습니다
+          </strong>
+          <span style="color:var(--text-light);">
+            본 감정대행 페이지의 하단 신청서에서 <strong>[종로 본점 방문 접수]</strong>를 선택하여 접수를 완료하시면, 별도의 상단 '방문예약' 메뉴에서 추가 예약을 하실 필요가 없습니다. 발급된 접수번호와 함께 안내되는 일정에 맞춰 매장을 방문해 주시면 됩니다.
+            (※ 상단 메뉴의 '방문예약'은 골드바 구매 상담 및 고금 매입 상담 고객을 위한 메뉴입니다.)
+          </span>
+        </div>
+      </div>
+
+      <!-- 2개 접수 방식 단계별 비교 -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.8rem;" class="hero-split-grid">
+        
+        <!-- 방문 접수 절차 -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:1.8rem;">
+          <h3 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-person-walking text-gold"></i> 방문 접수 절차 (고객 행동 요령)
+          </h3>
+          <div style="display:flex; flex-direction:column; gap:0.9rem;">
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">1. 감정대행 신청서 접수</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">하단 신청서에서 [방문 접수] 선택 후 의뢰 품목 정보 입력 (접수번호 발급)</p>
+            </div>
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">2. 종로 본점 매장 방문 & 실물 인계</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">예약 시간에 맞춰 제품을 지참하고 방문하여 외관 상태 및 사전 계량 확인</p>
+            </div>
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">3. 전문 검사기관 안전 의뢰</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">골드랩이 검사기관에 안전하게 제품을 인계하여 비파괴 과학 시험 진행</p>
+            </div>
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">4. 결과 통보 및 제품 수령</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">결과 확인서 발급 완료 안내 후 매장 재방문 수령 (또는 안심 배송 수령)</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 택배 접수 절차 -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:20px; padding:1.8rem;">
+          <h3 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin-bottom:1.2rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-box-archive text-gold"></i> 택배 접수 절차 (고객 행동 요령)
+          </h3>
+          <div style="display:flex; flex-direction:column; gap:0.9rem;">
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">1. 감정대행 신청서 접수 & 반환주소 입력</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">하단 신청서에서 [택배 접수] 선택 후 반환받으실 주소 입력</p>
+            </div>
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">2. 우체국 안심소포 발송</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">발급된 접수번호를 메모 동봉 후 우체국 안심소포(보험 취급)로 완충 포장 발송</p>
+            </div>
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">3. 제품 도착 & 개봉 검수 안내</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">본점 도착 즉시 개봉 검수 후 검사기관에 안전하게 검사 의뢰 (상태 알림 발송)</p>
+            </div>
+            <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem 1rem;">
+              <strong style="color:var(--gold-light); font-size:0.9rem;">4. 결과 확인서 동봉 & 안심 반환 발송</strong>
+              <p style="color:var(--text-muted); font-size:0.83rem; margin:0.2rem 0 0 0;">확인서 동봉 후 우체국 안심소포로 안전하게 고객님께 반환 발송 (운송장 안내)</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- 6. 검사 한계 및 유의사항 (Inspection Limitations) -->
+    <!-- ==================================================================== -->
+    <section style="margin-bottom:4rem;" id="section-limitations">
+      <div style="text-align:center; margin-bottom:2rem;">
+        <span class="section-badge" style="margin-bottom:0.4rem;"><i class="fa-solid fa-shield-halved text-gold"></i> STEP 6 · 기술적 한계 및 사전 유의사항</span>
+        <h2 style="font-size:1.85rem; font-weight:900; color:var(--text-white); margin:0;">
+          비파괴 검사의 기술적 한계와 사전 유의사항
+        </h2>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+          골드랩은 과학적 측정 범위와 한계를 과장 없이 솔직하고 투명하게 설명합니다.
+        </p>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:1.5rem;">
+        
+        <!-- 1. 비파괴 표면 측정의 한계 -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem;">
+          <div style="color:var(--gold-light); font-size:1.1rem; font-weight:800; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-circle-exclamation text-gold"></i> 비파괴 표면 측정의 기술적 한계
+          </div>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.7; margin:0;">
+            XRF 비파괴 성분 분석은 제품 표면을 훼손하지 않는 안전한 시험 방식이나, 두꺼운 도금층 내부의 코어 심재나 속이 비어 있는(Hollow) 제품의 내부 이물질은 비파괴 방식상 완벽한 내부 투과 측정이 어려울 수 있습니다. 골드랩은 실제 검사 범위를 넘어서는 비과학적 표현(‘100% 진품 판별’, ‘완벽한 내부 검증’, ‘절대 훼손 없음’ 등)을 사용하지 않습니다.
+          </p>
+        </div>
+
+        <!-- 2. 추가검사는 고객 사전 동의 필수 -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem;">
+          <div style="color:var(--gold-light); font-size:1.1rem; font-weight:800; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-signature text-gold"></i> 추가검사의 고객 사전 동의 필수
+          </div>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.7; margin:0;">
+            비파괴 검사 범위를 초과하여 시금석 시험, 절단 검사, 화학 용해 분석 등 정밀·특수 추가검사가 필요한 경우, <strong>반드시 사유와 예상 비용을 사전에 상세히 안내해 드리고 고객님의 서면 또는 유선 사전 동의를 득한 경우에만</strong> 별도 견적으로 진행됩니다. 고객 동의 없는 임의 손상 검사는 절대 진행되지 않습니다.
+          </p>
+        </div>
+
+        <!-- 3. 보증서 재발급 불가 및 법적 효력 구분 -->
+        <div style="background:#12141d; border:1px solid var(--border-dark); border-radius:18px; padding:1.8rem;">
+          <div style="color:var(--gold-light); font-size:1.1rem; font-weight:800; margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-file-contract text-gold"></i> 보증서 재발급 불가 및 참고용 문서
+          </div>
+          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.7; margin:0;">
+            골드랩의 결과 확인서는 전문 검사기관의 과학 시험 성적을 바탕으로 작성된 성분·함량 참고용 확인서입니다. 기존 귀금속 판매 브랜드의 정품 품질보증서 재발급이 아니며, 법적 감정 분쟁에서의 공인기관 감정서와는 발급 주체 및 목적이 구분됩니다.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- 7. 온라인 감정대행 신청서 (Application Form) -->
+    <!-- ==================================================================== -->
     <div id="applySection" style="max-width:840px; margin:0 auto; background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:2.5rem; box-shadow:0 20px 50px rgba(0,0,0,0.6);">
       
       <div style="text-align:center; margin-bottom:2rem;">
-        <span class="section-badge" style="margin-bottom:0.6rem;"><i class="fa-solid fa-file-pen text-gold"></i> ONLINE APPLICATION</span>
+        <span class="section-badge" style="margin-bottom:0.6rem;"><i class="fa-solid fa-file-pen text-gold"></i> STEP 7 · ONLINE APPLICATION</span>
         <h2 style="font-size:1.8rem; font-weight:900; color:var(--text-white); margin:0;">귀금속 정밀 감정대행 신청서</h2>
-        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">신청서를 접수하시면 고유 접수번호가 즉시 발급됩니다.</p>
+        <p style="color:var(--text-muted); font-size:0.95rem; margin-top:0.4rem;">
+          신청서를 접수하시면 고유 접수번호가 즉시 발급됩니다. (방문 접수 고객은 별도 방문예약 불필요)
+        </p>
       </div>
 
       <form id="appraisalForm" onsubmit="SubmitAppraisal(event)">
@@ -189,19 +486,23 @@
         <!-- 접수 방식 선택 -->
         <div class="form-group" style="margin-bottom:1.5rem;">
           <label class="form-label" style="font-weight:800; font-size:1rem; color:var(--gold-light);">1. 접수 방식 선택 *</label>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
-            <label style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; cursor:pointer; display:flex; align-items:center; gap:0.8rem;">
-              <input type="radio" name="appraisalMethod" value="VISIT" checked onchange="ToggleCourierFields()" style="accent-color:var(--gold-primary);">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;" class="hero-split-grid">
+            <label style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; cursor:pointer; display:flex; align-items:flex-start; gap:0.8rem;">
+              <input type="radio" name="appraisalMethod" value="VISIT" checked onchange="ToggleCourierFields()" style="accent-color:var(--gold-primary); margin-top:0.25rem;">
               <div>
-                <strong style="color:var(--text-white); display:block; font-size:1.05rem;">🏢 종로 본점 방문 접수</strong>
-                <span style="font-size:0.82rem; color:var(--text-muted);">직접 방문하여 당일 정밀 입회 감정 (소요시간 30~60분)</span>
+                <strong style="color:var(--text-white); display:block; font-size:1.02rem;">🏢 종로 본점 방문 접수</strong>
+                <span style="font-size:0.82rem; color:var(--text-muted); line-height:1.5; display:block; margin-top:0.2rem;">
+                  매장 방문 실물 접수 및 외관 확인 (검사기관 의뢰 후 1~2영업일 결과 안내, 별도 방문예약 불필요)
+                </span>
               </div>
             </label>
-            <label style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; cursor:pointer; display:flex; align-items:center; gap:0.8rem;">
-              <input type="radio" name="appraisalMethod" value="COURIER" onchange="ToggleCourierFields()" style="accent-color:var(--gold-primary);">
+            <label style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; cursor:pointer; display:flex; align-items:flex-start; gap:0.8rem;">
+              <input type="radio" name="appraisalMethod" value="COURIER" onchange="ToggleCourierFields()" style="accent-color:var(--gold-primary); margin-top:0.25rem;">
               <div>
-                <strong style="color:var(--text-white); display:block; font-size:1.05rem;">📦 전국 안심 택배 접수</strong>
-                <span style="font-size:0.82rem; color:var(--text-muted);">우체국 안심보험 택배 발송 (수령 후 1~2영업일 이내 결과 통보)</span>
+                <strong style="color:var(--text-white); display:block; font-size:1.02rem;">📦 전국 안심 택배 접수</strong>
+                <span style="font-size:0.82rem; color:var(--text-muted); line-height:1.5; display:block; margin-top:0.2rem;">
+                  우체국 안심보험 택배 발송 (입고 후 검사기관 의뢰 및 2~3영업일 결과 안내, 왕복 배송비 별도)
+                </span>
               </div>
             </label>
           </div>
@@ -529,10 +830,11 @@
           <a href="support.html#terms" style="color:var(--text-light); text-decoration:none;">이용약관</a> |
           <a href="support.html#privacy" style="color:var(--gold-light); font-weight:700; text-decoration:underline;">개인정보처리방침</a> |
           <a href="support.html#appraisal-terms" style="color:var(--text-light); text-decoration:none;">감정대행이용조건</a> |
-          <a href="verify.html" style="color:var(--gold-light); text-decoration:none;"><i class="fa-solid fa-qrcode"></i> 확인서 진위확인</a>
+          <a href="verify.html" style="color:var(--gold-light); text-decoration:none;"><i class="fa-solid fa-qrcode"></i> 확인서 진위조회</a>
         </div>
-        <p>상호명: GoldLab & Co. | 대표자: 황미숙 | 사업자등록번호: 185-07-02856 | 통신판매업신고: 제 2025-서울은평-1081 호</p>
-        <p>소재지: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 개인정보보호책임자: 황미숙</p>
+        <p>상호명: GoldLab & Co. (골드랩앤코) | 대표자: 황미숙 | 사업자등록번호: 185-07-02856 | 통신판매업신고: 제 2025-서울은평-1081 호</p>
+        <p>소재지: 서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 | 대표전화: 010-4017-4988 | 개인정보보호책임자: 황미숙 (skycraft102@naver.com)</p>
+        <p>© 2026 GoldLab & Co. All Rights Reserved. 본 웹사이트의 모든 콘텐츠는 저작권법의 보호를 받습니다.</p>
       </div>
     </div>
   </footer>
