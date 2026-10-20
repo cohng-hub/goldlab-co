@@ -3255,9 +3255,11 @@ function GetKstDateString(dateObj = new Date()) {
 const OFFICIAL_24K_HISTORY = {};
 
 function UpdateChartData() {
-  const titleEl = document.getElementById('chartMetalTitle');
-  const subEl = document.getElementById('chartMetalSub');
   const canvasEl = document.getElementById('heroPriceChart') || document.getElementById('goldPriceChart');
+  const titleEl = document.getElementById('chartMetalTitle');
+  if (!canvasEl && !titleEl) return;
+
+  const subEl = document.getElementById('chartMetalSub');
   const emptyEl = document.getElementById('chartEmptyState');
   const statsBanner = document.getElementById('chartStatsBanner') || document.querySelector('.chart-stats-banner');
   const highEl = document.getElementById('highPriceText');

@@ -8,8 +8,6 @@
   
   <!-- FontAwesome Icon CDN -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Chart.js CDN for High-Quality Interactive Price Chart -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Stylesheet -->
   <link rel="stylesheet" href="style.css?v=20261016_mobile_v3">
 </head>
@@ -27,8 +25,6 @@
 
         <!-- Main Navigation Links -->
         <ul class="nav-menu" id="navMenu">
-          <li><a href="index.html#hero-split" class="nav-link active"><i class="fa-solid fa-chart-line"></i> 금 시세</a></li>
-          <li><a href="products.html" class="nav-link"><i class="fa-solid fa-gem"></i> 18K 팔찌·골드바</a></li>
           <li><a href="appraisal.html" class="nav-link"><i class="fa-solid fa-microscope"></i> 감정대행</a></li>
           <li><a href="reviews.html" class="nav-link"><i class="fa-solid fa-star"></i> 고객 후기</a></li>
           <li><a href="membership.html" class="nav-link"><i class="fa-solid fa-crown"></i> 멤버십 혜택</a></li>
@@ -65,11 +61,11 @@
         </p>
       </div>
 
-      <!-- BOTTOM: 5:5 동일 크기 그리드 (좌: 실시간 시세 카드 / 우: 실시간 시세 그래프 카드) -->
-      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:2rem; align-items:stretch;">
+      <!-- 실시간 시세 전광판 (단독 중앙 배치) -->
+      <div style="max-width:760px; margin:0 auto;">
         
-        <!-- LEFT CARD (50%): 한국금거래소 당일 실시간 시세표 카드 -->
-        <div class="live-price-card" style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:1.8rem 2rem; box-shadow:0 20px 50px rgba(0,0,0,0.6); display:flex; flex-direction:column; justify-content:space-between; height:100%;">
+        <!-- 한국금거래소 당일 실시간 시세표 카드 -->
+        <div class="live-price-card" style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:1.8rem 2rem; box-shadow:0 20px 50px rgba(0,0,0,0.6); display:flex; flex-direction:column;">
           <div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
               <div>
@@ -143,59 +139,17 @@
             </div>
           </div>
 
-          <!-- Bottom Action Buttons in Left Card -->
-          <div style="display:flex; gap:0.8rem; margin-top:1.2rem;">
-            <a href="#booking" class="btn btn-gold" style="flex:1; padding:0.85rem; font-size:0.98rem; font-weight:800;"><i class="fa-solid fa-calendar-check"></i> 종로 방문예약</a>
-            <a href="mypage.html" class="btn btn-outline-gold" onclick="OpenMyPageOrLogin(event)" style="flex:1; padding:0.85rem; font-size:0.98rem; font-weight:800;"><i class="fa-solid fa-wallet"></i> 내 자산 손익관리</a>
-          </div>
-        </div>
-
-        <!-- RIGHT CARD (50%): 실시간 금 시세 동향 그래프 카드 -->
-        <div class="main-chart-card" style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:24px; padding:1.8rem 2rem; box-shadow:0 20px 50px rgba(0,0,0,0.6); display:flex; flex-direction:column; justify-content:space-between; height:100%;">
-          <div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.8rem; flex-wrap:wrap; gap:0.6rem;">
-              <div>
-                <span class="section-badge" style="margin-bottom:0.3rem; font-size:0.78rem;"><i class="fa-solid fa-shield-halved"></i> CHART HISTORY</span>
-                <h3 style="font-size:1.35rem; color:var(--text-white); font-weight:800; margin:0;" id="chartMetalTitle">
-                  <i class="fa-solid fa-chart-line text-gold"></i> 🇰🇷 순금 24K 시세 변동 추이
-                </h3>
-              </div>
-              
-              <!-- Period Buttons -->
-              <div class="chart-period-btns" style="display:flex; gap:0.3rem; background:rgba(255,255,255,0.06); padding:0.25rem; border-radius:10px;">
-                <button class="period-btn active" onclick="SetChartPeriod(this, '1M')" style="background:var(--gold-gradient); color:#000; font-weight:800; border:none; padding:0.3rem 0.7rem; border-radius:6px; font-size:0.82rem; cursor:pointer;">1개월</button>
-                <button class="period-btn" onclick="SetChartPeriod(this, '3M')" style="background:transparent; color:var(--text-muted); font-weight:700; border:none; padding:0.3rem 0.7rem; border-radius:6px; font-size:0.82rem; cursor:pointer;">3개월</button>
-                <button class="period-btn" onclick="SetChartPeriod(this, '6M')" style="background:transparent; color:var(--text-muted); font-weight:700; border:none; padding:0.3rem 0.7rem; border-radius:6px; font-size:0.82rem; cursor:pointer;">6개월</button>
-                <button class="period-btn" onclick="SetChartPeriod(this, '1Y')" style="background:transparent; color:var(--text-muted); font-weight:700; border:none; padding:0.3rem 0.7rem; border-radius:6px; font-size:0.82rem; cursor:pointer;">1년</button>
-              </div>
-            </div>
-
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:1rem;" id="chartMetalSub">
-              출처: 한국금거래소 당일 공식 고시 | 살 때(VAT포함): 790,000원 · 팔 때(매입가): 677,000원
-            </div>
-
-            <!-- Chart Canvas -->
-            <div class="canvas-wrapper" style="position:relative; width:100%; height:235px;">
-              <canvas id="goldPriceChart"></canvas>
-              <div id="chartEmptyState" style="display:none; position:absolute; top:0; left:0; width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; background:rgba(18,20,29,0.92); border-radius:12px; color:var(--text-muted); text-align:center;">
-                <i class="fa-solid fa-chart-line text-gold" style="font-size:2.8rem; margin-bottom:1rem; opacity:0.7;"></i>
-                <div style="font-size:1.15rem; font-weight:800; color:var(--text-white); margin-bottom:0.35rem;">시세 이력 준비 중</div>
-                <div style="font-size:0.88rem; color:var(--text-muted); max-width:420px; line-height:1.5;">해당 귀금속의 공인 검증 과거 시세 DB를 연동 준비하고 있습니다. 당일 실시간 공식 시세는 좌측 시세 전광판에서 확인하실 수 있습니다.</div>
-              </div>
-            </div>
+          <!-- Bottom Action Buttons in Card -->
+          <div style="display:flex; gap:0.8rem; margin-top:1.4rem;">
+            <a href="#booking" class="btn btn-gold" style="flex:1; padding:0.85rem; font-size:0.98rem; font-weight:800; text-align:center;"><i class="fa-solid fa-calendar-check"></i> 종로 방문예약</a>
+            <a href="mypage.html" class="btn btn-outline-gold" onclick="OpenMyPageOrLogin(event)" style="flex:1; padding:0.85rem; font-size:0.98rem; font-weight:800; text-align:center;"><i class="fa-solid fa-wallet"></i> 내 자산 손익관리</a>
           </div>
 
-          <!-- Chart Summary Footer Badges (Hidden when no verified historical series exists) -->
-          <div class="chart-stats-banner" id="chartStatsBanner" style="display:none; justify-content:space-between; background:rgba(11,12,16,0.9); border:1px solid var(--border-dark); border-radius:14px; padding:0.85rem 1.1rem; margin-top:1rem; font-size:0.85rem;">
-            <div><span style="color:var(--text-muted);">최고 시세:</span> <strong id="highPriceText" style="color:var(--pnl-plus); font-weight:800;">-</strong></div>
-            <div><span style="color:var(--text-muted);">최저 시세:</span> <strong id="lowPriceText" style="color:var(--pnl-minus); font-weight:800;">-</strong></div>
-            <div><span style="color:var(--text-muted);">평균 시세:</span> <strong id="avgPriceText" style="color:var(--gold-light); font-weight:800;">-</strong></div>
-          </div>
-          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.6rem; line-height:1.5;">
+          <!-- Official rate source footnote -->
+          <div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.9rem; line-height:1.5; text-align:center;">
             ※ 출처: 한국금거래소 당일 공식 고시 기준 (외부 참고 시세) · 단위: 3.75g (1돈, 살 때 VAT 10% 포함) · GoldLab 실제 거래가격은 주문/매입 시 제휴 공급단가가 별도 적용됩니다.
           </div>
         </div>
-
       </div>
     </div>
   </section>
