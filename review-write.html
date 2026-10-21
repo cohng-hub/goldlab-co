@@ -282,14 +282,50 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261021_rev_clean_v10"></script>
+  <script src="app.js?v=202610210750"></script>
   <script>
     let currentUploadedPhotos = [];
     let verifiedOfflineTx = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
-      // 1. 로그인 인증 확인
+      // 1. 인증 정보 즉시 동기화 (로컬스토리지 & 부모 창)
+      authToken = localStorage.getItem('goldlab_auth_token') || '';
+      const cachedRaw = localStorage.getItem('goldlab_active_user');
+      if (cachedRaw) {
+        try { currentUser = JSON.parse(cachedRaw); } catch (e) {}
+      }
+
+      // 부모 창(opener)이 열려있다면 부모 창의 로그인 상태를 즉시 상속
+      if (window.opener && !window.opener.closed) {
+        try {
+          if (!currentUser && window.opener.currentUser) {
+            currentUser = window.opener.currentUser;
+          }
+          if (!authToken && window.opener.authToken) {
+            authToken = window.opener.authToken;
+          }
+        } catch (e) {}
+      }
+
+      // 서버 auth 상태 비동기 조회 완료 대기
+      if (typeof LoadAuthState === 'function') {
+        try {
+          await LoadAuthState();
+        } catch (e) {
+          console.warn('LoadAuthState error in review popup:', e);
+        }
+      }
+
+      // 캐시 유저 재확인
       if (!currentUser) {
+        const fallbackRaw = localStorage.getItem('goldlab_active_user');
+        if (fallbackRaw) {
+          try { currentUser = JSON.parse(fallbackRaw); } catch (e) {}
+        }
+      }
+
+      // 토큰과 유저 정보가 모두 없을 때만 로그인 안내
+      if (!currentUser && !authToken) {
         alert('[로그인 필요]\n후기 작성은 골드랩앤코 회원 로그인 후 이용 가능합니다.');
         if (window.opener && !window.opener.closed && typeof window.opener.OpenAuthModal === 'function') {
           window.opener.OpenAuthModal('login');
