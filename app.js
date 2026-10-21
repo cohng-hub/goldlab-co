@@ -297,7 +297,48 @@ function getInBrowserDB() {
     try {
       const parsed = JSON.parse(dbStr);
       if (parsed && parsed.users && Array.isArray(parsed.users)) {
-        // Ensure master admin accounts are always present with MASTER_ADMIN role
+        // Complete purge of dummy users and dummy mock records
+        const dummyEmails = ['admin@goldlabnco.com', 'dohyun.kim84@naver.com', 'jieun.lee91@gmail.com', 'donga.jewelry@naver.com', 'eprltls@gmail.com'];
+        const dummyNames = ['골드랩 시스템 관리자', '김도현', '이지은', '(주)동아귀금속', '동아귀금속', '일반 회원', '일반회원'];
+        const dummyUserIds = ['usr_admin_001', 'usr_dohyun_01', 'usr_jieun_02', 'usr_donga_03', 'usr_eprltls'];
+
+        parsed.users = parsed.users.filter(u => 
+          !dummyEmails.includes(u.email?.toLowerCase()) && 
+          !dummyNames.includes(u.name) &&
+          !dummyUserIds.includes(u.id)
+        );
+        if (Array.isArray(parsed.appraisals)) {
+          parsed.appraisals = parsed.appraisals.filter(a => 
+            !dummyNames.includes(a.applicantName) && !dummyUserIds.includes(a.userId)
+          );
+        }
+        if (Array.isArray(parsed.reservations)) {
+          parsed.reservations = parsed.reservations.filter(r => 
+            !dummyNames.includes(r.name) && !dummyUserIds.includes(r.userId)
+          );
+        }
+        if (Array.isArray(parsed.orders)) {
+          parsed.orders = parsed.orders.filter(o => 
+            !dummyNames.includes(o.recipientName) && !dummyUserIds.includes(o.userId)
+          );
+        }
+        if (Array.isArray(parsed.inquiries)) {
+          parsed.inquiries = parsed.inquiries.filter(i => 
+            !dummyNames.includes(i.name) && !dummyUserIds.includes(i.userId)
+          );
+        }
+        if (Array.isArray(parsed.gv_gc_ledgers)) {
+          parsed.gv_gc_ledgers = parsed.gv_gc_ledgers.filter(l => 
+            !dummyUserIds.includes(l.userId)
+          );
+        }
+        if (Array.isArray(parsed.audit_logs)) {
+          parsed.audit_logs = parsed.audit_logs.filter(al => 
+            !dummyEmails.includes(al.actorEmail?.toLowerCase())
+          );
+        }
+
+        // Ensure master admin account is always present with MASTER_ADMIN role
         let m1 = parsed.users.find(u => u.email === 'goldlabnco@naver.com');
         if (!m1) {
           parsed.users.unshift({
@@ -314,26 +355,15 @@ function getInBrowserDB() {
           m1.role = 'MASTER_ADMIN';
           m1.tier = '👑 MASTER ADMIN';
         }
-        let m2 = parsed.users.find(u => u.email === 'admin@goldlabnco.com');
-        if (!m2) {
-          parsed.users.push({
-            id: 'usr_admin_001',
-            name: '골드랩 시스템 관리자',
-            email: 'admin@goldlabnco.com',
-            phone: '010-4017-4988',
-            role: 'MASTER_ADMIN',
-            userType: 'MASTER',
-            tier: '👑 MASTER ADMIN',
-            status: 'ACTIVE'
-          });
-        } else {
-          m2.role = 'MASTER_ADMIN';
-          m2.tier = '👑 MASTER ADMIN';
-        }
 
         if (!Array.isArray(parsed.reviews)) parsed.reviews = [];
         if (!Array.isArray(parsed.offline_transactions)) parsed.offline_transactions = [];
         if (!Array.isArray(parsed.review_reports)) parsed.review_reports = [];
+
+        // Save sanitized database back to localStorage
+        try {
+          localStorage.setItem(IN_BROWSER_DB_KEY, JSON.stringify(parsed));
+        } catch(e) {}
 
         return parsed;
       }
@@ -352,225 +382,19 @@ function getInBrowserDB() {
         tier: '👑 MASTER ADMIN',
         status: 'ACTIVE',
         createdAt: '2026-10-08T12:00:00.000Z'
-      },
-      {
-        id: 'usr_admin_001',
-        name: '골드랩 시스템 관리자',
-        email: 'admin@goldlabnco.com',
-        phone: '010-4017-4988',
-        role: 'MASTER_ADMIN',
-        userType: 'MASTER',
-        tier: '👑 MASTER ADMIN',
-        status: 'ACTIVE',
-        createdAt: '2026-10-08T12:00:00.000Z'
-      },
-      {
-        id: 'usr_dohyun_01',
-        name: '김도현',
-        email: 'dohyun.kim84@naver.com',
-        phone: '010-3842-7195',
-        role: 'USER',
-        userType: 'PERSONAL',
-        tier: 'VIP PLATINUM',
-        status: 'ACTIVE',
-        createdAt: '2026-10-09T14:20:00.000Z'
-      },
-      {
-        id: 'usr_jieun_02',
-        name: '이지은',
-        email: 'jieun.lee91@gmail.com',
-        phone: '010-7215-4683',
-        role: 'USER',
-        userType: 'PERSONAL',
-        tier: 'GOLD',
-        status: 'ACTIVE',
-        createdAt: '2026-10-10T11:15:00.000Z'
-      },
-      {
-        id: 'usr_donga_03',
-        name: '(주)동아귀금속',
-        email: 'donga.jewelry@naver.com',
-        phone: '02-741-3388',
-        bizName: '(주)동아귀금속',
-        bizNo: '101-86-45892',
-        role: 'B2B_APPROVED',
-        userType: 'BIZ',
-        tier: '🏢 B2B 도매 정회원',
-        status: 'B2B_APPROVED',
-        createdAt: '2026-10-11T09:40:00.000Z'
-      },
-      {
-        id: 'usr_eprltls',
-        name: '일반 회원',
-        email: 'eprltls@gmail.com',
-        phone: '010-0000-0000',
-        role: 'USER',
-        userType: 'PERSONAL',
-        tier: 'SILVER',
-        status: 'ACTIVE',
-        createdAt: '2026-10-12T10:00:00.000Z'
       }
     ],
-    appraisals: [
-      {
-        id: 'GL-AP-20261014-0001',
-        receiptNo: 'GL-AP-20261014-0001',
-        userId: 'usr_dohyun_01',
-        applicantName: '김도현',
-        applicantPhone: '010-3842-7195',
-        type: 'VISIT',
-        method: 'VISIT',
-        itemType: '24K 순금 골드바',
-        quantity: 1,
-        items: [{ itemIndex: 1, itemType: '24K 순금 골드바', expectedPurity: '24K', expectedWeight: '37.5g' }],
-        estimatedPurity: '24K',
-        estimatedWeight: '37.5g',
-        actualWeight: '37.502g (10돈)',
-        status: 'INSPECTED',
-        statusText: '정밀 검사 완료',
-        certificateNo: 'GL-CERT-20261014-0001',
-        costBase: 29900,
-        freeBenefitApplied: false,
-        gcUsed: 0,
-        finalPayAmount: 29900,
-        createdAt: '2026-10-14T11:30:00.000Z'
-      },
-      {
-        id: 'GL-AP-20261014-0002',
-        receiptNo: 'GL-AP-20261014-0002',
-        userId: 'usr_jieun_02',
-        applicantName: '이지은',
-        applicantPhone: '010-7215-4683',
-        type: 'DELIVERY',
-        method: 'COURIER',
-        returnAddress: '서울특별시 송파구 올림픽로 123',
-        itemType: '18K 로즈골드 목걸이',
-        quantity: 1,
-        items: [{ itemIndex: 1, itemType: '18K 로즈골드 목걸이', expectedPurity: '18K', expectedWeight: '11.25g' }],
-        estimatedPurity: '18K',
-        estimatedWeight: '11.25g',
-        actualWeight: null,
-        status: 'APPLIED',
-        statusText: '접수 완료 (발송 대기)',
-        certificateNo: null,
-        costBase: 29900,
-        freeBenefitApplied: true,
-        gcUsed: 0,
-        finalPayAmount: 0,
-        createdAt: '2026-10-14T14:15:00.000Z'
-      }
-    ],
-    certificates: [
-      {
-        id: 'GL-CERT-20261014-0001',
-        documentNo: 'GL-CERT-20261014-0001',
-        docNumber: 'GL-CERT-20261014-0001',
-        receiptNo: 'GL-AP-20261014-0001',
-        appraisalId: 'GL-AP-20261014-0001',
-        verifyToken: 'vtok_20261014_0001',
-        verificationToken: 'vtok_20261014_0001',
-        itemType: '24K 순금 골드바',
-        measuredWeight: '37.502g (10.00돈)',
-        measuredPurity: 'Au 99.99% (포나인 순금)',
-        inspectionMethod: '형광 X선(XRF) 분광 분석 및 전자 비중 측정',
-        laboratory: 'GoldLab 정밀분석실',
-        inspectionDate: '2026.10.14 15:30',
-        issueDate: '2026.10.14',
-        issuer: '황미숙 (GoldLab & Co.)',
-        status: 'VALID',
-        notes: '비파괴 XRF 성분분석 및 비중 측정 결과 정상 규격 합격. 도금 또는 심재 이상 없음.'
-      }
-    ],
-    reservations: [
-      {
-        id: 'GL-RS-20261015-0001',
-        reservationNo: 'GL-RS-20261015-0001',
-        userId: 'usr_dohyun_01',
-        name: '김도현',
-        phone: '010-3842-7195',
-        branch: '종로 본점',
-        category: '골드바 구매 상담',
-        purpose: '골드바 구매 상담',
-        date: '2026-10-15',
-        time: '14:00',
-        timeSlot: '14:00',
-        status: 'CONFIRMED',
-        createdAt: '2026-10-14T09:00:00.000Z'
-      },
-      {
-        id: 'GL-RS-20261016-0002',
-        reservationNo: 'GL-RS-20261016-0002',
-        userId: 'usr_donga_03',
-        name: '(주)동아귀금속',
-        phone: '02-741-3388',
-        branch: '종로 본점',
-        category: 'B2B 도매 제휴',
-        purpose: 'B2B 도매 제휴',
-        date: '2026-10-16',
-        time: '15:30',
-        timeSlot: '15:30',
-        status: 'CONFIRMED',
-        createdAt: '2026-10-14T10:30:00.000Z'
-      }
-    ],
-    orders: [
-      {
-        id: 'GL-ORD-20261014-0001',
-        orderNo: 'GL-ORD-20261014-0001',
-        userId: 'usr_dohyun_01',
-        recipientName: '김도현',
-        recipientPhone: '010-3842-7195',
-        productName: '24K 순금 투자용 미니 골드바 1돈 (3.75g)',
-        optionName: '기본',
-        quantity: 1,
-        totalItemAmount: 715000,
-        discountGCAmount: 0,
-        gcUsed: 0,
-        finalAmount: 715000,
-        finalPayAmount: 715000,
-        deliveryMethod: 'COURIER',
-        status: 'SHIPPED',
-        orderStatus: 'SHIPPED',
-        paymentStatus: 'COMPLETED',
-        trackingNo: '6892019482710',
-        trackingNumber: '6892019482710',
-        courier: '우체국택배',
-        tierAtOrder: 'VIP PLATINUM',
-        accrualRate: 0.010,
-        accrualGC: 7150,
-        gcAccrued: true,
-        createdAt: '2026-10-14T10:00:00.000Z'
-      }
-    ],
-    inquiries: [
-      {
-        id: 'INQ-20261014-0001',
-        inquiryNo: 'GL-INQ-20261014-0001',
-        userId: 'usr_dohyun_01',
-        name: '김도현',
-        email: 'dohyun.kim84@naver.com',
-        phone: '010-3842-7195',
-        category: '방문 및 주차 안내',
-        title: '종로 본점 방문 시 주차 문의',
-        content: '종로 본점 방문 시 건물 주차 지원이 가능한가요?',
-        message: '종로 본점 방문 시 건물 주차 지원이 가능한가요?',
-        reply: '네 고객님, 종로 돈화문로6나길 제일빌딩 지하 주차장 2시간 무료 지원됩니다.',
-        status: 'REPLIED',
-        createdAt: '2026-10-14T10:20:00.000Z'
-      }
-    ],
+    appraisals: [],
+    certificates: [],
+    reservations: [],
+    orders: [],
+    inquiries: [],
     gv_gc_ledgers: [
       { id: 'L-M1', userId: 'usr_master_001', type: 'GV_ADD', amount: 50000000, note: '마스터 관리자 운영 실적', createdAt: '2026-10-08T12:00:00.000Z' },
-      { id: 'L-M2', userId: 'usr_master_001', type: 'GC_EARN', amount: 350000, note: '마스터 관리자 테스트 리워드', createdAt: '2026-10-08T12:00:00.000Z' },
-      { id: 'L-D1', userId: 'usr_dohyun_01', type: 'GV_ADD', amount: 35000000, note: 'VIP PLATINUM 누적 구매 실적', createdAt: '2026-10-09T14:20:00.000Z' },
-      { id: 'L-D2', userId: 'usr_dohyun_01', type: 'GC_EARN', amount: 150000, note: 'VIP PLATINUM 구매 적립', createdAt: '2026-10-09T14:20:00.000Z' },
-      { id: 'L-J1', userId: 'usr_jieun_02', type: 'GV_ADD', amount: 15000000, note: 'GOLD 누적 구매 실적', createdAt: '2026-10-10T11:15:00.000Z' },
-      { id: 'L-J2', userId: 'usr_jieun_02', type: 'GC_EARN', amount: 75000, note: 'GOLD 구매 적립', createdAt: '2026-10-10T11:15:00.000Z' },
-      { id: 'L-E1', userId: 'usr_eprltls', type: 'GC_EARN', amount: 5000, note: '신규 가입 축하 5,000 GC 적립', createdAt: '2026-10-12T10:00:00.000Z' }
+      { id: 'L-M2', userId: 'usr_master_001', type: 'GC_EARN', amount: 350000, note: '마스터 관리자 테스트 리워드', createdAt: '2026-10-08T12:00:00.000Z' }
     ],
     audit_logs: [
-      { id: 'AUD-01', action: 'SYSTEM_BOOT', actorEmail: 'admin@goldlabnco.com', detail: 'GoldLab&co 통합 관제 엔진 기동', timestamp: '2026-10-14T09:00:00.000Z' },
-      { id: 'AUD-02', action: 'ISSUE_CERTIFICATE', actorEmail: 'goldlabnco@naver.com', targetId: 'GL-CERT-20261014-0001', detail: '24K 순금 골드바 10돈 검사 확인서 발행', timestamp: '2026-10-14T15:30:00.000Z' }
+      { id: 'AUD-01', action: 'SYSTEM_BOOT', actorEmail: 'goldlabnco@naver.com', detail: 'GoldLab&co 통합 관제 엔진 기동', timestamp: '2026-10-08T12:00:00.000Z' }
     ],
     products: [
       { id: 'GL-PROD-001', name: '24K 순금 포춘 골드바 10돈 (37.5g)', category: 'GOLDBAR_24K', purity: '24K (순도 99.99%)', weightGrams: 37.5, price: 7020000, stock: 15, status: 'ACTIVE' },
@@ -608,15 +432,15 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
   // 1. Auth: Login
   if (cleanPath === '/api/auth/login' && method === 'POST') {
     const cleanEmail = (body && body.email ? String(body.email) : '').trim().toLowerCase();
-    const isMaster = cleanEmail === 'goldlabnco@naver.com' || cleanEmail === 'admin@goldlabnco.com' || cleanEmail.includes('master') || cleanEmail.includes('admin');
+    const isMaster = cleanEmail === 'goldlabnco@naver.com';
 
     let user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
     if (isMaster) {
       if (!user) {
         user = {
-          id: 'usr_master_' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_'),
-          name: cleanEmail === 'goldlabnco@naver.com' ? '황미숙 대표 (최고관리자)' : '골드랩 시스템 관리자',
-          email: cleanEmail,
+          id: 'usr_master_001',
+          name: '황미숙 대표 (최고관리자)',
+          email: 'goldlabnco@naver.com',
           phone: '010-4017-4988',
           role: 'MASTER_ADMIN',
           userType: 'MASTER',
@@ -2394,114 +2218,27 @@ async function LogoutUser() {
 }
 
 function GetMasterMembersDB() {
+  const dummyEmails = ['admin@goldlabnco.com', 'dohyun.kim84@naver.com', 'jieun.lee91@gmail.com', 'donga.jewelry@naver.com', 'eprltls@gmail.com'];
+  const dummyNames = ['골드랩 시스템 관리자', '김도현', '이지은', '(주)동아귀금속', '동아귀금속', '일반 회원', '일반회원'];
+  const dummyIds = ['usr_admin_001', 'usr_dohyun_01', 'usr_jieun_02', 'usr_donga_03', 'usr_eprltls'];
+
   const stored = localStorage.getItem('goldlab_master_members_db_v4');
+  let members = [];
   if (stored !== null) {
-    try { return JSON.parse(stored); } catch(e) {}
+    try { members = JSON.parse(stored); } catch(e) {}
   }
-  const defaultMembers = [
-    {
-      id: 'usr_dohyun_01',
-      name: '김도현',
-      email: 'dohyun.kim84@naver.com',
-      phone: '010-3842-7195',
-      userType: 'PERSONAL',
-      tier: 'VIP PLATINUM MEMBER',
-      joinDate: '2026.04.16 14:20',
-      note: '종로 본점 방문 VIP 단골 고객 / 자산 방어용 순금 오롯 골드바 및 미니바 분할 매수',
-      transactions: [
-        {
-          id: 1713241200000,
-          date: '2026.04.16',
-          type: '매수',
-          itemName: '24K 한국조폐공사 오롯 골드바 10돈',
-          purity: '24K',
-          donWeight: 10,
-          unitCost: 655000,
-          totalCost: 6550000
-        },
-        {
-          id: 1718683200000,
-          date: '2026.06.18',
-          type: '매수',
-          itemName: '24K 포나인 순금 미니골드바 5돈',
-          purity: '24K',
-          donWeight: 5,
-          unitCost: 698000,
-          totalCost: 3490000
-        }
-      ]
-    },
-    {
-      id: 'usr_jieun_02',
-      name: '이지은',
-      email: 'jieun.lee91@gmail.com',
-      phone: '010-7215-4683',
-      userType: 'PERSONAL',
-      tier: 'GOLD MEMBER',
-      joinDate: '2026.05.22 11:15',
-      note: '첫돌 기념 돌반지 선물 및 데일리 18K 로즈골드 목걸이 매수 / 시세 알림 등록',
-      transactions: [
-        {
-          id: 1716343200000,
-          date: '2026.05.22',
-          type: '매수',
-          itemName: '24K 순금 왕관 돌반지 1돈',
-          purity: '24K',
-          donWeight: 1,
-          unitCost: 668000,
-          totalCost: 668000
-        },
-        {
-          id: 1717552800000,
-          date: '2026.06.05',
-          type: '매수',
-          itemName: '18K 로즈골드 볼체인 목걸이 3돈',
-          purity: '18K',
-          donWeight: 3,
-          unitCost: 475000,
-          totalCost: 1425000
-        }
-      ]
-    },
-    {
-      id: 'usr_donga_03',
-      name: '(주)동아귀금속',
-      email: 'donga.jewelry@naver.com',
-      phone: '02-741-3388',
-      userType: 'BIZ',
-      bizName: '(주)동아귀금속',
-      bizNo: '101-86-45892',
-      tier: 'B2B VIP MEMBER',
-      joinDate: '2026.03.25 09:40',
-      note: '종로 3가 공방 제조 납품사 / 순금 원자재 덩어리 및 백금(PT) 정기 도매 매입사',
-      transactions: [
-        {
-          id: 1711328400000,
-          date: '2026.03.25',
-          type: '매수',
-          itemName: '24K 순금 원자재 그래뉼/덩어리 40돈',
-          purity: '24K',
-          donWeight: 40,
-          unitCost: 635000,
-          totalCost: 25400000
-        },
-        {
-          id: 1712710800000,
-          date: '2026.04.10',
-          type: '매수',
-          itemName: 'PT990 백금 인곳 바 10돈',
-          purity: 'PT',
-          donWeight: 10,
-          unitCost: 310000,
-          totalCost: 3100000
-        }
-      ]
-    }
-  ];
+  if (!Array.isArray(members)) members = [];
+
+  members = members.filter(m => 
+    !dummyEmails.includes(m.email?.toLowerCase()) && 
+    !dummyNames.includes(m.name) && 
+    !dummyIds.includes(m.id)
+  );
+
   try {
-    localStorage.setItem('goldlab_master_members_db_v4', JSON.stringify(defaultMembers));
+    localStorage.setItem('goldlab_master_members_db_v4', JSON.stringify(members));
   } catch(e) {}
-  return defaultMembers;
+  return members;
 }
 
 function SaveMasterMembersDB(members) {
