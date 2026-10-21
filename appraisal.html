@@ -7,7 +7,91 @@
   <meta name="description" content="종로 첨단 비파괴 XRF 성분분석 및 초정밀 비중 측정을 통한 투명한 귀금속 감정대행 서비스. 방문 및 안심 택배 접수 가능.">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="style.css?v=20261016_mobile_v3">
+  <link rel="stylesheet" href="style.css?v=20261021_check_v8">
+  <style>
+    /* 100% Guaranteed Visible Luxury Gold Checkbox Component */
+    .custom-check-label {
+      display: flex !important;
+      align-items: flex-start !important;
+      gap: 0.85rem !important;
+      cursor: pointer !important;
+      user-select: none !important;
+      position: relative !important;
+    }
+    .custom-check-label.align-center {
+      align-items: center !important;
+    }
+    .custom-check-label input[type="checkbox"] {
+      position: absolute !important;
+      opacity: 0 !important;
+      width: 1px !important;
+      height: 1px !important;
+      margin: -1px !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      clip: rect(0, 0, 0, 0) !important;
+      border: 0 !important;
+      pointer-events: none !important;
+    }
+    .custom-check-square {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 22px !important;
+      height: 22px !important;
+      min-width: 22px !important;
+      min-height: 22px !important;
+      border: 2px solid #e0b848 !important;
+      border-radius: 6px !important;
+      background: #181b28 !important;
+      margin: 0 !important;
+      flex-shrink: 0 !important;
+      box-sizing: border-box !important;
+      transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6), inset 0 0 5px rgba(224, 184, 72, 0.2) !important;
+      cursor: pointer !important;
+      position: relative !important;
+    }
+    .custom-check-label:hover .custom-check-square {
+      border-color: #ffe082 !important;
+      background: #222638 !important;
+      box-shadow: 0 0 12px rgba(224, 184, 72, 0.5) !important;
+      transform: scale(1.04);
+    }
+    .custom-check-square .check-icon {
+      display: none;
+      color: #08090d !important;
+      font-size: 13px !important;
+      font-weight: 900 !important;
+      line-height: 1 !important;
+      pointer-events: none !important;
+    }
+    .custom-check-label input[type="checkbox"]:checked + .custom-check-square,
+    .custom-check-square.checked {
+      background: linear-gradient(135deg, #f9e076 0%, #d4af37 50%, #b8860b 100%) !important;
+      border-color: #fce8a5 !important;
+      box-shadow: 0 0 14px rgba(212, 175, 55, 0.75) !important;
+    }
+    .custom-check-label input[type="checkbox"]:checked + .custom-check-square .check-icon,
+    .custom-check-square.checked .check-icon {
+      display: inline-block !important;
+    }
+    /* Fallback CSS Checkmark if icon font fails or is empty */
+    .custom-check-label input[type="checkbox"]:checked + .custom-check-square:empty::after,
+    .custom-check-square.checked:empty::after {
+      content: "" !important;
+      display: block !important;
+      width: 6px !important;
+      height: 11px !important;
+      border: solid #08090d !important;
+      border-width: 0 2.8px 2.8px 0 !important;
+      transform: rotate(45deg) translate(-0.5px, -0.5px) !important;
+    }
+    .custom-check-label input[type="checkbox"]:focus-visible + .custom-check-square {
+      outline: 2px solid #f9e076 !important;
+      outline-offset: 2px !important;
+    }
+  </style>
 </head>
 <body>
 
@@ -705,11 +789,14 @@
 
         <!-- 무료 기본 세척 및 광택 신청 -->
         <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.5rem;">
-          <label style="display:flex; align-items:flex-start; gap:0.8rem; cursor:pointer;">
-            <input type="checkbox" id="apFreePolish" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin-top:0.2rem;">
-            <div>
-              <strong style="color:var(--gold-light);">[선택] 무상 기본 세척 및 표면 광택 신청 (가능한 제품에 한함)</strong>
-              <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.2rem; line-height:1.6;">
+          <label for="apFreePolish" class="custom-check-label" style="display:flex; align-items:flex-start; gap:0.85rem; cursor:pointer;">
+            <input type="checkbox" id="apFreePolish">
+            <span class="custom-check-square" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; min-width:22px; min-height:22px; border:2px solid #e0b848; border-radius:6px; background:#181b28; margin-top:2px; flex-shrink:0; cursor:pointer; box-sizing:border-box; transition:all 0.15s ease;">
+              <i class="fa-solid fa-check check-icon" style="display:none; color:#08090d; font-size:13px; font-weight:900;"></i>
+            </span>
+            <div style="flex:1;">
+              <strong style="color:var(--gold-light); font-size:0.98rem; display:block;">[선택] 무상 기본 세척 및 표면 광택 신청 (가능한 제품에 한함)</strong>
+              <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem; line-height:1.6; margin-bottom:0;">
                 초음파 세척 및 주얼리 표면 미세 스크래치 제거 광택을 무상 제공합니다.
                 (※ 제품 형태와 작업 특성에 따라 표면 미세 마모 및 중량 변화가 발생할 수 있으며, 광택 작업이 가능한 제품에 한하여 고객님의 선택과 사전 동의 하에 신중히 진행됩니다.)
               </p>
@@ -725,11 +812,14 @@
 
           <!-- 1. 등급별 무료 감정 혜택 적용 -->
           <div style="background:rgba(224,184,72,0.06); border:1px solid rgba(224,184,72,0.25); border-radius:12px; padding:1rem 1.2rem; margin-bottom:1.2rem;">
-            <label style="display:flex; align-items:flex-start; gap:0.8rem; cursor:pointer;">
-              <input type="checkbox" id="apApplyFreeBenefit" onchange="RecalculateAppraisalFee()" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin-top:0.2rem;">
-              <div>
-                <strong style="color:var(--gold-light); font-size:0.98rem;">[회원 혜택] 연간 무료 감정 혜택 1회 적용 (기본 감정료 29,900원 전액 면제)</strong>
-                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem; line-height:1.5;" id="apFreeBenefitNotice">
+            <label for="apApplyFreeBenefit" class="custom-check-label" style="display:flex; align-items:flex-start; gap:0.85rem; cursor:pointer;">
+              <input type="checkbox" id="apApplyFreeBenefit" onchange="RecalculateAppraisalFee()">
+              <span class="custom-check-square" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; min-width:22px; min-height:22px; border:2px solid #e0b848; border-radius:6px; background:#181b28; margin-top:2px; flex-shrink:0; cursor:pointer; box-sizing:border-box; transition:all 0.15s ease;">
+                <i class="fa-solid fa-check check-icon" style="display:none; color:#08090d; font-size:13px; font-weight:900;"></i>
+              </span>
+              <div style="flex:1;">
+                <strong style="color:var(--gold-light); font-size:0.98rem; display:block;">[회원 혜택] 연간 무료 감정 혜택 1회 적용 (기본 감정료 29,900원 전액 면제)</strong>
+                <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem; line-height:1.5; margin-bottom:0;" id="apFreeBenefitNotice">
                   회원 등급별 연간 무료 감정 혜택 (SILVER 연 1회 / GOLD 연 2회 / VIP 연 3회)을 적용합니다. 로그인 시 잔여 횟수가 확인됩니다.
                 </p>
               </div>
@@ -766,9 +856,12 @@
             • <strong>비용:</strong> 택배 이용 시 왕복 배송비만 고객 부담 / 현장 방문 접수는 배송비 없음 (특수·추가검사는 별도 견적이며 사전 동의 후 진행)<br>
             • <strong>참여 조건:</strong> 홈페이지 회원 로그인 후 신청 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 (기존 회원도 참여 가능)
           </p>
-          <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; background:#08090d; border:1.5px solid var(--border-gold-bright); border-radius:12px; padding:1.1rem 1.3rem; margin:0; user-select:none; box-shadow:0 4px 15px rgba(0,0,0,0.4);">
-            <input type="checkbox" id="apAgreeEventReview" checked onchange="RecalculateAppraisalFee()" style="accent-color:#e0b848 !important; width:22px !important; height:22px !important; min-width:22px !important; min-height:22px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
-            <span style="font-size:0.95rem; font-weight:800; color:var(--gold-light); line-height:1.55; word-break:keep-all;">
+          <label for="apAgreeEventReview" class="custom-check-label align-center" style="display:flex; align-items:center; gap:0.85rem; background:#08090d; border:1.5px solid var(--border-gold-bright); border-radius:12px; padding:1.1rem 1.3rem; margin:0; box-shadow:0 4px 15px rgba(0,0,0,0.4); cursor:pointer;">
+            <input type="checkbox" id="apAgreeEventReview" checked onchange="RecalculateAppraisalFee()">
+            <span class="custom-check-square checked" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; min-width:22px; min-height:22px; border:2px solid #fce8a5; border-radius:6px; background:linear-gradient(135deg, #f9e076 0%, #d4af37 50%, #b8860b 100%); flex-shrink:0; cursor:pointer; box-sizing:border-box; transition:all 0.15s ease; box-shadow:0 0 14px rgba(212, 175, 55, 0.7);">
+              <i class="fa-solid fa-check check-icon" style="display:inline-block; color:#08090d; font-size:13px; font-weight:900;"></i>
+            </span>
+            <span style="flex:1; font-size:0.95rem; font-weight:800; color:var(--gold-light); line-height:1.55; word-break:keep-all;">
               [필수] 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 조건을 확인하고 이벤트 참여에 동의합니다.
             </span>
           </label>
@@ -776,19 +869,28 @@
 
         <!-- 필수 약관 및 동의 체크 -->
         <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.3rem 1.4rem; margin-bottom:1.8rem; font-size:0.9rem; color:var(--text-light); line-height:1.7;">
-          <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; margin-bottom:0.85rem; user-select:none;">
-            <input type="checkbox" id="apAgreeInspection" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
-            <span style="line-height:1.55; word-break:keep-all;">[필수] 비파괴 XRF 성분분석 시험의 범위와 기술적 한계 및 보증서 재발급 불가 정책을 확인하였으며 이에 동의합니다.</span>
+          <label for="apAgreeInspection" class="custom-check-label align-center" style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; margin-bottom:0.85rem;">
+            <input type="checkbox" id="apAgreeInspection">
+            <span class="custom-check-square" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; min-width:22px; min-height:22px; border:2px solid #e0b848; border-radius:6px; background:#181b28; flex-shrink:0; cursor:pointer; box-sizing:border-box; transition:all 0.15s ease;">
+              <i class="fa-solid fa-check check-icon" style="display:none; color:#08090d; font-size:13px; font-weight:900;"></i>
+            </span>
+            <span style="flex:1; line-height:1.55; word-break:keep-all;">[필수] 비파괴 XRF 성분분석 시험의 범위와 기술적 한계 및 보증서 재발급 불가 정책을 확인하였으며 이에 동의합니다.</span>
           </label>
           <div id="courierAgreeGroup" style="display:none; margin-bottom:0.85rem;">
-            <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; user-select:none;">
-              <input type="checkbox" id="apAgreeDelivery" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
-              <span style="line-height:1.55; word-break:keep-all;">[택배 필수] 택배 운송 규정 및 분실·파손 보상 한도(우체국 안심소포 보험 취급 규정 준수)를 확인하고 동의합니다.</span>
+            <label for="apAgreeDelivery" class="custom-check-label align-center" style="display:flex; align-items:center; gap:0.85rem; cursor:pointer;">
+              <input type="checkbox" id="apAgreeDelivery">
+              <span class="custom-check-square" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; min-width:22px; min-height:22px; border:2px solid #e0b848; border-radius:6px; background:#181b28; flex-shrink:0; cursor:pointer; box-sizing:border-box; transition:all 0.15s ease;">
+                <i class="fa-solid fa-check check-icon" style="display:none; color:#08090d; font-size:13px; font-weight:900;"></i>
+              </span>
+              <span style="flex:1; line-height:1.55; word-break:keep-all;">[택배 필수] 택배 운송 규정 및 분실·파손 보상 한도(우체국 안심소포 보험 취급 규정 준수)를 확인하고 동의합니다.</span>
             </label>
           </div>
-          <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; margin:0; user-select:none;">
-            <input type="checkbox" id="apAgreePrivacy" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
-            <span style="line-height:1.55; word-break:keep-all;">[필수] 감정 접수 및 본인 확인을 위한 개인정보 수집 및 이용에 동의합니다.</span>
+          <label for="apAgreePrivacy" class="custom-check-label align-center" style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; margin:0;">
+            <input type="checkbox" id="apAgreePrivacy">
+            <span class="custom-check-square" style="display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; min-width:22px; min-height:22px; border:2px solid #e0b848; border-radius:6px; background:#181b28; flex-shrink:0; cursor:pointer; box-sizing:border-box; transition:all 0.15s ease;">
+              <i class="fa-solid fa-check check-icon" style="display:none; color:#08090d; font-size:13px; font-weight:900;"></i>
+            </span>
+            <span style="flex:1; line-height:1.55; word-break:keep-all;">[필수] 감정 접수 및 본인 확인을 위한 개인정보 수집 및 이용에 동의합니다.</span>
           </label>
         </div>
 
@@ -989,6 +1091,52 @@
     let userFreeRemaining = 0;
     let userTier = 'SILVER';
 
+    function SyncCheckboxUI() {
+      document.querySelectorAll('.custom-check-label').forEach(label => {
+        const input = label.querySelector('input[type="checkbox"]');
+        const square = label.querySelector('.custom-check-square');
+        const icon = square ? square.querySelector('.check-icon') : null;
+        if (!input || !square) return;
+
+        function update() {
+          if (input.disabled) {
+            label.style.opacity = '0.5';
+            label.style.cursor = 'not-allowed';
+            square.style.cursor = 'not-allowed';
+          } else {
+            label.style.opacity = '1';
+            label.style.cursor = 'pointer';
+            square.style.cursor = 'pointer';
+          }
+
+          if (input.checked) {
+            square.classList.add('checked');
+            square.style.background = 'linear-gradient(135deg, #f9e076 0%, #d4af37 50%, #b8860b 100%)';
+            square.style.borderColor = '#fce8a5';
+            square.style.boxShadow = '0 0 14px rgba(212, 175, 55, 0.7)';
+            if (icon) {
+              icon.style.display = 'inline-block';
+              icon.style.color = '#08090d';
+            }
+          } else {
+            square.classList.remove('checked');
+            square.style.background = '#181b28';
+            square.style.borderColor = '#e0b848';
+            square.style.boxShadow = '0 2px 8px rgba(0,0,0,0.6)';
+            if (icon) {
+              icon.style.display = 'none';
+            }
+          }
+        }
+
+        if (!input._hasSyncHandler) {
+          input.addEventListener('change', update);
+          input._hasSyncHandler = true;
+        }
+        update();
+      });
+    }
+
     function ToggleCourierFields() {
       const isCourier = document.querySelector('input[name="appraisalMethod"]:checked')?.value === 'COURIER';
       const addressBox = document.getElementById('courierAddressGroup');
@@ -1156,6 +1304,7 @@
           finalEl.innerText = finalAmount.toLocaleString('ko-KR');
         }
       }
+      SyncCheckboxUI();
     }
 
     function ApplyMaxAppraisalGC() {
@@ -1428,6 +1577,7 @@
       HandleAppraisalQtyChange();
       RecalculateAppraisalFee();
       LoadUserAppraisalBenefits();
+      SyncCheckboxUI();
     });
   </script>
 </body>
