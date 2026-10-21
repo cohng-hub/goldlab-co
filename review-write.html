@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>고객 후기 작성 | GoldLab & Co.</title>
+  <meta name="description" content="GoldLab & Co. 공식 고객 솔직 후기 작성 전용 독립 창">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css?v=20261016_mobile_v3">
+  
+  <style>
+    body {
+      background: radial-gradient(circle at 50% 10%, rgba(20, 24, 35, 0.98) 0%, #06070a 100%);
+      min-height: 100vh;
+      color: var(--text-main);
+      padding: 1.5rem 1.2rem;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: var(--font-base, -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif);
+    }
+    .popup-container {
+      max-width: 580px;
+      margin: 0 auto;
+    }
+    .popup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid var(--border-dark);
+      padding-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    .popup-title-area h1 {
+      color: var(--text-white);
+      font-size: 1.45rem;
+      font-weight: 900;
+      margin: 0.35rem 0 0 0;
+      letter-spacing: -0.02em;
+    }
+    .btn-close-window {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-close-window:hover {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border-color: rgba(239, 68, 68, 0.4);
+    }
+    .form-card {
+      background: rgba(15, 18, 26, 0.85);
+      border: 1px solid var(--border-dark);
+      border-radius: 16px;
+      padding: 1.4rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+    .star-rating-picker {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 2rem;
+      color: var(--gold-light);
+      cursor: pointer;
+      margin: 0.4rem 0;
+    }
+    .star-rating-picker i {
+      transition: transform 0.15s ease, color 0.15s ease;
+    }
+    .star-rating-picker i:hover {
+      transform: scale(1.15);
+    }
+    .photo-upload-previews {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin-top: 0.6rem;
+    }
+    .photo-preview-item {
+      position: relative;
+      width: 76px;
+      height: 76px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border-gold-bright);
+    }
+    .photo-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .btn-remove-photo {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+    }
+    .privacy-notice-box {
+      background: rgba(224, 184, 72, 0.08);
+      border: 1px solid rgba(224, 184, 72, 0.25);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 0.82rem;
+      color: var(--gold-light);
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+      line-height: 1.5;
+      margin-top: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <div class="popup-title-area">
+        <span class="section-badge" style="display:inline-block; margin-bottom:0.3rem;">
+          <i class="fa-solid fa-pen-nib text-gold"></i> 독립 작성 창
+        </span>
+        <h1>고객 솔직 후기 작성</h1>
+        <div style="font-size:0.83rem; color:var(--text-muted); margin-top:0.25rem;">
+          골드랩앤코 서비스를 이용해 주신 소중한 경험을 별도의 창에서 편안하게 남겨주세요.
+        </div>
+      </div>
+      <button type="button" class="btn-close-window" onclick="window.close()" title="창 닫기">&times;</button>
+    </div>
+
+    <div class="form-card">
+      <form id="writeReviewForm" onsubmit="SubmitReviewForm(event)">
+        <input type="hidden" id="editReviewId" value="">
+
+        <!-- STEP 1: Select Review Type / Eligible Transaction -->
+        <div id="txSelectionSection" class="form-group" style="margin-bottom:1.3rem;">
+          <label class="form-label" style="font-weight:800; color:var(--gold-light);">
+            후기 구분 및 이용 내역 선택 *
+          </label>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.4rem;">
+            회원 일반 이용 경험 후기 또는 본인의 거래·감정 내역을 선택하실 수 있습니다.
+          </div>
+          <select class="form-control" id="reviewEligibleTxSelect" required onchange="HandleTxSelectChange()">
+            <option value="MEMBER:GENERAL" selected>✨ [회원 일반 후기] 골드랩앤코 서비스 및 매장 이용 솔직 후기</option>
+          </select>
+
+          <!-- Event appraisal notice banner in modal -->
+          <div id="reviewEventNoticeBanner" style="display:none; background:rgba(224,184,72,0.12); border:1px solid var(--border-gold-bright); border-radius:10px; padding:0.75rem 0.9rem; margin-top:0.6rem; font-size:0.82rem; color:var(--gold-light); line-height:1.55;">
+            <i class="fa-solid fa-gift text-gold"></i> <strong>귀금속 감정비 무료 이벤트 참여 건</strong><br>
+            감정비 무료 혜택을 제공받은 감정 이용 내역입니다. 후기 등록 시 <em>“감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.”</em> 문구가 자동으로 표기됩니다.
+          </div>
+
+          <!-- Alternative: Offline code input toggle -->
+          <div style="margin-top:0.5rem; font-size:0.82rem;">
+            <a href="javascript:void(0)" onclick="SwitchToOfflineCodeInput()" style="color:var(--gold-light); text-decoration:underline;">
+              <i class="fa-solid fa-ticket"></i> 종로 매장 오프라인 거래 영수증 인증코드가 있으신가요?
+            </a>
+          </div>
+        </div>
+
+        <!-- Offline code input box (optional toggle) -->
+        <div id="offlineCodeBox" style="display:none; background:#141824; border:1px solid var(--border-dark); border-radius:12px; padding:0.9rem; margin-bottom:1.3rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.4rem;">
+            <label class="form-label" style="font-weight:800; color:var(--gold-light); margin:0; font-size:0.88rem;">
+              오프라인 거래 인증코드
+            </label>
+            <a href="javascript:void(0)" onclick="SwitchBackToTxList()" style="font-size:0.78rem; color:var(--text-muted);">
+              ← 완료 내역 목록으로 돌아가기
+            </a>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <input type="text" id="inputOfflineAuthCode" class="form-control" placeholder="예: GL-REV-XXXX-XXXX" style="text-transform:uppercase;">
+            <button type="button" onclick="VerifyEnteredOfflineCode()" class="btn btn-secondary" style="white-space:nowrap; padding:0.55rem 0.9rem;">
+              인증 확인
+            </button>
+          </div>
+          <div id="offlineCodeResultMsg" style="font-size:0.8rem; margin-top:0.35rem;"></div>
+        </div>
+
+        <!-- STEP 2: Category Selector -->
+        <div id="reviewCategoryGroup" class="form-group" style="margin-bottom:1.3rem;">
+          <label class="form-label" style="font-weight:800; color:var(--gold-light);">
+            후기 분야 (카테고리) *
+          </label>
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.4rem;">
+            후기를 남기실 주요 서비스 영역을 선택해 주세요.
+          </div>
+          <select class="form-control" id="reviewCategorySelect">
+            <option value="GENERAL" selected>🏢 매장 방문 및 고객 서비스 전반</option>
+            <option value="GOLD_SELL">💰 실시간 시세 및 금 매입 / 판매</option>
+            <option value="PRODUCT_BUY">💎 18K 주얼리 및 순금 골드바 구매</option>
+            <option value="APPRAISAL">🔬 귀금속 정밀 감정대행 (XRF / 비중 시험)</option>
+          </select>
+        </div>
+
+        <!-- STEP 3: Interactive Star Rating -->
+        <div class="form-group" style="margin-bottom:1.3rem;">
+          <label class="form-label" style="font-weight:800; color:var(--gold-light);">
+            별점 평가 * <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(직접 클릭하여 선택해 주세요)</span>
+          </label>
+          <div>
+            <div class="star-rating-picker" id="starPicker">
+              <i class="fa-regular fa-star" data-rating="1"></i>
+              <i class="fa-regular fa-star" data-rating="2"></i>
+              <i class="fa-regular fa-star" data-rating="3"></i>
+              <i class="fa-regular fa-star" data-rating="4"></i>
+              <i class="fa-regular fa-star" data-rating="5"></i>
+            </div>
+            <input type="hidden" id="selectedStarRating" value="" required>
+            <div id="starRatingLabel" style="font-size:0.85rem; color:var(--text-muted); font-weight:700;">
+              별점을 선택해 주세요
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Review Content -->
+        <div class="form-group" style="margin-bottom:1.3rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+            <label class="form-label" style="font-weight:800; color:var(--gold-light); margin:0;">
+              후기 본문 * <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(최소 20자 ~ 최대 1,000자)</span>
+            </label>
+            <span id="reviewCharCount" style="font-size:0.8rem; font-family:var(--font-num); color:var(--text-muted);">
+              0 / 1,000자
+            </span>
+          </div>
+          <textarea id="reviewContentInput" class="form-control" rows="5" placeholder="골드랩앤코를 이용하시면서 느끼신 만족도, 감정·시세의 정확성, 매장 응대 경험 등을 솔직하게 작성해 주세요." minlength="20" maxlength="1000" required oninput="UpdateReviewCharCount()"></textarea>
+        </div>
+
+        <!-- STEP 5: Photo Upload -->
+        <div class="form-group" style="margin-bottom:1.2rem;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem;">
+            <label class="form-label" style="font-weight:800; color:var(--gold-light); margin:0;">
+              사진 첨부 <span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted);">(선택, 최대 3장)</span>
+            </label>
+            <span id="photoCountNotice" style="font-size:0.8rem; font-family:var(--font-num); color:var(--text-muted);">
+              0 / 3장
+            </span>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-muted); margin-bottom:0.4rem;">
+            JPG, PNG, WebP 파일 지원 (장당 10MB 이하). 서버에서 EXIF 위치 정보 자동 제거 및 최적화되어 안전하게 보관됩니다.
+          </p>
+
+          <input type="file" id="reviewFileInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none;" onchange="HandleReviewPhotoSelect(event)">
+          <button type="button" class="btn btn-secondary" onclick="document.getElementById('reviewFileInput').click()" style="font-size:0.84rem; padding:0.45rem 0.9rem;">
+            <i class="fa-solid fa-camera"></i> 사진 추가하기
+          </button>
+
+          <div class="photo-upload-previews" id="photoPreviewsContainer"></div>
+        </div>
+
+        <!-- Privacy Warning Alert -->
+        <div class="privacy-notice-box">
+          <i class="fa-solid fa-triangle-exclamation" style="font-size:1.05rem; margin-top:0.1rem; flex-shrink:0;"></i>
+          <div>
+            <strong>개인정보 보호 안내:</strong> 전화번호, 계좌번호 등 개인정보가 포함되지 않았는지 확인해 주세요. 작성자 이름은 자동으로 마스킹(예: 홍*동) 처리되어 안전하게 공개됩니다.
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display:flex; justify-content:flex-end; gap:0.8rem; margin-top:1.4rem;">
+          <button type="button" class="btn btn-secondary" onclick="window.close()">창 닫기</button>
+          <button type="submit" class="btn btn-gold" id="btnSubmitReview" style="padding:0.7rem 1.6rem;">
+            <i class="fa-solid fa-check"></i> 후기 등록 완료
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js?v=20261021_rev_clean_v10"></script>
+  <script>
+    let currentUploadedPhotos = [];
+    let verifiedOfflineTx = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. 로그인 인증 확인
+      if (!currentUser) {
+        alert('[로그인 필요]\n후기 작성은 골드랩앤코 회원 로그인 후 이용 가능합니다.');
+        if (window.opener && !window.opener.closed && typeof window.opener.OpenAuthModal === 'function') {
+          window.opener.OpenAuthModal('login');
+          window.close();
+        } else {
+          window.location.href = 'index.html?login=true';
+        }
+        return;
+      }
+
+      InitStarRatingPicker();
+
+      // Read URL Params
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlAuthCode = urlParams.get('auth_code');
+      const urlWriteType = urlParams.get('write_type');
+      const urlRefId = urlParams.get('ref_id');
+
+      // Load Eligible Transactions
+      await LoadEligibleTransactions(urlWriteType, urlRefId);
+
+      if (urlAuthCode) {
+        SwitchToOfflineCodeInput();
+        document.getElementById('inputOfflineAuthCode').value = urlAuthCode.trim().toUpperCase();
+        VerifyEnteredOfflineCode();
+      }
+    });
+
+    function InitStarRatingPicker() {
+      const picker = document.getElementById('starPicker');
+      const stars = picker ? picker.querySelectorAll('i') : [];
+      const hiddenInput = document.getElementById('selectedStarRating');
+      const label = document.getElementById('starRatingLabel');
+
+      const labels = {
+        1: '1점 (매우 아쉬워요)',
+        2: '2점 (조금 아쉬워요)',
+        3: '3점 (보통이에요)',
+        4: '4점 (만족해요, 추천해요)',
+        5: '5점 (최고예요, 아주 만족해요!)'
+      };
+
+      stars.forEach(s => {
+        s.addEventListener('mouseenter', () => {
+          const val = parseInt(s.getAttribute('data-rating'), 10);
+          HighlightStars(val);
+        });
+
+        s.addEventListener('click', () => {
+          const val = parseInt(s.getAttribute('data-rating'), 10);
+          hiddenInput.value = val;
+          if (label) label.innerText = labels[val] || '';
+          HighlightStars(val);
+        });
+      });
+
+      if (picker) {
+        picker.addEventListener('mouseleave', () => {
+          const currentVal = parseInt(hiddenInput.value, 10) || 0;
+          HighlightStars(currentVal);
+        });
+      }
+
+      function HighlightStars(count) {
+        stars.forEach(s => {
+          const val = parseInt(s.getAttribute('data-rating'), 10);
+          if (val <= count) {
+            s.className = 'fa-solid fa-star';
+            s.style.color = 'var(--gold-light)';
+          } else {
+            s.className = 'fa-regular fa-star';
+            s.style.color = 'rgba(255,255,255,0.3)';
+          }
+        });
+      }
+    }
+
+    async function LoadEligibleTransactions(preselectType = '', preselectRefId = '') {
+      const txSelect = document.getElementById('reviewEligibleTxSelect');
+      if (!txSelect) return;
+
+      txSelect.innerHTML = '<option value="MEMBER:GENERAL" selected>✨ [회원 일반 후기] 골드랩앤코 서비스 및 매장 이용 솔직 후기</option>';
+
+      try {
+        const res = await ApiRequest('/api/reviews/my-eligible-transactions');
+        let optionsHtml = '<option value="MEMBER:GENERAL" selected>✨ [회원 일반 후기] 골드랩앤코 서비스 및 매장 이용 솔직 후기</option>';
+
+        if (res && res.eligibleItems && res.eligibleItems.length > 0) {
+          for (const it of res.eligibleItems) {
+            if (it.transactionType === 'MEMBER') continue;
+            if (it.alreadyReviewed) {
+              optionsHtml += `<option value="${it.transactionType}:${it.transactionId}" disabled style="color:#666;" data-is-event="${it.isEventApplied ? 'true' : 'false'}">[작성완료] ${it.categoryLabel} - ${it.title} (${it.date})</option>`;
+            } else {
+              optionsHtml += `<option value="${it.transactionType}:${it.transactionId}" data-is-event="${it.isEventApplied ? 'true' : 'false'}">[내역연결] ${it.categoryLabel} - ${it.title} (${it.date})</option>`;
+            }
+          }
+        }
+
+        txSelect.innerHTML = optionsHtml;
+        if (preselectType && preselectRefId) {
+          txSelect.value = `${preselectType}:${preselectRefId}`;
+          HandleTxSelectChange();
+        }
+      } catch (err) {
+        // Fallback default member option remains
+      }
+    }
+
+    function SwitchToOfflineCodeInput() {
+      document.getElementById('txSelectionSection').style.display = 'none';
+      document.getElementById('offlineCodeBox').style.display = 'block';
+    }
+
+    function SwitchBackToTxList() {
+      document.getElementById('txSelectionSection').style.display = 'block';
+      document.getElementById('offlineCodeBox').style.display = 'none';
+      verifiedOfflineTx = null;
+    }
+
+    async function VerifyEnteredOfflineCode() {
+      const codeInput = document.getElementById('inputOfflineAuthCode');
+      const msgEl = document.getElementById('offlineCodeResultMsg');
+      const code = (codeInput?.value || '').trim().toUpperCase();
+
+      if (!code) {
+        alert('인증코드를 입력해 주세요.');
+        return;
+      }
+
+      msgEl.innerHTML = '<span style="color:var(--gold-light);"><i class="fa-solid fa-spinner fa-spin"></i> 인증 확인 중...</span>';
+
+      try {
+        const res = await ApiRequest('/api/reviews/verify-offline-code', 'POST', { authCode: code });
+        if (res && res.success && res.offlineTx) {
+          verifiedOfflineTx = res.offlineTx;
+          msgEl.innerHTML = `
+            <span style="color:#10b981; font-weight:800;">
+              <i class="fa-solid fa-circle-check"></i> 인증 완료: [${res.offlineTx.tradeTypeLabel}] ${res.offlineTx.customerMemo || '현장 거래'}
+            </span>
+          `;
+        } else {
+          throw new Error((res && res.error) || '유효하지 않은 코드입니다.');
+        }
+      } catch (err) {
+        verifiedOfflineTx = null;
+        msgEl.innerHTML = `<span style="color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> ${err.message}</span>`;
+      }
+    }
+
+    function HandleTxSelectChange() {
+      verifiedOfflineTx = null;
+      const selectEl = document.getElementById('reviewEligibleTxSelect');
+      const selectVal = selectEl?.value || '';
+      const selectedOption = selectEl?.selectedOptions ? selectEl.selectedOptions[0] : null;
+      const catSelect = document.getElementById('reviewCategorySelect');
+      const eventNotice = document.getElementById('reviewEventNoticeBanner');
+
+      const isEvent = selectedOption ? (selectedOption.getAttribute('data-is-event') === 'true' || selectedOption.text.includes('[이벤트]')) : false;
+      if (eventNotice) {
+        eventNotice.style.display = isEvent ? 'block' : 'none';
+      }
+
+      if (!catSelect) return;
+      if (selectVal.startsWith('ORDER:')) {
+        catSelect.value = 'PRODUCT_BUY';
+      } else if (selectVal.startsWith('APPRAISAL:')) {
+        catSelect.value = 'APPRAISAL';
+      } else if (selectVal.startsWith('RESERVATION:')) {
+        catSelect.value = 'GENERAL';
+      }
+    }
+
+    function UpdateReviewCharCount() {
+      const txt = document.getElementById('reviewContentInput')?.value || '';
+      const countEl = document.getElementById('reviewCharCount');
+      if (countEl) {
+        countEl.innerText = `${txt.length} / 1,000자`;
+        countEl.style.color = txt.length < 20 ? '#ef4444' : 'var(--text-muted)';
+      }
+    }
+
+    async function HandleReviewPhotoSelect(e) {
+      const files = Array.from(e.target.files || []);
+      if (!files.length) return;
+
+      const remainingSlots = 3 - currentUploadedPhotos.length;
+      if (remainingSlots <= 0) {
+        alert('사진은 최대 3장까지만 첨부할 수 있습니다.');
+        e.target.value = '';
+        return;
+      }
+
+      const filesToProcess = files.slice(0, remainingSlots);
+      for (const file of filesToProcess) {
+        if (file.size > 10 * 1024 * 1024) {
+          alert(`[용량 초과] '${file.name}'의 용량이 10MB를 초과했습니다.`);
+          continue;
+        }
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+          alert(`[포맷 제한] JPG, PNG, WebP 이미지 파일만 첨부할 수 있습니다: ${file.name}`);
+          continue;
+        }
+        try {
+          const optimizedDataUrl = await OptimizeImageWithCanvas(file, 1600);
+          currentUploadedPhotos.push({
+            dataUrl: optimizedDataUrl,
+            name: file.name
+          });
+        } catch (err) {
+          alert(`이미지 처리 중 오류가 발생했습니다: ${file.name}`);
+        }
+      }
+
+      e.target.value = '';
+      RenderPhotoPreviews();
+    }
+
+    function OptimizeImageWithCanvas(file, maxDimension = 1600) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+            if (width > maxDimension || height > maxDimension) {
+              if (width > height) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              } else {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            try {
+              resolve(canvas.toDataURL('image/webp', 0.85));
+            } catch (err) {
+              resolve(canvas.toDataURL('image/jpeg', 0.85));
+            }
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function RenderPhotoPreviews() {
+      const container = document.getElementById('photoPreviewsContainer');
+      const countEl = document.getElementById('photoCountNotice');
+      if (!container) return;
+
+      if (countEl) countEl.innerText = `${currentUploadedPhotos.length} / 3장`;
+      let html = '';
+      currentUploadedPhotos.forEach((item, idx) => {
+        html += `
+          <div class="photo-preview-item">
+            <img src="${item.dataUrl}" alt="미리보기">
+            <button type="button" class="btn-remove-photo" onclick="RemovePhotoPreview(${idx})" title="사진 제거">&times;</button>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    function RemovePhotoPreview(idx) {
+      currentUploadedPhotos.splice(idx, 1);
+      RenderPhotoPreviews();
+    }
+
+    async function SubmitReviewForm(e) {
+      e.preventDefault();
+
+      const starRating = parseInt(document.getElementById('selectedStarRating')?.value, 10);
+      if (!starRating || starRating < 1 || starRating > 5) {
+        alert('별점을 1점부터 5점까지 직접 선택해 주세요.');
+        return;
+      }
+
+      const content = (document.getElementById('reviewContentInput')?.value || '').trim();
+      if (content.length < 20 || content.length > 1000) {
+        alert(`후기 본문은 최소 20자 이상 1,000자 이하로 작성해 주세요. (현재: ${content.length}자)`);
+        return;
+      }
+
+      let txType = 'MEMBER';
+      let txId = 'GENERAL';
+      let authCode = null;
+
+      if (verifiedOfflineTx) {
+        txType = 'OFFLINE';
+        txId = verifiedOfflineTx.authCode;
+        authCode = verifiedOfflineTx.authCode;
+      } else {
+        const selectVal = document.getElementById('reviewEligibleTxSelect')?.value || 'MEMBER:GENERAL';
+        if (selectVal.includes(':')) {
+          const parts = selectVal.split(':');
+          txType = parts[0] || 'MEMBER';
+          txId = parts[1] || 'GENERAL';
+        }
+      }
+
+      const selectedCategory = document.getElementById('reviewCategorySelect')?.value || 'GENERAL';
+
+      const submitBtn = document.getElementById('btnSubmitReview');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 안전하게 저장 중...';
+      }
+
+      try {
+        const finalPhotoUrls = [];
+        for (const p of currentUploadedPhotos) {
+          finalPhotoUrls.push(p.dataUrl);
+        }
+
+        const res = await ApiRequest('/api/reviews', 'POST', {
+          transactionType: txType,
+          transactionId: txId,
+          authCode,
+          category: selectedCategory,
+          rating: starRating,
+          content,
+          photos: finalPhotoUrls
+        });
+
+        if (res && res.success) {
+          alert('[등록 완료]\n' + (res.message || '소중한 후기가 성공적으로 등록되었습니다.'));
+
+          // Synchronize and notify parent opener window if available
+          if (window.opener && !window.opener.closed) {
+            try {
+              if (typeof window.opener.LoadCustomerReviews === 'function') {
+                window.opener.LoadCustomerReviews(1);
+              } else {
+                window.opener.location.reload();
+              }
+            } catch (openErr) {
+              window.opener.location.reload();
+            }
+          }
+          window.close();
+        } else {
+          throw new Error((res && res.error) || '후기 등록에 실패했습니다.');
+        }
+      } catch (err) {
+        alert('[등록 실패] ' + (err.message || '오류가 발생했습니다. 입력하신 내용은 그대로 유지됩니다.'));
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<i class="fa-solid fa-check"></i> 후기 등록 완료';
+        }
+      }
+    }
+  </script>
+</body>
+</html>

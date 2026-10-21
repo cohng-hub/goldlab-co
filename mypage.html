@@ -1078,12 +1078,12 @@
 
               if (diffDays >= 0) {
                 reviewActionHtml = `
-                  <a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px; box-shadow:0 0 10px rgba(224,184,72,0.3);"><i class="fa-solid fa-pen"></i> 이벤트 후기 작성</a>
+                  <a href="review-write.html?write_type=APPRAISAL&ref_id=${a.id}" onclick="OpenReviewWritePopup('APPRAISAL', '${a.id}'); return false;" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px; box-shadow:0 0 10px rgba(224,184,72,0.3);"><i class="fa-solid fa-pen"></i> 이벤트 후기 작성</a>
                   <div style="font-size:0.72rem; color:var(--gold-light); margin-top:2px;">기한: 14일 이내 (D-${diffDays})</div>
                 `;
               } else {
                 reviewActionHtml = `
-                  <a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px; background:#b91c1c; border-color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> 이벤트 후기 작성</a>
+                  <a href="review-write.html?write_type=APPRAISAL&ref_id=${a.id}" onclick="OpenReviewWritePopup('APPRAISAL', '${a.id}'); return false;" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px; background:#b91c1c; border-color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> 이벤트 후기 작성</a>
                   <div style="font-size:0.72rem; color:#ef4444; margin-top:2px;">기한 경과 (솔직한 후기 작성 요망)</div>
                 `;
               }
@@ -1094,7 +1094,7 @@
             if (alreadyReviewed) {
               reviewActionHtml = `<a href="reviews.html" class="btn btn-outline-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-star"></i> 내 후기 보기</a>`;
             } else if (isDone) {
-              reviewActionHtml = `<a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
+              reviewActionHtml = `<a href="review-write.html?write_type=APPRAISAL&ref_id=${a.id}" onclick="OpenReviewWritePopup('APPRAISAL', '${a.id}'); return false;" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
             } else {
               reviewActionHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">검사완료 후 작성</span>`;
             }
@@ -1165,7 +1165,7 @@
           if (ordInfo && ordInfo.alreadyReviewed) {
             reviewActionHtml = `<a href="reviews.html" class="btn btn-outline-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-star"></i> 내 후기 보기</a>`;
           } else if (isDone) {
-            reviewActionHtml = `<a href="reviews.html?write_type=ORDER&ref_id=${o.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
+            reviewActionHtml = `<a href="review-write.html?write_type=ORDER&ref_id=${o.id}" onclick="OpenReviewWritePopup('ORDER', '${o.id}'); return false;" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
           } else {
             reviewActionHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">배송완료 후 작성</span>`;
           }
@@ -2083,6 +2083,28 @@
         document.execCommand('copy');
         alert('고객 안내용 링크가 복사되었습니다.');
       }
+    }
+
+    function OpenReviewWritePopup(writeType, refId) {
+      const w = 620;
+      const h = 860;
+      const left = Math.max(0, Math.round((window.screen.width - w) / 2));
+      const top = Math.max(0, Math.round((window.screen.height - h) / 2));
+      const url = `review-write.html?write_type=${encodeURIComponent(writeType)}&ref_id=${encodeURIComponent(refId)}`;
+      try {
+        const popup = window.open(
+          url,
+          'GoldLabReviewWritePopup',
+          `width=${w},height=${h},top=${top},left=${left},scrollbars=yes,resizable=yes`
+        );
+        if (popup && !popup.closed) {
+          popup.focus();
+          return;
+        }
+      } catch (e) {
+        console.warn('팝업 차단 발생, 상세 페이지로 이동합니다:', e);
+      }
+      window.location.href = `reviews.html?write_type=${encodeURIComponent(writeType)}&ref_id=${encodeURIComponent(refId)}`;
     }
   </script>
 </body>

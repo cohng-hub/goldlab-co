@@ -1520,14 +1520,50 @@
       }
     }
 
-    // 7. Write Review Flow (Auth Check + Eligible Tx Fetch)
-    async function OpenWriteReviewFlow(prefillOfflineCode = '', preselectType = '', preselectRefId = '') {
+    // 7. Write Review Flow (Auth Check + Standalone Popup Window with Modal Fallback)
+    function OpenWriteReviewFlow(prefillOfflineCode = '', preselectType = '', preselectRefId = '') {
       if (!currentUser) {
         alert('[로그인 필요]\n후기 작성은 골드랩앤코 회원 로그인 후 이용 가능합니다.');
         OpenAuthModal('login');
         return;
       }
 
+      // 1) 독립 팝업창(window.open) URL 및 파라미터 조합
+      let popupUrl = 'review-write.html';
+      const params = [];
+      if (prefillOfflineCode) params.push('auth_code=' + encodeURIComponent(prefillOfflineCode));
+      if (preselectType && preselectRefId) {
+        params.push('write_type=' + encodeURIComponent(preselectType));
+        params.push('ref_id=' + encodeURIComponent(preselectRefId));
+      }
+      if (params.length) popupUrl += '?' + params.join('&');
+
+      const w = 620;
+      const h = 860;
+      const left = Math.max(0, Math.round((window.screen.width - w) / 2));
+      const top = Math.max(0, Math.round((window.screen.height - h) / 2));
+
+      // 2) 브라우저 독립 새 창 열기 시도
+      try {
+        const popup = window.open(
+          popupUrl,
+          'GoldLabReviewWritePopup',
+          `width=${w},height=${h},top=${top},left=${left},scrollbars=yes,resizable=yes`
+        );
+
+        if (popup && !popup.closed) {
+          popup.focus();
+          return;
+        }
+      } catch (e) {
+        console.warn('팝업창 열기 실패, 인페이지 모달로 전환:', e);
+      }
+
+      // 3) 팝업 차단 등으로 새 창이 열리지 않았을 때 기존 인페이지 모달로 안전하게 fallback
+      OpenInPageReviewModal(prefillOfflineCode, preselectType, preselectRefId);
+    }
+
+    async function OpenInPageReviewModal(prefillOfflineCode = '', preselectType = '', preselectRefId = '') {
       // Reset modal state
       document.getElementById('writeReviewForm').reset();
       document.getElementById('editReviewId').value = '';
