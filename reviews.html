@@ -786,6 +786,13 @@
             <option value="MEMBER:GENERAL" selected>✨ [회원 일반 후기] 골드랩앤코 서비스 및 매장 이용 솔직 후기</option>
           </select>
 
+          <!-- Event appraisal notice banner in modal -->
+          <div id="reviewEventNoticeBanner" style="display:none; background:rgba(224,184,72,0.12); border:1px solid var(--border-gold-bright); border-radius:10px; padding:0.8rem 1rem; margin-top:0.75rem; font-size:0.83rem; color:var(--gold-light); line-height:1.55;">
+            <i class="fa-solid fa-gift text-gold"></i> <strong>귀금속 감정비 무료 이벤트 참여 건</strong><br>
+            감정비 무료 혜택을 제공받은 감정 이용 내역입니다. 후기 등록 시 <em>“감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.”</em> 문구가 자동으로 표기됩니다.
+            <div style="font-size:0.78rem; color:var(--text-light); margin-top:0.3rem;">※ 높은 별점이나 긍정적 평가를 강요하지 않습니다. 실제 이용 경험을 솔직하게 평가해 주세요.</div>
+          </div>
+
           <!-- Alternative: Offline code input toggle -->
           <div style="margin-top:0.6rem; font-size:0.84rem;">
             <a href="javascript:void(0)" onclick="SwitchToOfflineCodeInput()" style="color:var(--gold-light); text-decoration:underline;">
@@ -1370,6 +1377,13 @@
           ? `<span class="verified-trade-badge"><i class="fa-solid fa-shield-check"></i> 거래 인증</span>`
           : `<span class="verified-trade-badge" style="background:rgba(224,184,72,0.18); color:var(--gold-light); border-color:rgba(224,184,72,0.4);"><i class="fa-solid fa-user-check"></i> 회원 후기</span>`;
 
+        const isEventRev = !!(r.isEventReview || r.eventCode === 'FREE_APPRAISAL_2026');
+        const eventDisclosureHtml = isEventRev
+          ? `<div style="background:rgba(224,184,72,0.12); border:1px solid rgba(224,184,72,0.35); color:var(--gold-light); font-size:0.8rem; font-weight:700; padding:0.4rem 0.8rem; border-radius:8px; margin-bottom:0.85rem; display:inline-flex; align-items:center; gap:0.45rem;">
+               <i class="fa-solid fa-gift text-gold"></i> 감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.
+             </div>`
+          : '';
+
         html += `
           <div class="review-card" id="revCard_${r.id}">
             <div class="review-header">
@@ -1384,6 +1398,7 @@
               </div>
             </div>
 
+            ${eventDisclosureHtml}
             <div class="review-content">${r.content}</div>
 
             ${photosHtml}
@@ -1519,9 +1534,9 @@
           for (const it of res.eligibleItems) {
             if (it.transactionType === 'MEMBER') continue;
             if (it.alreadyReviewed) {
-              optionsHtml += `<option value="${it.transactionType}:${it.transactionId}" disabled style="color:#666;">[작성완료] ${it.categoryLabel} - ${it.title} (${it.date})</option>`;
+              optionsHtml += `<option value="${it.transactionType}:${it.transactionId}" disabled style="color:#666;" data-is-event="${it.isEventApplied ? 'true' : 'false'}">[작성완료] ${it.categoryLabel} - ${it.title} (${it.date})</option>`;
             } else {
-              optionsHtml += `<option value="${it.transactionType}:${it.transactionId}">[내역연결] ${it.categoryLabel} - ${it.title} (${it.date})</option>`;
+              optionsHtml += `<option value="${it.transactionType}:${it.transactionId}" data-is-event="${it.isEventApplied ? 'true' : 'false'}">[내역연결] ${it.categoryLabel} - ${it.title} (${it.date})</option>`;
             }
           }
         }
@@ -1591,8 +1606,17 @@
     function HandleTxSelectChange() {
       // Clear offline transaction if selected from list
       verifiedOfflineTx = null;
-      const selectVal = document.getElementById('reviewEligibleTxSelect')?.value || '';
+      const selectEl = document.getElementById('reviewEligibleTxSelect');
+      const selectVal = selectEl?.value || '';
+      const selectedOption = selectEl?.selectedOptions ? selectEl.selectedOptions[0] : null;
       const catSelect = document.getElementById('reviewCategorySelect');
+      const eventNotice = document.getElementById('reviewEventNoticeBanner');
+
+      const isEvent = selectedOption ? (selectedOption.getAttribute('data-is-event') === 'true' || selectedOption.text.includes('[이벤트]')) : false;
+      if (eventNotice) {
+        eventNotice.style.display = isEvent ? 'block' : 'none';
+      }
+
       if (!catSelect) return;
       if (selectVal.startsWith('ORDER:')) {
         catSelect.value = 'PRODUCT_BUY';
