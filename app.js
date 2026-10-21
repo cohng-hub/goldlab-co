@@ -291,37 +291,6 @@ function ApplyKakaoChannelConfig() {
 // ==========================================================================
 const IN_BROWSER_DB_KEY = 'goldlab_live_db_v5';
 
-const DEFAULT_CUSTOMER_REVIEWS = [
-  {
-    id: 'REV-20261021-0001',
-    userId: 'usr_customer_review_01',
-    authorName: '이*정',
-    authorMasked: '이*정',
-    category: 'APPRAISAL',
-    categoryLabel: '감정 이용',
-    transactionType: 'MEMBER',
-    transactionId: 'MEMBER-usr_customer_review_01-20261021',
-    rating: 5,
-    content: '아꼈는데 금년 시세가 좋길래 종로 골드랩앤코에 맡겼습니다. 3일 정도 걸렸고 남편이 선물받은 타이핀이 57%나 금이라고 합니다 ㅎㅎㅎㅎ 그래서 그냥 남편이안차니 매입도 가능하냐고 하니까 현금으로 바로 매입 진행도 해주시고 목소리도 좋으시고 설명도 잘해주시고 너무 감사합니다 서울가면 한번 들를게요~ 참 돌반지도 같이 샀는데 공임도 안받으시네요 왠지 득템한기분 ㅎㅎㅎ',
-    photos: ['assets/review_tiepin.png'],
-    isVerifiedTrade: true,
-    isEventReview: false,
-    eventCode: null,
-    eventNotice: null,
-    isPublic: true,
-    hiddenReason: null,
-    hiddenAt: null,
-    hiddenBy: null,
-    isDeleted: false,
-    adminReply: {
-      content: '고객님, 소중하고 따뜻한 후기 남겨주셔서 진심으로 감사드립니다! 소중한 추억이 깃든 제품의 정확한 금 함량(57%)을 신속하고 투명하게 분석해 드리고 매입까지 만족스럽게 진행해 드릴 수 있어 저희도 큰 보람을 느낍니다. 함께 구매해 주신 순금 돌반지도 기분 좋은 선물이 되셨기를 바라며, 다음 번 서울 방문 시에도 편안하게 찾아주시면 성심성의껏 모시겠습니다. 늘 건강하시고 행복 가득한 하루 되세요! - 골드랩앤코 임직원 일동',
-      repliedAt: '2026-10-21T06:15:00.000Z',
-      adminName: '황미숙 대표 (골드랩&co)'
-    },
-    createdAt: '2026-10-21T05:30:00.000Z',
-    updatedAt: '2026-10-21T06:15:00.000Z'
-  }
-];
 
 function getInBrowserDB() {
   let dbStr = localStorage.getItem(IN_BROWSER_DB_KEY);
@@ -389,15 +358,12 @@ function getInBrowserDB() {
         }
 
         if (!Array.isArray(parsed.reviews)) parsed.reviews = [];
-        if (parsed.reviews.length === 0) {
-          parsed.reviews = JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_REVIEWS));
-        } else {
-          parsed.reviews.forEach(r => {
-            if (r.transactionType === 'MEMBER' && (r.transactionId === 'GENERAL' || !r.transactionId)) {
-              r.transactionId = `MEMBER-${r.userId || 'usr'}-${r.id || Date.now()}`;
-            }
-          });
-        }
+        parsed.reviews = parsed.reviews.filter(r => r.userId !== 'usr_customer_review_01');
+        parsed.reviews.forEach(r => {
+          if (r.transactionType === 'MEMBER' && (r.transactionId === 'GENERAL' || !r.transactionId)) {
+            r.transactionId = `MEMBER-${r.userId || 'usr'}-${r.id || Date.now()}`;
+          }
+        });
 
         if (!Array.isArray(parsed.offline_transactions)) parsed.offline_transactions = [];
         if (!Array.isArray(parsed.review_reports)) parsed.review_reports = [];
@@ -443,7 +409,7 @@ function getInBrowserDB() {
       { id: 'GL-PROD-002', name: '24K 순금 투자용 미니 골드바 1돈 (3.75g)', category: 'GOLDBAR_24K', purity: '24K (순도 99.99%)', weightGrams: 3.75, price: 715000, stock: 30, status: 'ACTIVE' },
       { id: 'GL-PROD-003', name: '18K 클래식 샤인 체인 팔찌 (남녀공용)', category: 'BRACELET_18K', purity: '18K (순도 75.0%)', weightGrams: 18.75, price: 2650000, stock: 5, status: 'ACTIVE' }
     ],
-    reviews: JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_REVIEWS)),
+    reviews: [],
     offline_transactions: [],
     review_reports: [],
     settings: {
