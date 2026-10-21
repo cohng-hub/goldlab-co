@@ -24,6 +24,27 @@ const submitLimiter = new RateLimiter(60000, 10);    // Max 10 submissions per m
 const reviewLimiter = new RateLimiter(60000, 15);    // Max 15 review actions per minute
 const reportLimiter = new RateLimiter(60000, 5);     // Max 5 reports per minute
 
+// ------------------------------------------------------------
+// EVENT: Free Appraisal Event Configuration (2026-10-21 ~ 2026-11-06 23:59:59 KST)
+// ------------------------------------------------------------
+const FREE_APPRAISAL_EVENT = {
+  code: 'FREE_APPRAISAL_2026',
+  title: '귀금속 감정비 무료 이벤트',
+  startDateKST: '2026-10-21T00:00:00+09:00',
+  endDateKST: '2026-11-06T23:59:59+09:00',
+  endTimestamp: new Date('2026-11-06T23:59:59+09:00').getTime(),
+  baseFee: 0,
+  originalFee: 29900,
+  maxItems: 2,
+  reviewDeadlineDays: 14,
+  policyVersion: '1.0.0',
+  disclosureNotice: '감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.'
+};
+
+function isFreeAppraisalEventActive(timestamp = Date.now()) {
+  return timestamp <= FREE_APPRAISAL_EVENT.endTimestamp;
+}
+
 // Helper: Mask author name for privacy protection
 function maskAuthorName(name) {
   if (!name || typeof name !== 'string') return '고객*';
@@ -237,6 +258,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
           role: newUser.role,
           userType: newUser.userType,
           tier: newUser.tier,
+          phone: newUser.phone,
           status: isBiz ? 'B2B_PENDING' : newUser.status
         }
       }, { 'Set-Cookie': cookieHeader });
@@ -255,16 +277,16 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     }
 
     const cleanEmail = String(email).trim().toLowerCase();
-    const isMaster = cleanEmail === 'goldlabnco@naver.com' || cleanEmail === 'admin@goldlabnco.com';
+    const isMaster = cleanEmail === 'goldlabnco@naver.com';
     const db = getDB();
     let user = db.users.find(u => u.email === cleanEmail);
 
     if (isMaster) {
       if (!user) {
         user = {
-          id: 'usr_master_' + cleanEmail.replace(/[^a-zA-Z0-9]/g, '_'),
-          name: cleanEmail === 'goldlabnco@naver.com' ? '황미숙 대표 (최고관리자)' : '골드랩 시스템 관리자',
-          email: cleanEmail,
+          id: 'usr_master_001',
+          name: '황미숙 대표 (최고관리자)',
+          email: 'goldlabnco@naver.com',
           phone: '010-4017-4988',
           passwordHash: hashPassword(password),
           userType: 'MASTER',
@@ -517,6 +539,18 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     return sendJSON(res, 200, db.settings.appraisal);
   }
 
+  // 4-B. EVENT: Free Appraisal Event Status & Parameters (Public)
+  if (pathname === '/api/events/free-appraisal' && method === 'GET') {
+    const now = Date.now();
+    const isActive = isFreeAppraisalEventActive(now);
+    return sendJSON(res, 200, {
+      success: true,
+      event: FREE_APPRAISAL_EVENT,
+      isActive,
+      currentServerTimeKST: new Date(now + 9 * 60 * 60 * 1000).toISOString()
+    });
+  }
+
   if (pathname === '/api/appraisals/apply' && method === 'POST') {
     if (process.env.NODE_ENV !== 'test') {
       const rateCheck = submitLimiter.isAllowed(clientIP);
@@ -582,16 +616,54 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       const serial = String(dbRef.appraisals.length + 1).padStart(4, '0');
       const appraisalId = `GL-AP-${dateStr}-${serial}`;
 
-      // Free Benefit and GC point logic
+      // Free Event, Free Member Benefit, and GC point logic
+      const isEventRequested = !!(body.applyEvent || body.agreeEventReview || body.eventCode === 'FREE_APPRAISAL_2026');
       const applyFreeBenefit = !!body.applyFreeBenefit;
       const requestedGC = Math.max(0, parseInt(body.gcUsed, 10) || 0);
+
+      let isEventApplied = false;
+      let eventCode = null;
+      let eventTitle = null;
+      let eventAgreedAt = null;
+      let eventPolicyVersion = null;
+      let eventReviewDeadlineDays = 14;
 
       let freeBenefitApplied = false;
       let costBase = 29900;
       let appliedGC = 0;
       let finalPayAmount = 29900;
 
-      if (applyFreeBenefit) {
+      if (isEventRequested) {
+        // 1. Must be logged in
+        if (!currentUser) {
+          return sendJSON(res, 401, { error: '귀금속 감정비 무료 이벤트는 회원 로그인 후 신청 가능합니다.' });
+        }
+        // 2. Must agree to review condition
+        if (!body.agreeEventReview && !body.eventAgreed) {
+          return sendJSON(res, 400, { error: '[필수] 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 조건을 확인하고 이벤트 참여에 동의해 주세요.' });
+        }
+        // 3. Must be within event deadline (KST 2026-11-06 23:59:59)
+        const nowTs = Date.now();
+        if (!isFreeAppraisalEventActive(nowTs)) {
+          return sendJSON(res, 400, {
+            error: '귀금속 감정비 무료 이벤트가 2026년 11월 6일 23:59:59부로 종료되었습니다. 현재는 정상 기본 감정료(29,900원)가 적용됩니다. 결제 금액을 확인하신 후 다시 접수해 주세요.',
+            eventExpired: true
+          });
+        }
+
+        // Apply Event: 0 won basic fee; preserve member free quota and GC points
+        isEventApplied = true;
+        eventCode = FREE_APPRAISAL_EVENT.code;
+        eventTitle = FREE_APPRAISAL_EVENT.title;
+        eventAgreedAt = new Date().toISOString();
+        eventPolicyVersion = FREE_APPRAISAL_EVENT.policyVersion;
+        eventReviewDeadlineDays = FREE_APPRAISAL_EVENT.reviewDeadlineDays;
+
+        costBase = 0;
+        finalPayAmount = 0;
+        appliedGC = 0;
+        freeBenefitApplied = false; // Event takes precedence; quota not consumed
+      } else if (applyFreeBenefit) {
         if (!currentUser) {
           return sendJSON(res, 401, { error: '회원 등급 무료 감정 혜택을 적용하려면 로그인이 필요합니다.' });
         }
@@ -688,6 +760,15 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         freePolishConsent: !!freePolishConsent,
         termsAgreed: true,
         extraQuoteConsent: !!extraQuoteConsent,
+        isEventApplied: !!isEventApplied,
+        eventCode: isEventApplied ? eventCode : null,
+        eventTitle: isEventApplied ? eventTitle : null,
+        eventAgreedAt: isEventApplied ? eventAgreedAt : null,
+        eventPolicyVersion: isEventApplied ? eventPolicyVersion : null,
+        eventReviewDeadlineDays: isEventApplied ? eventReviewDeadlineDays : null,
+        reviewStatus: isEventApplied ? 'PENDING' : null,
+        reviewedReviewId: null,
+        reviewedAt: null,
         status: 'APPLIED',
         actualWeight: null,
         arrivedPhotos: [],
@@ -701,7 +782,13 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         costExtra: 0,
         extraQuoteApproved: false,
         history: [
-          { status: 'APPLIED', note: '온라인 감정대행 접수 완료', timestamp: new Date().toISOString() }
+          {
+            status: 'APPLIED',
+            note: isEventApplied
+              ? '온라인 감정대행 접수 완료 (감정비 무료 이벤트 적용, 14일 이내 후기 작성 동의)'
+              : (freeBenefitApplied ? '온라인 감정대행 접수 완료 (회원 등급 무료 혜택 적용)' : '온라인 감정대행 접수 완료'),
+            timestamp: new Date().toISOString()
+          }
         ],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
@@ -724,6 +811,13 @@ async function handleApiRequest(req, res, parsedUrl, body) {
           type: newAppraisal.type,
           costBase: newAppraisal.costBase,
           freeBenefitApplied: newAppraisal.freeBenefitApplied,
+          isEventApplied: newAppraisal.isEventApplied,
+          eventCode: newAppraisal.eventCode,
+          eventTitle: newAppraisal.eventTitle,
+          eventAgreedAt: newAppraisal.eventAgreedAt,
+          eventPolicyVersion: newAppraisal.eventPolicyVersion,
+          eventReviewDeadlineDays: newAppraisal.eventReviewDeadlineDays,
+          reviewStatus: newAppraisal.reviewStatus,
           gcUsed: newAppraisal.gcUsed,
           finalPayAmount: newAppraisal.finalPayAmount,
           shippingCost: newAppraisal.shippingCost,
@@ -757,6 +851,14 @@ async function handleApiRequest(req, res, parsedUrl, body) {
           costBase: a.costBase,
           costExtra: a.costExtra,
           freeBenefitApplied: !!a.freeBenefitApplied,
+          isEventApplied: !!a.isEventApplied,
+          eventCode: a.eventCode || null,
+          eventTitle: a.eventTitle || null,
+          eventAgreedAt: a.eventAgreedAt || null,
+          eventReviewDeadlineDays: a.eventReviewDeadlineDays || 14,
+          reviewStatus: a.reviewStatus || null,
+          reviewedReviewId: a.reviewedReviewId || null,
+          reviewedAt: a.reviewedAt || null,
           gcUsed: a.gcUsed || 0,
           finalPayAmount: a.finalPayAmount !== undefined ? a.finalPayAmount : a.costBase,
           hasCertificate: !!cert,
@@ -1359,7 +1461,9 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   // 8-B-1. Public Reviews List with Dynamic Aggregates & Filtering
   if (pathname === '/api/reviews' && method === 'GET') {
     const db = getDB();
-    const query = parsedUrl.searchParams;
+    const query = parsedUrl.searchParams || {
+      get: (k) => (parsedUrl.query && parsedUrl.query[k] !== undefined ? parsedUrl.query[k] : null)
+    };
     const reqCategory = query.get('category') || 'ALL';
     const page = Math.max(1, parseInt(query.get('page') || '1', 10));
     const limit = Math.max(1, Math.min(50, parseInt(query.get('limit') || '10', 10)));
@@ -1370,12 +1474,21 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     // Real dynamic aggregates (never fake or arbitrary)
     const totalCount = allPublic.length;
     let sumRating = 0;
+    let verifiedSumRating = 0;
+    let verifiedTradeCount = 0;
+    let memberReviewCount = 0;
     const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     const categoryCounts = { ALL: totalCount, GOLD_SELL: 0, PRODUCT_BUY: 0, APPRAISAL: 0, GENERAL: 0 };
 
     allPublic.forEach(r => {
       const rt = Math.round(Number(r.rating) || 5);
       sumRating += rt;
+      if (r.isVerifiedTrade) {
+        verifiedTradeCount++;
+        verifiedSumRating += rt;
+      } else {
+        memberReviewCount++;
+      }
       if (ratingCounts[rt] !== undefined) ratingCounts[rt]++;
       const cat = r.category || 'GENERAL';
       if (categoryCounts[cat] !== undefined) categoryCounts[cat]++;
@@ -1383,6 +1496,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     });
 
     const averageRating = totalCount > 0 ? Number((sumRating / totalCount).toFixed(1)) : 0;
+    const verifiedAverageRating = verifiedTradeCount > 0 ? Number((verifiedSumRating / verifiedTradeCount).toFixed(1)) : 0;
 
     // Filter by requested category
     let filtered = allPublic;
@@ -1410,6 +1524,9 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       photos: r.photos || [],
       isVerifiedTrade: !!r.isVerifiedTrade,
       isVerified: !!r.isVerifiedTrade,
+      isEventReview: !!r.isEventReview,
+      eventCode: r.eventCode || null,
+      eventNotice: r.eventNotice || (r.isEventReview ? '감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.' : null),
       adminReply: r.adminReply ? {
         content: r.adminReply.content,
         repliedAt: r.adminReply.repliedAt,
@@ -1427,6 +1544,9 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       totalPages,
       currentPage: page,
       averageRating,
+      verifiedTradeCount,
+      memberReviewCount,
+      verifiedAverageRating,
       ratingCounts,
       categoryCounts
     });
@@ -1445,7 +1565,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
 
     const myAppraisals = (db.appraisals || []).filter(a =>
       (a.userId === currentUser.id || a.applicantPhone === currentUser.phone) &&
-      (a.status === 'COMPLETED' || a.status === 'INSPECTED')
+      (a.status === 'COMPLETED' || a.status === 'INSPECTED' || a.status === 'RETURN_SHIPPED')
     );
 
     const myReservations = (db.reservations || []).filter(r =>
@@ -1502,14 +1622,18 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       const isGoldSell = (a.itemType && (a.itemType.includes('매입') || a.itemType.includes('판매') || a.itemType.includes('고금')));
       const cat = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
       const catLabel = isGoldSell ? '금 판매' : '감정 이용';
+      const isEvent = !!(a.isEventApplied || a.eventCode === 'FREE_APPRAISAL_2026');
+      const prefix = isEvent ? '[이벤트] ' : '';
       eligibleItems.push({
         transactionType: 'APPRAISAL',
         transactionId: a.id,
         category: cat,
         categoryLabel: catLabel,
-        title: `${catLabel} - ${a.itemType || '귀금속 정밀 감정'} (${a.receiptNo || a.id})`,
+        title: `${prefix}${catLabel} - ${a.itemType || '귀금속 정밀 감정'} (${a.receiptNo || a.id})`,
         date: a.createdAt ? a.createdAt.substring(0, 10) : '',
         status: a.status,
+        isEventApplied: isEvent,
+        eventCode: a.eventCode || null,
         alreadyReviewed: !!alreadyReviewId,
         reviewId: alreadyReviewId || null
       });
@@ -1614,6 +1738,10 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       let verifiedTxId = transactionId || authCode;
       let verifiedTxType = transactionType || 'MEMBER';
 
+      let isEventReview = false;
+      let eventCode = null;
+      let eventNotice = null;
+
       // 1. Member general review (Always allowed for any registered member)
       if (!verifiedTxType || verifiedTxType === 'MEMBER' || verifiedTxId === 'MEMBER') {
         verifiedTxType = 'MEMBER';
@@ -1634,13 +1762,19 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       } else if (verifiedTxType === 'APPRAISAL') {
         const appraisal = dbRef.appraisals.find(a => a.id === verifiedTxId && (a.userId === currentUser.id || a.applicantPhone === currentUser.phone));
         if (!appraisal) return sendJSON(res, 404, { error: '본인의 감정 접수 내역을 찾을 수 없습니다.' });
-        const isCompleted = appraisal.status === 'COMPLETED' || appraisal.status === 'INSPECTED';
+        const isCompleted = appraisal.status === 'COMPLETED' || appraisal.status === 'INSPECTED' || appraisal.status === 'RETURN_SHIPPED';
         if (!isCompleted) {
           return sendJSON(res, 403, { error: '검사 또는 감정 대행이 완료된 후에만 후기를 작성할 수 있습니다.' });
         }
         const isGoldSell = appraisal.itemType && (appraisal.itemType.includes('매입') || appraisal.itemType.includes('판매') || appraisal.itemType.includes('고금'));
         finalCategory = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
         finalCategoryLabel = isGoldSell ? '금 판매' : '감정 이용';
+
+        if (appraisal.isEventApplied || appraisal.eventCode === 'FREE_APPRAISAL_2026') {
+          isEventReview = true;
+          eventCode = 'FREE_APPRAISAL_2026';
+          eventNotice = '감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.';
+        }
       } else if (verifiedTxType === 'RESERVATION') {
         const resv = (dbRef.reservations || []).find(r => r.id === verifiedTxId && (r.userId === currentUser.id || r.bookPhone === currentUser.phone || r.phone === currentUser.phone));
         if (finalCategory === 'GOLD_SELL') finalCategoryLabel = '금 판매';
@@ -1685,7 +1819,10 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         rating: numRating,
         content: sanitizeText(trimmedContent),
         photos: safePhotos,
-        isVerifiedTrade: verifiedTxType !== 'MEMBER',
+        isVerifiedTrade: (verifiedTxType === 'ORDER' || verifiedTxType === 'APPRAISAL' || verifiedTxType === 'OFFLINE'),
+        isEventReview: !!isEventReview,
+        eventCode: isEventReview ? eventCode : null,
+        eventNotice: isEventReview ? eventNotice : null,
         isMemberReview: true,
         isPublic: true,
         hiddenReason: null,
@@ -1700,6 +1837,15 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       if (verifiedTxType === 'OFFLINE') {
         const offTx = dbRef.offline_transactions.find(t => t.authCode && t.authCode.toUpperCase() === verifiedTxId.toUpperCase());
         if (offTx) offTx.reviewedReviewId = newReview.id;
+      }
+
+      if (verifiedTxType === 'APPRAISAL') {
+        const ap = dbRef.appraisals.find(a => a.id === verifiedTxId);
+        if (ap) {
+          ap.reviewedReviewId = newReview.id;
+          ap.reviewedAt = new Date().toISOString();
+          if (ap.isEventApplied) ap.reviewStatus = 'COMPLETED';
+        }
       }
 
       dbRef.reviews.unshift(newReview);
@@ -1873,15 +2019,20 @@ async function handleApiRequest(req, res, parsedUrl, body) {
 
     if (pathname.startsWith('/api/admin/appraisals/') && pathname.endsWith('/status') && (method === 'PUT' || method === 'POST')) {
       const appraisalId = pathname.split('/')[4];
-      const { newStatus, note, actualWeight, inspectedPhotos, costExtra } = body || {};
+      const { newStatus, nextStatus, note, actualWeight, inspectedPhotos, costExtra } = body || {};
+
+      let statusToSet = newStatus || nextStatus || (body && body.status);
+      if (statusToSet === 'SHIPPING_GUIDE') statusToSet = 'DISPATCH_GUIDED';
+      if (statusToSet === 'PENDING_ADDITIONAL_CONSENT') statusToSet = 'PENDING_EXTRA_CONSENT';
+      if (statusToSet === 'RETURN_PREPARING') statusToSet = 'PREPARING_RETURN';
 
       const VALID_STATES = [
-        'APPLIED', 'DISPATCH_GUIDED', 'ARRIVED', 'INSPECTING',
-        'PENDING_EXTRA_CONSENT', 'INSPECTED', 'PREPARING_RETURN',
-        'RETURN_SHIPPED', 'COMPLETED', 'CANCELLED'
+        'APPLIED', 'DISPATCH_GUIDED', 'SHIPPING_GUIDE', 'ARRIVED', 'INSPECTING',
+        'PENDING_EXTRA_CONSENT', 'PENDING_ADDITIONAL_CONSENT', 'INSPECTED',
+        'PREPARING_RETURN', 'RETURN_PREPARING', 'RETURN_SHIPPED', 'COMPLETED', 'CANCELLED'
       ];
 
-      if (!VALID_STATES.includes(newStatus)) {
+      if (!VALID_STATES.includes(statusToSet)) {
         return sendJSON(res, 400, { error: '유효하지 않은 진행 상태입니다.' });
       }
 
@@ -1889,7 +2040,8 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         const item = dbRef.appraisals.find(a => a.id === appraisalId);
         if (!item) return sendJSON(res, 404, { error: '해당 접수건을 찾을 수 없습니다.' });
 
-        item.status = newStatus;
+        item.status = statusToSet;
+        item.updatedAt = new Date().toISOString();
         if (actualWeight) item.actualWeight = actualWeight;
         if (costExtra !== undefined) item.costExtra = Number(costExtra);
         if (inspectedPhotos) item.inspectedPhotos = inspectedPhotos;
@@ -2452,5 +2604,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
 }
 
 module.exports = {
-  handleApiRequest
+  handleApiRequest,
+  isFreeAppraisalEventActive,
+  FREE_APPRAISAL_EVENT
 };

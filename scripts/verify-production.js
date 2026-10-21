@@ -128,7 +128,7 @@ async function runTests() {
 
     // Login Admin
     const resAdmin = await request({ path: '/api/auth/login', method: 'POST' }, {
-      email: 'admin@goldlabnco.com',
+      email: 'goldlabnco@naver.com',
       password: process.env.ADMIN_INITIAL_PASSWORD || 'GoldLabAdmin2026!#'
     });
     assert.strictEqual(resAdmin.status, 200);

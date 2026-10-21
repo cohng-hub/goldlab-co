@@ -4,7 +4,6 @@ const { hashPassword } = require('../server/auth');
 
 const DB_FILE = path.join(__dirname, '..', 'data', 'goldlab_db.json');
 
-const adminEmail = process.env.ADMIN_EMAIL || 'admin@goldlabnco.com';
 const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'GoldLab2026!MasterSecure';
 
 const cleanDB = {
@@ -21,36 +20,6 @@ const cleanDB = {
       userType: 'MASTER',
       role: 'MASTER_ADMIN',
       tier: '👑 MASTER ADMIN',
-      twoFactorEnabled: false,
-      twoFactorSecret: null,
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      id: 'usr_admin_001',
-      email: adminEmail.toLowerCase().trim(),
-      passwordHash: hashPassword(adminPass),
-      name: '골드랩 시스템 관리자',
-      phone: '010-4017-4988',
-      userType: 'MASTER',
-      role: 'MASTER_ADMIN',
-      tier: '👑 MASTER ADMIN',
-      twoFactorEnabled: false,
-      twoFactorSecret: null,
-      status: 'ACTIVE',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      id: 'usr_eprltls',
-      email: 'eprltls@gmail.com',
-      passwordHash: hashPassword('GoldLab1234!'),
-      name: '일반 회원',
-      phone: '010-0000-0000',
-      userType: 'PERSONAL',
-      role: 'USER',
-      tier: 'STANDARD MEMBER',
       twoFactorEnabled: false,
       twoFactorSecret: null,
       status: 'ACTIVE',
@@ -152,13 +121,13 @@ const cleanDB = {
       closedDays: [0, 6]
     },
     business: {
-      companyName: '골드랩 (GoldLab&co)',
+      companyName: '골드랩앤코 (GoldLab & Co.)',
       ceo: '황미숙',
-      bizNo: '101-86-77777',
+      bizNo: '185-07-02856',
       mailOrderNo: '제 2025-서울은평-1081 호',
-      address: '서울특별시 종로구 돈화문로 12길',
-      tel: '02-765-8888',
-      csEmail: 'cs@goldlabnco.com'
+      address: '서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호',
+      tel: '010-4017-4988',
+      csEmail: 'skycraft102@naver.com'
     }
   }
 };

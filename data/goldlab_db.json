@@ -1,12 +1,12 @@
 {
   "version": "2.0.0",
   "createdAt": "2026-10-08T12:26:04.017Z",
-  "updatedAt": "2026-10-15T06:58:01.916Z",
+  "updatedAt": "2026-10-21T06:18:01.411Z",
   "users": [
     {
       "id": "usr_master_001",
       "email": "goldlabnco@naver.com",
-      "passwordHash": "a9890afd59e67906efb7cf42e72233a6:bb3fd0872ebdfa897188f546711e77acf72186268241dcd7c82944c957023ce12133a0ce5fc30b2f42d4895285f2ae4672313d5c84a91e9928c149467714dd93",
+      "passwordHash": "d43f4506d0ca1f5edf80dc11a7daa597:c89e6befeddaff991dafcf10c2a01ec65cdc74b73269d8ea9e2ba380a7d0f90a4ed5c4a6faa5570e06388d2a93c881b087f167fd1d5efa902a8cb61519209f66",
       "name": "황미숙 대표 (최고관리자)",
       "phone": "010-4017-4988",
       "userType": "MASTER",
@@ -17,143 +17,9 @@
       "status": "ACTIVE",
       "createdAt": "2026-10-08T12:26:04.065Z",
       "updatedAt": "2026-10-08T12:26:04.065Z"
-    },
-    {
-      "id": "usr_admin_001",
-      "email": "admin@goldlabnco.com",
-      "passwordHash": "2b984706ae3043885309bfdf1bbf7828:d7a8a3ffb1e352611dcd8a7f52f05d9172334db061a9ac93c1e3b3aaa3f5af8ed5212b2c64b6900cc9aee52ed6469ffd1a44aac8f9995121e170ef676eda7f11",
-      "name": "골드랩 시스템 관리자",
-      "phone": "010-4017-4988",
-      "userType": "MASTER",
-      "role": "MASTER_ADMIN",
-      "tier": "👑 MASTER ADMIN",
-      "twoFactorEnabled": false,
-      "twoFactorSecret": null,
-      "status": "ACTIVE",
-      "createdAt": "2026-10-08T12:26:04.109Z",
-      "updatedAt": "2026-10-08T12:26:04.109Z"
-    },
-    {
-      "id": "usr_eprltls",
-      "email": "eprltls@gmail.com",
-      "passwordHash": "cf0674d6a941c4ed345dd9c355ac1545:01827952f3992f2451af62df72973daf8cddaca4a2ea0eb1c0b53c8bc976ef9e78fbee96166af7b11b30077a5e5b182f9d114857a178cc2a76845ffd0408268a",
-      "name": "일반 회원",
-      "phone": "010-0000-0000",
-      "userType": "PERSONAL",
-      "role": "USER",
-      "tier": "STANDARD MEMBER",
-      "twoFactorEnabled": false,
-      "twoFactorSecret": null,
-      "status": "ACTIVE",
-      "createdAt": "2026-10-08T12:26:04.152Z",
-      "updatedAt": "2026-10-08T12:26:04.152Z"
     }
   ],
   "sessions": [
-    {
-      "id": "sess_1791462369490",
-      "userId": "usr_admin_001",
-      "hashedToken": "d35fc911db403b61abcadf3dba4bfb21d2ad9bdf1a0c6274c9f91cdf45509ca6",
-      "expiresAt": "2026-10-15T12:26:09.490Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-08T12:26:09.490Z"
-    },
-    {
-      "id": "sess_1791462424679",
-      "userId": "usr_admin_001",
-      "hashedToken": "45aba70f456e4424fdfe9176c8cec0a9ae1b0c0330a4c1ba3fefcd7ce96d42ba",
-      "expiresAt": "2026-10-15T12:27:04.679Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-08T12:27:04.679Z"
-    },
-    {
-      "id": "sess_1791782792686",
-      "userId": "usr_admin_001",
-      "hashedToken": "4d8020146dbf5fa2dbf88d4e9dae4c29b1dd32c93fcdd883e56f302f2ec3df01",
-      "expiresAt": "2026-10-19T05:26:32.686Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T05:26:32.686Z"
-    },
-    {
-      "id": "sess_1791791845186",
-      "userId": "usr_admin_001",
-      "hashedToken": "b4beca3dd13292b1ab82d5708a55e21d934b57dc9b495908c723c8cd12e56a4d",
-      "expiresAt": "2026-10-19T07:57:25.186Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T07:57:25.186Z"
-    },
-    {
-      "id": "sess_1791792827553",
-      "userId": "usr_admin_001",
-      "hashedToken": "ad8b74affd214ac11585caa9db68e91f01a1e020ec08bc5706da79794cd3582e",
-      "expiresAt": "2026-10-19T08:13:47.553Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T08:13:47.553Z"
-    },
-    {
-      "id": "sess_1791792866666",
-      "userId": "usr_admin_001",
-      "hashedToken": "297c024063266aa1a813300d50ce3c272628fd7a5aac9fe25633fc7083ee75be",
-      "expiresAt": "2026-10-19T08:14:26.666Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T08:14:26.666Z"
-    },
-    {
-      "id": "sess_1791792911409",
-      "userId": "usr_admin_001",
-      "hashedToken": "f891c14c7db02c208b1d1f1fed3a36362befa3a67e4f02173a3042b608dcbd31",
-      "expiresAt": "2026-10-19T08:15:11.409Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T08:15:11.409Z"
-    },
-    {
-      "id": "sess_1791792925762",
-      "userId": "usr_admin_001",
-      "hashedToken": "736074008eca37c51cbee1701baf3e75c14fe19feab934ced470d233f02f5327",
-      "expiresAt": "2026-10-19T08:15:25.762Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T08:15:25.762Z"
-    },
-    {
-      "id": "sess_1791795298603",
-      "userId": "usr_admin_001",
-      "hashedToken": "55dc57dc847f0288519164677bb9f0d1b011d0136ccb7e3aec91436f1cb3cf84",
-      "expiresAt": "2026-10-19T08:54:58.603Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T08:54:58.603Z"
-    },
-    {
-      "id": "sess_1791795323024",
-      "userId": "usr_admin_001",
-      "hashedToken": "d0c6205dbfabe42e2348d8d50aa8b2e963dd1a51a9c285a35437657fa2624b1e",
-      "expiresAt": "2026-10-19T08:55:23.024Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T08:55:23.024Z"
-    },
-    {
-      "id": "sess_1791796273857",
-      "userId": "usr_admin_001",
-      "hashedToken": "7e9e9ebb9c2abdcc7bf4fcfb8676757073bd00887e5078e17347d197de3bdb66",
-      "expiresAt": "2026-10-19T09:11:13.857Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T09:11:13.857Z"
-    },
-    {
-      "id": "sess_1791798660446",
-      "userId": "usr_admin_001",
-      "hashedToken": "36d01934a198dee23917e42b7c600b193d59b8b484d4843f98e02dc62b2ffa95",
-      "expiresAt": "2026-10-19T09:51:00.446Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T09:51:00.446Z"
-    },
-    {
-      "id": "sess_1791798680677",
-      "userId": "usr_admin_001",
-      "hashedToken": "72a20be9243762be6cfe16faef89e0acfc5e93d6feda293d1a6ed6141a75eb26",
-      "expiresAt": "2026-10-19T09:51:20.677Z",
-      "clientIP": "::ffff:127.0.0.1",
-      "createdAt": "2026-10-12T09:51:20.677Z"
-    },
     {
       "id": "sess_1791971439301",
       "userId": "usr_master_001",
@@ -161,6 +27,22 @@
       "expiresAt": "2026-10-21T09:50:39.301Z",
       "clientIP": "::1",
       "createdAt": "2026-10-14T09:50:39.307Z"
+    },
+    {
+      "id": "sess_1792562196730",
+      "userId": "usr_master_001",
+      "hashedToken": "21c624dbf4b4cfeeb13d5b2ad92624c0b1391eaf5ac828b0ad4d26829da0abca",
+      "expiresAt": "2026-10-28T05:56:36.730Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-21T05:56:36.730Z"
+    },
+    {
+      "id": "sess_1792563480423",
+      "userId": "usr_master_001",
+      "hashedToken": "9e0e1159103a4182a668f88783c80e52c3c348c83568ea8e260063b97e590965",
+      "expiresAt": "2026-10-28T06:18:00.423Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-21T06:18:00.423Z"
     }
   ],
   "password_resets": [],
@@ -235,6 +117,21 @@
   "audit_logs": [],
   "settings": {
     "siteName": "GoldLab&co",
+    "events": {
+      "freeAppraisal": {
+        "code": "FREE_APPRAISAL_2026",
+        "title": "귀금속 감정비 무료 이벤트",
+        "startDateKST": "2026-10-21T00:00:00+09:00",
+        "endDateKST": "2026-11-06T23:59:59+09:00",
+        "endTimestamp": 1793977199000,
+        "baseFee": 0,
+        "originalFee": 29900,
+        "maxItems": 2,
+        "reviewDeadlineDays": 14,
+        "policyVersion": "1.0.0",
+        "disclosureNotice": "감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다."
+      }
+    },
     "appraisal": {
       "baseFee": 29900,
       "visitPrice": 29900,
@@ -271,16 +168,48 @@
       ]
     },
     "business": {
-      "companyName": "골드랩 (GoldLab&co)",
+      "companyName": "골드랩앤코 (GoldLab & Co.)",
       "ceo": "황미숙",
-      "bizNo": "101-86-77777",
+      "bizNo": "185-07-02856",
       "mailOrderNo": "제 2025-서울은평-1081 호",
-      "address": "서울특별시 종로구 돈화문로 12길",
-      "tel": "02-765-8888",
-      "csEmail": "cs@goldlabnco.com"
+      "address": "서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호",
+      "tel": "010-4017-4988",
+      "csEmail": "skycraft102@naver.com"
     }
   },
-  "reviews": [],
+  "reviews": [
+    {
+      "id": "REV-20261021-0001",
+      "userId": "usr_customer_review_01",
+      "authorName": "이*정",
+      "authorMasked": "이*정",
+      "category": "APPRAISAL",
+      "categoryLabel": "감정 이용",
+      "transactionType": "MEMBER",
+      "transactionId": "MEMBER-usr_customer_review_01-20261021",
+      "rating": 5,
+      "content": "아꼈는데 금년 시세가 좋길래 종로 골드랩앤코에 맡겼습니다. 3일 정도 걸렸고 남편이 선물받은 타이핀이 57%나 금이라고 합니다 ㅎㅎㅎㅎ 그래서 그냥 남편이안차니 매입도 가능하냐고 하니까 현금으로 바로 매입 진행도 해주시고 목소리도 좋으시고 설명도 잘해주시고 너무 감사합니다 서울가면 한번 들를게요~ 참 돌반지도 같이 샀는데 공임도 안받으시네요 왠지 득템한기분 ㅎㅎㅎ",
+      "photos": [
+        "assets/review_tiepin.png"
+      ],
+      "isVerifiedTrade": true,
+      "isEventReview": false,
+      "eventCode": null,
+      "eventNotice": null,
+      "isPublic": true,
+      "hiddenReason": null,
+      "hiddenAt": null,
+      "hiddenBy": null,
+      "isDeleted": false,
+      "adminReply": {
+        "content": "고객님, 소중하고 따뜻한 후기 남겨주셔서 진심으로 감사드립니다! 소중한 추억이 깃든 제품의 정확한 금 함량(57%)을 신속하고 투명하게 분석해 드리고 매입까지 만족스럽게 진행해 드릴 수 있어 저희도 큰 보람을 느낍니다. 함께 구매해 주신 순금 돌반지도 기분 좋은 선물이 되셨기를 바라며, 다음 번 서울 방문 시에도 편안하게 찾아주시면 성심성의껏 모시겠습니다. 늘 건강하시고 행복 가득한 하루 되세요! - 골드랩앤코 임직원 일동",
+        "repliedAt": "2026-10-21T06:15:00.000Z",
+        "adminName": "황미숙 대표 (골드랩&co)"
+      },
+      "createdAt": "2026-10-21T05:30:00.000Z",
+      "updatedAt": "2026-10-21T06:15:00.000Z"
+    }
+  ],
   "offline_transactions": [],
   "review_reports": []
 }
