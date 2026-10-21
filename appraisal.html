@@ -528,7 +528,7 @@
         </p>
       </div>
 
-      <form id="appraisalForm" onsubmit="SubmitAppraisal(event)">
+      <form id="appraisalForm" novalidate onsubmit="SubmitAppraisal(event)">
         
         <!-- 접수 방식 선택 -->
         <div class="form-group" style="margin-bottom:1.5rem;">
@@ -705,8 +705,8 @@
 
         <!-- 무료 기본 세척 및 광택 신청 -->
         <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.5rem;">
-          <label style="display:flex; align-items:flex-start; gap:0.6rem; cursor:pointer;">
-            <input type="checkbox" id="apFreePolish" style="accent-color:var(--gold-primary); margin-top:0.25rem;">
+          <label style="display:flex; align-items:flex-start; gap:0.8rem; cursor:pointer;">
+            <input type="checkbox" id="apFreePolish" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin-top:0.2rem;">
             <div>
               <strong style="color:var(--gold-light);">[선택] 무상 기본 세척 및 표면 광택 신청 (가능한 제품에 한함)</strong>
               <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.2rem; line-height:1.6;">
@@ -725,8 +725,8 @@
 
           <!-- 1. 등급별 무료 감정 혜택 적용 -->
           <div style="background:rgba(224,184,72,0.06); border:1px solid rgba(224,184,72,0.25); border-radius:12px; padding:1rem 1.2rem; margin-bottom:1.2rem;">
-            <label style="display:flex; align-items:flex-start; gap:0.7rem; cursor:pointer;">
-              <input type="checkbox" id="apApplyFreeBenefit" onchange="RecalculateAppraisalFee()" style="accent-color:var(--gold-primary); margin-top:0.25rem;">
+            <label style="display:flex; align-items:flex-start; gap:0.8rem; cursor:pointer;">
+              <input type="checkbox" id="apApplyFreeBenefit" onchange="RecalculateAppraisalFee()" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin-top:0.2rem;">
               <div>
                 <strong style="color:var(--gold-light); font-size:0.98rem;">[회원 혜택] 연간 무료 감정 혜택 1회 적용 (기본 감정료 29,900원 전액 면제)</strong>
                 <p style="color:var(--text-muted); font-size:0.85rem; margin-top:0.25rem; line-height:1.5;" id="apFreeBenefitNotice">
@@ -766,29 +766,29 @@
             • <strong>비용:</strong> 택배 이용 시 왕복 배송비만 고객 부담 / 현장 방문 접수는 배송비 없음 (특수·추가검사는 별도 견적이며 사전 동의 후 진행)<br>
             • <strong>참여 조건:</strong> 홈페이지 회원 로그인 후 신청 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 (기존 회원도 참여 가능)
           </p>
-          <label style="display:flex; align-items:flex-start; gap:0.65rem; cursor:pointer; background:#08090d; border:1px solid var(--border-gold-bright); border-radius:12px; padding:0.95rem 1.1rem; margin:0;">
-            <input type="checkbox" id="apAgreeEventReview" checked onchange="RecalculateAppraisalFee()" style="accent-color:var(--gold-primary); width:19px; height:19px; margin-top:2px;">
-            <span style="font-size:0.9rem; font-weight:800; color:var(--gold-light); line-height:1.5; word-break:keep-all;">
+          <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; background:#08090d; border:1.5px solid var(--border-gold-bright); border-radius:12px; padding:1.1rem 1.3rem; margin:0; user-select:none; box-shadow:0 4px 15px rgba(0,0,0,0.4);">
+            <input type="checkbox" id="apAgreeEventReview" checked onchange="RecalculateAppraisalFee()" style="accent-color:#e0b848 !important; width:22px !important; height:22px !important; min-width:22px !important; min-height:22px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
+            <span style="font-size:0.95rem; font-weight:800; color:var(--gold-light); line-height:1.55; word-break:keep-all;">
               [필수] 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 조건을 확인하고 이벤트 참여에 동의합니다.
             </span>
           </label>
         </div>
 
         <!-- 필수 약관 및 동의 체크 -->
-        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; margin-bottom:1.8rem; font-size:0.88rem; color:var(--text-light); line-height:1.7;">
-          <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer; margin-bottom:0.6rem;">
-            <input type="checkbox" id="apAgreeInspection" required style="accent-color:var(--gold-primary);">
-            <span>[필수] 비파괴 XRF 성분분석 시험의 범위와 기술적 한계 및 보증서 재발급 불가 정책을 확인하였으며 이에 동의합니다.</span>
+        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.3rem 1.4rem; margin-bottom:1.8rem; font-size:0.9rem; color:var(--text-light); line-height:1.7;">
+          <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; margin-bottom:0.85rem; user-select:none;">
+            <input type="checkbox" id="apAgreeInspection" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
+            <span style="line-height:1.55; word-break:keep-all;">[필수] 비파괴 XRF 성분분석 시험의 범위와 기술적 한계 및 보증서 재발급 불가 정책을 확인하였으며 이에 동의합니다.</span>
           </label>
-          <div id="courierAgreeGroup" style="display:none; margin-bottom:0.6rem;">
-            <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer;">
-              <input type="checkbox" id="apAgreeDelivery" style="accent-color:var(--gold-primary);">
-              <span>[택배 필수] 택배 운송 규정 및 분실·파손 보상 한도(우체국 안심소포 보험 취급 규정 준수)를 확인하고 동의합니다.</span>
+          <div id="courierAgreeGroup" style="display:none; margin-bottom:0.85rem;">
+            <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; user-select:none;">
+              <input type="checkbox" id="apAgreeDelivery" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
+              <span style="line-height:1.55; word-break:keep-all;">[택배 필수] 택배 운송 규정 및 분실·파손 보상 한도(우체국 안심소포 보험 취급 규정 준수)를 확인하고 동의합니다.</span>
             </label>
           </div>
-          <label style="display:flex; align-items:center; gap:0.6rem; cursor:pointer;">
-            <input type="checkbox" id="apAgreePrivacy" required style="accent-color:var(--gold-primary);">
-            <span>[필수] 감정 접수 및 본인 확인을 위한 개인정보 수집 및 이용에 동의합니다.</span>
+          <label style="display:flex; align-items:center; gap:0.85rem; cursor:pointer; margin:0; user-select:none;">
+            <input type="checkbox" id="apAgreePrivacy" style="accent-color:#e0b848 !important; width:20px !important; height:20px !important; min-width:20px !important; min-height:20px !important; cursor:pointer; flex-shrink:0; appearance:auto !important; -webkit-appearance:auto !important; margin:0;">
+            <span style="line-height:1.55; word-break:keep-all;">[필수] 감정 접수 및 본인 확인을 위한 개인정보 수집 및 이용에 동의합니다.</span>
           </label>
         </div>
 
@@ -847,7 +847,7 @@
         </div>
 
         <!-- 제출 버튼 -->
-        <button type="submit" id="btnSubmitAppraisal" class="btn btn-gold" style="width:100%; padding:1.1rem; font-size:1.15rem; font-weight:900;">
+        <button type="button" onclick="SubmitAppraisal(event)" id="btnSubmitAppraisal" class="btn btn-gold" style="width:100%; padding:1.15rem; font-size:1.15rem; font-weight:900; cursor:pointer; box-shadow:0 0 25px rgba(224,184,72,0.35);">
           <i class="fa-solid fa-paper-plane"></i> 감정대행 신청서 접수하기
         </button>
       </form>
@@ -1210,25 +1210,81 @@
     }
 
     async function SubmitAppraisal(e) {
-      e.preventDefault();
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
       const method = document.querySelector('input[name="appraisalMethod"]:checked')?.value || 'VISIT';
-      const applicantName = document.getElementById('apApplicantName').value.trim();
-      const applicantPhone = document.getElementById('apApplicantPhone').value.trim();
-      const returnAddress = document.getElementById('apReturnAddress')?.value.trim() || '';
-      const quantity = parseInt(document.getElementById('apQuantity').value, 10) || 1;
+      const applicantName = (document.getElementById('apApplicantName')?.value || '').trim();
+      const applicantPhone = (document.getElementById('apApplicantPhone')?.value || '').trim();
+      const returnAddress = (document.getElementById('apReturnAddress')?.value || '').trim();
+      const quantity = parseInt(document.getElementById('apQuantity')?.value, 10) || 1;
 
-      // Item 1
-      const itemType1 = document.getElementById('apItemType').value;
-      const expectedPurity1 = document.getElementById('apExpectedPurity').value;
-      const expectedWeight1 = document.getElementById('apExpectedWeight').value.trim();
-      const requests1 = document.getElementById('apRequests').value.trim();
+      // 1. Applicant Info Validation
+      if (!applicantName) {
+        alert('신청자 성함을 입력해 주세요.');
+        document.getElementById('apApplicantName')?.focus();
+        return;
+      }
+      if (!applicantPhone) {
+        alert('연락처(휴대폰 번호)를 입력해 주세요.');
+        document.getElementById('apApplicantPhone')?.focus();
+        return;
+      }
 
-      // Free polish, event, and terms
-      const freePolish = document.getElementById('apFreePolish').checked;
+      // 2. Courier Validation
+      if (method === 'COURIER') {
+        if (!returnAddress) {
+          alert('택배 반환 배송지 주소를 정확히 입력해 주세요.');
+          document.getElementById('apReturnAddress')?.focus();
+          return;
+        }
+        const agreeDelivery = document.getElementById('apAgreeDelivery');
+        if (agreeDelivery && !agreeDelivery.checked) {
+          alert('[택배 필수] 택배 운송 규정 및 분실·파손 보상 한도에 동의해 주세요.');
+          agreeDelivery.focus();
+          return;
+        }
+      }
+
+      // 3. Mandatory Inspection & Privacy Terms Validation
+      const agreeInspection = document.getElementById('apAgreeInspection');
+      if (agreeInspection && !agreeInspection.checked) {
+        alert('[필수 확인]\n비파괴 XRF 성분분석 시험의 범위와 기술적 한계 및 보증서 재발급 불가 정책을 확인하고 동의해 주세요.');
+        agreeInspection.focus();
+        agreeInspection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      const agreePrivacy = document.getElementById('apAgreePrivacy');
+      if (agreePrivacy && !agreePrivacy.checked) {
+        alert('[필수 확인]\n감정 접수 및 본인 확인을 위한 개인정보 수집 및 이용에 동의해 주세요.');
+        agreePrivacy.focus();
+        agreePrivacy.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // 4. Free Event Condition & User Auth Resolution
       const isEventActive = Date.now() <= 1793977199000;
-      const isEventChecked = isEventActive && document.getElementById('apAgreeEventReview')?.checked;
+      const eventAgreementCheckbox = document.getElementById('apAgreeEventReview');
+      const isEventChecked = isEventActive && (eventAgreementCheckbox ? eventAgreementCheckbox.checked : false);
 
-      // Event participation requires logged-in user
+      // Resolve current user from memory, cached active user, or token
+      if (!currentUser) {
+        const cached = localStorage.getItem('goldlab_active_user');
+        if (cached) {
+          try { currentUser = JSON.parse(cached); } catch (err) {}
+        }
+      }
+      if (!currentUser && localStorage.getItem('goldlab_auth_token')) {
+        try {
+          const authMe = await ApiRequest('/api/auth/me');
+          if (authMe && authMe.success && authMe.user) {
+            currentUser = authMe.user;
+          }
+        } catch (err) {}
+      }
+
       if (isEventChecked && !currentUser) {
         alert('귀금속 감정비 무료 이벤트는 회원가입 및 로그인 후 신청하실 수 있습니다.\n로그인 화면으로 안내해 드립니다.');
         sessionStorage.setItem('goldlab_auth_redirect', 'appraisal.html?event=FREE_APPRAISAL_2026');
@@ -1239,15 +1295,17 @@
       const applyFreeBenefit = isEventChecked ? false : (document.getElementById('apApplyFreeBenefit')?.checked || false);
       const gcUsed = (isEventChecked || applyFreeBenefit) ? 0 : (parseInt(document.getElementById('apGcAmount')?.value, 10) || 0);
 
-      if (method === 'COURIER' && !returnAddress) {
-        alert('택배 반환 배송지를 입력해주세요.');
-        return;
-      }
-
       if (quantity < 1 || quantity > 2) {
         alert('감정대행 접수는 1건당 제품 최대 2개까지만 가능합니다.');
         return;
       }
+
+      // Item 1 Information
+      const itemType1 = document.getElementById('apItemType')?.value || '골드바';
+      const expectedPurity1 = document.getElementById('apExpectedPurity')?.value || '모름';
+      const expectedWeight1 = (document.getElementById('apExpectedWeight')?.value || '').trim();
+      const requests1 = (document.getElementById('apRequests')?.value || '').trim();
+      const freePolish = !!document.getElementById('apFreePolish')?.checked;
 
       const items = [
         {

@@ -76,11 +76,44 @@ img, video, canvas {
 a { color: inherit; text-decoration: none; }
 ul { list-style: none; }
 
-button, input, select {
+button, input:not([type="checkbox"]):not([type="radio"]), select {
   font-family: inherit;
   outline: none;
   appearance: none;
   -webkit-appearance: none;
+}
+
+/* Explicit Checkbox & Radio Appearance */
+input[type="checkbox"] {
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+  accent-color: #e0b848 !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
+}
+
+input[type="radio"] {
+  appearance: auto !important;
+  -webkit-appearance: auto !important;
+  -moz-appearance: auto !important;
+  accent-color: #e0b848 !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  cursor: pointer !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+  margin: 0 !important;
+  flex-shrink: 0 !important;
 }
 
 /* Container */

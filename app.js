@@ -837,6 +837,12 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     if (rawUser) {
       try { user = JSON.parse(rawUser); } catch(e) {}
     }
+    if (!user && typeof currentUser !== 'undefined' && currentUser) {
+      user = currentUser;
+    }
+    if (!user && token) {
+      user = (db.users || []).find(u => u.id === token || u.email === token) || (db.users && db.users[0]);
+    }
 
     const dateStr = new Date().toISOString().substring(0, 10).replace(/-/g, '');
     const serial = String(db.appraisals.length + 1).padStart(4, '0');
@@ -2243,10 +2249,12 @@ async function HandleUserLogin(e) {
       authToken = res2fa.token;
       localStorage.setItem('goldlab_auth_token', authToken);
       currentUser = res2fa.user;
+      localStorage.setItem('goldlab_active_user', JSON.stringify(currentUser));
     } else {
       authToken = res.token;
       localStorage.setItem('goldlab_auth_token', authToken);
       currentUser = res.user;
+      localStorage.setItem('goldlab_active_user', JSON.stringify(currentUser));
     }
 
     UpdateAuthUI();
@@ -2314,6 +2322,7 @@ async function HandleUserSignup(e) {
     authToken = res.token;
     localStorage.setItem('goldlab_auth_token', authToken);
     currentUser = res.user;
+    localStorage.setItem('goldlab_active_user', JSON.stringify(currentUser));
 
     UpdateAuthUI();
     CloseModal('authModal');
