@@ -302,7 +302,7 @@ const DEFAULT_CUSTOMER_REVIEWS = [
     transactionType: 'MEMBER',
     transactionId: 'MEMBER-usr_customer_review_01-20261021',
     rating: 5,
-    content: '아꼈는데 금년 시세가 좋길래 종로 골드랩앤코에 맡겼습니다. 3일정도 걸렸고 남편이 선물받은 타이핀이 57%의 금이라고 하네요ㅎㅎㅎㅎ 그래서 그냥 남편도 안차니 매입도 가능하다고 하니까 현금으로 바로 매입 진행도 해주고 목소리도 좋으시고 설명도 잘해주시고 너무 감사합니다. 서울가면 한번 들릴게요~ 돌반지도 같이 샀는데 공임도 안받으시나요? 득템한기분ㅎㅎ',
+    content: '감정대행 서비스가 있다고해서 혹시나 하는마음에 연락드렸더니 친절하게 상담해주시고 택배서비스라 비대면 이라 좋았습니다 제가 지방이다보니 금은방에서 검사해보니 금이라고 하시긴 하셨는데 좀더 자세히 알고싶어서 종로 골드랩앤코에 맏겼습니다 3일 정도 걸렸고 남편이 선물받은 타이핀이 57%나 금이라고 합니다 ㅎㅎㅎㅎ 그래서 그냥 남편이안차니  매입도 가능하냐고 하니까 현금으로 바로 매입 진행도 해주시고 목소리도 좋으시고 설명도 잘해주시고 너무 감사합니다 서울가면 한번 들를꼐요~ 참 돌반지도 같이 샀는데 공임도 안받으시네요 왠지 득템한기분 ㅎㅎㅎ',
     photos: [],
     isVerifiedTrade: true,
     isEventReview: false,
@@ -388,8 +388,11 @@ function getInBrowserDB() {
         if (parsed.reviews.length === 0) {
           parsed.reviews = JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_REVIEWS));
         } else {
-          const hasRev = parsed.reviews.some(r => r.id === 'REV-20261021-0001');
-          if (!hasRev) {
+          const targetRev = parsed.reviews.find(r => r.id === 'REV-20261021-0001');
+          if (targetRev) {
+            targetRev.content = DEFAULT_CUSTOMER_REVIEWS[0].content;
+            targetRev.adminReply = null;
+          } else {
             parsed.reviews.unshift(...JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_REVIEWS)));
           }
           parsed.reviews.forEach(r => {
