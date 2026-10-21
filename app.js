@@ -291,6 +291,38 @@ function ApplyKakaoChannelConfig() {
 // ==========================================================================
 const IN_BROWSER_DB_KEY = 'goldlab_live_db_v5';
 
+const DEFAULT_CUSTOMER_REVIEWS = [
+  {
+    id: 'REV-20261021-0001',
+    userId: 'usr_customer_review_01',
+    authorName: '이*정',
+    authorMasked: '이*정',
+    category: 'APPRAISAL',
+    categoryLabel: '감정 이용',
+    transactionType: 'MEMBER',
+    transactionId: 'MEMBER-usr_customer_review_01-20261021',
+    rating: 5,
+    content: '아꼈는데 금년 시세가 좋길래 종로 골드랩앤코에 맡겼습니다. 3일 정도 걸렸고 남편이 선물받은 타이핀이 57%나 금이라고 합니다 ㅎㅎㅎㅎ 그래서 그냥 남편이안차니 매입도 가능하냐고 하니까 현금으로 바로 매입 진행도 해주시고 목소리도 좋으시고 설명도 잘해주시고 너무 감사합니다 서울가면 한번 들를게요~ 참 돌반지도 같이 샀는데 공임도 안받으시네요 왠지 득템한기분 ㅎㅎㅎ',
+    photos: ['assets/review_tiepin.png'],
+    isVerifiedTrade: true,
+    isEventReview: false,
+    eventCode: null,
+    eventNotice: null,
+    isPublic: true,
+    hiddenReason: null,
+    hiddenAt: null,
+    hiddenBy: null,
+    isDeleted: false,
+    adminReply: {
+      content: '고객님, 소중하고 따뜻한 후기 남겨주셔서 진심으로 감사드립니다! 소중한 추억이 깃든 제품의 정확한 금 함량(57%)을 신속하고 투명하게 분석해 드리고 매입까지 만족스럽게 진행해 드릴 수 있어 저희도 큰 보람을 느낍니다. 함께 구매해 주신 순금 돌반지도 기분 좋은 선물이 되셨기를 바라며, 다음 번 서울 방문 시에도 편안하게 찾아주시면 성심성의껏 모시겠습니다. 늘 건강하시고 행복 가득한 하루 되세요! - 골드랩앤코 임직원 일동',
+      repliedAt: '2026-10-21T06:15:00.000Z',
+      adminName: '황미숙 대표 (골드랩&co)'
+    },
+    createdAt: '2026-10-21T05:30:00.000Z',
+    updatedAt: '2026-10-21T06:15:00.000Z'
+  }
+];
+
 function getInBrowserDB() {
   let dbStr = localStorage.getItem(IN_BROWSER_DB_KEY);
   if (dbStr) {
@@ -357,6 +389,16 @@ function getInBrowserDB() {
         }
 
         if (!Array.isArray(parsed.reviews)) parsed.reviews = [];
+        if (parsed.reviews.length === 0) {
+          parsed.reviews = JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_REVIEWS));
+        } else {
+          parsed.reviews.forEach(r => {
+            if (r.transactionType === 'MEMBER' && (r.transactionId === 'GENERAL' || !r.transactionId)) {
+              r.transactionId = `MEMBER-${r.userId || 'usr'}-${r.id || Date.now()}`;
+            }
+          });
+        }
+
         if (!Array.isArray(parsed.offline_transactions)) parsed.offline_transactions = [];
         if (!Array.isArray(parsed.review_reports)) parsed.review_reports = [];
 
@@ -401,7 +443,7 @@ function getInBrowserDB() {
       { id: 'GL-PROD-002', name: '24K 순금 투자용 미니 골드바 1돈 (3.75g)', category: 'GOLDBAR_24K', purity: '24K (순도 99.99%)', weightGrams: 3.75, price: 715000, stock: 30, status: 'ACTIVE' },
       { id: 'GL-PROD-003', name: '18K 클래식 샤인 체인 팔찌 (남녀공용)', category: 'BRACELET_18K', purity: '18K (순도 75.0%)', weightGrams: 18.75, price: 2650000, stock: 5, status: 'ACTIVE' }
     ],
-    reviews: [],
+    reviews: JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_REVIEWS)),
     offline_transactions: [],
     review_reports: [],
     settings: {
@@ -1235,7 +1277,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     const totalCount = allPublic.length;
     let sumRating = 0;
     const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    const categoryCounts = { ALL: totalCount, GOLD_SELL: 0, PRODUCT_BUY: 0, APPRAISAL: 0 };
+    const categoryCounts = { ALL: totalCount, GOLD_SELL: 0, PRODUCT_BUY: 0, APPRAISAL: 0, GENERAL: 0 };
 
     allPublic.forEach(r => {
       const rt = Math.round(Number(r.rating) || 5);
@@ -1419,7 +1461,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     }
     if (!user) throw new Error('로그인 후 후기를 작성할 수 있습니다.');
 
-    const { rating, content, photos, transactionType, transactionId, authCode } = body || {};
+    const { rating, content, photos, transactionType, transactionId, authCode, category } = body || {};
     const numRating = parseInt(rating, 10);
     if (!numRating || numRating < 1 || numRating > 5) throw new Error('별점은 1점부터 5점까지 직접 선택해 주세요.');
 
@@ -1432,30 +1474,28 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       throw new Error('단순 방문 상담 예약 건은 거래 인증 후기를 작성할 수 없습니다.');
     }
 
-    if (!transactionType || !transactionId) {
-      throw new Error('연결할 거래 완료 내역을 선택해 주세요.');
-    }
-
-    // Duplicate check
-    const existing = (db.reviews || []).find(r => r.transactionType === transactionType && r.transactionId === transactionId);
-    if (existing) {
-      throw new Error('해당 거래 건은 이미 후기가 작성되었습니다. (완료 내역 1건당 후기 1개 제한)');
-    }
-
-    let finalCategory = 'PRODUCT_BUY';
-    let finalCategoryLabel = '제품 구매';
-    let verifiedTxId = transactionId;
+    let finalCategory = category || 'GENERAL';
+    let finalCategoryLabel = '회원 이용 후기';
+    let verifiedTxId = transactionId || authCode;
+    let verifiedTxType = transactionType || 'MEMBER';
 
     let isEventReview = false;
     let eventCode = null;
     let eventNotice = null;
 
-    if (transactionType === 'ORDER') {
-      const ord = (db.orders || []).find(o => o.id === transactionId);
+    if (!verifiedTxType || verifiedTxType === 'MEMBER' || verifiedTxId === 'GENERAL' || verifiedTxId === 'MEMBER') {
+      verifiedTxType = 'MEMBER';
+      verifiedTxId = `MEMBER-${user.id}-${Date.now()}`;
+      if (finalCategory === 'GOLD_SELL') finalCategoryLabel = '금 판매';
+      else if (finalCategory === 'PRODUCT_BUY') finalCategoryLabel = '제품 구매';
+      else if (finalCategory === 'APPRAISAL') finalCategoryLabel = '감정 이용';
+      else { finalCategory = 'GENERAL'; finalCategoryLabel = '회원 이용 후기'; }
+    } else if (verifiedTxType === 'ORDER') {
+      const ord = (db.orders || []).find(o => o.id === verifiedTxId);
       finalCategory = 'PRODUCT_BUY';
       finalCategoryLabel = '제품 구매';
-    } else if (transactionType === 'APPRAISAL') {
-      const ap = (db.appraisals || []).find(a => a.id === transactionId);
+    } else if (verifiedTxType === 'APPRAISAL') {
+      const ap = (db.appraisals || []).find(a => a.id === verifiedTxId);
       const isGoldSell = ap && ap.itemType && (ap.itemType.includes('매입') || ap.itemType.includes('판매') || ap.itemType.includes('고금'));
       finalCategory = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
       finalCategoryLabel = isGoldSell ? '금 판매' : '감정 이용';
@@ -1465,8 +1505,8 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
         eventCode = 'FREE_APPRAISAL_2026';
         eventNotice = '감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.';
       }
-    } else if (transactionType === 'OFFLINE') {
-      const cleanCode = (authCode || transactionId).trim().toUpperCase();
+    } else if (verifiedTxType === 'OFFLINE') {
+      const cleanCode = (authCode || verifiedTxId).trim().toUpperCase();
       const offTx = (db.offline_transactions || []).find(t => t.authCode && t.authCode.toUpperCase() === cleanCode);
       if (!offTx || offTx.status !== 'AUTHORIZED') throw new Error('유효한 오프라인 거래 인증코드가 아닙니다.');
       verifiedTxId = offTx.authCode;
@@ -1475,6 +1515,14 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       offTx.status = 'REVIEWED';
       offTx.reviewedUserId = user.id;
       offTx.usedAt = new Date().toISOString();
+    }
+
+    // Duplicate check: Block ONLY if already reviewed for this transaction (non-MEMBER)
+    if (verifiedTxType !== 'MEMBER') {
+      const existing = (db.reviews || []).find(r => r.transactionType === verifiedTxType && r.transactionId === verifiedTxId);
+      if (existing) {
+        throw new Error('해당 거래 건은 이미 후기가 작성되었습니다. (완료 내역 1건당 후기 1개 제한)');
+      }
     }
 
     function maskName(str) {
@@ -1496,7 +1544,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       authorMasked: maskName(user.name),
       category: finalCategory,
       categoryLabel: finalCategoryLabel,
-      transactionType,
+      transactionType: verifiedTxType,
       transactionId: verifiedTxId,
       rating: numRating,
       content: trimmedContent,
