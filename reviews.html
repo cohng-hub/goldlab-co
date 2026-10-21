@@ -1143,32 +1143,11 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261021_rev_clean_v10"></script>
+  <script src="app.js?v=20261021_rev_v11"></script>
   <script>
     /* ==============================================================
        Dedicated Customer Review Interactive Engine
        ============================================================== */
-    // Immediate Active Purge of old cached review from browser localStorage
-    (function purgeOldCachedReview() {
-      try {
-        const key = 'goldlab_live_db_v5';
-        const str = localStorage.getItem(key);
-        if (str) {
-          const db = JSON.parse(str);
-          if (db && Array.isArray(db.reviews)) {
-            const beforeLen = db.reviews.length;
-            db.reviews = db.reviews.filter(r => 
-              r.userId !== 'usr_customer_review_01' &&
-              !(r.content && r.content.includes('타이핀')) &&
-              !(r.authorName && r.authorName.includes('이*정'))
-            );
-            if (db.reviews.length !== beforeLen) {
-              localStorage.setItem(key, JSON.stringify(db));
-            }
-          }
-        }
-      } catch (e) {}
-    })();
 
     let currentCategory = 'ALL';
     let currentPage = 1;
@@ -1210,13 +1189,6 @@
         const res = await ApiRequest(`/api/reviews?category=${currentCategory}&page=${currentPage}&limit=10`);
 
         if (res && res.success) {
-          if (Array.isArray(res.reviews)) {
-            res.reviews = res.reviews.filter(r => 
-              r.userId !== 'usr_customer_review_01' &&
-              !(r.content && r.content.includes('타이핀')) &&
-              !(r.authorName && r.authorName.includes('이*정'))
-            );
-          }
           RenderAggregateStats(res);
           RenderReviewsList(res.reviews, res.reviews ? res.reviews.length : res.totalCount, res.reviews ? res.reviews.length : res.filteredCount);
           RenderPagination(res.currentPage, res.totalPages);
