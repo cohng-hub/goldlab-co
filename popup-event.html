@@ -29,7 +29,7 @@
 
     .popup-wrapper {
       flex: 1;
-      padding: 34px 28px 24px 28px;
+      padding: 24px 22px 18px 22px;
       overflow-y: auto;
     }
 
@@ -167,15 +167,19 @@
 
     /* Fixed Bottom Bar (Exact Shilla Hotel Reference Style) */
     .popup-bottom-bar {
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
       background: #231f20;
       color: #ffffff;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 11px 20px;
+      padding: 12px 18px;
       font-size: 13px;
       border-top: 1px solid #3a3435;
       user-select: none;
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.15);
     }
     .popup-bottom-bar label {
       display: inline-flex;

@@ -3638,9 +3638,6 @@ function getKstMidnightTimestamp() {
 }
 
 function InitFreeAppraisalEventPopup() {
-  const modal = document.getElementById('freeAppraisalEventModal');
-  if (!modal) return;
-
   // 1. Check if event is still active (deadline: 2026-11-06 23:59:59 KST)
   if (Date.now() > FREE_APPRAISAL_EVENT_CONFIG.endTimestamp) {
     return;
@@ -3657,119 +3654,48 @@ function InitFreeAppraisalEventPopup() {
     return;
   }
 
-  // 4. 별도의 브라우저 창(독립 팝업 윈도우, 신라호텔 스타일)으로 띄우기
-  const popupW = 500;
-  const popupH = 680;
-  const popupLeft = Math.max(30, Math.round((window.screen.width - popupW) / 2));
-  const popupTop = Math.max(30, Math.round((window.screen.height - popupH) / 2));
-
-  let popupWin = null;
-  try {
-    popupWin = window.open(
-      'popup-event.html',
-      'GoldLabEventNoticePopup',
-      `width=${popupW},height=${popupH},top=${popupTop},left=${popupLeft},scrollbars=yes,resizable=yes`
-    );
-  } catch (e) {
-    console.warn('독립 팝업 윈도우 호출 실패(브라우저 팝업 차단 등):', e);
-  }
-
-  // 별도 브라우저 창이 성공적으로 열렸다면 웹사이트 내부 모달은 띄우지 않고 종료!
-  if (popupWin && !popupWin.closed && typeof popupWin.closed !== 'undefined') {
-    try { popupWin.focus(); } catch (e) {}
+  // 4. 별도의 브라우저 창(독립 팝업 윈도우, 신라호텔 스타일)으로 바로 띄우기 (어두운 내부 모달 완전 제거)
+  const popup = OpenStandaloneEventPopup();
+  if (popup && !popup.closed && typeof popup.closed !== 'undefined') {
     return;
   }
 
-  // 5. 브라우저에서 자동 팝업 차단(사용자 클릭 제스처 필요 정책)이 발생한 경우에만 안전하게 내부 모달로 fallback
-  const btnText = document.getElementById('eventModalBtnText');
-  if (btnText) {
-    if (currentUser) {
-      btnText.innerText = '무료 감정대행 신청하기';
-    } else {
-      btnText.innerText = '회원가입·로그인 후 무료 감정 신청';
-    }
-  }
-
-  eventPopupLastFocused = document.activeElement;
-  modal.classList.add('active');
-  document.body.style.overflow = 'hidden';
-
-  const actionBtn = document.getElementById('btnEventModalAction');
-  if (actionBtn) actionBtn.focus();
-
-  // Focus trap & Esc handler
-  eventPopupKeydownHandler = function(e) {
-    if (e.key === 'Escape') {
-      e.preventDefault();
-      CloseEventPopup(false);
-      return;
-    }
-    if (e.key === 'Tab') {
-      const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey) {
-        if (document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    }
+  // 5. 브라우저 보안 정책상 페이지 로드 직후 팝업이 대기된 경우, 첫 클릭/터치 즉시 독립 팝업창 실행
+  const triggerOnFirstInteraction = function() {
+    document.removeEventListener('click', triggerOnFirstInteraction, true);
+    document.removeEventListener('pointerdown', triggerOnFirstInteraction, true);
+    document.removeEventListener('touchstart', triggerOnFirstInteraction, true);
+    OpenStandaloneEventPopup();
   };
-  document.addEventListener('keydown', eventPopupKeydownHandler);
+  document.addEventListener('click', triggerOnFirstInteraction, true);
+  document.addEventListener('pointerdown', triggerOnFirstInteraction, true);
+  document.addEventListener('touchstart', triggerOnFirstInteraction, true);
 }
 
 function CloseEventPopup(fromTodayCheckbox = false) {
-  const modal = document.getElementById('freeAppraisalEventModal');
-  if (!modal) return;
-
-  const chkToday = document.getElementById('chkEventModalHideToday');
-  if (fromTodayCheckbox || (chkToday && chkToday.checked)) {
+  if (fromTodayCheckbox) {
     const kstMidnight = getKstMidnightTimestamp();
     localStorage.setItem('goldlab_hide_event_popup_until', String(kstMidnight));
   }
-
-  // Session suppression for '닫기'
   sessionStorage.setItem('goldlab_hide_event_popup_session', 'true');
-
-  modal.classList.remove('active');
+  const modal = document.getElementById('freeAppraisalEventModal');
+  if (modal) modal.classList.remove('active');
   document.body.style.overflow = '';
-
-  if (eventPopupKeydownHandler) {
-    document.removeEventListener('keydown', eventPopupKeydownHandler);
-    eventPopupKeydownHandler = null;
-  }
-
-  if (eventPopupLastFocused && typeof eventPopupLastFocused.focus === 'function') {
-    try { eventPopupLastFocused.focus(); } catch (e) {}
-  }
 }
 
 function HandleEventPopupAction() {
-  const chkToday = document.getElementById('chkEventModalHideToday');
-  if (chkToday && chkToday.checked) {
-    localStorage.setItem('goldlab_hide_event_popup_until', String(getKstMidnightTimestamp()));
-  }
-
+  CloseEventPopup(false);
   if (currentUser) {
-    CloseEventPopup(false);
     window.location.href = 'appraisal.html?event=FREE_APPRAISAL_2026';
   } else {
     sessionStorage.setItem('goldlab_auth_redirect', 'appraisal.html?event=FREE_APPRAISAL_2026');
-    CloseEventPopup(false);
     OpenAuthModal('login');
   }
 }
 
 function OpenStandaloneEventPopup() {
-  const popupW = 500;
-  const popupH = 680;
+  const popupW = 520;
+  const popupH = 720;
   const popupLeft = Math.max(30, Math.round((window.screen.width - popupW) / 2));
   const popupTop = Math.max(30, Math.round((window.screen.height - popupH) / 2));
 
