@@ -358,7 +358,11 @@ function getInBrowserDB() {
         }
 
         if (!Array.isArray(parsed.reviews)) parsed.reviews = [];
-        parsed.reviews = parsed.reviews.filter(r => r.userId !== 'usr_customer_review_01');
+        parsed.reviews = parsed.reviews.filter(r => 
+          r.userId !== 'usr_customer_review_01' &&
+          !(r.content && r.content.includes('타이핀')) &&
+          !(r.authorName && r.authorName.includes('이*정'))
+        );
         parsed.reviews.forEach(r => {
           if (r.transactionType === 'MEMBER' && (r.transactionId === 'GENERAL' || !r.transactionId)) {
             r.transactionId = `MEMBER-${r.userId || 'usr'}-${r.id || Date.now()}`;
@@ -1239,7 +1243,13 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     const page = Math.max(1, parseInt(urlParams.get('page') || '1', 10));
     const limit = Math.max(1, Math.min(50, parseInt(urlParams.get('limit') || '10', 10)));
 
-    const allPublic = (db.reviews || []).filter(r => r.isPublic && !r.isDeleted);
+    const allPublic = (db.reviews || []).filter(r => 
+      r.isPublic && 
+      !r.isDeleted &&
+      r.userId !== 'usr_customer_review_01' &&
+      !(r.content && r.content.includes('타이핀')) &&
+      !(r.authorName && r.authorName.includes('이*정'))
+    );
     const totalCount = allPublic.length;
     let sumRating = 0;
     const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };

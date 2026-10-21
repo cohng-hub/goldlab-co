@@ -1,7 +1,7 @@
 {
   "version": "2.0.0",
   "createdAt": "2026-10-08T12:26:04.017Z",
-  "updatedAt": "2026-10-21T06:28:39.569Z",
+  "updatedAt": "2026-10-21T06:33:40.485Z",
   "users": [
     {
       "id": "usr_master_001",
@@ -51,6 +51,14 @@
       "expiresAt": "2026-10-28T06:28:39.240Z",
       "clientIP": "::ffff:127.0.0.1",
       "createdAt": "2026-10-21T06:28:39.240Z"
+    },
+    {
+      "id": "sess_1792564419732",
+      "userId": "usr_master_001",
+      "hashedToken": "7d25709a7b5270fad5104dfd1212eb2e51686c86c499d32fdc9a32eff5fdc9c5",
+      "expiresAt": "2026-10-28T06:33:39.732Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-21T06:33:39.732Z"
     }
   ],
   "password_resets": [],
