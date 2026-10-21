@@ -183,6 +183,7 @@
           </h3>
           <a href="appraisal.html" class="btn btn-gold btn-sm"><i class="fa-solid fa-plus"></i> 신규 감정 접수하기</a>
         </div>
+        <div id="clientEventReviewNotice" style="display:none; margin-bottom:1.2rem;"></div>
         <div class="data-table-wrap">
           <table class="data-table">
             <thead>
@@ -407,10 +408,11 @@
                 <th>실측중량</th>
                 <th>상태 변경</th>
                 <th>확인서 발행</th>
+                <th>이벤트/후기 상태</th>
               </tr>
             </thead>
             <tbody id="adminAppraisalsBody">
-              <tr><td colspan="8" style="text-align:center; padding:2rem;">불러오는 중...</td></tr>
+              <tr><td colspan="9" style="text-align:center; padding:2rem;">불러오는 중...</td></tr>
             </tbody>
           </table>
         </div>
@@ -905,7 +907,7 @@
     <p>© 2026 GoldLab & Co. All Rights Reserved.</p>
   </footer>
 
-  <script src="app.js?v=202610210317"></script>
+  <script src="app.js?v=202610210337"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Check Auth
@@ -1031,8 +1033,12 @@
 
         if (!res.success || !res.appraisals || res.appraisals.length === 0) {
           tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:3rem; color:var(--text-muted);">신청하신 감정대행 내역이 없습니다.</td></tr>';
+          const noticeEl = document.getElementById('clientEventReviewNotice');
+          if (noticeEl) noticeEl.style.display = 'none';
           return;
         }
+
+        const pendingEventReviews = [];
 
         tbody.innerHTML = res.appraisals.map(a => {
           const statusClass = 'badge-status badge-status-' + a.status.toLowerCase().replace(/_/g, '-');
@@ -1045,21 +1051,53 @@
             ? a.items.map(it => it.itemType).join(', ')
             : a.itemType;
 
-          const feeDesc = a.freeBenefitApplied
-            ? '<div style="font-size:0.75rem; color:#10b981;">무료 혜택 적용 (0원)</div>'
-            : (a.gcUsed > 0 
-                ? `<div style="font-size:0.75rem; color:var(--gold-light);">GC -${a.gcUsed.toLocaleString('ko-KR')}원 할인 -> ${a.finalPayAmount.toLocaleString('ko-KR')}원</div>`
-                : '<div style="font-size:0.75rem; color:var(--text-muted);">기본 29,900원</div>');
+          const isEvent = !!(a.isEventApplied || a.eventCode === 'FREE_APPRAISAL_2026');
+
+          const feeDesc = isEvent
+            ? '<div style="font-size:0.75rem; color:#f5e4a2; font-weight:800;"><i class="fa-solid fa-gift text-gold"></i> 감정비 무료 이벤트 적용 (0원)</div>'
+            : (a.freeBenefitApplied
+                ? '<div style="font-size:0.75rem; color:#10b981;">회원 무료 혜택 적용 (0원)</div>'
+                : (a.gcUsed > 0 
+                    ? `<div style="font-size:0.75rem; color:var(--gold-light);">GC -${a.gcUsed.toLocaleString('ko-KR')}원 할인 -> ${a.finalPayAmount.toLocaleString('ko-KR')}원</div>`
+                    : '<div style="font-size:0.75rem; color:var(--text-muted);">기본 29,900원</div>'));
 
           const apInfo = eligibleMap[`APPRAISAL_${a.id}`];
           const isDone = ['COMPLETED', 'INSPECTED', 'RETURN_SHIPPED'].includes(a.status);
+          const alreadyReviewed = !!(a.reviewedReviewId || (apInfo && apInfo.alreadyReviewed));
+
           let reviewActionHtml = '';
-          if (apInfo && apInfo.alreadyReviewed) {
-            reviewActionHtml = `<a href="reviews.html" class="btn btn-outline-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-star"></i> 내 후기 보기</a>`;
-          } else if (isDone) {
-            reviewActionHtml = `<a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
+
+          if (isEvent) {
+            if (alreadyReviewed) {
+              reviewActionHtml = `<a href="reviews.html" class="btn btn-outline-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-star"></i> 작성한 후기 보기</a>`;
+            } else if (isDone) {
+              const compDate = new Date(a.updatedAt || a.createdAt);
+              const deadline = new Date(compDate.getTime() + 14 * 24 * 3600 * 1000);
+              const diffDays = Math.ceil((deadline.getTime() - Date.now()) / (24 * 3600 * 1000));
+              pendingEventReviews.push({ receiptNo: a.receiptNo, diffDays });
+
+              if (diffDays >= 0) {
+                reviewActionHtml = `
+                  <a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px; box-shadow:0 0 10px rgba(224,184,72,0.3);"><i class="fa-solid fa-pen"></i> 이벤트 후기 작성</a>
+                  <div style="font-size:0.72rem; color:var(--gold-light); margin-top:2px;">기한: 14일 이내 (D-${diffDays})</div>
+                `;
+              } else {
+                reviewActionHtml = `
+                  <a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px; background:#b91c1c; border-color:#ef4444;"><i class="fa-solid fa-triangle-exclamation"></i> 이벤트 후기 작성</a>
+                  <div style="font-size:0.72rem; color:#ef4444; margin-top:2px;">기한 경과 (솔직한 후기 작성 요망)</div>
+                `;
+              }
+            } else {
+              reviewActionHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">서비스 완료 후 작성</span>`;
+            }
           } else {
-            reviewActionHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">검사완료 후 작성</span>`;
+            if (alreadyReviewed) {
+              reviewActionHtml = `<a href="reviews.html" class="btn btn-outline-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-star"></i> 내 후기 보기</a>`;
+            } else if (isDone) {
+              reviewActionHtml = `<a href="reviews.html?write_type=APPRAISAL&ref_id=${a.id}" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px;"><i class="fa-solid fa-pen"></i> 후기 작성</a>`;
+            } else {
+              reviewActionHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">검사완료 후 작성</span>`;
+            }
           }
 
           return `
@@ -1078,6 +1116,29 @@
             </tr>
           `;
         }).join('');
+
+        const noticeEl = document.getElementById('clientEventReviewNotice');
+        if (noticeEl) {
+          if (pendingEventReviews.length > 0) {
+            noticeEl.style.display = 'block';
+            noticeEl.innerHTML = `
+              <div style="background:rgba(224,184,72,0.12); border:1px solid var(--border-gold-bright); border-radius:14px; padding:1rem 1.4rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+                <div style="display:flex; align-items:center; gap:0.7rem;">
+                  <i class="fa-solid fa-gift text-gold" style="font-size:1.5rem;"></i>
+                  <div>
+                    <strong style="color:var(--gold-light); font-size:0.95rem;">[귀금속 감정비 무료 이벤트] 서비스 완료 후기 작성 안내</strong>
+                    <p style="color:var(--text-light); font-size:0.85rem; margin:0.2rem 0 0 0;">
+                      무료 혜택으로 감정 완료된 <strong>${pendingEventReviews.length}건</strong>이 있습니다. 서비스 완료 후 14일 이내 솔직한 후기를 남겨주세요. (별점 무관 · 사진 첨부 환영)
+                    </p>
+                  </div>
+                </div>
+                <a href="reviews.html" class="btn btn-gold btn-sm" style="white-space:nowrap;"><i class="fa-solid fa-pen"></i> 후기 작성하러 가기</a>
+              </div>
+            `;
+          } else {
+            noticeEl.style.display = 'none';
+          }
+        }
       } catch (e) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#ef4444;">감정 내역 로드 실패</td></tr>';
       }
@@ -1297,6 +1358,28 @@
             ? `<button class="btn btn-outline-gold btn-sm" onclick="ViewCertificate('${a.certificateNo}')"><i class="fa-solid fa-eye"></i> 확인서</button>`
             : `<button class="btn btn-gold btn-sm" onclick="OpenCertIssueModal('${a.id}')"><i class="fa-solid fa-stamp"></i> 발행</button>`;
 
+          const isEvent = !!(a.isEventApplied || a.eventCode === 'FREE_APPRAISAL_2026');
+          let eventStatusHtml = '';
+
+          if (isEvent) {
+            if (a.reviewedReviewId || a.reviewStatus === 'COMPLETED') {
+              eventStatusHtml = `<span class="badge-status" style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); font-size:0.75rem;"><i class="fa-solid fa-check"></i> 후기 완료</span>`;
+            } else if (['COMPLETED', 'INSPECTED', 'RETURN_SHIPPED'].includes(a.status)) {
+              const compDate = new Date(a.updatedAt || a.createdAt);
+              const deadline = new Date(compDate.getTime() + 14 * 24 * 3600 * 1000);
+              const diffDays = Math.ceil((deadline.getTime() - Date.now()) / (24 * 3600 * 1000));
+              if (diffDays >= 0) {
+                eventStatusHtml = `<span class="badge-status" style="background:rgba(224,184,72,0.15); color:var(--gold-light); border:1px solid var(--border-dark); font-size:0.75rem;"><i class="fa-solid fa-hourglass-half"></i> 미작성 (D-${diffDays})</span>`;
+              } else {
+                eventStatusHtml = `<span class="badge-status" style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); font-size:0.75rem;"><i class="fa-solid fa-clock"></i> 기한 경과</span>`;
+              }
+            } else {
+              eventStatusHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">감정 진행 중</span>`;
+            }
+          } else {
+            eventStatusHtml = `<span style="color:var(--text-muted); font-size:0.78rem;">일반 접수</span>`;
+          }
+
           return `
             <tr>
               <td><strong class="text-gold">${a.receiptNo}</strong></td>
@@ -1307,11 +1390,12 @@
               <td>${a.measuredWeight || '미실측'}</td>
               <td>${selectHtml}</td>
               <td>${issueBtn}</td>
+              <td>${eventStatusHtml}</td>
             </tr>
           `;
         }).join('');
       } catch (e) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; color:#ef4444;">로드 실패</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; color:#ef4444;">로드 실패</td></tr>';
       }
     }
 

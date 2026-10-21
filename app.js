@@ -104,6 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } catch (e) { console.error('SyncLiveKGERates error:', e); }
 
   try { LoadMainReviewPreview(); } catch (e) {}
+  try { InitFreeAppraisalEventPopup(); } catch (e) { console.error('InitFreeAppraisalEventPopup error:', e); }
 });
 
 // Window load fallback to guarantee calendar initialization
@@ -800,9 +801,33 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     };
   }
 
-  // 7. Appraisals: Settings
+  // 7-A. Appraisals: Settings
   if (cleanPath === '/api/appraisals/settings') {
     return { success: true, ...db.settings.appraisal };
+  }
+
+  // 7-B. Event: Free Appraisal Event (Public)
+  if (cleanPath === '/api/events/free-appraisal') {
+    const now = Date.now();
+    const isActive = now <= 1793977199000;
+    return {
+      success: true,
+      event: {
+        code: 'FREE_APPRAISAL_2026',
+        title: '귀금속 감정비 무료 이벤트',
+        startDateKST: '2026-10-21T00:00:00+09:00',
+        endDateKST: '2026-11-06T23:59:59+09:00',
+        endTimestamp: 1793977199000,
+        baseFee: 0,
+        originalFee: 29900,
+        maxItems: 2,
+        reviewDeadlineDays: 14,
+        policyVersion: '1.0.0',
+        disclosureNotice: '감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.'
+      },
+      isActive,
+      currentServerTimeKST: new Date(now + 9 * 60 * 60 * 1000).toISOString()
+    };
   }
 
   // 8. Appraisals: Apply
@@ -817,13 +842,48 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     const serial = String(db.appraisals.length + 1).padStart(4, '0');
     const appraisalId = `GL-AP-${dateStr}-${serial}`;
 
+    const isEventRequested = !!(body && (body.applyEvent || body.agreeEventReview || body.eventCode === 'FREE_APPRAISAL_2026'));
     const applyFree = !!(body && body.applyFreeBenefit);
     const requestedGC = Math.max(0, parseInt(body && body.gcUsed, 10) || 0);
+
+    let isEventApplied = false;
+    let eventCode = null;
+    let eventTitle = null;
+    let eventAgreedAt = null;
+    let eventPolicyVersion = null;
+    let eventReviewDeadlineDays = 14;
+
+    let costBase = 29900;
     let finalPayAmount = 29900;
     let appliedGC = 0;
+    let freeBenefitApplied = false;
 
-    if (applyFree) {
+    if (isEventRequested) {
+      if (!user) {
+        throw new Error('귀금속 감정비 무료 이벤트는 회원 로그인 후 신청 가능합니다.');
+      }
+      if (!body.agreeEventReview && !body.eventAgreed) {
+        throw new Error('[필수] 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 조건을 확인하고 이벤트 참여에 동의해 주세요.');
+      }
+      if (Date.now() > 1793977199000) {
+        throw new Error('귀금속 감정비 무료 이벤트가 2026년 11월 6일 23:59:59부로 종료되었습니다. 현재는 정상 기본 감정료(29,900원)가 적용됩니다. 결제 금액을 확인하신 후 다시 접수해 주세요.');
+      }
+
+      isEventApplied = true;
+      eventCode = 'FREE_APPRAISAL_2026';
+      eventTitle = '귀금속 감정비 무료 이벤트';
+      eventAgreedAt = new Date().toISOString();
+      eventPolicyVersion = '1.0.0';
+      eventReviewDeadlineDays = 14;
+
+      costBase = 0;
       finalPayAmount = 0;
+      appliedGC = 0;
+      freeBenefitApplied = false;
+    } else if (applyFree) {
+      costBase = 29900;
+      finalPayAmount = 0;
+      freeBenefitApplied = true;
     } else if (requestedGC > 0) {
       appliedGC = Math.min(requestedGC, 10000, 29900);
       finalPayAmount = 29900 - appliedGC;
@@ -852,12 +912,21 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       itemType: (body && body.itemType) ? body.itemType : '골드바/고금',
       quantity: (body && body.quantity) ? body.quantity : 1,
       items: (body && body.items) ? body.items : [{ itemIndex: 1, itemType: (body && body.itemType) || '골드바', expectedPurity: (body && body.expectedPurity) || '24K' }],
+      isEventApplied,
+      eventCode,
+      eventTitle,
+      eventAgreedAt,
+      eventPolicyVersion,
+      eventReviewDeadlineDays: isEventApplied ? eventReviewDeadlineDays : null,
+      reviewStatus: isEventApplied ? 'PENDING' : null,
+      reviewedReviewId: null,
+      reviewedAt: null,
       status: 'APPLIED',
       statusText: '접수 완료 (입고 대기)',
       actualWeight: null,
       certificateNo: null,
-      costBase: 29900,
-      freeBenefitApplied: applyFree,
+      costBase,
+      freeBenefitApplied,
       gcUsed: appliedGC,
       finalPayAmount,
       createdAt: new Date().toISOString()
@@ -1425,7 +1494,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
 
     const myAppraisals = (db.appraisals || []).filter(a =>
       (a.userId === user.id || a.applicantPhone === user.phone) &&
-      (a.status === 'COMPLETED' || a.status === 'INSPECTED')
+      (a.status === 'COMPLETED' || a.status === 'INSPECTED' || a.status === 'RETURN_SHIPPED')
     );
 
     const reviewedMap = {};
@@ -1459,14 +1528,18 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       const isGoldSell = (a.itemType && (a.itemType.includes('매입') || a.itemType.includes('판매') || a.itemType.includes('고금')));
       const cat = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
       const catLabel = isGoldSell ? '금 판매' : '감정 이용';
+      const isEvent = !!(a.isEventApplied || a.eventCode === 'FREE_APPRAISAL_2026');
+      const prefix = isEvent ? '[이벤트] ' : '';
       eligibleItems.push({
         transactionType: 'APPRAISAL',
         transactionId: a.id,
         category: cat,
         categoryLabel: catLabel,
-        title: `${catLabel} - ${a.itemType || '귀금속 정밀 감정'} (${a.receiptNo || a.id})`,
+        title: `${prefix}${catLabel} - ${a.itemType || '귀금속 정밀 감정'} (${a.receiptNo || a.id})`,
         date: a.createdAt ? a.createdAt.substring(0, 10) : '',
         status: a.status,
+        isEventApplied: isEvent,
+        eventCode: a.eventCode || null,
         alreadyReviewed: !!alreadyReviewId,
         reviewId: alreadyReviewId || null
       });
@@ -1543,6 +1616,10 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     let finalCategoryLabel = '제품 구매';
     let verifiedTxId = transactionId;
 
+    let isEventReview = false;
+    let eventCode = null;
+    let eventNotice = null;
+
     if (transactionType === 'ORDER') {
       const ord = (db.orders || []).find(o => o.id === transactionId);
       finalCategory = 'PRODUCT_BUY';
@@ -1552,6 +1629,12 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       const isGoldSell = ap && ap.itemType && (ap.itemType.includes('매입') || ap.itemType.includes('판매') || ap.itemType.includes('고금'));
       finalCategory = isGoldSell ? 'GOLD_SELL' : 'APPRAISAL';
       finalCategoryLabel = isGoldSell ? '금 판매' : '감정 이용';
+
+      if (ap && (ap.isEventApplied || ap.eventCode === 'FREE_APPRAISAL_2026')) {
+        isEventReview = true;
+        eventCode = 'FREE_APPRAISAL_2026';
+        eventNotice = '감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.';
+      }
     } else if (transactionType === 'OFFLINE') {
       const cleanCode = (authCode || transactionId).trim().toUpperCase();
       const offTx = (db.offline_transactions || []).find(t => t.authCode && t.authCode.toUpperCase() === cleanCode);
@@ -1589,6 +1672,9 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       content: trimmedContent,
       photos: Array.isArray(photos) ? photos.slice(0, 3) : [],
       isVerifiedTrade: true,
+      isEventReview: !!isEventReview,
+      eventCode: isEventReview ? eventCode : null,
+      eventNotice: isEventReview ? eventNotice : null,
       isPublic: true,
       hiddenReason: null,
       hiddenAt: null,
@@ -1602,6 +1688,15 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
     if (transactionType === 'OFFLINE') {
       const offTx = (db.offline_transactions || []).find(t => t.authCode && t.authCode.toUpperCase() === verifiedTxId.toUpperCase());
       if (offTx) offTx.reviewedReviewId = newRev.id;
+    }
+
+    if (transactionType === 'APPRAISAL') {
+      const ap = (db.appraisals || []).find(a => a.id === verifiedTxId);
+      if (ap) {
+        ap.reviewedReviewId = newRev.id;
+        ap.reviewedAt = new Date().toISOString();
+        if (ap.isEventApplied) ap.reviewStatus = 'COMPLETED';
+      }
     }
 
     if (!Array.isArray(db.reviews)) db.reviews = [];
@@ -2157,6 +2252,14 @@ async function HandleUserLogin(e) {
     UpdateAuthUI();
     CloseModal('authModal');
 
+    const authRedirect = sessionStorage.getItem('goldlab_auth_redirect');
+    if (authRedirect) {
+      sessionStorage.removeItem('goldlab_auth_redirect');
+      alert('[👤 로그인 완료]\n환영합니다, ' + currentUser.name + ' 회원님!\n무료 감정 신청 화면으로 연결합니다.');
+      window.location.href = authRedirect;
+      return;
+    }
+
     if (currentUser.role === 'MASTER_ADMIN' || currentUser.role === 'STAFF') {
       alert('[👑 관리자 인증 완료]\n' + currentUser.name + ' 님, 환영합니다.\n관리자 관제센터로 연결합니다.');
       window.location.href = 'mypage.html?tab=master';
@@ -2214,6 +2317,14 @@ async function HandleUserSignup(e) {
 
     UpdateAuthUI();
     CloseModal('authModal');
+
+    const authRedirect = sessionStorage.getItem('goldlab_auth_redirect');
+    if (authRedirect) {
+      sessionStorage.removeItem('goldlab_auth_redirect');
+      alert('[🎉 회원가입 완료]\n환영합니다, ' + currentUser.name + ' 회원님! 신규 가입 축하 5,000 GC 포인트가 적립되었습니다.\n무료 감정 신청 화면으로 연결합니다.');
+      window.location.href = authRedirect;
+      return;
+    }
 
     if (isBiz) {
       alert('[🏢 B2B 회원가입 완료]\n사업자 인증 심사 요청이 접수되었습니다. 관리자 승인 완료 후 종로 도매 특가 단가 및 대량 발주 기능이 활성화됩니다.');
@@ -3731,6 +3842,137 @@ async function SubmitReservation(e) {
 function CloseModal(modalId) {
   const el = document.getElementById(modalId);
   if (el) el.classList.remove('active');
+}
+
+// --------------------------------------------------------------------------
+// EVENT POPUP: Free Appraisal Event (귀금속 감정비 무료 이벤트)
+// --------------------------------------------------------------------------
+const FREE_APPRAISAL_EVENT_CONFIG = {
+  code: 'FREE_APPRAISAL_2026',
+  title: '귀금속 감정비 무료 이벤트',
+  endDateKST: '2026-11-06T23:59:59+09:00',
+  endTimestamp: 1793977199000 // 2026-11-06 23:59:59 KST
+};
+
+let eventPopupLastFocused = null;
+let eventPopupKeydownHandler = null;
+
+function getKstMidnightTimestamp() {
+  const now = new Date();
+  const kstNow = new Date(now.getTime() + 9 * 3600000);
+  const kstYear = kstNow.getUTCFullYear();
+  const kstMonth = kstNow.getUTCMonth();
+  const kstDate = kstNow.getUTCDate();
+  // Midnight of the current KST day (23:59:59.999 KST = 14:59:59.999 UTC)
+  return Date.UTC(kstYear, kstMonth, kstDate, 14, 59, 59, 999);
+}
+
+function InitFreeAppraisalEventPopup() {
+  const modal = document.getElementById('freeAppraisalEventModal');
+  if (!modal) return;
+
+  // 1. Check if event is still active (deadline: 2026-11-06 23:59:59 KST)
+  if (Date.now() > FREE_APPRAISAL_EVENT_CONFIG.endTimestamp) {
+    return;
+  }
+
+  // 2. Check session suppression (닫기 clicked earlier in this browser session)
+  if (sessionStorage.getItem('goldlab_hide_event_popup_session') === 'true') {
+    return;
+  }
+
+  // 3. Check '오늘 하루 보지 않기' (KST midnight expiration)
+  const hideUntil = localStorage.getItem('goldlab_hide_event_popup_until');
+  if (hideUntil && Date.now() <= parseInt(hideUntil, 10)) {
+    return;
+  }
+
+  // 4. Update action button text according to login state
+  const btnText = document.getElementById('eventModalBtnText');
+  if (btnText) {
+    if (currentUser) {
+      btnText.innerText = '무료 감정대행 신청하기';
+    } else {
+      btnText.innerText = '회원가입·로그인 후 무료 감정 신청';
+    }
+  }
+
+  // 5. Open popup with accessibility & focus trap
+  eventPopupLastFocused = document.activeElement;
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+
+  const actionBtn = document.getElementById('btnEventModalAction');
+  if (actionBtn) actionBtn.focus();
+
+  // Focus trap & Esc handler
+  eventPopupKeydownHandler = function(e) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      CloseEventPopup(false);
+      return;
+    }
+    if (e.key === 'Tab') {
+      const focusable = modal.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+  };
+  document.addEventListener('keydown', eventPopupKeydownHandler);
+}
+
+function CloseEventPopup(fromTodayCheckbox = false) {
+  const modal = document.getElementById('freeAppraisalEventModal');
+  if (!modal) return;
+
+  const chkToday = document.getElementById('chkEventModalHideToday');
+  if (fromTodayCheckbox || (chkToday && chkToday.checked)) {
+    const kstMidnight = getKstMidnightTimestamp();
+    localStorage.setItem('goldlab_hide_event_popup_until', String(kstMidnight));
+  }
+
+  // Session suppression for '닫기'
+  sessionStorage.setItem('goldlab_hide_event_popup_session', 'true');
+
+  modal.classList.remove('active');
+  document.body.style.overflow = '';
+
+  if (eventPopupKeydownHandler) {
+    document.removeEventListener('keydown', eventPopupKeydownHandler);
+    eventPopupKeydownHandler = null;
+  }
+
+  if (eventPopupLastFocused && typeof eventPopupLastFocused.focus === 'function') {
+    try { eventPopupLastFocused.focus(); } catch (e) {}
+  }
+}
+
+function HandleEventPopupAction() {
+  const chkToday = document.getElementById('chkEventModalHideToday');
+  if (chkToday && chkToday.checked) {
+    localStorage.setItem('goldlab_hide_event_popup_until', String(getKstMidnightTimestamp()));
+  }
+
+  if (currentUser) {
+    CloseEventPopup(false);
+    window.location.href = 'appraisal.html?event=FREE_APPRAISAL_2026';
+  } else {
+    sessionStorage.setItem('goldlab_auth_redirect', 'appraisal.html?event=FREE_APPRAISAL_2026');
+    CloseEventPopup(false);
+    OpenAuthModal('login');
+  }
 }
 
 function QuickInquiry(prodName) {
