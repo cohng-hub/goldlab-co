@@ -3657,7 +3657,30 @@ function InitFreeAppraisalEventPopup() {
     return;
   }
 
-  // 4. Update action button text according to login state
+  // 4. 별도의 브라우저 창(독립 팝업 윈도우, 신라호텔 스타일)으로 띄우기
+  const popupW = 500;
+  const popupH = 680;
+  const popupLeft = Math.max(30, Math.round((window.screen.width - popupW) / 2));
+  const popupTop = Math.max(30, Math.round((window.screen.height - popupH) / 2));
+
+  let popupWin = null;
+  try {
+    popupWin = window.open(
+      'popup-event.html',
+      'GoldLabEventNoticePopup',
+      `width=${popupW},height=${popupH},top=${popupTop},left=${popupLeft},scrollbars=yes,resizable=yes`
+    );
+  } catch (e) {
+    console.warn('독립 팝업 윈도우 호출 실패(브라우저 팝업 차단 등):', e);
+  }
+
+  // 별도 브라우저 창이 성공적으로 열렸다면 웹사이트 내부 모달은 띄우지 않고 종료!
+  if (popupWin && !popupWin.closed && typeof popupWin.closed !== 'undefined') {
+    try { popupWin.focus(); } catch (e) {}
+    return;
+  }
+
+  // 5. 브라우저에서 자동 팝업 차단(사용자 클릭 제스처 필요 정책)이 발생한 경우에만 안전하게 내부 모달로 fallback
   const btnText = document.getElementById('eventModalBtnText');
   if (btnText) {
     if (currentUser) {
@@ -3667,7 +3690,6 @@ function InitFreeAppraisalEventPopup() {
     }
   }
 
-  // 5. Open popup with accessibility & focus trap
   eventPopupLastFocused = document.activeElement;
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
@@ -3742,6 +3764,28 @@ function HandleEventPopupAction() {
     sessionStorage.setItem('goldlab_auth_redirect', 'appraisal.html?event=FREE_APPRAISAL_2026');
     CloseEventPopup(false);
     OpenAuthModal('login');
+  }
+}
+
+function OpenStandaloneEventPopup() {
+  const popupW = 500;
+  const popupH = 680;
+  const popupLeft = Math.max(30, Math.round((window.screen.width - popupW) / 2));
+  const popupTop = Math.max(30, Math.round((window.screen.height - popupH) / 2));
+
+  try {
+    const popupWin = window.open(
+      'popup-event.html',
+      'GoldLabEventNoticePopup',
+      `width=${popupW},height=${popupH},top=${popupTop},left=${popupLeft},scrollbars=yes,resizable=yes`
+    );
+    if (popupWin) {
+      try { popupWin.focus(); } catch (e) {}
+      CloseEventPopup(false);
+      return popupWin;
+    }
+  } catch (e) {
+    console.warn('독립 팝업 윈도우 열기 실패:', e);
   }
 }
 
