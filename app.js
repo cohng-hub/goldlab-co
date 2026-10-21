@@ -3638,53 +3638,166 @@ function getKstMidnightTimestamp() {
 }
 
 function InitFreeAppraisalEventPopup() {
-  // 1. Check if event is still active (deadline: 2026-11-06 23:59:59 KST)
+  // 0. 일회성 테스트 캐시 초기화 (이전 테스트 시 체크박스 눌러 숨김 처리된 플래그 리셋)
+  try {
+    sessionStorage.removeItem('goldlab_hide_event_popup_session');
+    if (!localStorage.getItem('goldlab_popup_reset_20261021_v4')) {
+      localStorage.removeItem('goldlab_hide_event_popup_until');
+      localStorage.setItem('goldlab_popup_reset_20261021_v4', 'true');
+    }
+  } catch (e) {}
+
+  // 1. 이벤트 기간 유효성 검사 (마감: 2026-11-06 23:59:59 KST)
   if (Date.now() > FREE_APPRAISAL_EVENT_CONFIG.endTimestamp) {
     return;
   }
 
-  // 2. Check session suppression (닫기 clicked earlier in this browser session)
-  if (sessionStorage.getItem('goldlab_hide_event_popup_session') === 'true') {
-    return;
-  }
-
-  // 3. Check '오늘 하루 보지 않기' (KST midnight expiration)
+  // 2. '오늘 하루 보지 않기' 확인 (URL에 ?popup=1 강제 확인 파라미터가 없는 경우)
+  const isBypass = new URLSearchParams(window.location.search).get('popup') === '1';
   const hideUntil = localStorage.getItem('goldlab_hide_event_popup_until');
-  if (hideUntil && Date.now() <= parseInt(hideUntil, 10)) {
+  if (!isBypass && hideUntil && Date.now() <= parseInt(hideUntil, 10)) {
     return;
   }
 
-  // 4. 별도의 브라우저 창(독립 팝업 윈도우, 신라호텔 스타일)으로 바로 띄우기 (어두운 내부 모달 완전 제거)
-  const popup = OpenStandaloneEventPopup();
-  if (popup && !popup.closed && typeof popup.closed !== 'undefined') {
+  // 3. 1차 시도: 브라우저 독립 OS 윈도우 창(window.open) 띄우기
+  let popupWin = null;
+  try {
+    popupWin = OpenStandaloneEventPopup();
+  } catch (e) {
+    console.warn('독립 팝업 윈도우 시도 중 예외:', e);
+  }
+
+  // 브라우저 팝업 허용 상태로 독립 창이 성공적으로 열렸다면 종료
+  if (popupWin && !popupWin.closed && typeof popupWin.closed !== 'undefined') {
     return;
   }
 
-  // 5. 브라우저 보안 정책상 페이지 로드 직후 팝업이 대기된 경우, 첫 클릭/터치 즉시 독립 팝업창 실행
-  const triggerOnFirstInteraction = function() {
-    document.removeEventListener('click', triggerOnFirstInteraction, true);
-    document.removeEventListener('pointerdown', triggerOnFirstInteraction, true);
-    document.removeEventListener('touchstart', triggerOnFirstInteraction, true);
-    OpenStandaloneEventPopup();
-  };
-  document.addEventListener('click', triggerOnFirstInteraction, true);
-  document.addEventListener('pointerdown', triggerOnFirstInteraction, true);
-  document.addEventListener('touchstart', triggerOnFirstInteraction, true);
+  // 4. 브라우저(크롬 등) 기본 팝업 차단으로 window.open이 막힌 경우:
+  // 뒷배경을 어둡게 가리는 모달 오버레이는 일체 띄우지 않고,
+  // 두 번째 사진과 100% 동일한 디자인의 '독립 부유형 윈도우 창'을 화면에 즉시 표시!
+  ShowFloatingEventWindow();
 }
 
-function CloseEventPopup(fromTodayCheckbox = false) {
-  if (fromTodayCheckbox) {
+function ShowFloatingEventWindow() {
+  if (document.getElementById('goldlabFloatingEventWindow')) return;
+
+  const winDiv = document.createElement('div');
+  winDiv.id = 'goldlabFloatingEventWindow';
+  winDiv.setAttribute('role', 'dialog');
+  winDiv.setAttribute('aria-label', '귀금속 감정비 무료 이벤트 안내');
+
+  winDiv.style.cssText = `
+    position: fixed;
+    top: 36px;
+    left: 36px;
+    width: 480px;
+    max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 54px);
+    background: #ffffff;
+    color: #222222;
+    border-radius: 8px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0, 0, 0, 0.12);
+    z-index: 999999;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  `;
+
+  winDiv.innerHTML = `
+    <!-- Top OS Window Header Bar -->
+    <div style="background:#22252e; color:#ffffff; padding:10px 14px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #333a4d; user-select:none;">
+      <div style="font-size:12.5px; font-weight:700; color:#e0e0e0; display:flex; align-items:center; gap:6px;">
+        <i class="fa-solid fa-gem text-gold" style="color:#e0b848;"></i> 귀금속 감정비 무료 이벤트 안내
+      </div>
+      <div style="display:flex; align-items:center; gap:6px;">
+        <button type="button" onclick="OpenStandaloneEventPopup(); CloseFloatingEventWindow();" title="컴퓨터 새 창으로 분리" style="background:rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.2); color:#fff; font-size:11px; padding:3px 8px; border-radius:4px; cursor:pointer;">
+          <i class="fa-solid fa-up-right-from-square"></i> 새 창 분리
+        </button>
+        <button type="button" onclick="CloseFloatingEventWindow()" aria-label="창 닫기" style="background:none; border:none; color:#bbb; font-size:16px; cursor:pointer; line-height:1; padding:0 4px;">
+          &times;
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content Area (100% Identical to popup-event.html) -->
+    <div style="padding:22px 20px 16px 20px; overflow-y:auto; flex:1; line-height:1.75; font-size:14px; color:#222;">
+      <div style="font-size:11px; font-weight:800; letter-spacing:2px; color:#92753a; text-transform:uppercase; text-align:center; margin-bottom:6px;">
+        GOLDLAB & CO. OFFICIAL NOTICE
+      </div>
+      <h2 style="font-size:21px; font-weight:800; color:#111; text-align:center; letter-spacing:-0.5px; line-height:1.35; margin-bottom:14px;">
+        귀금속 감정비 무료 이벤트 안내
+      </h2>
+      <hr style="border:0; border-top:2px solid #8c734b; margin:0 0 18px 0;">
+
+      <p style="color:#333; margin-bottom:14px; word-break:keep-all; line-height:1.75;">
+        저희 골드랩앤코(GoldLab & Co.)는 고객님의 소중한 귀금속 자산에 대한 신뢰와 투명한 가치 확인을 위하여, <strong>귀금속 정밀 감정대행 서비스의 기본 감정료를 전액 무료로 지원</strong>하는 특별 이벤트를 진행하오니 많은 이용 바랍니다.
+      </p>
+
+      <div style="background:#faf7f0; border:1px solid #e5d8be; border-radius:8px; padding:14px 16px; margin:16px 0; text-align:center;">
+        <div style="display:inline-block; font-size:11.5px; font-weight:700; color:#8c734b; background:#fff; border:1px solid #d4c4a5; padding:2px 8px; border-radius:12px; margin-bottom:4px;">
+          특별 혜택
+        </div>
+        <div style="font-size:16px; color:#555; font-weight:700;">
+          기본 감정료 <del style="color:#888; margin-right:4px;">29,900원</del> → <strong style="font-size:20px; color:#b3391b; font-weight:900;">0원 (전액 무료)</strong>
+        </div>
+      </div>
+
+      <div style="background:#fdfdfd; border:1px solid #ebebeb; border-radius:8px; padding:13px 15px; margin-bottom:14px;">
+        <div style="font-size:13px; font-weight:800; color:#1a1a1a; margin-bottom:6px; display:flex; align-items:center; gap:5px;">
+          <i class="fa-solid fa-clipboard-check text-gold" style="color:#92753a;"></i> 참여 조건 및 비용 안내
+        </div>
+        <ul style="list-style:none; padding:0; margin:0; font-size:13px; color:#444; line-height:1.65;">
+          <li style="margin-bottom:3px;">• <strong>참여 조건:</strong> 홈페이지 회원가입 및 14일 이내 솔직한 후기 작성 (기존 회원 가능)</li>
+          <li style="margin-bottom:3px;">• <strong>비용 안내:</strong> 택배 접수는 왕복 배송비만 고객 부담 / 종로 본점 방문은 배송비 없음</li>
+          <li style="margin-bottom:3px;">• <strong>적용 범위:</strong> 접수 1건당 제품 최대 2개까지 적용</li>
+          <li>• <strong>진행 기간:</strong> 2026년 11월 6일까지 접수 건에 한함</li>
+        </ul>
+      </div>
+
+      <p style="font-size:12px; color:#777; margin-bottom:12px; line-height:1.6;">
+        ※ 특수·추가 정밀검사는 별도 비용이며 고객 사전 동의 후 진행됩니다.<br>
+        ※ 비회원 또는 후기 미동의 시 정상 기본 감정료(29,900원)가 적용됩니다.
+      </p>
+
+      <a href="appraisal.html?event=FREE_APPRAISAL_2026" onclick="CloseFloatingEventWindow();" style="display:block; width:100%; background:linear-gradient(135deg, #1b202e 0%, #0d1017 100%); color:#fff; border:1px solid #333a4d; padding:13px 16px; font-size:14.5px; font-weight:800; border-radius:6px; cursor:pointer; text-align:center; text-decoration:none; margin:14px 0 6px 0; box-shadow:0 4px 12px rgba(0,0,0,0.12);">
+        <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> 무료 감정대행 신청하기
+      </a>
+    </div>
+
+    <!-- Bottom Bar (100% Identical to popup-event.html / Shilla Hotel) -->
+    <div style="background:#231f20; color:#ffffff; display:flex; justify-content:space-between; align-items:center; padding:11px 18px; font-size:13px; border-top:1px solid #3a3435; user-select:none; box-shadow:0 -4px 15px rgba(0,0,0,0.15);">
+      <label style="display:inline-flex; align-items:center; gap:7px; cursor:pointer; font-weight:500; color:#f0f0f0;">
+        <input type="checkbox" id="chkFloatingHideToday" style="width:15px; height:15px; cursor:pointer; accent-color:#92753a;">
+        오늘 하루 이 창을 다시 열지 않음
+      </label>
+      <button type="button" onclick="CloseFloatingEventWindow()" style="background:none; border:none; color:#ffffff; font-size:12.5px; font-weight:800; cursor:pointer; letter-spacing:0.8px; padding:3px 6px;">
+        CLOSE X
+      </button>
+    </div>
+  `;
+
+  document.body.appendChild(winDiv);
+}
+
+function CloseFloatingEventWindow() {
+  const win = document.getElementById('goldlabFloatingEventWindow');
+  const chk = document.getElementById('chkFloatingHideToday');
+  if (chk && chk.checked) {
     const kstMidnight = getKstMidnightTimestamp();
     localStorage.setItem('goldlab_hide_event_popup_until', String(kstMidnight));
   }
-  sessionStorage.setItem('goldlab_hide_event_popup_session', 'true');
-  const modal = document.getElementById('freeAppraisalEventModal');
-  if (modal) modal.classList.remove('active');
-  document.body.style.overflow = '';
+  if (win) {
+    win.remove();
+  }
+}
+
+function CloseEventPopup(fromTodayCheckbox = false) {
+  CloseFloatingEventWindow();
 }
 
 function HandleEventPopupAction() {
-  CloseEventPopup(false);
+  CloseFloatingEventWindow();
   if (currentUser) {
     window.location.href = 'appraisal.html?event=FREE_APPRAISAL_2026';
   } else {
@@ -3707,7 +3820,7 @@ function OpenStandaloneEventPopup() {
     );
     if (popupWin) {
       try { popupWin.focus(); } catch (e) {}
-      CloseEventPopup(false);
+      CloseFloatingEventWindow();
       return popupWin;
     }
   } catch (e) {
