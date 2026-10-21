@@ -319,32 +319,25 @@
           </div>
         </div>
 
-        <!-- 확인서 예시 영역 (자료 검토 중 상태 안내) -->
-        <div style="background:#0d0f17; border:1px dashed var(--border-gold-bright); border-radius:22px; padding:2.2rem; text-align:center;">
-          <div style="width:58px; height:58px; border-radius:16px; background:rgba(224,184,72,0.1); border:1px solid rgba(224,184,72,0.3); display:flex; align-items:center; justify-content:center; margin:0 auto 1.2rem auto;">
-            <i class="fa-solid fa-file-invoice text-gold" style="font-size:1.8rem;"></i>
-          </div>
-          <h4 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin-bottom:0.6rem;">
-            결과 확인서 공식 양식 안내
-          </h4>
-          <p style="color:var(--text-muted); font-size:0.88rem; line-height:1.6; max-width:360px; margin:0 auto 1.5rem auto;">
-            골드랩앤코의 실제 결과 확인서 표준 서식과 항목 배치 안내 영역입니다. 개인정보가 보호된 공식 양식이 확정되는 대로 본 영역에 게시될 예정입니다.
-          </p>
-          
-          <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:14px; padding:1.2rem; text-align:left; font-size:0.84rem; line-height:1.8; color:var(--text-muted);">
-            <div style="color:var(--gold-light); font-weight:800; margin-bottom:0.4rem; text-align:center;">
-              [확인서 표준 기재 항목 프레임]
+        <!-- 귀금속 검사 결과서 공식 양식 -->
+        <div style="background:#12141d; border:1px solid var(--border-gold-bright); border-radius:22px; padding:1.5rem; text-align:center; box-shadow:0 12px 35px rgba(0,0,0,0.5); position:relative;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding:0 0.25rem;">
+            <div style="font-size:1rem; font-weight:800; color:var(--gold-light); display:flex; align-items:center; gap:0.5rem;">
+              <i class="fa-solid fa-file-lines text-gold"></i> 귀금속 검사 결과서 (공식 양식)
             </div>
-            <div>1. 접수 식별: 접수번호 / 접수일 / 발급일</div>
-            <div>2. 외관 정보: 의뢰 제품 종류 / 실측 사진</div>
-            <div>3. 계량 데이터: 0.001g 단위 정밀 실측 중량</div>
-            <div>4. 시험 성적: 원소 성분 분석 수치 (XRF 검사 결과)</div>
-            <div>5. 진위 검증: 위변조 방지 고유 QR 및 확인 토큰</div>
+            <button type="button" onclick="OpenReportLightbox()" style="background:rgba(224,184,72,0.12); border:1px solid rgba(224,184,72,0.35); color:var(--gold-light); padding:5px 12px; border-radius:8px; font-size:0.78rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:5px; transition:all 0.2s;" onmouseover="this.style.background='rgba(224,184,72,0.25)'" onmouseout="this.style.background='rgba(224,184,72,0.12)'" title="크게 보기">
+              <i class="fa-solid fa-magnifying-glass-plus"></i> 크게 보기
+            </button>
           </div>
-          
-          <small style="color:var(--text-muted); font-size:0.78rem; display:block; margin-top:1rem;">
-            ※ 임의로 조작된 가짜 결과값이나 검사기관 직인은 게시하지 않습니다.
-          </small>
+
+          <!-- 리포트 이미지 미리보기 컨테이너 -->
+          <div onclick="OpenReportLightbox()" style="background:#ffffff; border-radius:12px; padding:8px; box-shadow:0 8px 24px rgba(0,0,0,0.6); cursor:pointer; overflow:hidden; transition:transform 0.2s, box-shadow 0.2s;" onmouseover="this.style.transform='scale(1.015)'; this.style.boxShadow='0 12px 32px rgba(224,184,72,0.25)';" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 8px 24px rgba(0,0,0,0.6)';" title="클릭하여 원본 크기로 보기">
+            <img src="assets/jewelry_test_report_sample.png" alt="귀금속 검사 결과서 공식 양식 (GoldLab & Co)" style="width:100%; max-width:420px; height:auto; display:block; margin:0 auto; border-radius:6px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+          </div>
+
+          <div style="font-size:0.8rem; color:var(--text-muted); margin-top:0.9rem; line-height:1.5;">
+            골드랩앤코 정밀 감정대행 완료 시 발급되는 공식 결과서 양식입니다. (클릭 시 원본 크기로 확대)
+          </div>
         </div>
 
       </div>
@@ -1565,6 +1558,20 @@
       RecalculateAppraisalFee();
     }
 
+    function OpenReportLightbox() {
+      const modal = document.getElementById('reportLightboxModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function CloseReportLightbox() {
+      const modal = document.getElementById('reportLightboxModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') CloseReportLightbox();
+    });
+
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       if (urlParams.get('event') === 'FREE_APPRAISAL_2026') {
@@ -1580,5 +1587,16 @@
       SyncCheckboxUI();
     });
   </script>
+
+  <!-- 귀금속 검사 결과서 원본 확대 라이트박스 모달 -->
+  <div id="reportLightboxModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); z-index:99999; align-items:center; justify-content:center; padding:1.5rem;" onclick="if(event.target === this) CloseReportLightbox();">
+    <div style="position:relative; max-width:92vw; max-height:92vh; display:flex; flex-direction:column; align-items:center;">
+      <div style="position:absolute; top:-40px; right:0; display:flex; gap:10px; align-items:center;">
+        <span style="color:#ffffff; font-size:0.88rem; font-weight:700;"><i class="fa-solid fa-file-lines text-gold"></i> 귀금속 검사 결과서 양식</span>
+        <button type="button" onclick="CloseReportLightbox()" style="background:#222; border:1px solid #555; color:#fff; width:32px; height:32px; border-radius:50%; cursor:pointer; font-size:1.1rem; display:flex; align-items:center; justify-content:center; transition:0.2s;" onmouseover="this.style.background='#ff4d4f'" onmouseout="this.style.background='#222'">✕</button>
+      </div>
+      <img src="assets/jewelry_test_report_sample.png" alt="귀금속 검사 결과서 양식 확대" style="max-width:90vw; max-height:85vh; width:auto; height:auto; object-fit:contain; border-radius:10px; box-shadow:0 15px 45px rgba(0,0,0,0.9); background:#fff; padding:6px;">
+    </div>
+  </div>
 </body>
 </html>
