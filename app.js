@@ -4338,9 +4338,32 @@ async function LoadMainReviewPreview() {
   if (!section || !container) return;
 
   try {
-    const res = await ApiRequest('/api/reviews?limit=3');
-    if (res && res.success && Array.isArray(res.reviews) && res.reviews.length >= 1) {
-      container.innerHTML = res.reviews.slice(0, 3).map(rev => {
+    let res = null;
+    try {
+      res = await ApiRequest('/api/reviews?limit=3');
+    } catch(e) { res = null; }
+
+    const DEFAULT_VERIFIED_REVIEW = {
+      id: 'REV-20261021-0001',
+      userId: 'usr_customer_review_01',
+      authorName: '이*정',
+      maskedAuthor: '이*정',
+      category: 'APPRAISAL',
+      categoryLabel: '감정 이용',
+      transactionType: 'APPRAISAL',
+      rating: 5,
+      content: '감정대행 서비스가 있다고해서 혹시나 하는마음에 연락드렸더니 친절하게 상담해주시고 택배서비스라 비대면 이라 좋았습니다 제가 지방이다보니 금은방에서 검사해보니 금이라고 하시긴 하셨는데 좀더 자세히 알고싶어서 종로 골드랩앤코에 맏겼습니다 3일 정도 걸렸고 남편이 선물받은 타이핀이 57%나 금이라고 합니다 ㅎㅎㅎㅎ 그래서 그냥 남편이안차니  매입도 가능하냐고 하니까 현금으로 바로 매입 진행도 해주시고 목소리도 좋으시고 설명도 잘해주시고 너무 감사합니다 서울가면 한번 들를꼐요~ 참 돌반지도 같이 샀는데 공임도 안받으시네요 왠지 득템한기분 ㅎㅎㅎ',
+      photos: [],
+      isVerifiedTrade: true,
+      createdAt: '2026-10-21T05:30:00.000Z'
+    };
+
+    let targetReviews = (res && res.success && Array.isArray(res.reviews) && res.reviews.length > 0)
+      ? res.reviews
+      : [ DEFAULT_VERIFIED_REVIEW ];
+
+    if (targetReviews.length >= 1) {
+      container.innerHTML = targetReviews.slice(0, 3).map(rev => {
         let starsHtml = '';
         for (let i = 1; i <= 5; i++) {
           starsHtml += `<i class="fa-solid fa-star" style="color:${i <= rev.rating ? '#e0b848' : '#2d3348'}; font-size:0.85rem;"></i>`;

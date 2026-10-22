@@ -20733,3 +20733,147 @@
 [2026. 10. 22. 오후 2:07:45] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.22 14:07!
 [2026. 10. 22. 오후 2:07:45] ====================================================
 
+[2026. 10. 22. 오후 2:27:40] ====================================================
+[2026. 10. 22. 오후 2:27:40] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 22. 오후 2:27:40] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 22. 오후 2:27:41] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1653, Sample: {"date":"2026-10-22 14:27:30","marketPriceList":[{"date":"2026-10-22 14:27:30","askDiff":-32.46,"bidDiff":-32.86,"priceGram":174163.54,"ask":4089.3,"type":"au","bid":4086.5,"bidDiffPer":-0.8,"askDiffP
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-22 12:41:31',
+  s_pure: 766000,
+  p_pure: 657000,
+  p_18k: 482900,
+  p_14k: 374500,
+  s_white: 296000,
+  p_white: 240000,
+  s_silver: 10090,
+  p_silver: 8390
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610220527).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 22. 오후 2:27:41] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 22. 오후 2:27:49] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.22 14:27!
+[2026. 10. 22. 오후 2:27:49] ====================================================
+
+[2026. 10. 22. 오후 2:47:39] ====================================================
+[2026. 10. 22. 오후 2:47:39] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 22. 오후 2:47:39] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 22. 오후 2:47:40] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1657, Sample: {"date":"2026-10-22 14:47:30","marketPriceList":[{"date":"2026-10-22 14:47:30","askDiff":-50.26,"bidDiff":-51.07,"priceGram":173489.22,"ask":4071.5,"type":"au","bid":4068.29,"bidDiffPer":-1.26,"askDif
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-22 14:29:32',
+  s_pure: 766000,
+  p_pure: 655000,
+  p_18k: 481500,
+  p_14k: 373400,
+  s_white: 296000,
+  p_white: 240000,
+  s_silver: 10090,
+  p_silver: 8390
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610220547).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 22. 오후 2:47:40] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 22. 오후 2:47:45] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.22 14:47!
+[2026. 10. 22. 오후 2:47:45] ====================================================
+
+[2026. 10. 22. 오후 3:07:39] ====================================================
+[2026. 10. 22. 오후 3:07:39] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 22. 오후 3:07:39] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 22. 오후 3:07:40] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1661, Sample: {"date":"2026-10-22 15:07:30","marketPriceList":[{"date":"2026-10-22 15:07:30","askDiff":-25.38,"bidDiff":-25.78,"priceGram":174545.42,"ask":4096.38,"type":"au","bid":4093.58,"bidDiffPer":-0.63,"askDi
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-22 14:29:32',
+  s_pure: 766000,
+  p_pure: 655000,
+  p_18k: 481500,
+  p_14k: 373400,
+  s_white: 296000,
+  p_white: 240000,
+  s_silver: 10090,
+  p_silver: 8390
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610220607).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 22. 오후 3:07:40] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 22. 오후 3:07:48] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.22 15:07!
+[2026. 10. 22. 오후 3:07:48] ====================================================
+
+[2026. 10. 22. 오후 3:27:40] ====================================================
+[2026. 10. 22. 오후 3:27:40] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 22. 오후 3:27:40] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 22. 오후 3:27:41] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1688, Sample: {"date":"2026-10-22 15:27:30","marketPriceList":[{"date":"2026-10-22 15:27:30","askDiff":-25.11,"bidDiff":-25.51,"priceGram":174446.29,"ask":4096.65,"type":"au","bid":4093.85,"bidDiffPer":-0.62,"askDi
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-22 14:29:32',
+  s_pure: 766000,
+  p_pure: 655000,
+  p_18k: 481500,
+  p_14k: 373400,
+  s_white: 296000,
+  p_white: 240000,
+  s_silver: 10090,
+  p_silver: 8390
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610220627).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 22. 오후 3:27:41] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 22. 오후 3:27:48] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.22 15:27!
+[2026. 10. 22. 오후 3:27:48] ====================================================
+
+[2026. 10. 22. 오후 3:47:39] ====================================================
+[2026. 10. 22. 오후 3:47:39] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 22. 오후 3:47:39] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 22. 오후 3:47:40] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1659, Sample: {"date":"2026-10-22 15:47:30","marketPriceList":[{"date":"2026-10-22 15:47:30","askDiff":-26.36,"bidDiff":-27.07,"priceGram":174383.84,"ask":4095.4,"type":"au","bid":4092.29,"bidDiffPer":-0.66,"askDif
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-22 14:29:32',
+  s_pure: 766000,
+  p_pure: 655000,
+  p_18k: 481500,
+  p_14k: 373400,
+  s_white: 296000,
+  p_white: 240000,
+  s_silver: 10090,
+  p_silver: 8390
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610220647).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 22. 오후 3:47:40] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 22. 오후 3:47:46] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.22 15:47!
+[2026. 10. 22. 오후 3:47:46] ====================================================
+
+[2026. 10. 22. 오후 4:07:39] ====================================================
+[2026. 10. 22. 오후 4:07:39] 🚀 [GoldLab Auto-Sync] Local sync process started.
+[2026. 10. 22. 오후 4:07:39] 📡 Fetching official Korea Gold Exchange rates...
+[2026. 10. 22. 오후 4:07:40] 🔄 [GoldLab Sync] Starting Korea Gold Exchange Official Rate Sync...
+📡 [GoldLab Sync] Connecting to Korea Gold Exchange (Attempt 1/5)...
+[Diagnostic] HTTP Status: 200, Body length: 1658, Sample: {"date":"2026-10-22 16:07:30","marketPriceList":[{"date":"2026-10-22 16:07:30","askDiff":-28.77,"bidDiff":-29.17,"priceGram":174266.75,"ask":4092.99,"type":"au","bid":4090.19,"bidDiffPer":-0.71,"askDi
+✅ [GoldLab Sync] Successfully received rates from KGE: {
+  date: '2026-10-22 14:29:32',
+  s_pure: 766000,
+  p_pure: 655000,
+  p_18k: 481500,
+  p_14k: 373400,
+  s_white: 296000,
+  p_white: 240000,
+  s_silver: 10090,
+  p_silver: 8390
+}
+✅ [GoldLab Sync] app.js rates updated.
+✅ [GoldLab Sync] HTML cache buster updated (v=202610220707).
+🎉 [GoldLab Sync] Successfully completed all sync tasks!
+[2026. 10. 22. 오후 4:07:40] 📝 Detected rate updates. Committing and pushing to GitHub...
+[2026. 10. 22. 오후 4:07:46] 🎉 [GoldLab Auto-Sync] Successfully synchronized & deployed to GitHub at 2026.10.22 16:07!
+[2026. 10. 22. 오후 4:07:46] ====================================================
+
