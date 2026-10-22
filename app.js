@@ -299,8 +299,8 @@ const DEFAULT_CUSTOMER_REVIEWS = [
     maskedAuthor: '이*정',
     category: 'APPRAISAL',
     categoryLabel: '감정 이용',
-    transactionType: 'MEMBER',
-    transactionId: 'MEMBER-usr_customer_review_01-20261021',
+    transactionType: 'APPRAISAL',
+    transactionId: 'APPRAISAL-20261021-0001',
     rating: 5,
     content: '감정대행 서비스가 있다고해서 혹시나 하는마음에 연락드렸더니 친절하게 상담해주시고 택배서비스라 비대면 이라 좋았습니다 제가 지방이다보니 금은방에서 검사해보니 금이라고 하시긴 하셨는데 좀더 자세히 알고싶어서 종로 골드랩앤코에 맏겼습니다 3일 정도 걸렸고 남편이 선물받은 타이핀이 57%나 금이라고 합니다 ㅎㅎㅎㅎ 그래서 그냥 남편이안차니  매입도 가능하냐고 하니까 현금으로 바로 매입 진행도 해주시고 목소리도 좋으시고 설명도 잘해주시고 너무 감사합니다 서울가면 한번 들를꼐요~ 참 돌반지도 같이 샀는데 공임도 안받으시네요 왠지 득템한기분 ㅎㅎㅎ',
     photos: [],
@@ -392,6 +392,9 @@ function getInBrowserDB() {
           if (targetRev) {
             targetRev.content = DEFAULT_CUSTOMER_REVIEWS[0].content;
             targetRev.adminReply = null;
+            targetRev.transactionType = 'APPRAISAL';
+            targetRev.transactionId = 'APPRAISAL-20261021-0001';
+            targetRev.isVerifiedTrade = true;
           } else {
             parsed.reviews.unshift(...JSON.parse(JSON.stringify(DEFAULT_CUSTOMER_REVIEWS)));
           }
@@ -738,7 +741,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
         throw new Error('귀금속 감정비 무료 이벤트는 회원 로그인 후 신청 가능합니다.');
       }
       if (!body.agreeEventReview && !body.eventAgreed) {
-        throw new Error('[필수] 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 조건을 확인하고 이벤트 참여에 동의해 주세요.');
+        throw new Error('서비스 이용 완료 후 14일 이내 홈페이지에 후기 작성 조건에 동의해 주세요.');
       }
       if (Date.now() > 1793977199000) {
         throw new Error('귀금속 감정비 무료 이벤트가 2026년 11월 6일 23:59:59부로 종료되었습니다. 현재는 정상 기본 감정료(29,900원)가 적용됩니다. 결제 금액을 확인하신 후 다시 접수해 주세요.');
@@ -1280,19 +1283,36 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       r.isPublic && 
       !r.isDeleted
     );
+    function checkIsVerifiedTrade(r) {
+      if (r.isVerifiedTrade === true) return true;
+      if (r.isVerifiedTrade === false) return false;
+      return (r.transactionType === 'ORDER' || r.transactionType === 'APPRAISAL' || r.transactionType === 'OFFLINE');
+    }
+
     const totalCount = allPublic.length;
     let sumRating = 0;
+    let verifiedSumRating = 0;
+    let verifiedTradeCount = 0;
+    let memberReviewCount = 0;
     const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
     const categoryCounts = { ALL: totalCount, GOLD_SELL: 0, PRODUCT_BUY: 0, APPRAISAL: 0, GENERAL: 0 };
 
     allPublic.forEach(r => {
       const rt = Math.round(Number(r.rating) || 5);
       sumRating += rt;
+      const isVerified = checkIsVerifiedTrade(r);
+      if (isVerified) {
+        verifiedTradeCount++;
+        verifiedSumRating += rt;
+      } else {
+        memberReviewCount++;
+      }
       if (ratingCounts[rt] !== undefined) ratingCounts[rt]++;
       if (categoryCounts[r.category] !== undefined) categoryCounts[r.category]++;
     });
 
     const averageRating = totalCount > 0 ? Number((sumRating / totalCount).toFixed(1)) : 0;
+    const verifiedAverageRating = verifiedTradeCount > 0 ? Number((verifiedSumRating / verifiedTradeCount).toFixed(1)) : 0;
 
     let filtered = allPublic;
     if (reqCategory && reqCategory !== 'ALL') {
@@ -1321,25 +1341,31 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       try { curUid = JSON.parse(rawUser)?.id; } catch(e) {}
     }
 
-    const safeReviews = paginated.map(r => ({
-      id: r.id,
-      authorMasked: r.authorMasked || maskName(r.authorName),
-      maskedAuthor: r.authorMasked || maskName(r.authorName),
-      category: r.category,
-      categoryLabel: r.categoryLabel,
-      rating: r.rating,
-      content: r.content,
-      photos: r.photos || [],
-      isVerifiedTrade: !!r.isVerifiedTrade,
-      isVerified: !!r.isVerifiedTrade,
-      adminReply: r.adminReply ? {
-        content: r.adminReply.content,
-        repliedAt: r.adminReply.repliedAt,
-        adminName: r.adminReply.adminName || '황미숙 대표 (골드랩&co)'
-      } : null,
-      createdAt: r.createdAt,
-      isMyReview: curUid ? (r.userId === curUid) : false
-    }));
+    const safeReviews = paginated.map(r => {
+      const isVerified = checkIsVerifiedTrade(r);
+      return {
+        id: r.id,
+        authorMasked: r.authorMasked || maskName(r.authorName),
+        maskedAuthor: r.authorMasked || maskName(r.authorName),
+        category: r.category,
+        categoryLabel: r.categoryLabel,
+        rating: r.rating,
+        content: r.content,
+        photos: r.photos || [],
+        isVerifiedTrade: isVerified,
+        isVerified: isVerified,
+        isEventReview: !!(r.isEventReview || r.eventCode === 'FREE_APPRAISAL_2026'),
+        eventCode: r.eventCode || null,
+        eventNotice: r.eventNotice || null,
+        adminReply: r.adminReply ? {
+          content: r.adminReply.content,
+          repliedAt: r.adminReply.repliedAt,
+          adminName: r.adminReply.adminName || '황미숙 대표 (골드랩&co)'
+        } : null,
+        createdAt: r.createdAt,
+        isMyReview: curUid ? (r.userId === curUid) : false
+      };
+    });
 
     return {
       success: true,
@@ -1349,6 +1375,9 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       totalPages,
       currentPage: page,
       averageRating,
+      verifiedTradeCount,
+      memberReviewCount,
+      verifiedAverageRating,
       ratingCounts,
       categoryCounts
     };
@@ -1555,7 +1584,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       rating: numRating,
       content: trimmedContent,
       photos: Array.isArray(photos) ? photos.slice(0, 3) : [],
-      isVerifiedTrade: true,
+      isVerifiedTrade: (verifiedTxType === 'ORDER' || verifiedTxType === 'APPRAISAL' || verifiedTxType === 'OFFLINE'),
       isEventReview: !!isEventReview,
       eventCode: isEventReview ? eventCode : null,
       eventNotice: isEventReview ? eventNotice : null,
@@ -3668,28 +3697,32 @@ function getKstMidnightTimestamp() {
 }
 
 function InitFreeAppraisalEventPopup() {
-  // 0. 일회성 테스트 캐시 초기화 (이전 테스트 시 체크박스 눌러 숨김 처리된 플래그 리셋)
-  try {
-    sessionStorage.removeItem('goldlab_hide_event_popup_session');
-    if (!localStorage.getItem('goldlab_popup_reset_20261021_v4')) {
-      localStorage.removeItem('goldlab_hide_event_popup_until');
-      localStorage.setItem('goldlab_popup_reset_20261021_v4', 'true');
-    }
-  } catch (e) {}
+  // 1. 첫 화면(메인 홈페이지 index.html / 루트)에서만 팝업 실행!
+  const path = (window.location.pathname || '').toLowerCase();
+  const isHomePage = path === '' || path === '/' || path.endsWith('/index.html') || path.endsWith('index.html') || path.endsWith('/');
+  const isBypass = new URLSearchParams(window.location.search).get('popup') === '1';
+  if (!isHomePage && !isBypass) {
+    return;
+  }
 
-  // 1. 이벤트 기간 유효성 검사 (마감: 2026-11-06 23:59:59 KST)
+  // 2. 이벤트 기간 유효성 검사 (마감: 2026-11-06 23:59:59 KST)
   if (Date.now() > FREE_APPRAISAL_EVENT_CONFIG.endTimestamp) {
     return;
   }
 
-  // 2. '오늘 하루 보지 않기' 확인 (URL에 ?popup=1 강제 확인 파라미터가 없는 경우)
-  const isBypass = new URLSearchParams(window.location.search).get('popup') === '1';
+  // 3. '오늘 하루 보지 않기' 확인 (localStorage)
   const hideUntil = localStorage.getItem('goldlab_hide_event_popup_until');
   if (!isBypass && hideUntil && Date.now() <= parseInt(hideUntil, 10)) {
     return;
   }
 
-  // 3. 1차 시도: 브라우저 독립 OS 윈도우 창(window.open) 띄우기
+  // 4. 일반 닫기로 닫은 경우 (sessionStorage: 세션 내 다른 페이지 이동 및 재방문 시 반복 노출 차단)
+  const sessionClosed = sessionStorage.getItem('goldlab_hide_event_popup_session');
+  if (!isBypass && sessionClosed === 'true') {
+    return;
+  }
+
+  // 5. 1차 시도: 브라우저 독립 OS 윈도우 창(window.open) 띄우기
   let popupWin = null;
   try {
     popupWin = OpenStandaloneEventPopup();
@@ -3702,9 +3735,9 @@ function InitFreeAppraisalEventPopup() {
     return;
   }
 
-  // 4. 브라우저(크롬 등) 기본 팝업 차단으로 window.open이 막힌 경우:
+  // 6. 브라우저 기본 팝업 차단으로 window.open이 막힌 경우:
   // 뒷배경을 어둡게 가리는 모달 오버레이는 일체 띄우지 않고,
-  // 두 번째 사진과 100% 동일한 디자인의 '독립 부유형 윈도우 창'을 화면에 즉시 표시!
+  // 독립 부유형 윈도우 창을 화면에 즉시 표시!
   ShowFloatingEventWindow();
 }
 
@@ -3778,7 +3811,7 @@ function ShowFloatingEventWindow() {
           <i class="fa-solid fa-clipboard-check text-gold" style="color:#92753a;"></i> 참여 조건 및 비용 안내
         </div>
         <ul style="list-style:none; padding:0; margin:0; font-size:13px; color:#444; line-height:1.65;">
-          <li style="margin-bottom:3px;">• <strong>참여 조건:</strong> 홈페이지 회원가입 및 14일 이내 솔직한 후기 작성 (기존 회원 가능)</li>
+          <li style="margin-bottom:3px;">• <strong>참여 조건:</strong> 골드랩앤코 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지에 후기 작성 (기존 회원 가능, 사진 첨부는 선택)</li>
           <li style="margin-bottom:3px;">• <strong>비용 안내:</strong> 택배 접수는 왕복 배송비만 고객 부담 / 종로 본점 방문은 배송비 없음</li>
           <li style="margin-bottom:3px;">• <strong>적용 범위:</strong> 접수 1건당 제품 최대 2개까지 적용</li>
           <li>• <strong>진행 기간:</strong> 2026년 11월 6일까지 접수 건에 한함</li>
@@ -3813,9 +3846,17 @@ function ShowFloatingEventWindow() {
 function CloseFloatingEventWindow() {
   const win = document.getElementById('goldlabFloatingEventWindow');
   const chk = document.getElementById('chkFloatingHideToday');
+
+  // 일반 닫기 시에도 세션 동안에는 다른 페이지 이동이나 재방문 시 다시 나타나지 않도록 기록
+  try {
+    sessionStorage.setItem('goldlab_hide_event_popup_session', 'true');
+  } catch (e) {}
+
   if (chk && chk.checked) {
     const kstMidnight = getKstMidnightTimestamp();
-    localStorage.setItem('goldlab_hide_event_popup_until', String(kstMidnight));
+    try {
+      localStorage.setItem('goldlab_hide_event_popup_until', String(kstMidnight));
+    } catch (e) {}
   }
   if (win) {
     win.remove();

@@ -1143,7 +1143,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=20261021_rev_v12"></script>
+  <script src="app.js?v=20261022_v15"></script>
   <script>
     /* ==============================================================
        Dedicated Customer Review Interactive Engine
@@ -1236,8 +1236,12 @@
           avgEl.innerText = avg > 0 ? avg.toFixed(1) : '-';
         }
         if (totalEl) {
-          const vCount = Number(data.verifiedTradeCount) || 0;
-          const mCount = Number(data.memberReviewCount) || 0;
+          let vCount = (data.verifiedTradeCount !== undefined) ? Number(data.verifiedTradeCount) : 0;
+          let mCount = (data.memberReviewCount !== undefined) ? Number(data.memberReviewCount) : 0;
+          if (data.verifiedTradeCount === undefined && Array.isArray(data.reviews)) {
+            vCount = data.reviews.filter(r => !!(r.isVerifiedTrade || r.isVerified)).length;
+            mCount = Math.max(0, total - vCount);
+          }
           totalEl.innerHTML = `${total.toLocaleString('ko-KR')} <span style="font-size:0.8rem; color:var(--text-muted); font-weight:normal;">(거래 인증 ${vCount}건 · 회원 ${mCount}건)</span>`;
         }
 

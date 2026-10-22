@@ -907,7 +907,7 @@
     <p>© 2026 GoldLab & Co. All Rights Reserved.</p>
   </footer>
 
-  <script src="app.js?v=202610220207"></script>
+  <script src="app.js?v=20261022_v15"></script>
   <script>
     document.addEventListener('DOMContentLoaded', async () => {
       // 1. Check Auth
@@ -1079,7 +1079,7 @@
               if (diffDays >= 0) {
                 reviewActionHtml = `
                   <a href="review-write.html?write_type=APPRAISAL&ref_id=${a.id}" onclick="OpenReviewWritePopup('APPRAISAL', '${a.id}'); return false;" class="btn btn-gold btn-sm" style="font-size:0.78rem; padding:3px 8px; box-shadow:0 0 10px rgba(224,184,72,0.3);"><i class="fa-solid fa-pen"></i> 이벤트 후기 작성</a>
-                  <div style="font-size:0.72rem; color:var(--gold-light); margin-top:2px;">기한: 14일 이내 (D-${diffDays})</div>
+                  <div style="font-size:0.72rem; color:var(--gold-light); margin-top:2px;">기한: 이용 완료 후 14일 이내 (D-${diffDays})</div>
                 `;
               } else {
                 reviewActionHtml = `
@@ -1128,7 +1128,7 @@
                   <div>
                     <strong style="color:var(--gold-light); font-size:0.95rem;">[귀금속 감정비 무료 이벤트] 서비스 완료 후기 작성 안내</strong>
                     <p style="color:var(--text-light); font-size:0.85rem; margin:0.2rem 0 0 0;">
-                      무료 혜택으로 감정 완료된 <strong>${pendingEventReviews.length}건</strong>이 있습니다. 서비스 완료 후 14일 이내 솔직한 후기를 남겨주세요. (별점 무관 · 사진 첨부 환영)
+                      무료 혜택으로 감정 완료된 <strong>${pendingEventReviews.length}건</strong>이 있습니다. 서비스 이용 완료 후 14일 이내 홈페이지에 후기 작성 (별점 무관 · 사진 첨부는 선택)
                     </p>
                   </div>
                 </div>

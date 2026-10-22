@@ -236,7 +236,7 @@
         <i class="fa-solid fa-clipboard-check"></i> 참여 조건 및 비용 안내
       </div>
       <ul class="info-list">
-        <li><strong>참여 조건:</strong> 골드랩앤코 회원가입 및 서비스 이용 완료 후 14일 이내 솔직한 후기 작성 (기존 회원 참여 가능)</li>
+        <li><strong>참여 조건:</strong> 골드랩앤코 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지에 후기 작성 (기존 회원 참여 가능, 사진 첨부는 선택)</li>
         <li><strong>비용 안내:</strong> 택배 접수는 왕복 배송비만 고객 부담 / 종로 본점 방문 접수는 배송비 없음</li>
         <li><strong>적용 범위:</strong> 접수 1건당 제품 최대 2개까지 기본 감정대행 범위에 적용</li>
         <li><strong>진행 기간:</strong> 2026년 11월 6일까지 접수 건에 한함</li>
@@ -276,9 +276,14 @@
     }
 
     function saveHideTodayIfChecked() {
+      try {
+        sessionStorage.setItem('goldlab_hide_event_popup_session', 'true');
+      } catch (e) {}
       const chk = document.getElementById('chkHideToday');
       if (chk && chk.checked) {
-        localStorage.setItem('goldlab_hide_event_popup_until', String(getKstMidnightTimestamp()));
+        try {
+          localStorage.setItem('goldlab_hide_event_popup_until', String(getKstMidnightTimestamp()));
+        } catch (e) {}
       }
     }
 

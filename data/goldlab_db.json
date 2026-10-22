@@ -1,7 +1,7 @@
 {
   "version": "2.0.0",
   "createdAt": "2026-10-08T12:26:04.017Z",
-  "updatedAt": "2026-10-21T06:33:40.485Z",
+  "updatedAt": "2026-10-22T02:18:35.772Z",
   "users": [
     {
       "id": "usr_master_001",
@@ -20,14 +20,6 @@
     }
   ],
   "sessions": [
-    {
-      "id": "sess_1791971439301",
-      "userId": "usr_master_001",
-      "hashedToken": "cf42d1dad52b65bbe856cc973580fec37d6cf82555ba32aabc73acb6da57003d",
-      "expiresAt": "2026-10-21T09:50:39.301Z",
-      "clientIP": "::1",
-      "createdAt": "2026-10-14T09:50:39.307Z"
-    },
     {
       "id": "sess_1792562196730",
       "userId": "usr_master_001",
@@ -59,6 +51,14 @@
       "expiresAt": "2026-10-28T06:33:39.732Z",
       "clientIP": "::ffff:127.0.0.1",
       "createdAt": "2026-10-21T06:33:39.732Z"
+    },
+    {
+      "id": "sess_1792635515528",
+      "userId": "usr_master_001",
+      "hashedToken": "924b572b481a4c05a4741bbfb1dc42f8e0771ce443029970ff0ddd2bf8b56555",
+      "expiresAt": "2026-10-29T02:18:35.528Z",
+      "clientIP": "::ffff:127.0.0.1",
+      "createdAt": "2026-10-22T02:18:35.528Z"
     }
   ],
   "password_resets": [],

@@ -640,7 +640,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         }
         // 2. Must agree to review condition
         if (!body.agreeEventReview && !body.eventAgreed) {
-          return sendJSON(res, 400, { error: '[필수] 회원가입 및 서비스 이용 완료 후 14일 이내 홈페이지 후기 작성 조건을 확인하고 이벤트 참여에 동의해 주세요.' });
+          return sendJSON(res, 400, { error: '서비스 이용 완료 후 14일 이내 홈페이지에 후기 작성 조건에 동의해 주세요.' });
         }
         // 3. Must be within event deadline (KST 2026-11-06 23:59:59)
         const nowTs = Date.now();
@@ -1483,7 +1483,8 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     allPublic.forEach(r => {
       const rt = Math.round(Number(r.rating) || 5);
       sumRating += rt;
-      if (r.isVerifiedTrade) {
+      const isVerified = (r.isVerifiedTrade === true) || (r.isVerifiedTrade !== false && (r.transactionType === 'ORDER' || r.transactionType === 'APPRAISAL' || r.transactionType === 'OFFLINE'));
+      if (isVerified) {
         verifiedTradeCount++;
         verifiedSumRating += rt;
       } else {
@@ -1513,17 +1514,19 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     const paginated = filtered.slice(startIndex, startIndex + limit);
 
     // Format safe public view (strip internal IDs, PII, email, phone)
-    const safeReviews = paginated.map(r => ({
-      id: r.id,
-      authorMasked: r.authorMasked || maskAuthorName(r.authorName),
-      maskedAuthor: r.authorMasked || maskAuthorName(r.authorName),
-      category: r.category,
-      categoryLabel: r.categoryLabel,
-      rating: r.rating,
-      content: r.content,
-      photos: r.photos || [],
-      isVerifiedTrade: !!r.isVerifiedTrade,
-      isVerified: !!r.isVerifiedTrade,
+    const safeReviews = paginated.map(r => {
+      const isVerified = (r.isVerifiedTrade === true) || (r.isVerifiedTrade !== false && (r.transactionType === 'ORDER' || r.transactionType === 'APPRAISAL' || r.transactionType === 'OFFLINE'));
+      return {
+        id: r.id,
+        authorMasked: r.authorMasked || maskAuthorName(r.authorName),
+        maskedAuthor: r.authorMasked || maskAuthorName(r.authorName),
+        category: r.category,
+        categoryLabel: r.categoryLabel,
+        rating: r.rating,
+        content: r.content,
+        photos: r.photos || [],
+        isVerifiedTrade: isVerified,
+        isVerified: isVerified,
       isEventReview: !!r.isEventReview,
       eventCode: r.eventCode || null,
       eventNotice: r.eventNotice || (r.isEventReview ? '감정비 무료 이벤트 혜택을 제공받아 작성한 후기입니다.' : null),
@@ -1534,7 +1537,8 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       } : null,
       createdAt: r.createdAt,
       isMyReview: currentUser ? (r.userId === currentUser.id) : false
-    }));
+    };
+  });
 
     return sendJSON(res, 200, {
       success: true,
