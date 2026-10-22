@@ -9,26 +9,26 @@ let REALTIME_STANDARD_RATES = {
   "24K_sell": 660000,
   "18K_sell": 485100,
   "14K_sell": 376200,
-  "PT_buy": 306000,
-  "PT_sell": 248000,
-  "AG_buy": 10360,
-  "AG_sell": 8620
+  "PT_buy": 299000,
+  "PT_sell": 242000,
+  "AG_buy": 10280,
+  "AG_sell": 8550
 };
 
 let REALTIME_RATE_CHANGES = {
   "24K_buy_diff": 0,
   "24K_buy_per": 0,
-  "24K_sell_diff": -5000,
-  "24K_sell_per": -0.76,
-  "18K_sell_diff": -3700,
-  "18K_sell_per": -0.76,
-  "14K_sell_diff": -2900,
-  "14K_sell_per": -0.77,
-  "PT_sell_diff": 0,
-  "PT_sell_per": 0,
-  "AG_sell_diff": 80,
-  "AG_sell_per": 0.93,
-  "date": "2026.10.21"
+  "24K_sell_diff": 0,
+  "24K_sell_per": 0,
+  "18K_sell_diff": 0,
+  "18K_sell_per": 0,
+  "14K_sell_diff": 0,
+  "14K_sell_per": 0,
+  "PT_sell_diff": -6000,
+  "PT_sell_per": -2.48,
+  "AG_sell_diff": -70,
+  "AG_sell_per": -0.82,
+  "date": "2026.10.22"
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
