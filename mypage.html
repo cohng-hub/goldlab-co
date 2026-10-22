@@ -1292,7 +1292,8 @@
     // View Certificate in Modal
     async function ViewCertificate(docNo) {
       try {
-        const res = await fetch('/api/certificates/verify/' + encodeURIComponent(docNo));
+        const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
+        const res = await fetch(apiBase + '/api/certificates/verify/' + encodeURIComponent(docNo));
         const data = await res.json();
         if (!data.success) {
           alert('확인서 정보를 불러올 수 없습니다.');

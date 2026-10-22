@@ -3,6 +3,20 @@
    Real-Time Market Rate Sync & Prominent Chart Engine & VIP PnL System
    ========================================================================== */
 
+// Central Cloud API Endpoint for Unified Real-Time Sync
+const CLOUD_BACKEND_URL = 'https://port-0-goldlab-co-mvizt51ped4d58e4.sel3.cloudtype.app';
+
+if (typeof window !== 'undefined') {
+  if (!window.GOLDLAB_API_BASE) {
+    const hn = window.location.hostname;
+    if (hn === 'localhost' || hn === '127.0.0.1' || (hn && hn.includes('cloudtype.app'))) {
+      window.GOLDLAB_API_BASE = '';
+    } else {
+      window.GOLDLAB_API_BASE = CLOUD_BACKEND_URL;
+    }
+  }
+}
+
 // Official Live Rates from Korea Gold Exchange (koreagoldx.co.kr 100% Exact Official Rates)
 let REALTIME_STANDARD_RATES = {
   "24K_buy": 766000,
@@ -2723,7 +2737,8 @@ async function ExportMasterMembersCSV() {
     return;
   }
   try {
-    const res = await fetch('/api/admin/export-csv', {
+    const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
+    const res = await fetch(apiBase + '/api/admin/export-csv', {
       headers: { 'Authorization': 'Bearer ' + authToken }
     });
     if (!res.ok) {

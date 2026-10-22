@@ -114,7 +114,8 @@
       resultDiv.innerHTML = '<div style="text-align:center; padding:2rem; color:var(--gold-light);"><i class="fa-solid fa-spinner fa-spin fa-2x"></i><p style="margin-top:0.8rem;">확인서 진위를 검증하는 중입니다...</p></div>';
 
       try {
-        const res = await fetch('/api/certificates/verify/' + encodeURIComponent(token));
+        const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
+        const res = await fetch(apiBase + '/api/certificates/verify/' + encodeURIComponent(token));
         const data = await res.json();
 
         if (!res.ok || !data.success) {
