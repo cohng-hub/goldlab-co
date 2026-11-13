@@ -33,8 +33,8 @@ jobs:
         run: |
           echo "=== IP and DNS Diagnostic ==="
           curl -s https://api.ipify.org && echo ""
-          echo "=== Curl probe to KGE ==="
-          curl -v -X POST https://koreagoldx.co.kr/api/main -H "Content-Type: application/json" -d "{}" --max-time 10 || echo "Curl exited with code $?"
+          echo "=== Reachability check to KGE ==="
+          curl -I -s https://www.koreagoldx.co.kr/ --max-time 10 | head -n 5 || echo "Curl exited with code $?"
 
       - name: Run Gold Rate Sync Script
         run: node scripts/sync-kge-rates.js

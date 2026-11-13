@@ -493,35 +493,94 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   // ------------------------------------------------------------
   // 2. GOLD RATES & LIVE MARKET DATA
   // ------------------------------------------------------------
-  if (pathname === '/api/gold-rates' && method === 'GET') {
-    const db = getDB();
+  if (pathname === '/api/gold-rates' && (method === 'GET' || method === 'POST')) {
+    let baseRates = {
+      '24K_buy': 782000,
+      '24K_sell': 671000,
+      '18K_sell': 493200,
+      '14K_sell': 382500,
+      'PT_buy': 311000,
+      'PT_sell': 252000,
+      'AG_buy': 10910,
+      'AG_sell': 9080
+    };
+    let rateChanges = {
+      '24K_buy_diff': 0,
+      '24K_buy_per': 0,
+      '24K_sell_diff': 0,
+      '24K_sell_per': 0,
+      '18K_sell_diff': 0,
+      '18K_sell_per': 0,
+      '14K_sell_diff': 0,
+      '14K_sell_per': 0,
+      'PT_sell_diff': 0,
+      'PT_sell_per': 0,
+      'AG_sell_diff': 0,
+      'AG_sell_per': 0,
+      'date': new Date().toISOString().substring(0, 10).replace(/-/g, '.')
+    };
+
+    try {
+      const appJsPath = path.resolve(__dirname, '..', 'app.js');
+      if (fs.existsSync(appJsPath)) {
+        const appJsContent = fs.readFileSync(appJsPath, 'utf8');
+        const rMatch = appJsContent.match(/let REALTIME_STANDARD_RATES = (\{[\s\S]*?\});/);
+        const cMatch = appJsContent.match(/let REALTIME_RATE_CHANGES = (\{[\s\S]*?\});/);
+        if (rMatch) baseRates = { ...baseRates, ...JSON.parse(rMatch[1]) };
+        if (cMatch) rateChanges = { ...rateChanges, ...JSON.parse(cMatch[1]) };
+      }
+    } catch (e) {}
+
     // Return current official benchmark rates with full metadata
     return sendJSON(res, 200, {
       source: '한국금거래소 (Korea Gold Exchange)',
       unit: '1돈 (3.75g)',
       vatIncluded: true,
       vatNotice: '살 때 부가세(VAT 10%) 포함, 팔 때 세금 공제 없음',
-      benchmarkTimestamp: '2026.10.08 10:50:41',
+      benchmarkTimestamp: rateChanges.date || new Date().toISOString().substring(0, 10).replace(/-/g, '.'),
       lastSyncTimestamp: new Date().toISOString(),
       isDelayed: false,
+      officialPrice4: {
+        s_pure: baseRates['24K_buy'],
+        p_pure: baseRates['24K_sell'],
+        p_18k: baseRates['18K_sell'],
+        p_14k: baseRates['14K_sell'],
+        s_white: baseRates['PT_buy'],
+        p_white: baseRates['PT_sell'],
+        s_silver: baseRates['AG_buy'],
+        p_silver: baseRates['AG_sell'],
+        turm_s_pure: rateChanges['24K_buy_diff'],
+        per_s_pure: rateChanges['24K_buy_per'],
+        turm_p_pure: rateChanges['24K_sell_diff'],
+        per_p_pure: rateChanges['24K_sell_per'],
+        turm_p_18k: rateChanges['18K_sell_diff'],
+        per_p_18k: rateChanges['18K_sell_per'],
+        turm_p_14k: rateChanges['14K_sell_diff'],
+        per_p_14k: rateChanges['14K_sell_per'],
+        turm_p_white: rateChanges['PT_sell_diff'],
+        per_p_white: rateChanges['PT_sell_per'],
+        turm_p_silver: rateChanges['AG_sell_diff'],
+        per_p_silver: rateChanges['AG_sell_per'],
+        date: rateChanges.date
+      },
       rates: {
-        '24K_buy': 782000,
-        '24K_sell': 671000,
-        '18K_sell': 493200,
-        '14K_sell': 382500,
-        'PT_buy': 311000,
-        'PT_sell': 252000,
-        'AG_buy': 10910,
-        'AG_sell': 9080,
-        pure24k: { buy: 782000, sell: 671000, diff: 0, diffPercent: 0.0 },
-        gold18k: { sell: 493200, diff: 0, diffPercent: 0.0 },
-        gold14k: { sell: 382500, diff: 0, diffPercent: 0.0 },
-        platinum: { buy: 311000, sell: 252000, diff: 0, diffPercent: 0.0 },
-        silver: { buy: 10910, sell: 9080, diff: 0, diffPercent: 0.0 }
+        '24K_buy': baseRates['24K_buy'],
+        '24K_sell': baseRates['24K_sell'],
+        '18K_sell': baseRates['18K_sell'],
+        '14K_sell': baseRates['14K_sell'],
+        'PT_buy': baseRates['PT_buy'],
+        'PT_sell': baseRates['PT_sell'],
+        'AG_buy': baseRates['AG_buy'],
+        'AG_sell': baseRates['AG_sell'],
+        pure24k: { buy: baseRates['24K_buy'], sell: baseRates['24K_sell'], diff: rateChanges['24K_sell_diff'], diffPercent: rateChanges['24K_sell_per'] },
+        gold18k: { sell: baseRates['18K_sell'], diff: rateChanges['18K_sell_diff'], diffPercent: rateChanges['18K_sell_per'] },
+        gold14k: { sell: baseRates['14K_sell'], diff: rateChanges['14K_sell_diff'], diffPercent: rateChanges['14K_sell_per'] },
+        platinum: { buy: baseRates['PT_buy'], sell: baseRates['PT_sell'], diff: rateChanges['PT_sell_diff'], diffPercent: rateChanges['PT_sell_per'] },
+        silver: { buy: baseRates['AG_buy'], sell: baseRates['AG_sell'], diff: rateChanges['AG_sell_diff'], diffPercent: rateChanges['AG_sell_per'] }
       },
       goldlabRates: {
-        '24K_sell_preferred': 681000,
-        '18K_sell_preferred': 496100
+        '24K_sell_preferred': baseRates['24K_sell'] + 10000,
+        '18K_sell_preferred': baseRates['18K_sell'] + 2900
       },
       goldlabSpread: {
         description: 'GoldLab&co 기준 도매 바닥가 기준 매입 우대 및 투명 유통 마진 적용',

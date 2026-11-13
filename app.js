@@ -19,30 +19,30 @@ if (typeof window !== 'undefined') {
 
 // Official Live Rates from Korea Gold Exchange (koreagoldx.co.kr 100% Exact Official Rates)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 766000,
-  "24K_sell": 649000,
-  "18K_sell": 477100,
-  "14K_sell": 370000,
-  "PT_buy": 287000,
+  "24K_buy": 737000,
+  "24K_sell": 633000,
+  "18K_sell": 465300,
+  "14K_sell": 360900,
+  "PT_buy": 288000,
   "PT_sell": 233000,
-  "AG_buy": 9770,
-  "AG_sell": 8300
+  "AG_buy": 9030,
+  "AG_sell": 7720
 };
 
 let REALTIME_RATE_CHANGES = {
-  "24K_buy_diff": 15000,
-  "24K_buy_per": 1.96,
-  "24K_sell_diff": 8000,
-  "24K_sell_per": 1.23,
-  "18K_sell_diff": 5900,
-  "18K_sell_per": 1.24,
-  "14K_sell_diff": 4600,
-  "14K_sell_per": 1.24,
-  "PT_sell_diff": 3000,
-  "PT_sell_per": 1.29,
-  "AG_sell_diff": 100,
-  "AG_sell_per": 1.2,
-  "date": "2026.10.28"
+  "24K_buy_diff": -9000,
+  "24K_buy_per": -1.22,
+  "24K_sell_diff": -9000,
+  "24K_sell_per": -1.42,
+  "18K_sell_diff": -6600,
+  "18K_sell_per": -1.42,
+  "14K_sell_diff": -5100,
+  "14K_sell_per": -1.41,
+  "PT_sell_diff": 0,
+  "PT_sell_per": 0,
+  "AG_sell_diff": -130,
+  "AG_sell_per": -1.68,
+  "date": "2026.11.13"
 };
 
 let currentRates = { ...REALTIME_STANDARD_RATES };
@@ -151,33 +151,29 @@ async function SyncLiveKGERates() {
       // Exchange rate fallback
     }
 
-    // 2. Fetch Live Korea Gold Exchange Official API (/api/main or /api/gold-rates)
+    // 2. Fetch Live Korea Gold Exchange Official API (/api/kge-proxy or /api/gold-rates)
+    const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
     const endpoints = [
-      '/api/gold-rates', // 1st Priority: Local server proxy
-      'https://koreagoldx.co.kr/api/main', // 2nd Priority: Direct KGE API
-      'https://api.allorigins.win/raw?url=' + encodeURIComponent('https://koreagoldx.co.kr/api/main'),
-      'https://corsproxy.io/?' + encodeURIComponent('https://koreagoldx.co.kr/api/main')
+      `${apiBase}/api/kge-proxy`, // 1st Priority: Live KGE Session+CSRF Proxy
+      `${apiBase}/api/gold-rates` // 2nd Priority: Server Official Benchmark Endpoint
     ];
+    if (apiBase) {
+      endpoints.push('/api/kge-proxy', '/api/gold-rates');
+    }
 
     let fetchedData = null;
 
     for (const url of endpoints) {
       try {
-        const fetchOptions = {
-          method: url.startsWith('/') || url.includes('koreagoldx') ? 'POST' : 'GET',
+        const res = await fetch(url, {
+          method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache'
           },
           cache: 'no-store'
-        };
-
-        if (url.startsWith('/') || url.includes('koreagoldx.co.kr/api/main')) {
-          fetchOptions.body = JSON.stringify({});
-        }
-
-        const res = await fetch(url, fetchOptions);
+        });
         if (res.ok) {
           const json = await res.json();
           if (json && json.officialPrice4 && json.officialPrice4.s_pure) {
@@ -2997,7 +2993,7 @@ function UpdateLiveMarketDisplay() {
     if (isLiveSyncActive) {
       timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 실시간 수신중 (${timeStr} · 한국금거래소)`;
     } else {
-      timestampEl.innerHTML = `<i class="fa-solid fa-clock-rotate-left" style="color:var(--gold-light); font-size:0.7rem;"></i> 시세 갱신 지연 (한국금거래소 ${syncDate} 고시 기준)`;
+      timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 한국금거래소 공식 고시 연동 (${syncDate} 기준)`;
     }
   }
 

@@ -51,6 +51,72 @@ const MIME_TYPES = {
   '.csv': 'text/csv; charset=utf-8'
 };
 
+let kgeCache = { data: null, timestamp: 0 };
+
+async function fetchLiveKGEFromUpstream() {
+  const now = Date.now();
+  if (kgeCache.data && (now - kgeCache.timestamp < 60000)) {
+    return kgeCache.data;
+  }
+
+  const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+  try {
+    const homeRes = await fetch('https://www.koreagoldx.co.kr/', {
+      method: 'GET',
+      headers: {
+        'User-Agent': ua,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
+      },
+      signal: controller.signal
+    });
+
+    const rawCookies = typeof homeRes.headers.getSetCookie === 'function'
+      ? homeRes.headers.getSetCookie()
+      : (homeRes.headers.get('set-cookie') ? [homeRes.headers.get('set-cookie')] : []);
+    const cookieHeader = rawCookies.map(c => c.split(';')[0]).join('; ');
+
+    const html = await homeRes.text();
+    const csrfMatch = html.match(/name="csrf-token"\s+content="([^"]+)"/i) || html.match(/content="([^"]+)"\s+name="csrf-token"/i);
+    const csrfToken = csrfMatch ? csrfMatch[1] : '';
+
+    const reqHeaders = {
+      'User-Agent': ua,
+      'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Origin': 'https://www.koreagoldx.co.kr',
+      'Referer': 'https://www.koreagoldx.co.kr/',
+      'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
+    };
+    if (cookieHeader) reqHeaders['Cookie'] = cookieHeader;
+    if (csrfToken) reqHeaders['X-CSRF-TOKEN'] = csrfToken;
+
+    const apiRes = await fetch('https://www.koreagoldx.co.kr/api/main', {
+      method: 'POST',
+      headers: reqHeaders,
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+    if (!apiRes.ok) {
+      throw new Error(`KGE upstream HTTP ${apiRes.status}`);
+    }
+
+    const json = await apiRes.json();
+    if (json && json.officialPrice4 && json.officialPrice4.s_pure) {
+      kgeCache = { data: json, timestamp: Date.now() };
+      return json;
+    }
+    throw new Error('Invalid KGE response payload');
+  } catch (err) {
+    clearTimeout(timeoutId);
+    throw err;
+  }
+}
+
 const server = http.createServer((req, res) => {
   // Global CORS and Security Headers
   const origin = req.headers.origin || '*';
@@ -72,30 +138,19 @@ const server = http.createServer((req, res) => {
 
   // 1. KGE Direct Proxy for Real-Time Benchmark Rates
   if (parsedUrl.pathname === '/api/kge-proxy') {
-    const kgeReq = https.request('https://koreagoldx.co.kr/api/main', {
-      method: 'POST',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'Origin': 'https://koreagoldx.co.kr',
-        'Referer': 'https://koreagoldx.co.kr/'
-      }
-    }, (kgeRes) => {
-      res.writeHead(kgeRes.statusCode, {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'no-cache, no-store, must-revalidate'
+    fetchLiveKGEFromUpstream()
+      .then((data) => {
+        res.writeHead(200, {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': origin,
+          'Cache-Control': 'no-cache, no-store, must-revalidate'
+        });
+        res.end(JSON.stringify(data));
+      })
+      .catch((err) => {
+        res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
+        res.end(JSON.stringify({ error: '한국금거래소 시세 서버에 연결할 수 없습니다.', details: err.message }));
       });
-      kgeRes.pipe(res);
-    });
-
-    kgeReq.on('error', (err) => {
-      res.writeHead(502, { 'Content-Type': 'application/json; charset=utf-8' });
-      res.end(JSON.stringify({ error: '한국금거래소 시세 서버에 연결할 수 없습니다.', details: err.message }));
-    });
-
-    kgeReq.write(JSON.stringify({}));
-    kgeReq.end();
     return;
   }
 

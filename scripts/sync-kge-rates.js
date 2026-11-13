@@ -19,19 +19,44 @@ function sleep(ms) {
 async function fetchKGEWithFetch(timeoutMs = 15000) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  const ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36';
 
   try {
-    const res = await fetch('https://koreagoldx.co.kr/api/main', {
-      method: 'POST',
+    // Step 1: Visit main page to acquire session cookies (JSESSIONID, AWSALB) and CSRF token
+    const homeRes = await fetch('https://www.koreagoldx.co.kr/', {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Origin': 'https://koreagoldx.co.kr',
-        'Referer': 'https://koreagoldx.co.kr/',
+        'User-Agent': ua,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
       },
-      body: JSON.stringify({}),
+      signal: controller.signal
+    });
+
+    const rawCookies = typeof homeRes.headers.getSetCookie === 'function'
+      ? homeRes.headers.getSetCookie()
+      : (homeRes.headers.get('set-cookie') ? [homeRes.headers.get('set-cookie')] : []);
+    const cookieHeader = rawCookies.map(c => c.split(';')[0]).join('; ');
+
+    const html = await homeRes.text();
+    const csrfMatch = html.match(/name="csrf-token"\s+content="([^"]+)"/i) || html.match(/content="([^"]+)"\s+name="csrf-token"/i);
+    const csrfToken = csrfMatch ? csrfMatch[1] : '';
+
+    // Step 2: Request official rates from /api/main with valid session & CSRF headers
+    const reqHeaders = {
+      'User-Agent': ua,
+      'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Origin': 'https://www.koreagoldx.co.kr',
+      'Referer': 'https://www.koreagoldx.co.kr/',
+      'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7'
+    };
+    if (cookieHeader) reqHeaders['Cookie'] = cookieHeader;
+    if (csrfToken) reqHeaders['X-CSRF-TOKEN'] = csrfToken;
+
+    const res = await fetch('https://www.koreagoldx.co.kr/api/main', {
+      method: 'POST',
+      headers: reqHeaders,
       signal: controller.signal
     });
 
