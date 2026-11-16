@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>종로 본점 방문예약 시스템 | GoldLab & Co.</title>
   <meta name="description" content="GoldLab & Co. 종로 본점 방문예약. 실시간 시간대별 정원 예약, 골드바 구매 및 고금 매입 1:1 VIP 상담">
+  <link rel="canonical" href="https://goldlabnco.com/reservation.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GoldLab & Co. (골드랩앤코)">
+  <meta property="og:title" content="종로 본점 방문예약 시스템 | GoldLab & Co.">
+  <meta property="og:description" content="GoldLab & Co. 종로 본점 방문예약. 실시간 시간대별 정원 예약, 골드바 구매 및 고금 매입 1:1 VIP 상담">
+  <meta property="og:url" content="https://goldlabnco.com/reservation.html">
+  <meta property="og:image" content="https://goldlabnco.com/x_header_banner.png">
+  <meta name="twitter:card" content="summary_large_image">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=20261016_mobile_v3">
@@ -153,8 +161,8 @@
 
           <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:1rem; margin-bottom:1.8rem; font-size:0.85rem; color:var(--text-muted); line-height:1.7;">
             <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; color:var(--text-light);">
-              <input type="checkbox" required checked style="accent-color:var(--gold-primary);">
-              <span>[필수] 방문예약 확인 및 일정 안내를 위한 개인정보 수집에 동의합니다.</span>
+              <input type="checkbox" id="bookPrivacyAgree" required style="accent-color:var(--gold-primary);">
+              <span>[필수] 방문예약 확인 및 일정 안내를 위한 개인정보 수집·이용에 동의합니다.</span>
             </label>
           </div>
 
@@ -162,6 +170,25 @@
             <i class="fa-solid fa-calendar-check"></i> 종로 본점 방문예약 확정하기
           </button>
         </form>
+
+        <!-- 오시는 길 & 지도 바로가기 (네이버지도 / 카카오맵) -->
+        <div style="margin-top:1.8rem; padding-top:1.4rem; border-top:1px solid var(--border-dark);">
+          <div style="font-size:0.95rem; font-weight:800; color:var(--text-white); margin-bottom:0.6rem; display:flex; align-items:center; gap:0.5rem;">
+            <i class="fa-solid fa-location-dot text-gold"></i> 종로 본점 오시는 길 안내
+          </div>
+          <p style="font-size:0.86rem; color:var(--text-muted); line-height:1.6; margin-bottom:0.9rem;">
+            서울특별시 종로구 돈화문로6나길 28-12 제일빌딩 307호 (종로3가역 인접)<br>
+            대표전화: <a href="tel:010-4017-4988" style="color:var(--gold-light); font-weight:700; text-decoration:none;">010-4017-4988</a> · 영업시간: 평일 11:00 ~ 18:00 (주말/공휴일 휴무)
+          </p>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.65rem;">
+            <a href="https://map.naver.com/p/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%A2%85%EB%A1%9C%EA%B5%AC%20%EB%8F%88%ED%99%94%EB%AC%B8%EB%A1%9C6%EB%82%98%EA%B8%B8%2028-12" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm" style="text-align:center; padding:0.6rem; font-size:0.84rem; font-weight:800; text-decoration:none;">
+              <i class="fa-solid fa-map-location-dot" style="color:#03c75a;"></i> 네이버 지도 길찾기
+            </a>
+            <a href="https://map.kakao.com/link/search/%EC%84%9C%EC%9A%B8%ED%8A%B9%EB%B3%84%EC%8B%9C%20%EC%A2%85%EB%A1%9C%EA%B5%AC%20%EB%8F%88%ED%99%94%EB%AC%B8%EB%A1%9C6%EB%82%98%EA%B8%B8%2028-12" target="_blank" rel="noopener noreferrer" class="btn btn-outline-gold btn-sm" style="text-align:center; padding:0.6rem; font-size:0.84rem; font-weight:800; text-decoration:none;">
+              <i class="fa-solid fa-location-arrow" style="color:#fee500;"></i> 카카오맵 길찾기
+            </a>
+          </div>
+        </div>
       </div>
 
     </div>

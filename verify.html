@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>검사 결과 확인서 진위 확인 시스템 | GoldLab & Co.</title>
   <meta name="description" content="GoldLab & Co. 귀금속 정밀 시험 결과 확인서의 온라인 진위 검증 시스템.">
+  <link rel="canonical" href="https://goldlabnco.com/verify.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GoldLab & Co. (골드랩앤코)">
+  <meta property="og:title" content="검사 결과 확인서 진위 확인 시스템 | GoldLab & Co.">
+  <meta property="og:description" content="GoldLab & Co. 귀금속 정밀 시험 결과 확인서의 온라인 진위 검증 시스템.">
+  <meta property="og:url" content="https://goldlabnco.com/verify.html">
+  <meta property="og:image" content="https://goldlabnco.com/x_header_banner.png">
+  <meta name="twitter:card" content="summary_large_image">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=20261016_mobile_v3">
@@ -116,6 +124,12 @@
       try {
         const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
         const res = await fetch(apiBase + '/api/certificates/verify/' + encodeURIComponent(token));
+        const contentType = res.headers.get('content-type') || '';
+
+        if (!contentType.includes('application/json')) {
+          throw new Error('SERVER_UNAVAILABLE');
+        }
+
         const data = await res.json();
 
         if (!res.ok || !data.success) {
@@ -183,8 +197,16 @@
 
       } catch (err) {
         resultDiv.innerHTML = `
-          <div style="background:rgba(239,68,68,0.1); border:1px solid #ef4444; border-radius:16px; padding:2rem; text-align:center;">
-            <p style="color:#ef4444;">진위 확인 조회 중 오류가 발생했습니다: ${err.message}</p>
+          <div style="background:rgba(245,158,11,0.1); border:1px solid #f59e0b; border-radius:16px; padding:2rem; text-align:center;">
+            <i class="fa-solid fa-circle-info" style="color:#f59e0b; font-size:2.4rem; margin-bottom:0.8rem;"></i>
+            <h3 style="color:var(--text-white); font-size:1.2rem; font-weight:800; margin-bottom:0.5rem;">온라인 진위조회 시스템 일시 점검 안내</h3>
+            <p style="color:var(--text-light); font-size:0.92rem; line-height:1.65; margin-bottom:1.2rem;">
+              현재 온라인 진위조회 서버 연결이 일시 지연되고 있습니다.<br>
+              매장 대표전화(<strong>010-4017-4988</strong>)로 확인서 문서번호를 말씀해 주시면 즉시 진위 여부를 확인해 드리겠습니다.
+            </p>
+            <a href="tel:01040174988" class="btn btn-gold btn-sm" style="display:inline-flex; align-items:center; gap:0.4rem; text-decoration:none;">
+              <i class="fa-solid fa-phone"></i> 대표전화로 즉시 확인 (010-4017-4988)
+            </a>
           </div>
         `;
       }

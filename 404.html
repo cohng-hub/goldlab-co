@@ -28,11 +28,31 @@
         'index': 'index.html'
       };
 
+      // Legacy Cafe24 / shopping mall paths -> immediate redirect to home
+      var legacyPatterns = [
+        '/product/compare',
+        '/order/basket',
+        '/member/',
+        '/board/',
+        '/category/',
+        '/shop/',
+        '/goods/',
+        '/order/',
+        '/myshop/',
+        '/product/'
+      ];
+      for (var i = 0; i < legacyPatterns.length; i++) {
+        if (path.indexOf(legacyPatterns[i]) !== -1) {
+          window.location.replace('/index.html');
+          return;
+        }
+      }
+
       for (var key in routes) {
         // Matches /reviews, /reviews/, /review, etc.
         var pattern = new RegExp('(\\/|^)' + key + '(\\/?)$', 'i');
         if (pattern.test(path)) {
-          window.location.replace(routes[key] + search + hash);
+          window.location.replace('/' + routes[key] + search + hash);
           return;
         }
       }

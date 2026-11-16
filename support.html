@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>고객센터 및 정책 센터 | GoldLab & Co.</title>
   <meta name="description" content="GoldLab & Co. 공식 이용약관, 개인정보처리방침, 감정대행 이용조건, 배송 및 환불 정책, 자주 묻는 질문(FAQ), 1:1 온라인 문의">
+  <link rel="canonical" href="https://goldlabnco.com/support.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GoldLab & Co. (골드랩앤코)">
+  <meta property="og:title" content="고객센터 및 정책 센터 | GoldLab & Co.">
+  <meta property="og:description" content="GoldLab & Co. 공식 이용약관, 개인정보처리방침, 감정대행 이용조건, 배송 및 환불 정책, 자주 묻는 질문(FAQ), 1:1 온라인 문의">
+  <meta property="og:url" content="https://goldlabnco.com/support.html">
+  <meta property="og:image" content="https://goldlabnco.com/x_header_banner.png">
+  <meta name="twitter:card" content="summary_large_image">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=20261016_mobile_v3">
@@ -220,9 +228,16 @@
           </select>
         </div>
 
-        <div class="form-group" style="margin-bottom:1.8rem;">
+        <div class="form-group" style="margin-bottom:1.4rem;">
           <label class="form-label">문의 내용 *</label>
           <textarea id="inqMessage" class="form-control" rows="5" required placeholder="상세한 문의 내용을 남겨주세요"></textarea>
+        </div>
+
+        <div style="background:#090b10; border:1px solid var(--border-dark); border-radius:12px; padding:1rem; margin-bottom:1.6rem; font-size:0.86rem; color:var(--text-muted); line-height:1.7;">
+          <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer; color:var(--text-light);">
+            <input type="checkbox" id="inqPrivacyAgree" required style="accent-color:var(--gold-primary);">
+            <span>[필수] 1:1 문의 접수 및 상담 답변 안내를 위한 개인정보 수집·이용에 동의합니다.</span>
+          </label>
         </div>
 
         <button type="submit" id="btnSubmitInquiry" class="btn btn-gold" style="width:100%; padding:1rem; font-size:1.05rem; font-weight:800;">
@@ -334,6 +349,13 @@
       const phone = document.getElementById('inqPhone').value.trim();
       const category = document.getElementById('inqCategory').value;
       const message = document.getElementById('inqMessage').value.trim();
+      const privacyChk = document.getElementById('inqPrivacyAgree');
+
+      if (privacyChk && !privacyChk.checked) {
+        alert('[필수] 1:1 문의 접수 및 답변 안내를 위한 개인정보 수집·이용에 동의해 주세요.');
+        privacyChk.focus();
+        return;
+      }
 
       const btn = document.getElementById('btnSubmitInquiry');
       if (btn) { btn.disabled = true; btn.innerText = '문의 접수 중...'; }
@@ -343,16 +365,21 @@
           name,
           phone,
           category,
+          content: message,
           message
         });
 
-        alert(`[문의 접수 완료]\n문의번호: ${res.inquiry.inquiryNo}\n고객님의 문의가 정상 등록되었습니다. 담당자 확인 후 신속히 연락드리겠습니다.`);
+        const inqNo = (res && res.inquiry && res.inquiry.inquiryNo) || (res && res.inquiryId) || '-';
+        alert(`[문의 접수 완료]\n문의번호: ${inqNo}\n고객님의 문의가 정상 등록되었습니다. 담당자 확인 후 신속히 연락드리겠습니다.`);
         document.getElementById('inquiryForm').reset();
-        if (currentUser) {
+        if (typeof currentUser !== 'undefined' && currentUser) {
           window.location.href = 'mypage.html';
         }
       } catch (err) {
-        alert('[문의 접수 실패] ' + err.message);
+        const msg = (typeof FormatUserFriendlyError === 'function')
+          ? FormatUserFriendlyError(err)
+          : '현재 온라인 접수가 일시 중단되었습니다. 매장 대표전화(010-4017-4988)로 연락해 주시면 즉시 도와드리겠습니다.';
+        alert('[1:1 문의 안내]\n' + msg);
       } finally {
         if (btn) {
           btn.disabled = false;

@@ -8,6 +8,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>귀금속 정밀 감정대행 서비스 | GoldLab & Co.</title>
   <meta name="description" content="종로 첨단 비파괴 XRF 성분분석 및 초정밀 비중 측정을 통한 투명한 귀금속 감정대행 서비스. 방문 및 안심 택배 접수 가능.">
+  <link rel="canonical" href="https://goldlabnco.com/appraisal.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="GoldLab & Co. (골드랩앤코)">
+  <meta property="og:title" content="귀금속 정밀 감정대행 서비스 | GoldLab & Co.">
+  <meta property="og:description" content="종로 첨단 비파괴 XRF 성분분석 및 초정밀 비중 측정을 통한 투명한 귀금속 감정대행 서비스. 방문 및 안심 택배 접수 가능.">
+  <meta property="og:url" content="https://goldlabnco.com/appraisal.html">
+  <meta property="og:image" content="https://goldlabnco.com/x_header_banner.png">
+  <meta name="twitter:card" content="summary_large_image">
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="style.css?v=20261021_check_v8">
@@ -1249,21 +1257,12 @@
       if (baseFeeEl) baseFeeEl.innerText = '29,900원';
 
       if (!isEventActive) {
-        // Event has expired (KST 2026-11-06 23:59:59 passed)
+        // Event has expired (KST 2026-11-06 23:59:59 passed) -> Hide event banner & card to prevent price confusion with 29,900 won
         if (eventCard) {
-          eventCard.style.background = 'rgba(239, 68, 68, 0.08)';
-          eventCard.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-          eventCard.innerHTML = `
-            <div style="color:#ef4444; font-weight:800; font-size:0.92rem;">
-              <i class="fa-solid fa-clock-rotate-left"></i> 귀금속 감정비 무료 이벤트가 2026년 11월 6일 23:59:59부로 종료되었습니다.
-            </div>
-            <p style="color:var(--text-muted); font-size:0.83rem; margin-top:0.3rem;">
-              현재는 정상 기본 감정료(29,900원)가 적용됩니다. 회원 연간 무료 감정 혜택 또는 GC 포인트 할인을 이용하실 수 있습니다.
-            </p>
-          `;
+          eventCard.style.display = 'none';
         }
         if (eventBanner) {
-          eventBanner.style.opacity = '0.6';
+          eventBanner.style.display = 'none';
         }
         if (eventAgreementCheckbox) eventAgreementCheckbox.checked = false;
       }
@@ -1586,7 +1585,10 @@
         }
 
       } catch (err) {
-        alert('[접수 실패] ' + err.message);
+        const msg = (typeof FormatUserFriendlyError === 'function')
+          ? FormatUserFriendlyError(err)
+          : '현재 온라인 접수가 일시 중단되었습니다. 매장 대표전화(010-4017-4988)로 연락해 주시면 즉시 도와드리겠습니다.';
+        alert('[감정대행 접수 안내]\n' + msg);
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;

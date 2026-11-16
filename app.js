@@ -60,10 +60,8 @@ const ALL_TIME_SLOTS = [
   '16:00', '16:30', '17:00', '17:30', '18:00'
 ];
 
-let bookedSlots = {
-  "2026-07-29": ["11:30", "15:00"],
-  "2026-07-30": ["14:00", "16:30"]
-};
+let bookedSlots = {};
+let selectedTimeStr = '';
 
 const INITIAL_TRANSACTIONS = [
   {
@@ -888,7 +886,7 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
       message: '방문예약이 성공적으로 완료되었습니다.',
       reservationId: newResv.id,
       reservation: newResv,
-      smsStatus: { sent: true, note: '온라인 방문예약 접수 완료' }
+      smsStatus: { sent: false, note: '알림톡 연동 대기' }
     };
   }
 
@@ -1767,9 +1765,42 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
 }
 
 
+function FormatUserFriendlyError(err, fallbackMsg = '현재 온라인 접수가 일시 중단되었습니다. 매장 대표전화(010-4017-4988)로 연락해 주시면 즉시 도와드리겠습니다.') {
+  if (!err) return fallbackMsg;
+  const raw = typeof err === 'string' ? err : (err.message || '');
+  if (!raw || /failed to fetch|networkerror|load failed|fetch failed|unexpected token|json/i.test(raw)) {
+    return fallbackMsg;
+  }
+  return raw;
+}
+
+function IsOnlineReceptionEndpoint(cleanPath, method) {
+  const m = (method || 'GET').toUpperCase();
+  if (m === 'POST') {
+    if (
+      cleanPath === '/api/reservations/book' ||
+      cleanPath === '/api/reservations/create' ||
+      cleanPath === '/api/reservations' ||
+      cleanPath === '/api/support/inquiries' ||
+      cleanPath === '/api/appraisals/apply' ||
+      cleanPath === '/api/orders' ||
+      cleanPath === '/api/orders/create'
+    ) {
+      return true;
+    }
+  }
+  if (cleanPath.startsWith('/api/certificates/verify/')) {
+    return true;
+  }
+  return false;
+}
+
 async function ApiRequest(path, method = 'GET', body = null) {
   const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
   const fullUrl = path.startsWith('http') ? path : (apiBase + path);
+  const cleanPath = (path || '').split('?')[0];
+  const isStrictOnline = IsOnlineReceptionEndpoint(cleanPath, method);
+  const offlinePhoneGuide = '현재 온라인 접수가 일시 중단되었습니다.\n매장 대표전화(010-4017-4988)로 연락해 주시면 즉시 예약 및 상담을 도와드리겠습니다.';
 
   const headers = { 'Content-Type': 'application/json' };
   if (authToken) {
@@ -1787,11 +1818,27 @@ async function ApiRequest(path, method = 'GET', body = null) {
     res = await fetch(fullUrl, opts);
     const contentType = res.headers.get('content-type') || '';
 
-    // Static host (GitHub Pages) returns 404, 405 Method Not Allowed, or non-JSON HTML error page
-    if (res.status === 404 || res.status === 405 || !contentType.includes('application/json')) {
+    // Static host (GitHub Pages) or sleeping Cloudtype container returns 404, 405, 502, 503, or non-JSON HTML error page
+    if (res.status === 404 || res.status === 405 || res.status === 502 || res.status === 503 || !contentType.includes('application/json')) {
+      if (isStrictOnline && !contentType.includes('application/json')) {
+        throw new Error(offlinePhoneGuide);
+      }
+      if (isStrictOnline && (res.status === 404 || res.status === 405 || res.status === 502 || res.status === 503)) {
+        // Check if it's a valid JSON 404 from our API (e.g., certificate not found) vs dead backend
+        if (contentType.includes('application/json')) {
+          const errJson = await res.json().catch(() => null);
+          if (errJson && (errJson.error || errJson.valid === false)) {
+            throw new Error(errJson.error || '요청하신 정보를 찾을 수 없습니다.');
+          }
+        }
+        throw new Error(offlinePhoneGuide);
+      }
       useFallback = true;
     }
   } catch (netErr) {
+    if (isStrictOnline) {
+      throw new Error(FormatUserFriendlyError(netErr, offlinePhoneGuide));
+    }
     useFallback = true;
   }
 
@@ -1803,14 +1850,17 @@ async function ApiRequest(path, method = 'GET', body = null) {
   try {
     data = await res.json();
   } catch (e) {
+    if (isStrictOnline) {
+      throw new Error(offlinePhoneGuide);
+    }
     return await InBrowserServerEngine(path, method, body, authToken);
   }
 
   if (!res.ok) {
-    if (res.status === 401 || res.status === 404 || res.status === 405) {
+    if (!isStrictOnline && (res.status === 401 || res.status === 404 || res.status === 405)) {
       return await InBrowserServerEngine(path, method, body, authToken);
     }
-    const errorMsg = (data && (data.error || data.message)) || ('서버 요청 실패 (상태 코드: ' + res.status + ')');
+    const errorMsg = (data && (data.error || data.message)) || offlinePhoneGuide;
     throw new Error(errorMsg);
   }
 
@@ -2021,7 +2071,7 @@ function EnsureAuthModalDOM() {
 
           <div style="margin-bottom:1.8rem; font-size:0.88rem; color:var(--text-muted);">
             <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
-              <input type="checkbox" required checked style="accent-color:var(--gold-primary);"> [필수] 서비스 이용약관 및 개인정보 처리방침 동의
+              <input type="checkbox" id="signupTermsAgree" required style="accent-color:var(--gold-primary);"> [필수] 서비스 이용약관 및 개인정보 처리방침 동의
             </label>
           </div>
 
@@ -2216,6 +2266,13 @@ async function HandleUserSignup(e) {
   const isBiz = currentSignupUserType === 'BIZ';
   const bizName = (document.getElementById('signupBizName')?.value || '').trim();
   const bizNo = (document.getElementById('signupBizNo')?.value || '').trim();
+
+  const termsChk = e.target.querySelector('input[type="checkbox"]');
+  if (termsChk && !termsChk.checked) {
+    alert('[필수] 서비스 이용약관 및 개인정보 처리방침에 동의해 주세요.');
+    termsChk.focus();
+    return;
+  }
 
   if (isBiz && (!bizName || !bizNo)) {
     alert('사업자명과 사업자등록번호를 정확히 입력해 주세요.');
@@ -2753,7 +2810,7 @@ async function ExportMasterMembersCSV() {
     URL.revokeObjectURL(url);
     alert('보안 감사 로그가 기록되었으며, 수식 실행 방지 처리된 CSV 파일이 다운로드되었습니다.');
   } catch (err) {
-    alert('[CSV 내보내기 실패] ' + err.message);
+    alert('[CSV 내보내기 안내] ' + FormatUserFriendlyError(err, '현재 서버 연결이 원활하지 않아 CSV 파일을 다운로드할 수 없습니다. 잠시 후 다시 시도해 주세요.'));
   }
 }
 
@@ -2942,9 +2999,12 @@ function UpdateLiveMarketDisplay() {
   // Top Ticker (2-Line Neat Layout with Exact KGE Rates & Real Diffs)
   const topTicker = document.getElementById('topTickerContent');
   if (topTicker) {
+    const tickerBadgeHtml = isLiveSyncActive
+      ? `<span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 실시간 수신 (${syncDate})</span>`
+      : `<span style="color:#f59e0b; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-clock"></i> 최근 고시 기준 참고 시세 (${syncDate} · 실시간 연동 대기)</span>`;
     topTicker.innerHTML = `
       <div style="display:flex; align-items:center; gap:1.2rem; flex-wrap:nowrap; white-space:nowrap; overflow-x:auto;">
-        <span style="color:#10b981; font-weight:700; font-size:0.78rem;"><i class="fa-solid fa-square-poll-vertical"></i> 한국금거래소 공식 실시간 연동 (${syncDate})</span>
+        ${tickerBadgeHtml}
         <span style="color:rgba(255,255,255,0.2);">|</span>
         <span>순금 24K 살때 <strong style="color:var(--gold-light); font-weight:800;">${formatWon(buy24K)}원</strong> ${chg24Buy}</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
@@ -2959,7 +3019,7 @@ function UpdateLiveMarketDisplay() {
         <span style="color:rgba(255,255,255,0.2);">|</span>
         <span>은 팔때 <strong style="color:var(--text-white); font-weight:700;">${formatWon(sellAG)}원</strong> ${chgAgSell}</span>
         <span style="color:rgba(255,255,255,0.2);">|</span>
-        <span style="font-size:0.75rem; color:var(--gold-light);">(VAT포함 3.75g 1돈 기준 한국금거래소 당일 공식 고시 시세)</span>
+        <span style="font-size:0.75rem; color:var(--gold-light);">(VAT포함 3.75g 1돈 기준 한국금거래소 공식 고시 참고 시세)</span>
       </div>
     `;
   }
@@ -2984,16 +3044,18 @@ function UpdateLiveMarketDisplay() {
   if (elSellPt) elSellPt.innerHTML = `${formatWon(sellPT)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
   if (elSellAg) elSellAg.innerHTML = `${formatWon(sellAG)}원 <span style="font-size:0.75rem; color:var(--text-muted); font-weight:400;">/돈</span>`;
 
-  // Live Timestamp & Status Display
+  // Live Timestamp & Status Display (Honest Real-Time vs Fallback Status)
   const now = new Date();
   const timeStr = `${now.getFullYear()}.${String(now.getMonth()+1).padStart(2,'0')}.${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-  lastFetchTime = timeStr;
+  if (isLiveSyncActive) {
+    lastFetchTime = timeStr;
+  }
   const timestampEl = document.getElementById('liveTimestamp');
   if (timestampEl) {
     if (isLiveSyncActive) {
       timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 실시간 수신중 (${timeStr} · 한국금거래소)`;
     } else {
-      timestampEl.innerHTML = `<i class="fa-solid fa-circle" style="color:#10b981; font-size:0.7rem;"></i> 한국금거래소 공식 고시 연동 (${syncDate} 기준)`;
+      timestampEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b; font-size:0.75rem;"></i> 실시간 연동 대기 · 최근 고시 기준(${syncDate}) 참고 시세`;
     }
   }
 
@@ -3348,10 +3410,24 @@ function ResetMarketRate() {
 // --------------------------------------------------------------------------
 // 3. Visit Reservation & Dynamic Time Slot Management
 // --------------------------------------------------------------------------
-function LoadBookedSlots() {
+async function LoadBookedSlots() {
+  try {
+    const apiBase = (typeof window !== 'undefined' && window.GOLDLAB_API_BASE) ? window.GOLDLAB_API_BASE : '';
+    const res = await fetch(apiBase + '/api/reservations/booked-slots', { cache: 'no-store' });
+    if (res.ok && (res.headers.get('content-type') || '').includes('application/json')) {
+      const data = await res.json();
+      if (data && data.bookedSlots && typeof data.bookedSlots === 'object') {
+        bookedSlots = data.bookedSlots;
+        SaveBookedSlots();
+        RenderTimeSlots();
+        return;
+      }
+    }
+  } catch (e) {}
+
   const stored = localStorage.getItem('goldlab_booked_slots_v2');
   if (stored) {
-    bookedSlots = JSON.parse(stored);
+    try { bookedSlots = JSON.parse(stored) || {}; } catch (e) { bookedSlots = {}; }
   }
 }
 
@@ -3521,8 +3597,9 @@ function GoTodayCalendar() {
 }
 
 function UpdateSelectedDateDisplay() {
+  const displayEl = document.getElementById('selectedDateDisplay');
   const textEl = document.getElementById('selectedDateText');
-  if (!textEl || !selectedDateStr) return;
+  if ((!displayEl && !textEl) || !selectedDateStr) return;
 
   const daysKo = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
   const parts = selectedDateStr.split('-');
@@ -3534,7 +3611,13 @@ function UpdateSelectedDateDisplay() {
   const dObj = new Date(y, m - 1, dayNum);
   const dayOfWeek = daysKo[dObj.getDay()];
 
-  textEl.innerText = `${y}년 ${m}월 ${dayNum}일 (${dayOfWeek})`;
+  const timeInput = document.getElementById('selectedTime');
+  const curTime = (timeInput && timeInput.value) ? timeInput.value : selectedTimeStr;
+  const dateLabel = `${y}년 ${m}월 ${dayNum}일 (${dayOfWeek})`;
+  const fullLabel = curTime ? `${dateLabel} · ${curTime}` : dateLabel;
+
+  if (displayEl) displayEl.innerText = fullLabel;
+  if (textEl) textEl.innerText = fullLabel;
 }
 
 function RenderTimeSlots() {
@@ -3544,14 +3627,16 @@ function RenderTimeSlots() {
   const dateVal = document.getElementById('bookDate')?.value || selectedDateStr || new Date().toISOString().split('T')[0];
   const dayBookedList = bookedSlots[dateVal] || [];
   const selectedTimeInput = document.getElementById('selectedTime');
-  let currentSelected = selectedTimeInput ? selectedTimeInput.value : '';
+  let currentSelected = selectedTimeInput ? selectedTimeInput.value : selectedTimeStr;
 
   // Check if selected date is weekend
   const dParts = dateVal.split('-');
   const selDateObj = new Date(parseInt(dParts[0],10), parseInt(dParts[1],10)-1, parseInt(dParts[2],10));
   if (selDateObj.getDay() === 0 || selDateObj.getDay() === 6) {
     container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:1.5rem; color:#ef4444; font-weight:700;">주말 및 공휴일은 휴무입니다. 평일 날짜를 선택해 주세요.</div>';
+    selectedTimeStr = '';
     if (selectedTimeInput) selectedTimeInput.value = '';
+    UpdateSelectedDateDisplay();
     return;
   }
 
@@ -3573,6 +3658,8 @@ function RenderTimeSlots() {
     currentSelected = availableSlots[0] || '';
     if (selectedTimeInput) selectedTimeInput.value = currentSelected;
   }
+  selectedTimeStr = currentSelected;
+  UpdateSelectedDateDisplay();
 
   container.innerHTML = ALL_TIME_SLOTS.map(t => {
     const isBooked = dayBookedList.includes(t);
@@ -3604,9 +3691,11 @@ function RenderTimeSlots() {
 }
 
 function SelectTimeSlot(chipEl, timeStr) {
+  selectedTimeStr = timeStr;
   const selectedTimeInput = document.getElementById('selectedTime');
   if (selectedTimeInput) selectedTimeInput.value = timeStr;
   RenderTimeSlots();
+  UpdateSelectedDateDisplay();
 }
 
 async function SubmitReservation(e) {
@@ -3619,6 +3708,7 @@ async function SubmitReservation(e) {
   const name = (document.getElementById('bookName')?.value || '').trim();
   const phone = (document.getElementById('bookPhone')?.value || '').trim();
   const memo = (document.getElementById('bookMemo')?.value || '').trim();
+  const privacyChk = document.getElementById('bookPrivacyAgree') || e.target.querySelector('input[type="checkbox"]');
 
   if (!date || !time) {
     alert('방문 희망 날짜와 시간을 선택해주세요.');
@@ -3626,6 +3716,11 @@ async function SubmitReservation(e) {
   }
   if (!name || !phone) {
     alert('예약자 성함과 연락처를 입력해주세요.');
+    return;
+  }
+  if (privacyChk && !privacyChk.checked) {
+    alert('[필수] 방문예약 확인 및 일정 안내를 위한 개인정보 수집·이용에 동의해 주세요.');
+    privacyChk.focus();
     return;
   }
 
@@ -3659,7 +3754,7 @@ async function SubmitReservation(e) {
     if (modalNotice) {
       modalNotice.innerHTML = res.smsStatus && res.smsStatus.sent
         ? '<span style="color:#10b981; font-weight:700;"><i class="fa-solid fa-check"></i> 알림톡 발송 완료</span>'
-        : '<span style="color:var(--text-muted); font-size:0.88rem;"><i class="fa-solid fa-info-circle"></i> 예약 접수 완료 (방문 일정 정상 확정 · 알림 연동 대기)</span>';
+        : '<span style="color:var(--text-muted); font-size:0.88rem;"><i class="fa-solid fa-info-circle"></i> 예약 접수 완료 (방문 일정 정상 확정 · 확인 안내 예정)</span>';
     }
 
     const bModal = document.getElementById('bookingModal');
@@ -3670,7 +3765,7 @@ async function SubmitReservation(e) {
     RenderTimeSlots();
     e.target.reset();
   } catch (err) {
-    alert('[예약 실패] ' + err.message);
+    alert('[방문예약 안내]\n' + FormatUserFriendlyError(err));
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
@@ -3911,7 +4006,7 @@ function OpenStandaloneEventPopup() {
 }
 
 function QuickInquiry(prodName) {
-  alert(`'${prodName}' 상품 구매 및 견적 상담 문의가 접수되었습니다.\n하단 대표전화 상담(010-4017-4988) 또는 방문 예약을 진행해 주세요!`);
+  alert(`'${prodName}' 상품 구매 및 견적 상담은 대표전화(010-4017-4988)로 연락해 주시거나 방문 예약 페이지에서 신청해 주세요.`);
 }
 
 // --------------------------------------------------------------------------
