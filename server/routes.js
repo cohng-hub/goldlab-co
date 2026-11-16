@@ -172,6 +172,28 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   const currentUser = authContext ? authContext.user : null;
 
   // ------------------------------------------------------------
+  // 0. HEALTH CHECK & PUBLIC SETTINGS ENDPOINTS
+  // ------------------------------------------------------------
+  if ((pathname === '/api/health' || pathname === '/api/healthz') && method === 'GET') {
+    return sendJSON(res, 200, {
+      success: true,
+      status: 'ok',
+      online: true,
+      service: 'GoldLab & Co. API Server',
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  if (pathname === '/api/settings' && method === 'GET') {
+    const db = getDB();
+    return sendJSON(res, 200, {
+      success: true,
+      settings: db.settings,
+      ...db.settings
+    });
+  }
+
+  // ------------------------------------------------------------
   // 1. AUTHENTICATION & SECURITY ENDPOINTS
   // ------------------------------------------------------------
   if (pathname === '/api/auth/register' && method === 'POST') {
@@ -493,7 +515,7 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   // ------------------------------------------------------------
   // 2. GOLD RATES & LIVE MARKET DATA
   // ------------------------------------------------------------
-  if (pathname === '/api/gold-rates' && (method === 'GET' || method === 'POST')) {
+  if ((pathname === '/api/gold-rates' || pathname === '/api/rates') && (method === 'GET' || method === 'POST')) {
     let baseRates = {
       '24K_buy': 782000,
       '24K_sell': 671000,
@@ -1053,6 +1075,27 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   // ------------------------------------------------------------
   // 5. VISIT RESERVATIONS
   // ------------------------------------------------------------
+  if (pathname === '/api/reservations/booked-slots' && method === 'GET') {
+    const db = getDB();
+    const capacity = (db.settings && db.settings.reservation && db.settings.reservation.capacityPerSlot) ? Math.max(2, db.settings.reservation.capacityPerSlot) : 2;
+    const counts = {};
+    (db.reservations || []).filter(r => r.status === 'CONFIRMED').forEach(r => {
+      const k = r.date + '_' + (r.timeSlot || r.time);
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    const fullSlots = {};
+    Object.keys(counts).forEach(k => {
+      if (counts[k] >= capacity) {
+        const parts = k.split('_');
+        const d = parts[0];
+        const t = parts[1];
+        if (!fullSlots[d]) fullSlots[d] = [];
+        fullSlots[d].push(t);
+      }
+    });
+    return sendJSON(res, 200, { success: true, bookedSlots: fullSlots, capacityPerSlot: capacity });
+  }
+
   if ((pathname === '/api/reservations/available-slots' || pathname === '/api/reservations/slots') && method === 'GET') {
     const dateQuery = parsedUrl.searchParams.get('date');
     if (!dateQuery || !/^\d{4}-\d{2}-\d{2}$/.test(dateQuery)) {
@@ -1405,36 +1448,45 @@ async function handleApiRequest(req, res, parsedUrl, body) {
   // 8. CUSTOMER SUPPORT & POLICIES
   // ------------------------------------------------------------
   if (pathname === '/api/support/inquiries' && method === 'POST') {
-    const { name, email, phone, category, title, content } = body || {};
-    if (!name || !email || !content) {
-      return sendJSON(res, 400, { error: '이름, 이메일, 문의 내용을 입력해 주세요.' });
+    const { name, email, phone, category, title, content, message } = body || {};
+    const finalContent = String(content || message || '').trim();
+    if (!name || !finalContent) {
+      return sendJSON(res, 400, { error: '이름과 문의 내용을 입력해 주세요.' });
     }
 
     return await runTransaction(async (dbRef) => {
-      const inqId = 'INQ-' + Date.now();
+      const inqId = 'GL-INQ-' + Date.now();
       const newInq = {
         id: inqId,
+        inquiryNo: inqId,
         userId: currentUser ? currentUser.id : null,
         name: String(name).trim(),
-        email: String(email).trim().toLowerCase(),
+        email: email ? String(email).trim().toLowerCase() : (currentUser ? currentUser.email : ''),
         phone: String(phone || '').trim(),
         category: category || '일반 상담',
-        title: String(title || '고객 문의').trim(),
-        content: String(content).trim(),
+        title: String(title || category || '고객 문의').trim(),
+        content: finalContent,
+        message: finalContent,
         answer: null,
+        reply: null,
         status: 'PENDING',
         createdAt: new Date().toISOString()
       };
       dbRef.inquiries.unshift(newInq);
-      return sendJSON(res, 201, { success: true, message: '문의가 안전하게 접수되었습니다.', inquiryId: inqId });
+      return sendJSON(res, 201, {
+        success: true,
+        message: '문의가 안전하게 접수되었습니다.',
+        inquiryId: inqId,
+        inquiry: newInq
+      });
     });
   }
 
   if (pathname === '/api/support/my-inquiries' && method === 'GET') {
     if (!currentUser) return sendJSON(res, 401, { error: '로그인이 필요합니다.' });
     const db = getDB();
-    const myInquiries = db.inquiries.filter(i => i.userId === currentUser.id || i.email === currentUser.email);
-    return sendJSON(res, 200, { inquiries: myInquiries });
+    const myInquiries = db.inquiries.filter(i => i.userId === currentUser.id || (currentUser.email && i.email === currentUser.email) || (currentUser.phone && i.phone === currentUser.phone));
+    return sendJSON(res, 200, { success: true, inquiries: myInquiries });
   }
 
   // ------------------------------------------------------------

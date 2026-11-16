@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /uploads/
+Disallow: /product/compare
+Disallow: /order/basket
+Disallow: /member/
+Disallow: /myshop/
+
+User-agent: Yeti
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+Sitemap: https://goldlabnco.com/sitemap.xml
+

@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
 
-// Load environment variables safely
+// Load environment variables safely (never overwrite host/Cloudtype injected env vars)
 try {
   if (typeof process.loadEnvFile === 'function') {
     process.loadEnvFile();
@@ -18,7 +18,10 @@ try {
         const trimmed = line.trim();
         if (trimmed && !trimmed.startsWith('#') && trimmed.includes('=')) {
           const [k, ...v] = trimmed.split('=');
-          process.env[k.trim()] = v.join('=').trim();
+          const key = k.trim();
+          if (process.env[key] === undefined) {
+            process.env[key] = v.join('=').trim();
+          }
         }
       }
     }
@@ -27,7 +30,7 @@ try {
   console.log('[Server] Note: .env loaded or defaults applied.');
 }
 
-const PORT = parseInt(process.env.PORT, 10) || 5000;
+const PORT = parseInt(process.env.PORT, 10) || 3000;
 const { getDB } = require('./server/db');
 const { handleApiRequest } = require('./server/routes');
 
@@ -136,6 +139,13 @@ const server = http.createServer((req, res) => {
 
   const parsedUrl = new URL(req.url, `http://${req.headers.host || 'localhost:' + PORT}`);
 
+  // 0. Container Health Check Endpoint (/healthz)
+  if (parsedUrl.pathname === '/healthz') {
+    res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
+    res.end(JSON.stringify({ status: 'ok', online: true, timestamp: new Date().toISOString() }));
+    return;
+  }
+
   // 1. KGE Direct Proxy for Real-Time Benchmark Rates
   if (parsedUrl.pathname === '/api/kge-proxy') {
     fetchLiveKGEFromUpstream()
@@ -188,10 +198,17 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // 3. Static Web Files Server
+  // 3. Static Web Files Server & Legacy URL Redirects
   let reqPath = parsedUrl.pathname;
   if (reqPath === '/' || reqPath === '') {
     reqPath = '/index.html';
+  }
+
+  // Redirect legacy Cafe24 / shopping mall paths to home
+  if (/^\/(product\/compare|order\/basket|member\/|board\/|category\/|shop\/|goods\/|order\/|myshop\/)/i.test(reqPath)) {
+    res.writeHead(301, { 'Location': '/' });
+    res.end();
+    return;
   }
 
   // Remove leading slashes and prevent directory traversal
@@ -228,14 +245,24 @@ const server = http.createServer((req, res) => {
 });
 
 if (require.main === module) {
-  server.listen(PORT, () => {
+  server.listen(PORT, '0.0.0.0', () => {
     console.log(`====================================================`);
     console.log(`👑 골드랩&co (GoldLab&co) 비즈니스 플랫폼 서버 가동`);
-    console.log(`📍 서비스 주소: http://localhost:${PORT}`);
-    console.log(`📡 REST API 엔드포인트: http://localhost:${PORT}/api/`);
+    console.log(`📍 서비스 주소: http://0.0.0.0:${PORT}`);
+    console.log(`📡 REST API 엔드포인트: http://0.0.0.0:${PORT}/api/`);
     console.log(`🛡️ 관리자/보안/데이터베이스 엔진: 온라인 정상 가동`);
     console.log(`====================================================`);
   });
+
+  // Dual-port compatibility: if primary PORT is 5000 (e.g. from .env), also listen on 3000 (Cloudtype default), and vice versa
+  const altPort = PORT === 3000 ? 5000 : 3000;
+  try {
+    const altServer = http.createServer(server.listeners('request')[0]);
+    altServer.on('error', () => {}); // Ignore if altPort is in use
+    altServer.listen(altPort, '0.0.0.0', () => {
+      console.log(`🔄 [Dual-Port] 호환 포트 http://0.0.0.0:${altPort} 동시 수신 대기 중`);
+    });
+  } catch (e) {}
 }
 
 module.exports = server;
