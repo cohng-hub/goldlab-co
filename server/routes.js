@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const { execFile } = require('child_process');
 const { getDB, saveDB, runTransaction, backupDB } = require('./db');
+const { sendAdminNotification } = require('./notify');
 const {
   hashPassword,
   verifyPassword,
@@ -877,6 +878,11 @@ async function handleApiRequest(req, res, parsedUrl, body) {
 
       dbRef.appraisals.unshift(newAppraisal);
 
+      sendAdminNotification(
+        '새 감정대행 접수',
+        `접수번호: ${newAppraisal.receiptNo}\n신청자: ${newAppraisal.applicantName} (${newAppraisal.applicantPhone})\n방식: ${newAppraisal.type} / 품목: ${newAppraisal.itemType} (${newAppraisal.quantity}개)\n결제예정: ${Number(newAppraisal.finalPayAmount || 0).toLocaleString()}원`
+      );
+
       return sendJSON(res, 201, {
         success: true,
         message: '감정대행 접수가 성공적으로 완료되었습니다.',
@@ -1183,6 +1189,11 @@ async function handleApiRequest(req, res, parsedUrl, body) {
 
       dbRef.reservations.unshift(newReservation);
 
+      sendAdminNotification(
+        '새 방문예약 접수',
+        `예약번호: ${newReservation.reservationNo}\n방문일시: ${newReservation.date} ${newReservation.timeSlot}\n예약자: ${newReservation.name} (${newReservation.phone})\n상담목적: ${newReservation.purpose}`
+      );
+
       return sendJSON(res, 201, {
         success: true,
         message: '방문예약이 성공적으로 완료되었습니다.',
@@ -1356,6 +1367,11 @@ async function handleApiRequest(req, res, parsedUrl, body) {
 
       dbRef.orders.unshift(newOrder);
 
+      sendAdminNotification(
+        '새 상품 주문 접수',
+        `주문번호: ${newOrder.orderNo}\n주문자: ${newOrder.shippingInfo && (newOrder.shippingInfo.recipientName || newOrder.shippingInfo.recipient) || currentUser.name}\n결제예정: ${Number(newOrder.finalPayAmount || 0).toLocaleString()}원`
+      );
+
       // Record GC deduction in Ledger atomically if used
       if (appliedGC > 0) {
         dbRef.gv_gc_ledgers.push({
@@ -1473,6 +1489,12 @@ async function handleApiRequest(req, res, parsedUrl, body) {
         createdAt: new Date().toISOString()
       };
       dbRef.inquiries.unshift(newInq);
+
+      sendAdminNotification(
+        '새 1:1 고객 문의',
+        `문의번호: ${inqId}\n문의자: ${newInq.name} (${newInq.phone || newInq.email || '연락처 없음'})\n유형: ${newInq.category}\n내용: ${newInq.content.substring(0, 120)}`
+      );
+
       return sendJSON(res, 201, {
         success: true,
         message: '문의가 안전하게 접수되었습니다.',
