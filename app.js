@@ -19,29 +19,29 @@ if (typeof window !== 'undefined') {
 
 // Official Live Rates from Korea Gold Exchange (koreagoldx.co.kr 100% Exact Official Rates)
 let REALTIME_STANDARD_RATES = {
-  "24K_buy": 706000,
-  "24K_sell": 610000,
-  "18K_sell": 448400,
-  "14K_sell": 347700,
-  "PT_buy": 258000,
-  "PT_sell": 209000,
-  "AG_buy": 8190,
-  "AG_sell": 6990
+  "24K_buy": 696000,
+  "24K_sell": 603000,
+  "18K_sell": 443300,
+  "14K_sell": 343800,
+  "PT_buy": 253000,
+  "PT_sell": 205000,
+  "AG_buy": 7990,
+  "AG_sell": 6820
 };
 
 let REALTIME_RATE_CHANGES = {
-  "24K_buy_diff": -5000,
-  "24K_buy_per": -0.71,
-  "24K_sell_diff": -10000,
-  "24K_sell_per": -1.64,
-  "18K_sell_diff": -7300,
-  "18K_sell_per": -1.63,
-  "14K_sell_diff": -5700,
-  "14K_sell_per": -1.64,
-  "PT_sell_diff": -4000,
-  "PT_sell_per": -1.91,
-  "AG_sell_diff": -10,
-  "AG_sell_per": -0.14,
+  "24K_buy_diff": -15000,
+  "24K_buy_per": -2.16,
+  "24K_sell_diff": -17000,
+  "24K_sell_per": -2.82,
+  "18K_sell_diff": -12400,
+  "18K_sell_per": -2.8,
+  "14K_sell_diff": -9600,
+  "14K_sell_per": -2.79,
+  "PT_sell_diff": -8000,
+  "PT_sell_per": -3.9,
+  "AG_sell_diff": -180,
+  "AG_sell_per": -2.64,
   "date": "2026.11.19"
 };
 
