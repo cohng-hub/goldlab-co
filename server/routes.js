@@ -300,62 +300,15 @@ async function handleApiRequest(req, res, parsedUrl, body) {
     }
 
     const cleanEmail = String(email).trim().toLowerCase();
-    const isMaster = cleanEmail === 'goldlabnco@naver.com';
-    const db = getDB();
-    let user = db.users.find(u => u.email === cleanEmail);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return sendJSON(res, 400, { error: '올바른 이메일 형식을 입력해 주세요.' });
+    }
 
-    if (isMaster) {
-      if (!user) {
-        user = {
-          id: 'usr_master_001',
-          name: '황미숙 대표 (최고관리자)',
-          email: 'goldlabnco@naver.com',
-          phone: '010-4017-4988',
-          passwordHash: hashPassword(password),
-          userType: 'MASTER',
-          role: 'MASTER_ADMIN',
-          tier: '👑 MASTER ADMIN',
-          twoFactorEnabled: false,
-          twoFactorSecret: null,
-          status: 'ACTIVE',
-          createdAt: new Date().toISOString()
-        };
-        db.users.push(user);
-      } else {
-        if (!verifyPassword(password, user.passwordHash)) {
-          user.passwordHash = hashPassword(password);
-        }
-      }
-    } else if (!user) {
-      const isBiz = cleanEmail.includes('biz') || cleanEmail.includes('corp');
-      user = {
-        id: 'usr_' + Date.now(),
-        name: cleanEmail.split('@')[0],
-        email: cleanEmail,
-        phone: '010-1234-5678',
-        passwordHash: hashPassword(password),
-        userType: isBiz ? 'BIZ' : 'PERSONAL',
-        role: isBiz ? 'B2B_PENDING' : 'USER',
-        tier: 'SILVER',
-        twoFactorEnabled: false,
-        twoFactorSecret: null,
-        status: 'ACTIVE',
-        createdAt: new Date().toISOString()
-      };
-      db.users.push(user);
-      db.gv_gc_ledgers.push({
-        id: 'LEDGER-GC-WELCOME-' + Date.now(),
-        userId: user.id,
-        type: 'GC_EARN',
-        amount: 5000,
-        referenceId: 'WELCOME-BONUS',
-        note: '신규 회원가입 축하 5,000 GC 적립',
-        createdAt: new Date().toISOString()
-      });
-    } else {
-      if (!verifyPassword(password, user.passwordHash)) {
-        user.passwordHash = hashPassword(password);
-      }
+    const db = getDB();
+    const user = db.users.find(u => u.email && u.email.toLowerCase() === cleanEmail);
+
+    if (!user || !user.passwordHash || !verifyPassword(password, user.passwordHash)) {
+      return sendJSON(res, 401, { error: '등록되지 않은 이메일이거나 비밀번호가 일치하지 않습니다. 정식 회원가입 후 이용해 주세요.' });
     }
 
     if (user.status === 'SUSPENDED') {
@@ -2411,16 +2364,49 @@ async function handleApiRequest(req, res, parsedUrl, body) {
       });
     }
 
-    // 9-5. GV & GC Ledger Manual Grant / Adjustment
-    if (pathname === '/api/admin/gv-gc/adjust' && method === 'POST') {
-      const { targetUserId, type, amount, reason } = body || {};
-      if (!targetUserId || !type || !amount || !reason) {
-        return sendJSON(res, 400, { error: '대상 회원, 구분(GV/GC), 금액, 조정 사유를 모두 입력해 주세요.' });
+    // 9-5. GV & GC Ledger Manual Grant / Adjustment (supports both /api/admin/gv-gc/adjust and /api/admin/ledger/adjust)
+    if ((pathname === '/api/admin/gv-gc/adjust' || pathname === '/api/admin/ledger/adjust') && method === 'POST') {
+      const { targetUserId, type, amount, gvDelta, gcDelta, reason } = body || {};
+      const cleanReason = String(reason || '').trim();
+      const hasDelta = (Number(gvDelta) || 0) !== 0 || (Number(gcDelta) || 0) !== 0;
+
+      if (!targetUserId || !cleanReason || (!hasDelta && (!type || !amount))) {
+        return sendJSON(res, 400, { error: '대상 회원, 조정 금액(GV/GC), 조정 사유를 모두 입력해 주세요.' });
       }
 
       return await runTransaction(async (dbRef) => {
         const target = dbRef.users.find(u => u.id === targetUserId);
         if (!target) return sendJSON(res, 404, { error: '회원을 찾을 수 없습니다.' });
+
+        const nowIso = new Date().toISOString();
+        if (hasDelta) {
+          const gvNum = Number(gvDelta) || 0;
+          const gcNum = Number(gcDelta) || 0;
+          if (gvNum !== 0) {
+            dbRef.gv_gc_ledgers.push({
+              id: 'LEDGER-ADJUST-GV-' + Date.now(),
+              userId: target.id,
+              type: gvNum > 0 ? 'GV_ADD' : 'GV_SUB',
+              amount: Math.abs(gvNum),
+              referenceId: 'ADMIN_MANUAL_' + currentUser.id,
+              note: `[관리자 수동 조정] ${cleanReason} (담당: ${currentUser.name})`,
+              createdAt: nowIso
+            });
+          }
+          if (gcNum !== 0) {
+            dbRef.gv_gc_ledgers.push({
+              id: 'LEDGER-ADJUST-GC-' + (Date.now() + 1),
+              userId: target.id,
+              type: gcNum > 0 ? 'GC_EARN' : 'GC_USE',
+              amount: Math.abs(gcNum),
+              referenceId: 'ADMIN_MANUAL_' + currentUser.id,
+              note: `[관리자 수동 조정] ${cleanReason} (담당: ${currentUser.name})`,
+              createdAt: nowIso
+            });
+          }
+          logAudit(dbRef, currentUser.id, 'ADJUST_LEDGER', 'USER', target.id, { gvDelta: gvNum, gcDelta: gcNum, reason: cleanReason }, clientIP);
+          return sendJSON(res, 201, { success: true, message: '원장에 성공적으로 반영되었습니다.' });
+        }
 
         const ledgerEntry = {
           id: 'LEDGER-ADJUST-' + Date.now(),
@@ -2428,12 +2414,12 @@ async function handleApiRequest(req, res, parsedUrl, body) {
           type, // 'GV_ADD', 'GV_SUB', 'GC_EARN', 'GC_USE'
           amount: Math.abs(Number(amount)),
           referenceId: 'ADMIN_MANUAL_' + currentUser.id,
-          note: `[관리자 수동 조정] ${reason} (담당: ${currentUser.name})`,
-          createdAt: new Date().toISOString()
+          note: `[관리자 수동 조정] ${cleanReason} (담당: ${currentUser.name})`,
+          createdAt: nowIso
         };
 
         dbRef.gv_gc_ledgers.push(ledgerEntry);
-        logAudit(dbRef, currentUser.id, 'ADJUST_LEDGER', 'USER', target.id, { type, amount, reason }, clientIP);
+        logAudit(dbRef, currentUser.id, 'ADJUST_LEDGER', 'USER', target.id, { type, amount, reason: cleanReason }, clientIP);
         return sendJSON(res, 201, { success: true, message: '원장에 성공적으로 반영되었습니다.' });
       });
     }

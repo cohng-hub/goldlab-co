@@ -485,62 +485,9 @@ async function InBrowserServerEngine(path, method = 'GET', body = null, token = 
   const cleanPath = (path || '').split('?')[0];
   const db = getInBrowserDB();
 
-  // 1. Auth: Login
+  // 1. Auth: Login (Strict: registered users only, no auto-signup)
   if (cleanPath === '/api/auth/login' && method === 'POST') {
-    const cleanEmail = (body && body.email ? String(body.email) : '').trim().toLowerCase();
-    const isMaster = cleanEmail === 'goldlabnco@naver.com';
-
-    let user = db.users.find(u => u.email.toLowerCase() === cleanEmail);
-    if (isMaster) {
-      if (!user) {
-        user = {
-          id: 'usr_master_001',
-          name: '황미숙 대표 (최고관리자)',
-          email: 'goldlabnco@naver.com',
-          phone: '010-4017-4988',
-          role: 'MASTER_ADMIN',
-          userType: 'MASTER',
-          tier: '👑 MASTER ADMIN',
-          status: 'ACTIVE',
-          createdAt: new Date().toISOString()
-        };
-        db.users.push(user);
-      } else {
-        user.role = 'MASTER_ADMIN';
-        user.userType = 'MASTER';
-        user.tier = '👑 MASTER ADMIN';
-      }
-    } else {
-      if (!user) {
-        const isBiz = cleanEmail.includes('biz') || cleanEmail.includes('corp');
-        user = {
-          id: 'usr_' + Date.now(),
-          name: cleanEmail.split('@')[0],
-          email: cleanEmail,
-          phone: '010-1234-5678',
-          role: isBiz ? 'B2B_PENDING' : 'USER',
-          userType: isBiz ? 'BIZ' : 'PERSONAL',
-          tier: 'SILVER',
-          status: 'ACTIVE',
-          createdAt: new Date().toISOString()
-        };
-        db.users.push(user);
-        db.gv_gc_ledgers.push({
-          id: 'LEDGER-WELCOME-' + Date.now(),
-          userId: user.id,
-          type: 'GC_EARN',
-          amount: 5000,
-          note: '신규 회원가입 축하 5,000 GC 적립',
-          createdAt: new Date().toISOString()
-        });
-      }
-    }
-    saveInBrowserDB(db);
-
-    const genToken = 'tok_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8);
-    localStorage.setItem('goldlab_auth_token', genToken);
-    localStorage.setItem('goldlab_active_user', JSON.stringify(user));
-    return { success: true, token: genToken, user };
+    throw new Error('서버와 연결할 수 없어 로그인을 처리할 수 없습니다. 잠시 후 다시 시도해 주세요.');
   }
 
   // 2. Auth: Register
@@ -1776,6 +1723,12 @@ function FormatUserFriendlyError(err, fallbackMsg = '현재 온라인 접수가 
 
 function IsOnlineReceptionEndpoint(cleanPath, method) {
   const m = (method || 'GET').toUpperCase();
+  if (cleanPath.startsWith('/api/auth/') || cleanPath.startsWith('/api/admin/')) {
+    return true;
+  }
+  if (cleanPath.startsWith('/api/reviews') && m !== 'GET') {
+    return true;
+  }
   if (m === 'POST') {
     if (
       cleanPath === '/api/reservations/book' ||
@@ -1857,7 +1810,7 @@ async function ApiRequest(path, method = 'GET', body = null) {
   }
 
   if (!res.ok) {
-    if (!isStrictOnline && (res.status === 401 || res.status === 404 || res.status === 405)) {
+    if (!isStrictOnline && (res.status === 404 || res.status === 405)) {
       return await InBrowserServerEngine(path, method, body, authToken);
     }
     const errorMsg = (data && (data.error || data.message)) || offlinePhoneGuide;
@@ -1875,6 +1828,7 @@ async function LoadAuthState() {
   authToken = localStorage.getItem('goldlab_auth_token') || '';
   if (!authToken) {
     currentUser = null;
+    localStorage.removeItem('goldlab_active_user');
     UpdateAuthUI();
     return;
   }
@@ -1882,13 +1836,18 @@ async function LoadAuthState() {
     const res = await ApiRequest('/api/auth/me');
     if (res && res.success && res.user) {
       currentUser = res.user;
+      localStorage.setItem('goldlab_active_user', JSON.stringify(currentUser));
     } else {
-      const raw = localStorage.getItem('goldlab_active_user');
-      currentUser = raw ? JSON.parse(raw) : null;
+      authToken = '';
+      currentUser = null;
+      localStorage.removeItem('goldlab_auth_token');
+      localStorage.removeItem('goldlab_active_user');
     }
   } catch (err) {
-    const raw = localStorage.getItem('goldlab_active_user');
-    currentUser = raw ? JSON.parse(raw) : null;
+    authToken = '';
+    currentUser = null;
+    localStorage.removeItem('goldlab_auth_token');
+    localStorage.removeItem('goldlab_active_user');
   }
   UpdateAuthUI();
 }
@@ -2206,7 +2165,7 @@ async function HandleUserLogin(e) {
     const res = await ApiRequest('/api/auth/login', 'POST', { email, password: pass });
     
     // Check if 2FA TOTP is required for Admin
-    if (res.require2fa) {
+    if (res.requires2FA || res.require2fa) {
       const totpCode = prompt('[2단계 인증 (2FA)]\n관리자 계정 보안을 위해 TOTP 6자리 번호를 입력하세요:');
       if (!totpCode) {
         alert('2단계 인증번호를 입력하지 않아 로그인이 취소되었습니다.');
@@ -2266,6 +2225,21 @@ async function HandleUserSignup(e) {
   const isBiz = currentSignupUserType === 'BIZ';
   const bizName = (document.getElementById('signupBizName')?.value || '').trim();
   const bizNo = (document.getElementById('signupBizNo')?.value || '').trim();
+
+  if (!name || !email || !pass) {
+    alert('이름, 이메일, 비밀번호는 필수 입력 항목입니다.');
+    return;
+  }
+
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('올바른 이메일 형식을 입력해 주세요.');
+    return;
+  }
+
+  if (pass.length < 8) {
+    alert('비밀번호는 최소 8자 이상으로 입력해 주세요.');
+    return;
+  }
 
   const termsChk = e.target.querySelector('input[type="checkbox"]');
   if (termsChk && !termsChk.checked) {
