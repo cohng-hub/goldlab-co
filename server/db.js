@@ -7,6 +7,19 @@ const DATA_DIR = path.resolve(__dirname, '..', 'data');
 const BACKUP_DIR = path.join(DATA_DIR, 'backups');
 const DB_FILE = path.join(DATA_DIR, 'goldlab_db.json');
 const DB_TMP_FILE = path.join(DATA_DIR, 'goldlab_db.tmp');
+const PRESERVED_REVIEWS_FILE = path.resolve(__dirname, 'preserved_reviews.json');
+
+function loadPreservedReviews() {
+  try {
+    if (fs.existsSync(PRESERVED_REVIEWS_FILE)) {
+      const parsed = JSON.parse(fs.readFileSync(PRESERVED_REVIEWS_FILE, 'utf8'));
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (err) {
+    console.error('[Database] Failed to load preserved_reviews.json:', err.message);
+  }
+  return [];
+}
 
 // Ensure storage directories exist
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -240,6 +253,19 @@ function loadDB() {
     console.log('[Database] Initializing brand-new persistent database...');
     dbMemoryCache = getDefaultDBSchema();
 
+    // Restore preserved live reviews so container redeploys never wipe existing customer reviews
+    const preserved = loadPreservedReviews();
+    if (preserved.length > 0) {
+      const existingIds = new Set((dbMemoryCache.reviews || []).map(r => r.id));
+      for (const rev of preserved) {
+        if (rev && rev.id && !existingIds.has(rev.id)) {
+          dbMemoryCache.reviews.push(rev);
+          existingIds.add(rev.id);
+        }
+      }
+      dbMemoryCache.reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
     // Initialize Master Admin account from environment variables safely
     const adminPass = process.env.ADMIN_INITIAL_PASSWORD || 'GoldLab2026!MasterSecure';
 
@@ -302,6 +328,22 @@ function loadDB() {
     }
 
     if (!Array.isArray(dbMemoryCache.reviews)) dbMemoryCache.reviews = [];
+    const preserved = loadPreservedReviews();
+    let reviewsMerged = false;
+    if (preserved.length > 0) {
+      const existingIds = new Set(dbMemoryCache.reviews.map(r => r.id));
+      for (const rev of preserved) {
+        if (rev && rev.id && !existingIds.has(rev.id)) {
+          dbMemoryCache.reviews.push(rev);
+          existingIds.add(rev.id);
+          reviewsMerged = true;
+        }
+      }
+      if (reviewsMerged) {
+        dbMemoryCache.reviews.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        persistDBToDisk(dbMemoryCache);
+      }
+    }
     const hasLeeReview = dbMemoryCache.reviews.some(r => r.id === 'REV-20261021-0001' || (r.content && r.content.includes('타이핀')));
     if (!hasLeeReview) {
       dbMemoryCache.reviews.unshift({

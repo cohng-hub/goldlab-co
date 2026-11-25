@@ -1194,7 +1194,7 @@
       `;
 
       try {
-        const res = await ApiRequest(`/api/reviews?category=${currentCategory}&page=${currentPage}&limit=10`);
+        const res = await ApiRequest(`/api/reviews?category=${currentCategory}&page=${currentPage}&limit=5`);
 
         if (res && res.success) {
           if ((!res.reviews || res.reviews.length === 0) && (!res.totalCount || res.totalCount === 0)) {
@@ -1236,7 +1236,7 @@
             };
           }
           RenderAggregateStats(res);
-          RenderReviewsList(res.reviews, res.reviews ? res.reviews.length : res.totalCount, res.reviews ? res.reviews.length : res.filteredCount);
+          RenderReviewsList(res.reviews, res.totalCount ?? (res.reviews ? res.reviews.length : 0), res.filteredCount ?? (res.reviews ? res.reviews.length : 0));
           RenderPagination(res.currentPage, res.totalPages);
         } else {
           throw new Error((res && res.error) || '후기를 불러오지 못했습니다.');
@@ -1957,7 +1957,7 @@
       if (!currentUser) return;
 
       try {
-        const res = await ApiRequest(`/api/reviews`);
+        const res = await ApiRequest(`/api/reviews?limit=50`);
         const review = res.reviews?.find(r => r.id === reviewId);
         if (!review) throw new Error('후기 정보를 불러올 수 없습니다.');
 
